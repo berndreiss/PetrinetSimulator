@@ -24,10 +24,20 @@ public class Petrinet {
 		this.places = new HashMap<String, Place>();
 	}
 
-	
+	public void setTransitions(Map<String, Transition> transitions) {
+		System.out.println("t:" + transitions.size());
+		this.transitions = transitions;
+	}
+
 	public Map<String, Transition> getTransitions(){
 		return transitions;
 	}
+	
+	public void setPlaces(Map<String, Place> places) {
+		System.out.println("p:" + places.size());
+		this.places = places;
+	}
+	
 	
 	public Map<String, Place> getPlaces(){
 		return places;

@@ -13,9 +13,10 @@ import java.util.Set;
  */
 public class Transition extends PetrinetElement {
 
+	private Map<String, Place> inputs = new HashMap<String, Place>();//set of places that serve as input
+	private Map<String, Place> outputs = new HashMap<String, Place>();//set of places that serve as output
+
 	
-	private Map<String, Place> preset;//set of places that serve as input
-	private Map<String, Place> postset;//set of places that serve as output
 
 	/**
 	 * A new instance of Transition is created. If arguments for preset and postset are not passed preset and postset are initialized as {@link HashSet}.
@@ -24,8 +25,6 @@ public class Transition extends PetrinetElement {
 	 */
 	public Transition(String id) {
 		this.id = id;
-		preset = new HashMap<String, Place>();
-		postset = new HashMap<String, Place>();
 	}
 
 	/**
@@ -36,8 +35,6 @@ public class Transition extends PetrinetElement {
 	public Transition(String id, String name) {
 		this.id = id;
 		this.name = name;
-		preset = new HashMap<String, Place>();
-		postset = new HashMap<String, Place>();
 	}
 	
 	/**
@@ -47,29 +44,15 @@ public class Transition extends PetrinetElement {
 	 * @param preset {@link Set} of initial input places.
 	 * @param postset {@link Set} of initial output places.
 	 */
-	public Transition(String id, String name, Map<String, Place> preset, Map<String, Place> postset) {
+	public Transition(String id, String name, Map<String, Place> inputs, Map<String, Place> outputs) {
 		this.id = id;
 		this.name = name;
-		this.preset = preset;
-		this.postset = postset;
+		this.inputs = inputs;
+		this.outputs = outputs;
 	}
 	
 	
-	/**
-	 * Adds a place to the set of input places (preset).
-	 * @param p {@link Place} to be added as an Input.
-	 */
-	public void addInput(Place p) {
-		preset.put(p.id, p);
-	}
 
-	/**
-	 * Adds a place to the set of output places (postset).
-	 * @param p {@link Place} to be added as an Output.
-	 */
-	public void addOutput(Place p) {
-		postset.put(p.id,p);
-	}
 	
 	/**
 	 * Activates a transition if it is active. If any place in the set of inputs does not have tokens, it does not activate. 
@@ -83,8 +66,8 @@ public class Transition extends PetrinetElement {
 			return returnList;
 
 		//decrement tokens
-		for (String s: preset.keySet()) {
-			Place p = preset.get(s);
+		for (String s: inputs.keySet()) {
+			Place p = (Place) inputs.get(s);
 			try {
 				p.decrementTokens();
 				returnList.add(p);
@@ -93,8 +76,8 @@ public class Transition extends PetrinetElement {
 			}
 		}
 		//increment tokens
-		for (String s: postset.keySet()) {
-			Place p = postset.get(s);
+		for (String s: outputs.keySet()) {
+			Place p = (Place) outputs.get(s);
 			p.incrementTokens();
 			returnList.add(p);
 		}
@@ -105,20 +88,38 @@ public class Transition extends PetrinetElement {
 	//returns true otherwise
 	private boolean isActive() {
 		
-		for (String s: preset.keySet()) {
-			Place p = preset.get(s);
+		for (String s: inputs.keySet()) {
+			Place p = (Place) inputs.get(s);
 			if (!p.hasTokens())
 				return false;
 		}
 		return true;
 	}
+	
+	/**
+	 * Adds a place to the set of input places (preset).
+	 * @param p {@link Place} to be added as an Input.
+	 */
+	public void addInput(Place p) {
+		inputs.put(p.id, p);
+		p.outputs.put(this.id, this);
+	}
 
-	public Map<String, Place> getPreset(){
-		return preset;
+	/**
+	 * Adds a place to the set of output places (postset).
+	 * @param p {@link Place} to be added as an Output.
+	 */
+	public void addOutput(Place p) {
+		outputs.put(p.id,p);
+		p.inputs.put(this.id, this);
+	}
+
+	public Map<String, Place> getInputs(){
+		return inputs;
 	}
 	
-	public Map<String, Place> getPostset(){
-		return postset;
+	public Map<String, Place> getOutputs(){
+		return outputs;
 	}
-	
+
 }

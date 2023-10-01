@@ -193,6 +193,9 @@ public class DemoFrame extends JFrame {
 		
 	}
 	
+	public void setPetrinet(Petrinet petrinet) {
+		this.petrinet = petrinet;
+	}
 
 	/**
 	 * Die Methode gibt den angegebenen Text im Label aus.

@@ -8,6 +8,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
 
@@ -159,17 +160,17 @@ public class DemoGraph extends MultiGraph {
 		node.setAttribute("xy", t.getX(), t.getY());
 		
 		
-		Map<String, Place> preset = t.getPreset();
-		Map<String, Place> postset = t.getPostset();
+		Map<String, PetrinetElement> preset = t.getInputs();
+		Map<String, PetrinetElement> postset = t.getOutputs();
 
 		//TODO: for both for loops handle places already added
 		for (String s: preset.keySet()) {
-			Place p = preset.get(s);
+			Place p = (Place) preset.get(s);
 			addEdge(p.getId()+t.getId(),this.getNode(p.getId()), node);
 		}
 		for (String s: postset.keySet()) {
-			Place p = postset.get(s);
-			addEdge(p.getId()+t.getId(), node,this.getNode(p.getId()));
+			Place p = (Place) postset.get(s);
+			addEdge(t.getId()+p.getId(), node,this.getNode(p.getId()));
 		}
 
 		return node;

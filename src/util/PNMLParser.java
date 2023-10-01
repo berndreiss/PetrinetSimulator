@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import datamodel.Arc;
 import datamodel.Petrinet;
 import datamodel.PetrinetElement;
 import datamodel.Place;
@@ -16,9 +15,14 @@ public class PNMLParser extends PNMLWopedParser{
 	private Map<String, Place> places = new HashMap<String, Place>();
 	private Map<String, Transition> transitions = new HashMap<String, Transition>();
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
+	private Map<String, String> originalArcIds = null;
+	
+	private boolean arcsHandled = false;
 	
 	public PNMLParser(File pnml) {
 		super(pnml);
+		this.initParser();
+		this.parse();
 	}
 	
 	
@@ -30,7 +34,6 @@ public class PNMLParser extends PNMLWopedParser{
 	
 	@Override
 	public void newPlace(final String id) {
-		System.out.println("TEST");
 		places.put(id, new Place(id));
 	}
 	
@@ -47,7 +50,7 @@ public class PNMLParser extends PNMLWopedParser{
 		
 		if (element != null) {
 			element.setX(xF);
-			element.setY(yF);
+			element.setY(-yF);
 		}
 			
 	
@@ -70,8 +73,6 @@ public class PNMLParser extends PNMLWopedParser{
 	}
 
 	private PetrinetElement getElement(String id){
-		if (arcs.containsKey(id))
-			return arcs.get(id);
 		if (transitions.containsKey(id))
 			return transitions.get(id);
 		if (places.containsKey(id))
@@ -85,6 +86,11 @@ public class PNMLParser extends PNMLWopedParser{
 	
 	public Map<String, Transition> getTransitions(){
 		
+		if (arcsHandled)
+			return transitions;
+		
+		originalArcIds = new HashMap<String, String>();
+		
 		for (String s: arcs.keySet()) {
 			
 			Arc a = arcs.get(s);
@@ -92,8 +98,13 @@ public class PNMLParser extends PNMLWopedParser{
 			String source = a.getSource();
 			String target = a.getTarget();
 			
+			originalArcIds.put(source+target, a.getId());
+			
 			Transition transition;
 			Place place;
+			
+			System.out.println("Source: " + source);
+			System.out.println("Target: " + target);
 			
 			if (transitions.containsKey(source)) {
 				transition = transitions.get(source);
@@ -106,6 +117,37 @@ public class PNMLParser extends PNMLWopedParser{
 			}
 		}
 		
+		arcsHandled = true;
 		return transitions;
+	}
+	
+	public Map<String, String> getOriginalArcIds(){
+		if (originalArcIds==null)
+			getTransitions();
+		return originalArcIds;
+	}
+	
+	private class Arc{
+		private String id;
+		private String source;
+		private String target;
+		
+		public Arc(String id, String source, String target) {
+			this.id = id;
+			this.source = source;
+			this.target = target;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getSource() {
+			return source;
+		}
+		
+		public String getTarget() {
+			return target;
+		}
 	}
 }

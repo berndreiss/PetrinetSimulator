@@ -1,11 +1,18 @@
 package datamodel;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class that represents places in petri nets. Each place has a number of tokens, an id and a name.
  */
 public class Place extends PetrinetElement {
 
 	private int numberOfTokens;
-	
+		
+	private Map<String, Place> inputs = new HashMap<String, Place>();//set of places that serve as input
+	private Map<String, Place> outputs = new HashMap<String, Place>();//set of places that serve as output
+
 	public Place(String id, String name, int initialTokens) {
 		this.id = id;
 		this.name = name;
@@ -60,5 +67,30 @@ public class Place extends PetrinetElement {
 		numberOfTokens--;
 	}
 
+	/**
+	 * Adds a place to the set of input places (preset).
+	 * @param p {@link Place} to be added as an Input.
+	 */
+	public void addInput(Transition t) {
+		inputs.put(t.id, t);
+		t.outputs.put(this.id, this);
+	}
+
+	/**
+	 * Adds a place to the set of output places (postset).
+	 * @param p {@link Place} to be added as an Output.
+	 */
+	public void addOutput(Transition t) {
+		outputs.put(t.id,t);
+		t.inputs.put(this.id, this);
+	}
+
+	public Map<String, Transition> getInputs(){
+		return inputs;
+	}
 	
+	public Map<String, Transition> getOutputs(){
+		return outputs;
+	}
 }
+
