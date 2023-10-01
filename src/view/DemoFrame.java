@@ -220,8 +220,8 @@ public class DemoFrame extends JFrame {
 		List<Place> placesChanged = petrinet.activate(id);
 		
 		for (Place p: placesChanged) {
-			Node place = graph.getNode(p.getID());
-			place.setAttribute("ui.label", p.numberOfTokens() == 0?0:p.numberOfTokens());
+			Node place = graph.getNode(p.getId());
+			place.setAttribute("ui.label", p.numberOfTokens() == 0?"":p.numberOfTokens());
 		}
 		
 //		// Ausgabe, welcher Knoten geklickt wurde

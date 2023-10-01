@@ -12,6 +12,7 @@ public class Petrinet {
 	private Transition currentTransition;
 	private Map<String, Transition> transitions;//set of transitions represented by a map since the Set interface does not provide a get function
 	private Map<String,Place> places;//set of places represented by a map since the Set interface does not provide a get function
+	
 	public Petrinet(Map<String,Transition> transitions, Map<String, Place> places, Transition startingTransition) {
 		this.transitions = transitions;
 		this.places = places;
@@ -22,6 +23,15 @@ public class Petrinet {
 		this.transitions = new HashMap<String, Transition>();
 		this.places = new HashMap<String, Place>();
 	}
+
+	
+	public Map<String, Transition> getTransitions(){
+		return transitions;
+	}
+	
+	public Map<String, Place> getPlaces(){
+		return places;
+	}
 	
 	public void addTransition(Transition t) throws DuplicateIdException {
 		if (transitions.containsKey(t.getId()) || places.containsKey(t.getId()))
@@ -30,13 +40,13 @@ public class Petrinet {
 	}
 	
 	public void addPlace(Place p) throws DuplicateIdException {
-		if (transitions.containsKey(p.getID()) || places.containsKey(p.getID()))
+		if (transitions.containsKey(p.getId()) || places.containsKey(p.getId()))
 			throw new DuplicateIdException("Id already exists");
-		places.put(p.getID(), p);
+		places.put(p.getId(), p);
 	}
 	
 	public void addInput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getID()))
+		if (!places.containsKey(p.getId()))
 			addPlace(p);
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -44,7 +54,7 @@ public class Petrinet {
 	}
 	
 	public void addOutput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getID()))
+		if (!places.containsKey(p.getId()))
 			addPlace(p);
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -71,7 +81,7 @@ public class Petrinet {
 		System.out.println("Places:");
 		for (String s : places.keySet()) {
 			Place p = places.get(s);
-			System.out.println(p.getID() + ", " + p.getName() + ", " + p.numberOfTokens());
+			System.out.println(p.getId() + ", " + p.getName() + ", " + p.numberOfTokens());
 		}
 		System.out.println("Transitions:");
 		for (String s: transitions.keySet()) {

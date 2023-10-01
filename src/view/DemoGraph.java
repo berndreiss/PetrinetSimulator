@@ -1,5 +1,7 @@
 package view;
 
+import java.util.Map;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -139,18 +141,37 @@ public class DemoGraph extends MultiGraph {
 		
 	}
 	
-	public Node addPlace(Place p, int x, int y) {
-		Node node = this.addNode(p.getID());
-		node.setAttribute("ui.label", p.numberOfTokens() == 0?0:p.numberOfTokens());
-		node.setAttribute("xy", x, y);
+	public Node addPlace(Place p) {
+		
+		//TODO: handle place already exists
+		Node node = this.addNode(p.getId());
+		node.setAttribute("ui.label", p.numberOfTokens() == 0?"":p.numberOfTokens());
+		node.setAttribute("ui.class", "place");
+		node.setAttribute("xy", p.getX(), p.getY());
 		return node;
 	}
 	
-	public Node addTransition(Transition t, int x, int y) {
+	public Node addTransition(Transition t) {
 		Node node = this.addNode(t.getId());
-		node.setAttribute("ui.label", t.getName());
-		this.toggleNodeHighlight(t.getId());
-		node.setAttribute("xy", x, y);
+//		node.setAttribute("ui.label", t.getName());
+//		this.toggleNodeHighlight(t.getId());
+		node.setAttribute("ui.class", "transition");
+		node.setAttribute("xy", t.getX(), t.getY());
+		
+		
+		Map<String, Place> preset = t.getPreset();
+		Map<String, Place> postset = t.getPostset();
+
+		//TODO: for both for loops handle places already added
+		for (String s: preset.keySet()) {
+			Place p = preset.get(s);
+			addEdge(p.getId()+t.getId(),this.getNode(p.getId()), node);
+		}
+		for (String s: postset.keySet()) {
+			Place p = postset.get(s);
+			addEdge(p.getId()+t.getId(), node,this.getNode(p.getId()));
+		}
+
 		return node;
 
 	}

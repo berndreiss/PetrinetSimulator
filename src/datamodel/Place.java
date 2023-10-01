@@ -2,11 +2,9 @@ package datamodel;
 /**
  * Class that represents places in petri nets. Each place has a number of tokens, an id and a name.
  */
-public class Place implements Comparable<Place> {
+public class Place extends PetrinetElement {
 
 	private int numberOfTokens;
-	private String id;
-	private String name;
 	
 	public Place(String id, String name, int initialTokens) {
 		this.id = id;
@@ -18,22 +16,11 @@ public class Place implements Comparable<Place> {
 		this.id = id;
 		this.name = name;
 	}
-	
-	/**
-	 * Returns the id of the place.
-	 * @return Id of given place.
-	 */
-	public String getID() {
-		return id;
+
+	public Place(String id) {
+		this.id = id;
 	}
-	
-	/**
-	 * Returns the name of the place.
-	 * @return Name of given place.
-	 */
-	public String getName() {
-		return name;
-	}
+
 	
 	/**
 	 * Returns true if place has tokens.
@@ -48,6 +35,10 @@ public class Place implements Comparable<Place> {
 	 */
 	public int numberOfTokens() {
 		return numberOfTokens;
+	}
+	
+	public void setNumberOfTokens(int numberOfTokens) {
+		this.numberOfTokens = numberOfTokens;
 	}
 	
 	/**
@@ -69,12 +60,5 @@ public class Place implements Comparable<Place> {
 		numberOfTokens--;
 	}
 
-	@Override
-	public int compareTo(Place o) {
-		if (this.id.equals(o.id))
-			return 0;
-		
-		return 1;
-	}
 	
 }
