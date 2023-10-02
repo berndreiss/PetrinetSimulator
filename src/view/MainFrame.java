@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -51,10 +53,12 @@ public class MainFrame extends JFrame {
 		
 			 @Override
 			 public void componentResized(ComponentEvent e) {
-				 updateSplitPane(controller);
+				 splitPane.setDividerLocation(finalFrame.getWidth()*splitPane.getDividerRatio());
 			 }
 		});
 		
+//		f.setSize(400, 240);
+//	      f.setLocationRelativeTo(null);
 		// bestimme eine geeignete Fenstergröße in Abhängigkeit von der
 		// Bildschirmauflösung
 		double heightPerc = 0.6; // relative Höhe des Fensters bzgl. der der Bildschirmhöhe (1.0), hier also 60 %
@@ -71,23 +75,43 @@ public class MainFrame extends JFrame {
 
 	public void updateSplitPane(Controller controller) {
 		
-		
+		Dimension zeroSize = new Dimension(0,0);
+		Dimension preferredSize = new Dimension((int) (this.getWidth()/2-10), (int) (this.getHeight()*0.5));
 		
 		JPanel petrinetPanel = new JPanel(new BorderLayout());
 		petrinetPanel.add(GraphStreamView.initPetrinetView(controller),BorderLayout.CENTER);
-		
+		petrinetPanel.setMinimumSize(zeroSize);
 		
 		JPanel reachabilityPanel = new JPanel(new BorderLayout());
 		reachabilityPanel.add(new JButton(), BorderLayout.CENTER);
+		reachabilityPanel.setMinimumSize(zeroSize);
+		
+//		petrinetPanel.setPreferredSize(preferredSize);
+//		reachabilityPanel.setPreferredSize(preferredSize);
 		
 		// Füge das JPanel zum Haupt-Frame hinzu
 		if (splitPane != null) {
-			splitPane.removeAll();
 			this.remove(splitPane);
 		}
-		splitPane = new GraphSplitPane(this, petrinetPanel, reachabilityPanel);
+		splitPane = new GraphSplitPane(this, JSplitPane.HORIZONTAL_SPLIT, petrinetPanel, reachabilityPanel);
+		splitPane.setDividerLocation(this.getWidth()/2);
+		double dividerLocation = splitPane.getDividerLocation();
+		System.out.println(dividerLocation);
+		final double frameWidth = this.getWidth();
+		System.out.println(frameWidth);
+		
+		splitPane.setDividerRatio(dividerLocation /(frameWidth==0?1:frameWidth));
+		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) {
+				splitPane.setDividerLocation(dividerLocation /(frameWidth==0?1:frameWidth));
+			}
+		} );
 		this.add(splitPane, BorderLayout.CENTER);
 		this.revalidate();
+		
+		
 	}
 	
 }

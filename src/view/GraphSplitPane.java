@@ -12,11 +12,18 @@ public class GraphSplitPane extends JSplitPane {
 
 	private JPanel petrinetPanel;
 	private JPanel reachabilityPanel;
-	public GraphSplitPane(JFrame mainFrame, JPanel petrinetPanel, JPanel reachabilityPanel) {
-		super(JSplitPane.HORIZONTAL_SPLIT, petrinetPanel, reachabilityPanel);
+	private double defaultDividerRatio = 0.5;
+	private double currentDividerRatio = 0.5;
+	
+
+	public GraphSplitPane(JFrame parent, int splitOrientation, JPanel petrinetPanel, JPanel reachabilityPanel) {
+		super(splitOrientation, petrinetPanel, reachabilityPanel);
+		this.defaultDividerRatio = 0.5;
+		this.currentDividerRatio = this.defaultDividerRatio;
+		this.setResizeWeight(defaultDividerRatio);
 		this.petrinetPanel = petrinetPanel;
 		this.reachabilityPanel = reachabilityPanel;
-		resetSize(mainFrame);
+		parent.addComponentListener(new Di);
 	}
 	
 	public void resetSize(JFrame mainFrame) {
@@ -25,5 +32,13 @@ public class GraphSplitPane extends JSplitPane {
 		reachabilityPanel.setPreferredSize(size);
 		revalidate();
 
+	}
+	
+	public void setDividerRatio(double ratio) {
+		this.dividerRatio = ratio;
+	}
+	
+	public double getDividerRatio() {
+		return dividerRatio;
 	}
 }
