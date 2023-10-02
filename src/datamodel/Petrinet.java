@@ -12,6 +12,7 @@ public class Petrinet {
 	private Transition currentTransition;
 	private Map<String, Transition> transitions;//set of transitions represented by a map since the Set interface does not provide a get function
 	private Map<String,Place> places;//set of places represented by a map since the Set interface does not provide a get function
+	private Map<String, String> originalArcIds;
 	
 	public Petrinet(Map<String,Transition> transitions, Map<String, Place> places, Transition startingTransition) {
 		this.transitions = transitions;

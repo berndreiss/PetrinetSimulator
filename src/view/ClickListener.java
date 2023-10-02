@@ -2,6 +2,8 @@ package view;
 
 import org.graphstream.ui.view.ViewerListener;
 
+import control.Controller;
+
 /**
  * Dieser Listener reagiert auf Klicks in der Anzeige des Graphen.
  * 
@@ -17,15 +19,15 @@ public class ClickListener implements ViewerListener {
 	/**
 	 * Referenz auf die DemoFrame Instanz 
 	 */
-	private DemoFrame frame;
+	private Controller controller;
 
 
 	/**
 	 * Erzeugt einen neuen ClickListener, der auf verschiedene Mausaktionen reagieren kann.
-	 * @param frame Referenz auf die DemoFrame Instanz
+	 * @param controller Referenz auf die DemoFrame Instanz
 	 */
-	public ClickListener(DemoFrame frame) {
-		this.frame = frame;
+	public ClickListener(Controller controller) {
+		this.controller = controller;
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class ClickListener implements ViewerListener {
 		System.out.println("ClickListener - buttonPushed: " + id);
 
 		// den frame darüber informieren, dass der Knoten id angeklickt wurde 
-		frame.clickNodeInGraph(id);
+		controller.clickNodeInGraph(id);
 	}
 
 	@Override

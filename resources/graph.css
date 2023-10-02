@@ -84,12 +84,16 @@ node.bild {
 	Style-Angabe fuer eine Kante
 */
 edge {
+  shape: line;
 	fill-color: #003366;
-	text-color: #003366;
+	
 	arrow-shape: arrow;
 	arrow-size: 9px, 6px;
+	/*
 	text-size:  12;
+  text-color: #003366;
 	text-color: purple;
+	*/
 }
 
 /*

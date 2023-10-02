@@ -10,8 +10,8 @@ public class Place extends PetrinetElement {
 
 	private int numberOfTokens;
 		
-	private Map<String, Place> inputs = new HashMap<String, Place>();//set of places that serve as input
-	private Map<String, Place> outputs = new HashMap<String, Place>();//set of places that serve as output
+	protected Map<String, Transition> inputs = new HashMap<String, Transition>();//set of places that serve as input
+	protected Map<String, Transition> outputs = new HashMap<String, Transition>();//set of places that serve as output
 
 	public Place(String id, String name, int initialTokens) {
 		this.id = id;
@@ -73,7 +73,6 @@ public class Place extends PetrinetElement {
 	 */
 	public void addInput(Transition t) {
 		inputs.put(t.id, t);
-		t.outputs.put(this.id, this);
 	}
 
 	/**
@@ -82,7 +81,6 @@ public class Place extends PetrinetElement {
 	 */
 	public void addOutput(Transition t) {
 		outputs.put(t.id,t);
-		t.inputs.put(this.id, this);
 	}
 
 	public Map<String, Transition> getInputs(){

@@ -193,49 +193,9 @@ public class DemoFrame extends JFrame {
 		
 	}
 	
-	public void setPetrinet(Petrinet petrinet) {
-		this.petrinet = petrinet;
-	}
-
-	/**
-	 * Die Methode gibt den angegebenen Text im Label aus.
-	 * 
-	 * @param text
-	 *            Text für die Ausgabe
-	 */
-	public void outputText(String text) {
-		statusLabel.setText(text);
-	}
 	
 	
 	
-	/**
-	 * Führt die Aktionen aus, die bei einem Klick in einen Knoten des
-	 * Graphen geschehen soll.
-	 * <p>
-	 * Diese Methode wird vom {@link ClickListener} aufgerufen.
-	 * </p>
-	 * 
-	 * @param id
-	 *            Id des Knotens, der angeklickt wurde
-	 */
-	public void clickNodeInGraph(String id) {
-		List<Place> placesChanged = petrinet.activate(id);
-		
-		for (Place p: placesChanged) {
-			Node place = graph.getNode(p.getId());
-			place.setAttribute("ui.label", p.numberOfTokens() == 0?"":p.numberOfTokens());
-		}
-		
-//		// Ausgabe, welcher Knoten geklickt wurde
-//		outputText(graph.getOutputText(id));
-//
-//		// Hervorhebung des Knotens setzten bzw. wegnehmen
-//		graph.toggleNodeHighlight(id);
-//		
-//		// Markierung auf angeklickten Knoten setzten 
-//		graph.markLastClickedNode(id);
-	}
 
 
 }

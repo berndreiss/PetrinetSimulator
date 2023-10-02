@@ -5,6 +5,7 @@ import java.util.Map;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
@@ -36,12 +37,12 @@ import datamodel.Transition;
  * 
  * @author ProPra-Team FernUni Hagen
  */
-public class DemoGraph extends MultiGraph {
+public class PetrinetGraph extends MultiGraph {
 
 	/** 
 	 * URL-Angabe zur css-Datei, in der das Layout des Graphen angegeben ist. 
 	*/
-	private static String CSS_FILE = "url(" + DemoGraph.class.getResource("/graph.css") + ")"; // diese Variante der Pfadangabe funktioniert auch aus einem JAR heraus
+	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/graph.css") + ")"; // diese Variante der Pfadangabe funktioniert auch aus einem JAR heraus
 	
 	/**
 	 * der SpriteManager des Graphen
@@ -59,7 +60,7 @@ public class DemoGraph extends MultiGraph {
 	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach
 	 * C.
 	 */
-	public DemoGraph() {
+	public PetrinetGraph() {
 		super("Beispiel");
 
 		// Angabe einer css-Datei für das Layout des Graphen
@@ -67,7 +68,10 @@ public class DemoGraph extends MultiGraph {
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
-				
+
+		SpringBox layout = new SpringBox(false);
+
+		
 		// Erzeugen von Knoten
 //		Node nodeA = this.addNode("n1");
 //		nodeA.setAttribute("ui.label", "A");
@@ -144,7 +148,10 @@ public class DemoGraph extends MultiGraph {
 	
 	public Node addPlace(Place p) {
 		
-		//TODO: handle place already exists
+		//return the node if it already exists
+		if(this.getNode(p.getId()) != null)
+			return this.getNode(p.getId());
+
 		Node node = this.addNode(p.getId());
 		node.setAttribute("ui.label", p.numberOfTokens() == 0?"":p.numberOfTokens());
 		node.setAttribute("ui.class", "place");
@@ -154,23 +161,22 @@ public class DemoGraph extends MultiGraph {
 	
 	public Node addTransition(Transition t) {
 		Node node = this.addNode(t.getId());
-//		node.setAttribute("ui.label", t.getName());
-//		this.toggleNodeHighlight(t.getId());
 		node.setAttribute("ui.class", "transition");
 		node.setAttribute("xy", t.getX(), t.getY());
 		
 		
-		Map<String, PetrinetElement> preset = t.getInputs();
-		Map<String, PetrinetElement> postset = t.getOutputs();
+		Map<String, Place> preset = t.getInputs();
+		Map<String, Place> postset = t.getOutputs();
 
-		//TODO: for both for loops handle places already added
 		for (String s: preset.keySet()) {
 			Place p = (Place) preset.get(s);
-			addEdge(p.getId()+t.getId(),this.getNode(p.getId()), node);
+			Node pNode = this.addPlace(p);
+			addEdge(p.getId()+t.getId(),pNode, node);
 		}
 		for (String s: postset.keySet()) {
 			Place p = (Place) postset.get(s);
-			addEdge(t.getId()+p.getId(), node,this.getNode(p.getId()));
+			Node pNode = this.addPlace(p);
+			addEdge(t.getId()+p.getId(), node,pNode);
 		}
 
 		return node;
@@ -179,6 +185,8 @@ public class DemoGraph extends MultiGraph {
 
 	public Edge addEdge(String name, Node a, Node b) {
 		Edge edge = this.addEdge(name, a, b, true);
+
+//		Edge edge1 = this.addEdge(name+"1", a, b, true);
 		return edge;
 	}
 	
