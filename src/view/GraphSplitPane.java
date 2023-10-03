@@ -1,6 +1,9 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -8,37 +11,83 @@ import javax.swing.JSplitPane;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
+import control.Controller;
+
 public class GraphSplitPane extends JSplitPane {
 
-	private JPanel petrinetPanel;
-	private JPanel reachabilityPanel;
 	private double defaultDividerRatio = 0.5;
-	private double currentDividerRatio = 0.5;
+	private JFrame parent;
+	private Controller controller;
+	private JSplitPane container;
 	
 
-	public GraphSplitPane(JFrame parent, int splitOrientation, JPanel petrinetPanel, JPanel reachabilityPanel) {
-		super(splitOrientation, petrinetPanel, reachabilityPanel);
+	public GraphSplitPane(JFrame parent, int splitOrientation, Controller controller) {
+		super(splitOrientation, new JPanel(), new JPanel());
+		
+
+		
+		this.parent = parent;
 		this.defaultDividerRatio = 0.5;
-		this.currentDividerRatio = this.defaultDividerRatio;
-		this.setResizeWeight(defaultDividerRatio);
-		this.petrinetPanel = petrinetPanel;
-		this.reachabilityPanel = reachabilityPanel;
-		parent.addComponentListener(new Di);
-	}
-	
-	public void resetSize(JFrame mainFrame) {
-		Dimension size = new Dimension((int) (mainFrame.getWidth()/2-10), (int) (mainFrame.getHeight()*0.8));
-		petrinetPanel.setPreferredSize(size);
-		reachabilityPanel.setPreferredSize(size);
-		revalidate();
+		this.controller = controller;
 
+		Dimension preferredSize = new Dimension((int) (parent.getWidth()/2-10), (int) (parent.getHeight()*0.5));
+		
+		this.setLeftComponent(new ResizingViewPanel(GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller), preferredSize));
+		
+		this.setRightComponent(new ResizingViewPanel(GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller), preferredSize));
+
+		parent.addComponentListener(new FrameResizeAdapter());
 	}
 	
-	public void setDividerRatio(double ratio) {
-		this.dividerRatio = ratio;
+
+	
+	private class FrameResizeAdapter extends ComponentAdapter{
+		
+		@Override
+		public void componentResized(ComponentEvent e) {
+			
+			Dimension oldSizeLeft = getLeftComponent().getSize();
+			remove(getLeftComponent());
+			setLeftComponent(new ResizingViewPanel(GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller), oldSizeLeft));
+			Dimension oldSizeRight = getRightComponent().getSize();
+			remove(getRightComponent());
+			setRightComponent(new ResizingViewPanel(GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller), oldSizeRight));
+			setDividerLocation(defaultDividerRatio);
+		}
+		
+		 
 	}
 	
-	public double getDividerRatio() {
-		return dividerRatio;
+	
+	private class ResizingViewPanel extends JPanel{
+		
+		public ResizingViewPanel(ViewPanel viewPanel, Dimension size) {
+			this.setLayout(new BorderLayout());
+			this.add(viewPanel, BorderLayout.CENTER);
+			this.addComponentListener(new PanelResizedAdapter());
+			Dimension zeroSize = new Dimension(0,0);
+
+			this.setMinimumSize(zeroSize);
+
+			this.setPreferredSize(size);
+			
+//			this.setSize(size);
+		}
+
+		
 	}
+	
+	private class PanelResizedAdapter extends ComponentAdapter{
+		
+		@Override
+		public void componentResized(ComponentEvent e) {
+			if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
+				defaultDividerRatio = (double) getLeftComponent().getWidth() / (getLeftComponent().getWidth()+getRightComponent().getWidth());
+			else
+				defaultDividerRatio = (double) getLeftComponent().getHeight() / (getLeftComponent().getHeight()+getRightComponent().getHeight());
+
+		}
+		
+	}
+	
 }

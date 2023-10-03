@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.graphstream.graph.Graph;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
@@ -17,9 +18,8 @@ import control.Controller;
 
 public class GraphStreamView extends JPanel {
 
-	public static ViewPanel initPetrinetView(Controller controller) {
+	public static ViewPanel initGraphStreamView(Graph graph, Controller controller) {
 
-		PetrinetGraph graph = controller.getGraph();
 		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);

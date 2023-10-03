@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
 import datamodel.Petrinet;
@@ -17,12 +18,14 @@ import datamodel.Transition;
 import util.PNMLParser;
 import view.MainFrame;
 import view.PetrinetGraph;
+import view.ReachabilityGraph;
 import view.GraphStreamView;
 
 public class Controller {
 
 	private Petrinet petrinet;
 	private PetrinetGraph petrinetGraph;
+	private ReachabilityGraph reachabilityGraph;
 	
 	private MainFrame mainFrame;
 
@@ -36,8 +39,12 @@ public class Controller {
 		return petrinet;
 	}
 	
-	public PetrinetGraph getGraph() {
+	public PetrinetGraph getPetrinetGraph() {
 		return petrinetGraph;
+	}
+	
+	public Graph getReachabilityGraph() {
+		return petrinetGraph; //TODOchange when ready!
 	}
 	
 	public void clickNodeInGraph(String id) {

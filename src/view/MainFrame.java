@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import org.graphstream.ui.swing_viewer.ViewPanel;
+
 import control.Controller;
 import datamodel.Petrinet;
 
@@ -49,13 +51,7 @@ public class MainFrame extends JFrame {
 
 		final JFrame finalFrame = this;
 		System.out.println(finalFrame.getSize());
-		this.addComponentListener(new ComponentAdapter() {
-		
-			 @Override
-			 public void componentResized(ComponentEvent e) {
-				 splitPane.setDividerLocation(finalFrame.getWidth()*splitPane.getDividerRatio());
-			 }
-		});
+	
 		
 //		f.setSize(400, 240);
 //	      f.setLocationRelativeTo(null);
@@ -75,39 +71,17 @@ public class MainFrame extends JFrame {
 
 	public void updateSplitPane(Controller controller) {
 		
-		Dimension zeroSize = new Dimension(0,0);
-		Dimension preferredSize = new Dimension((int) (this.getWidth()/2-10), (int) (this.getHeight()*0.5));
 		
-		JPanel petrinetPanel = new JPanel(new BorderLayout());
-		petrinetPanel.add(GraphStreamView.initPetrinetView(controller),BorderLayout.CENTER);
-		petrinetPanel.setMinimumSize(zeroSize);
-		
-		JPanel reachabilityPanel = new JPanel(new BorderLayout());
-		reachabilityPanel.add(new JButton(), BorderLayout.CENTER);
-		reachabilityPanel.setMinimumSize(zeroSize);
-		
-//		petrinetPanel.setPreferredSize(preferredSize);
-//		reachabilityPanel.setPreferredSize(preferredSize);
 		
 		// Füge das JPanel zum Haupt-Frame hinzu
 		if (splitPane != null) {
 			this.remove(splitPane);
 		}
-		splitPane = new GraphSplitPane(this, JSplitPane.HORIZONTAL_SPLIT, petrinetPanel, reachabilityPanel);
-		splitPane.setDividerLocation(this.getWidth()/2);
+		splitPane = new GraphSplitPane(this, JSplitPane.HORIZONTAL_SPLIT, controller);
 		double dividerLocation = splitPane.getDividerLocation();
 		System.out.println(dividerLocation);
 		final double frameWidth = this.getWidth();
-		System.out.println(frameWidth);
 		
-		splitPane.setDividerRatio(dividerLocation /(frameWidth==0?1:frameWidth));
-		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
-			
-			@Override
-			public void propertyChange(PropertyChangeEvent arg0) {
-				splitPane.setDividerLocation(dividerLocation /(frameWidth==0?1:frameWidth));
-			}
-		} );
 		this.add(splitPane, BorderLayout.CENTER);
 		this.revalidate();
 		
