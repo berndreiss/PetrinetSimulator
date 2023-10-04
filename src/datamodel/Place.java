@@ -9,7 +9,9 @@ import java.util.Map;
 public class Place extends PetrinetElement {
 
 	private int numberOfTokens;
-		
+	
+	private NumberOfTokensListener numberOfTokensListener;
+	
 	protected Map<String, Transition> inputs = new HashMap<String, Transition>();//set of places that serve as input
 	protected Map<String, Transition> outputs = new HashMap<String, Transition>();//set of places that serve as output
 
@@ -40,19 +42,21 @@ public class Place extends PetrinetElement {
 	 * Returns the number of tokens currently at the place.
 	 * @return Number of tokens.
 	 */
-	public int numberOfTokens() {
+	public int getNumberOfTokens() {
 		return numberOfTokens;
 	}
 	
 	public void setNumberOfTokens(int numberOfTokens) {
 		this.numberOfTokens = numberOfTokens;
+		if (numberOfTokensListener != null)
+			numberOfTokensListener.numberChanged(numberOfTokens);
 	}
 	
 	/**
 	 * Increments the number of tokens by 1.
 	 */
 	public void incrementTokens() {
-		numberOfTokens++;
+		setNumberOfTokens(numberOfTokens+1);
 	}
 	
 	/**
@@ -64,7 +68,9 @@ public class Place extends PetrinetElement {
 		if (numberOfTokens <= 0)
 			throw new OutOfTokensException("There are no tokens in place with ID \"" + id + "\"");
 				
-		numberOfTokens--;
+		
+		setNumberOfTokens(numberOfTokens-1);
+
 	}
 
 	/**
@@ -91,4 +97,5 @@ public class Place extends PetrinetElement {
 		return outputs;
 	}
 }
+
 

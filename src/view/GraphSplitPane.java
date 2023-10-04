@@ -11,17 +11,17 @@ import javax.swing.JSplitPane;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
-import control.Controller;
+import control.PetrinetController;
 
 public class GraphSplitPane extends JSplitPane {
 
 	private double defaultDividerRatio = 0.5;
 	private JFrame parent;
-	private Controller controller;
+	private PetrinetController controller;
 	private JSplitPane container;
 	
 
-	public GraphSplitPane(JFrame parent, int splitOrientation, Controller controller) {
+	public GraphSplitPane(JFrame parent, int splitOrientation, PetrinetController controller) {
 		super(splitOrientation, new JPanel(), new JPanel());
 		
 

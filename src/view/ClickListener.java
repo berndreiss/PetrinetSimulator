@@ -2,7 +2,7 @@ package view;
 
 import org.graphstream.ui.view.ViewerListener;
 
-import control.Controller;
+import control.PetrinetController;
 
 /**
  * Dieser Listener reagiert auf Klicks in der Anzeige des Graphen.
@@ -19,14 +19,14 @@ public class ClickListener implements ViewerListener {
 	/**
 	 * Referenz auf die DemoFrame Instanz 
 	 */
-	private Controller controller;
+	private PetrinetController controller;
 
 
 	/**
 	 * Erzeugt einen neuen ClickListener, der auf verschiedene Mausaktionen reagieren kann.
 	 * @param controller Referenz auf die DemoFrame Instanz
 	 */
-	public ClickListener(Controller controller) {
+	public ClickListener(PetrinetController controller) {
 		this.controller = controller;
 	}
 

@@ -2,16 +2,22 @@ package view;
 
 import java.util.Map;
 
+import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.camera.Camera;
 
 import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
+
+import control.PetrinetController;
 
 /**
  * Die Klasse DemoGraph implementiert einen Graphen mittels GraphStream. Die
@@ -20,49 +26,57 @@ import datamodel.Transition;
  * Erreichbarkeitsgraphen).
  * 
  * <p>
- * <b>Achtung:</b><br> Beachten Sie an dieser Stelle bitte die Hinweise aus der
- * Aufgabenstellung bezüglich der Trennung <i>eigener Datenstrukturen zur
- * Repräsentation eines Graphen</i> (Petrinetz oder Erreichbarkeitsgraphen) und
- * der <i>graphischen Darstellung eines Graphen</i> mittels der
- * Graphenvisualisierungsbibliothek GraphStream.
+ * <b>Achtung:</b><br>
+ * Beachten Sie an dieser Stelle bitte die Hinweise aus der Aufgabenstellung
+ * bezüglich der Trennung <i>eigener Datenstrukturen zur Repräsentation eines
+ * Graphen</i> (Petrinetz oder Erreichbarkeitsgraphen) und der <i>graphischen
+ * Darstellung eines Graphen</i> mittels der Graphenvisualisierungsbibliothek
+ * GraphStream.
  * </p>
  * 
  * <p>
  * In diesem Beispielprogramm soll lediglich die Verwendung der
  * Graphenvisualisierungsbibliothek GraphStream vorgestellt werden. Eine
  * geeignete Datenstruktur zur Repräsentation eines Graphen - wie in der
- * Aufgabenstellung erwähnt - ist somit hier nicht Teil der Programmstruktur.
- * In Ihrer eigenen Lösung müssen Sie diese Anforderung selber realisieren.
+ * Aufgabenstellung erwähnt - ist somit hier nicht Teil der Programmstruktur. In
+ * Ihrer eigenen Lösung müssen Sie diese Anforderung selber realisieren.
  * </p>
  * 
  * @author ProPra-Team FernUni Hagen
  */
 public class PetrinetGraph extends MultiGraph {
 
-	/** 
-	 * URL-Angabe zur css-Datei, in der das Layout des Graphen angegeben ist. 
-	*/
-	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/graph.css") + ")"; // diese Variante der Pfadangabe funktioniert auch aus einem JAR heraus
-	
+	/**
+	 * URL-Angabe zur css-Datei, in der das Layout des Graphen angegeben ist.
+	 */
+	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/petrinet_graph.css") + ")"; // diese
+																											// Variante
+																											// der
+																											// Pfadangabe
+																											// funktioniert
+																											// auch aus
+																											// einem JAR
+																											// heraus
+
 	/**
 	 * der SpriteManager des Graphen
-	 */	
+	 */
 	private SpriteManager spriteMan;
-	
 	/**
 	 * Sprite in X-Form, das zur Markierung das zuletzt angeklickten Knotens dient
 	 */
 	private Sprite spriteMark;
-    
+
+	private PetrinetController controller;
+
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
-	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach
-	 * C.
+	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach C.
 	 */
-	public PetrinetGraph() {
+	public PetrinetGraph(PetrinetController controller) {
 		super("Beispiel");
-
+		this.controller = controller;
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
@@ -71,112 +85,57 @@ public class PetrinetGraph extends MultiGraph {
 
 		SpringBox layout = new SpringBox(false);
 
-		
-		// Erzeugen von Knoten
-//		Node nodeA = this.addNode("n1");
-//		nodeA.setAttribute("ui.label", "A");
-//		nodeA.setAttribute("xy", 100, 50);
-//
-//		Node nodeB = this.addNode("n2");
-//		nodeB.setAttribute("ui.label", "B");
-//		nodeB.setAttribute("xy", 200, 50);
-//
-//		Node nodeC = this.addNode("n3");
-//		nodeC.setAttribute("ui.label", "C");
-//		nodeC.setAttribute("xy", 300, 50);
-//
-//		Node nodeD = this.addNode("n4");
-//		nodeD.setAttribute("ui.label", "D");
-//		nodeD.setAttribute("xy", 200, 100);
-//
-//		Node nodeE = this.addNode("n5");
-//		nodeE.setAttribute("ui.label", "E");
-//		nodeE.setAttribute("xy", 200, 0);
-//		nodeE.setAttribute("ui.class", "bild");
-//
-//		// Erzeugen von Kanten und Sprites, die als Label benutzt werden
-//		Edge edge1 = this.addEdge("k1", nodeA, nodeB, true);
-//		Sprite s1 = spriteMan.addSprite("s1");
-//		s1.attachToEdge(edge1.getId());
-//		s1.setPosition(0.5);
-//		s1.setAttribute("ui.label", "Kante 1");
-//		s1.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge2 = this.addEdge("k2", nodeC, nodeB, true);
-//		Sprite s2 = spriteMan.addSprite("s2");
-//		s2.attachToEdge(edge2.getId());
-//		s2.setPosition(0.5);
-//		s2.setAttribute("ui.label", "Kante 2");
-//		s2.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge3a = this.addEdge("k3a", nodeA, nodeD, true);
-//		Sprite s3a = spriteMan.addSprite("s3a");
-//		s3a.attachToEdge(edge3a.getId());
-//		s3a.setPosition(0.45);
-//		s3a.setAttribute("ui.label", "Kante 3a");
-//		s3a.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge3b = this.addEdge("k3b", nodeA, nodeD, true);
-//		Sprite s3b = spriteMan.addSprite("s3b");
-//		s3b.attachToEdge(edge3b.getId());
-//		s3b.setPosition(0.55);
-//		s3b.setAttribute("ui.label", "Kante 3b");
-//		s3b.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge4 = this.addEdge("k4", nodeD, nodeC, true);
-//		Sprite s4 = spriteMan.addSprite("s4");
-//		s4.attachToEdge(edge4.getId());
-//		s4.setPosition(0.75);
-//		s4.setAttribute("ui.label", "Kante 4");
-//		s4.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge5 = this.addEdge("k5", nodeC, nodeD, true);
-//		Sprite s5 = spriteMan.addSprite("s5");
-//		s5.attachToEdge(edge5.getId());
-//		s5.setPosition(0.75);
-//		s5.setAttribute("ui.label", "Kante 5");
-//		s5.setAttribute("ui.class", "edgeLabel");
-//
-//		Edge edge6 = this.addEdge("k6", nodeB, nodeE, true);
-//		Sprite s6 = spriteMan.addSprite("s6");
-//		s6.attachToEdge(edge6.getId());
-//		s6.setPosition(0.5);
-//		s6.setAttribute("ui.label", "Kante 6");
-//		s6.setAttribute("ui.class", "edgeLabel");
-		
 	}
-	
-	public Node addPlace(Place p) {
-		
-		//return the node if it already exists
-		if(this.getNode(p.getId()) != null)
-			return this.getNode(p.getId());
 
-		Node node = this.addNode(p.getId());
-		node.setAttribute("ui.label", p.numberOfTokens() == 0?"":p.numberOfTokens());
-		node.setAttribute("ui.class", "place");
-		node.setAttribute("xy", p.getX(), p.getY());
+	public SpriteManager getSpriteManager() {
+		return spriteMan;
+	}
+
+	private Node addPetrinetElement(PetrinetElement e, String spriteAddition) {
+		Node node = this.addNode(e.getId());
+		node.setAttribute("xy", e.getX(), e.getY());
+
+		Sprite sprite = spriteMan.addSprite("s" + e.getId());
+		sprite.setAttribute("ui.class", "nodeLabel");
+		sprite.setAttribute("ui.label", "[" + e.getId() + "] " + e.getName() + spriteAddition);
+		sprite.attachToNode(node.getId());
+		sprite.setPosition(0.5);
+
 		return node;
 	}
-	
+
+	public Node addPlace(Place p) {
+
+		// return the node if it already exists
+		if (this.getNode(p.getId()) != null)
+			return this.getNode(p.getId());
+
+		Node node = addPetrinetElement(p, " <" + p.getNumberOfTokens() + ">");
+		node.setAttribute("ui.class", "place");
+		node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
+
+		return node;
+	}
+
 	public Node addTransition(Transition t) {
-		Node node = this.addNode(t.getId());
+		if (this.getNode(t.getId()) != null)
+			return this.getNode(t.getId());
+
+		Node node = this.addPetrinetElement(t, "");
 		node.setAttribute("ui.class", "transition");
-		node.setAttribute("xy", t.getX(), t.getY());
-		
-		
+
 		Map<String, Place> preset = t.getInputs();
 		Map<String, Place> postset = t.getOutputs();
 
-		for (String s: preset.keySet()) {
+		for (String s : preset.keySet()) {
 			Place p = (Place) preset.get(s);
 			Node pNode = this.addPlace(p);
-			addEdge(p.getId()+t.getId(),pNode, node);
+			addEdge(p.getId() + t.getId(), pNode, node);
 		}
-		for (String s: postset.keySet()) {
+		for (String s : postset.keySet()) {
 			Place p = (Place) postset.get(s);
 			Node pNode = this.addPlace(p);
-			addEdge(t.getId()+p.getId(), node,pNode);
+			addEdge(t.getId() + p.getId(), node, pNode);
 		}
 
 		return node;
@@ -187,27 +146,30 @@ public class PetrinetGraph extends MultiGraph {
 		Edge edge = this.addEdge(name, a, b, true);
 
 //		Edge edge1 = this.addEdge(name+"1", a, b, true);
+		Sprite sprite = spriteMan.addSprite("s" + name);
+		sprite.setAttribute("ui.class", "edgeLabel");
+		sprite.setAttribute("ui.label", controller.getPetrinet().getOriginalArcId(name));
+		sprite.attachToEdge(name);
+		sprite.setPosition(0.5);
+
 		return edge;
 	}
-	
+
 	/**
 	 * Liefert einen Text zu einem Knoten, der für die Ausgabe verwendet wird.
 	 * 
-	 * @param id
-	 *            Id des Knotens, zu dem der Text ermittelt werden soll
+	 * @param id Id des Knotens, zu dem der Text ermittelt werden soll
 	 * @return Ausgabe-Text zu einem Knoten
 	 */
 	public String getOutputText(String id) {
 		Node node = this.getNode(id);
-		return new String("Der Knoten \"" + node.getAttribute("ui.label")
-				+ "\" hat die ID \"" + node.getId() + "\"");
+		return new String("Der Knoten \"" + node.getAttribute("ui.label") + "\" hat die ID \"" + node.getId() + "\"");
 	}
 
 	/**
 	 * Das Hervorheben des Knotens wegnehmen oder setzen.
 	 * 
-	 * @param id
-	 *            Id des Knotens, bei dem das Hervorheben getauscht werden soll
+	 * @param id Id des Knotens, bei dem das Hervorheben getauscht werden soll
 	 */
 	public void toggleNodeHighlight(String id) {
 		Node node = this.getNode(id);
@@ -218,22 +180,31 @@ public class PetrinetGraph extends MultiGraph {
 			node.setAttribute("ui.class", "highlight");
 		}
 	}
-	
-	
+
 	/**
 	 * Markiert den zuletzt angeklickten Knoten mit einem X-förmigen Sprite.
-	 * @param id
-	 * 				Id des angeklickten Knotens
+	 * 
+	 * @param id Id des angeklickten Knotens
 	 */
 	public void markLastClickedNode(String id) {
-		
+
 		if (spriteMark == null) {
 			// Sprite erzeugen, das zur Markierung des zuletzt angeklickten Knotens dient
-	       	spriteMark = spriteMan.addSprite("sMark");
-	       	spriteMark.setAttribute("ui.class", "mark");
+			spriteMark = spriteMan.addSprite("sMark");
+			spriteMark.setAttribute("ui.class", "mark");
 		}
-       	
-        // Sprite auf Knoten setzen
+
+		// Sprite auf Knoten setzen
 		spriteMark.attachToNode(id);
 	}
+	
+	public static String placeTokenLabel(int numberOfTokens) {
+		if (numberOfTokens == 0)
+			return "";
+		
+		if (numberOfTokens > 9)
+			return ">9";
+		return String.valueOf(numberOfTokens);
+	}
+
 }

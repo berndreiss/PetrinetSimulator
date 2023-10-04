@@ -13,10 +13,11 @@ import java.util.Set;
  */
 public class Transition extends PetrinetElement {
 
-	private Map<String, Place> inputs = new HashMap<String, Place>();//set of places that serve as input
-	private Map<String, Place> outputs = new HashMap<String, Place>();//set of places that serve as output
+	private Map<String, Place> inputs;//set of places that serve as input
+	private Map<String, Place> outputs;//set of places that serve as output
 
-	
+	private boolean active;
+	private TransitionActiveListener transitionActiveListener;
 
 	/**
 	 * A new instance of Transition is created. If arguments for preset and postset are not passed preset and postset are initialized as {@link HashSet}.
@@ -24,7 +25,7 @@ public class Transition extends PetrinetElement {
 	 * @param name Name of the transition.
 	 */
 	public Transition(String id) {
-		this.id = id;
+		this(id, "");
 	}
 
 	/**
@@ -33,8 +34,7 @@ public class Transition extends PetrinetElement {
 	 * @param name Name of the transition.
 	 */
 	public Transition(String id, String name) {
-		this.id = id;
-		this.name = name;
+		this(id, name, new HashMap<String, Place>(), new HashMap<String, Place>());
 	}
 	
 	/**
@@ -49,6 +49,7 @@ public class Transition extends PetrinetElement {
 		this.name = name;
 		this.inputs = inputs;
 		this.outputs = outputs;
+		this.active = checkActive();
 	}
 	
 	
@@ -62,7 +63,7 @@ public class Transition extends PetrinetElement {
 	public List<Place> activate() {
 		ArrayList<Place> returnList = new ArrayList<Place>();
 		//if transition is not active, return immediately
-		if (!isActive())
+		if (!checkActive())
 			return returnList;
 
 		//decrement tokens
@@ -81,12 +82,18 @@ public class Transition extends PetrinetElement {
 			p.incrementTokens();
 			returnList.add(p);
 		}
+		setActive(checkActive());
+
 		return returnList;
+	}
+	
+	public boolean isActive() {
+		return active;
 	}
 	
 	//returns false if one of the places in the input does not have tokens
 	//returns true otherwise
-	private boolean isActive() {
+	private boolean checkActive() {
 		
 		for (String s: inputs.keySet()) {
 			Place p = (Place) inputs.get(s);
@@ -103,6 +110,18 @@ public class Transition extends PetrinetElement {
 	public void addInput(Place p) {
 		inputs.put(p.id, p);
 		p.outputs.put(this.id, this);
+		setActive(checkActive());
+		
+	}
+	
+	private void setActive(boolean active) {
+		
+		if (this.active == active)
+			return;
+		
+		this.active = active;
+		if (transitionActiveListener != null)
+			transitionActiveListener.stateChanges(active);
 	}
 
 	/**

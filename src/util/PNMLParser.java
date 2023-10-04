@@ -3,6 +3,7 @@ package util;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import datamodel.Petrinet;
 import datamodel.PetrinetElement;
@@ -12,17 +13,20 @@ import propra.pnml.PNMLWopedParser;
 
 public class PNMLParser extends PNMLWopedParser{
 
-	private Map<String, Place> places = new HashMap<String, Place>();
-	private Map<String, Transition> transitions = new HashMap<String, Transition>();
+	private Map<String, Place> places;
+	private Map<String, Transition> transitions;
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
-	private Map<String, String> originalArcIds = null;
+	private Map<String, String> originalArcIds;
 	
-	private boolean arcsHandled = false;
 	
-	public PNMLParser(File pnml) {
+	public PNMLParser(File pnml, Petrinet petrinet) {
 		super(pnml);
+		places = petrinet.getPlaces();
+		transitions = petrinet.getTransitions();
+		originalArcIds = petrinet.getOriginalArcIds();
 		this.initParser();
 		this.parse();
+		handleTransitions();
 	}
 	
 	
@@ -84,12 +88,7 @@ public class PNMLParser extends PNMLWopedParser{
 		return places;
 	}
 	
-	public Map<String, Transition> getTransitions(){
-		
-		if (arcsHandled)
-			return transitions;
-		
-		originalArcIds = new HashMap<String, String>();
+	private Map<String, Transition> handleTransitions(){
 		
 		for (String s: arcs.keySet()) {
 			
@@ -102,10 +101,7 @@ public class PNMLParser extends PNMLWopedParser{
 			
 			Transition transition;
 			Place place;
-			
-			System.out.println("Source: " + source);
-			System.out.println("Target: " + target);
-			
+						
 			if (transitions.containsKey(source)) {
 				transition = transitions.get(source);
 				place = places.get(target);
@@ -117,15 +113,9 @@ public class PNMLParser extends PNMLWopedParser{
 			}
 		}
 		
-		arcsHandled = true;
 		return transitions;
 	}
 	
-	public Map<String, String> getOriginalArcIds(){
-		if (originalArcIds==null)
-			getTransitions();
-		return originalArcIds;
-	}
 	
 	private class Arc{
 		private String id;

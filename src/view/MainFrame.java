@@ -17,7 +17,7 @@ import javax.swing.JSplitPane;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
-import control.Controller;
+import control.PetrinetController;
 import datamodel.Petrinet;
 
 public class MainFrame extends JFrame {
@@ -25,13 +25,13 @@ public class MainFrame extends JFrame {
 	private JPanel menu;
 	private GraphSplitPane splitPane;
 	
-	private Controller controller;
+	private PetrinetController controller;
 	private JLabel statusLabel;
 
 	public MainFrame(String title) {
 		super(title);
 
-		this.controller = new Controller(this, new Petrinet(), new PetrinetGraph());
+		this.controller = new PetrinetController(this);
 
 		updateSplitPane(controller);
 		
@@ -50,7 +50,6 @@ public class MainFrame extends JFrame {
 		this.add(statusLabel, BorderLayout.SOUTH);
 
 		final JFrame finalFrame = this;
-		System.out.println(finalFrame.getSize());
 	
 		
 //		f.setSize(400, 240);
@@ -69,7 +68,7 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 	}
 
-	public void updateSplitPane(Controller controller) {
+	public void updateSplitPane(PetrinetController controller) {
 		
 		
 		
@@ -77,10 +76,8 @@ public class MainFrame extends JFrame {
 		if (splitPane != null) {
 			this.remove(splitPane);
 		}
+		
 		splitPane = new GraphSplitPane(this, JSplitPane.HORIZONTAL_SPLIT, controller);
-		double dividerLocation = splitPane.getDividerLocation();
-		System.out.println(dividerLocation);
-		final double frameWidth = this.getWidth();
 		
 		this.add(splitPane, BorderLayout.CENTER);
 		this.revalidate();

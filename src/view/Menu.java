@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -10,20 +11,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import control.Controller;
+import control.PetrinetController;
 
 public class Menu extends JPanel {
 	
 	private JButton button;
-	private Controller controller;
-	public Menu(JFrame parent, Controller controller) {
+	private PetrinetController controller;
+	public Menu(JFrame parent, PetrinetController controller) {
 		this.controller = controller;
+
+		this.setLayout(new FlowLayout());
 		button=new JButton("Get file");
 		button.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("TEST");
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFileFilter(new FileFilter() {
 					
@@ -51,7 +53,16 @@ public class Menu extends JPanel {
 			}
 		}); 
 		add(button);
+		JButton addNode = new JButton("+Node");
+		addNode.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.onAddNode();
+			}
+		});
 		
+		add(addNode);
 	}
 
 }

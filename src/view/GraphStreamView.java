@@ -11,32 +11,37 @@ import javax.swing.JPanel;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
+import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerPipe;
+import org.graphstream.ui.view.camera.Camera;
 
-import control.Controller;
+import control.PetrinetController;
 
 public class GraphStreamView extends JPanel {
 
-	public static ViewPanel initGraphStreamView(Graph graph, Controller controller) {
+	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller) {
 
 		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
 		// bessere Darstellungsqualität und Antialiasing (Kantenglättung) aktivieren
-		// HINWEIS: Damit diese Attribute eine Auswirkung haben, müssen sie NACH 
+		// HINWEIS: Damit diese Attribute eine Auswirkung haben, müssen sie NACH
 		// Erzeugung des SwingViewer gesetzt werden
 		graph.setAttribute("ui.quality");
 		graph.setAttribute("ui.antialias");
-		
+
 		// Das Auto-Layout für den Graphen kann aktiviert oder deaktiviert
 		// werden.
 		// Auto-Layout deaktivieren: Die explizit hinzugefügten Koordinaten
 		// werden genutzt (wie in DemoGraph).
 		// Achtung: Falls keine Koordinaten definiert wurden, liegen alle Knoten
 		// übereinander.)
-		viewer.disableAutoLayout();
+		if (graph instanceof PetrinetGraph)
+			viewer.disableAutoLayout();
+		else
+			viewer.enableAutoLayout();
 		// Auto-Layout aktivieren: GraphStream generiert ein möglichst
 		// übersichtliches Layout
 		// (und ignoriert hinzugefügte Koordinaten)
@@ -83,8 +88,7 @@ public class GraphStreamView extends JPanel {
 				viewerPipe.pump();
 			}
 		});
-		
-		
+
 		// Zoom per Mausrad ermöglichen
 		viewPanel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
@@ -101,9 +105,9 @@ public class GraphStreamView extends JPanel {
 				viewPanel.getCamera().setViewPercent(zoomLevel);
 			}
 		});
-		
+
 		return viewPanel;
-		
+
 	}
-	
+
 }

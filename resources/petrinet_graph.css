@@ -6,6 +6,10 @@
 	Style-Angabe fuer einen Knoten
 */
 
+graph {
+	padding: 50px;
+}
+
 node {
 	size: 30px;
 	
@@ -26,6 +30,7 @@ node.place {
 	
 	fill-color: #99ccff;
 	
+	text-mode: normal;
 	text-color: #003366;
 	text-size: 18;
 	text-offset: 0,-5;
@@ -101,11 +106,20 @@ edge {
 */
 sprite.edgeLabel {
 	shape: box;
-	fill-color: rgb(200, 255, 200);
+	fill-color: rgb(255, 255, 255);
 	size: 60,20;
 	text-size: 12;
 	text-alignment: center;
 	text-offset: 0,-3;
+}
+sprite.nodeLabel {
+	shape: box;
+	fill-color: rgb(255,255, 255);
+	size: 0,0;
+
+	text-size: 12;
+	text-alignment: center;
+	text-offset: 0,25;
 }
 
 
