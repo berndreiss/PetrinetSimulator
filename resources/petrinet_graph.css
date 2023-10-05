@@ -89,7 +89,7 @@ node.bild {
 	Style-Angabe fuer eine Kante
 */
 edge {
-  shape: line;
+ 	shape: line;
 	fill-color: #003366;
 	
 	arrow-shape: arrow;
@@ -107,7 +107,7 @@ edge {
 sprite.edgeLabel {
 	shape: box;
 	fill-color: rgb(255, 255, 255);
-	size: 60,20;
+	size: 40,20;
 	text-size: 12;
 	text-alignment: center;
 	text-offset: 0,-3;

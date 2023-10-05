@@ -6,14 +6,18 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
@@ -22,7 +26,6 @@ import datamodel.Petrinet;
 
 public class MainFrame extends JFrame {
 
-	private JPanel menu;
 	private GraphSplitPane splitPane;
 	
 	private PetrinetController controller;
@@ -35,11 +38,21 @@ public class MainFrame extends JFrame {
 
 		updateSplitPane(controller);
 		
-		menu = new Menu(this, controller);
 
 		JPanel visualization = new JPanel();
-
-		add(menu, BorderLayout.NORTH);
+		
+		JMenuBar menuBar = new PetrinetMenu(this, controller);
+		
+		this.setJMenuBar(menuBar);
+		
+		JToolBar toolbar = new JToolBar();
+		
+		toolbar.add(new JButton("Test1"));
+		toolbar.add(new JButton("Test2"));
+		toolbar.setFloatable(false);
+		
+		this.add(toolbar, BorderLayout.NORTH);
+		
 		add(visualization, BorderLayout.CENTER);
 		
 		// Erzeuge ein Label, welches als Statuszeile dient, ...

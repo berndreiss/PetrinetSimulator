@@ -17,6 +17,7 @@ import datamodel.Petrinet;
 import datamodel.PetrinetStateChangedListener;
 import datamodel.Place;
 import datamodel.ReachabilityGraphModel;
+import datamodel.ReachabilityState;
 import datamodel.Transition;
 import util.PNMLParser;
 import view.MainFrame;
@@ -43,10 +44,20 @@ public class PetrinetController {
 		this.petrinetGraph = new PetrinetGraph(this);
 		this.reachabilityGraph = new ReachabilityGraph("Default");
 		this.reachabilityGraphModel = new ReachabilityGraphModel(this);
-		reachabilityGraph.addState(reachabilityGraphModel.getCurrentStateId(), ""); //add initial state
-		petrinet.addPetrinetStateChangedListener(t->
-			reachabilityGraph.addState(reachabilityGraphModel.getCurrentStateId(), t==null?"":t.getId())
-		);
+		reachabilityGraph.addState(reachabilityGraphModel.getCurrentState(), ""); //add initial state
+		petrinet.addPetrinetStateChangedListener(t->{
+			ReachabilityState state =  reachabilityGraphModel.addNewState(petrinet);
+			reachabilityGraph.addState(reachabilityGraphModel.getCurrentState(), t==null?"":t.getId());
+			
+			ReachabilityState m = reachabilityGraphModel.checkIfStateIsBackwardsValid(state);
+			
+			if (m != null) {
+				reachabilityGraph.markStatesInvalid(m.getState(), state.getState());
+				System.out.println("YES");
+			}else {
+				System.out.println("NO");
+			}
+		});
 	}
 	
 	public Petrinet getPetrinet() {

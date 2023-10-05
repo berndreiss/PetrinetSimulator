@@ -96,6 +96,8 @@ public class Place extends PetrinetElement {
 	public Map<String, Transition> getOutputs(){
 		return outputs;
 	}
+	
+
 }
 
 

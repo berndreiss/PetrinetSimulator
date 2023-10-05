@@ -56,13 +56,14 @@ public class ReachabilityGraph extends MultiGraph {
 
 		}
 		if (this.getEdge(currentNode.getId()+id) == null) {
-			Edge e = this.addEdge(currentNode.getId()+id, currentNode, node);
+			Edge e = this.addEdge(currentNode.getId()+id, currentNode, node, true);
 			Sprite sprite = spriteMan.addSprite("s" + e.getId());
 			sprite.setAttribute("ui.class", "edgeLabel");
 			sprite.setAttribute("ui.label", transitionId);
 
 			sprite.attachToEdge(e.getId());
 			sprite.setPosition(0.5);
+			System.out.println(e.isDirected());
 
 		}
 		currentNode = node;
@@ -70,4 +71,11 @@ public class ReachabilityGraph extends MultiGraph {
 		return node;
 	}
 
+	public void markStatesInvalid(String m, String mMark) {
+		Node nodeM = this.getNode(m);
+		Node nodeMMark = this.getNode(mMark);
+		
+		nodeM.setAttribute("ui.class", "m");
+		nodeMMark.setAttribute("ui.class", "m_mark");
+	}
 }

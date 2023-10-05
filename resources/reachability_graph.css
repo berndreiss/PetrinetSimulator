@@ -11,7 +11,7 @@ graph {
 
 node {
 	shape: box;
-	size: 60px;
+	size: 80px,35px;
 	
 	fill-color: #99ccff;
 	
@@ -25,7 +25,17 @@ node {
 }
 
 
+node.m{
+	
+	fill-color: #ffff00;
 
+}
+
+node.m_mark{
+	
+	fill-color: #ff0000;
+
+}
 
 /*
    zusaetzliches Attribut "highlight" fuer einen Knoten, der
@@ -55,7 +65,7 @@ node.bild {
 	Style-Angabe fuer eine Kante
 */
 edge {
-  shape: line;
+	shape: line;
 	fill-color: #003366;
 	
 	arrow-shape: arrow;
@@ -73,7 +83,7 @@ edge {
 sprite.edgeLabel {
 	shape: box;
 	fill-color: rgb(255, 255, 255);
-	size: 60,20;
+	size: 40,20;
 	text-size: 12;
 	text-alignment: center;
 	text-offset: 0,-3;

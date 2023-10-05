@@ -148,7 +148,7 @@ public class PetrinetGraph extends MultiGraph {
 //		Edge edge1 = this.addEdge(name+"1", a, b, true);
 		Sprite sprite = spriteMan.addSprite("s" + name);
 		sprite.setAttribute("ui.class", "edgeLabel");
-		sprite.setAttribute("ui.label", controller.getPetrinet().getOriginalArcId(name));
+		sprite.setAttribute("ui.label", "[" + controller.getPetrinet().getOriginalArcId(name) + "]");
 		sprite.attachToEdge(name);
 		sprite.setPosition(0.5);
 
