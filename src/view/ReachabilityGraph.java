@@ -18,6 +18,10 @@ public class ReachabilityGraph extends MultiGraph {
 	private Sprite spriteMark;
 
 	private Node currentNode;
+	
+	private Node nodeM;
+	
+	private Node nodeMMarked;
 
 	public ReachabilityGraph(String id) {
 		super(id);
@@ -63,19 +67,28 @@ public class ReachabilityGraph extends MultiGraph {
 
 			sprite.attachToEdge(e.getId());
 			sprite.setPosition(0.5);
-			System.out.println(e.isDirected());
 
 		}
 		currentNode = node;
 
 		return node;
 	}
+	
 
 	public void markStatesInvalid(String m, String mMark) {
-		Node nodeM = this.getNode(m);
-		Node nodeMMark = this.getNode(mMark);
 		
-		nodeM.setAttribute("ui.class", "m");
-		nodeMMark.setAttribute("ui.class", "m_mark");
+		if (nodeM != null)
+			nodeM.setAttribute("ui.class", "node");
+		if (nodeMMarked != null)
+			nodeMMarked.setAttribute("ui.class", "node");
+		
+		nodeM = this.getNode(m);
+		nodeMMarked = this.getNode(mMark);
+		
+		if (nodeM != null)
+			nodeM.setAttribute("ui.class", "m");
+		
+		if(nodeMMarked != null)
+			nodeMMarked.setAttribute("ui.class", "m_mark");
 	}
 }

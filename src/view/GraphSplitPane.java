@@ -61,6 +61,8 @@ public class GraphSplitPane extends JSplitPane {
 	
 	private class ResizingViewPanel extends JPanel{
 		
+		private static final long serialVersionUID = 1L;
+
 		public ResizingViewPanel(ViewPanel viewPanel, Dimension size) {
 			this.setLayout(new BorderLayout());
 			this.add(viewPanel, BorderLayout.CENTER);

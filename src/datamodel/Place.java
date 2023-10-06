@@ -46,16 +46,43 @@ public class Place extends PetrinetElement {
 		return numberOfTokens;
 	}
 	
-	public void setNumberOfTokens(int numberOfTokens) {
+	protected void setNumberOfTokens(int numberOfTokens) {
+
+		boolean hadNoTokens = hasTokens()?false:true;
+		
 		this.numberOfTokens = numberOfTokens;
+
+		if (numberOfTokens == 0) {
+
+			for (String s: outputs.keySet()) {
+				Transition t = outputs.get(s);
+				t.updateActivationStatus();
+			}
+		}
+		
+		if (hadNoTokens && numberOfTokens > 0) {
+			
+			
+			for (String s: outputs.keySet()) {
+				Transition t = outputs.get(s);
+				t.updateActivationStatus();
+
+			}
+		}
+		
 		if (numberOfTokensListener != null)
 			numberOfTokensListener.numberChanged(numberOfTokens);
+		
+	}
+
+	public void setNumberOfTokensListener(NumberOfTokensListener numberOfTokensListener) {
+		this.numberOfTokensListener = numberOfTokensListener;
 	}
 	
 	/**
 	 * Increments the number of tokens by 1.
 	 */
-	public void incrementTokens() {
+	protected void incrementTokens() {
 		setNumberOfTokens(numberOfTokens+1);
 	}
 	
@@ -63,7 +90,7 @@ public class Place extends PetrinetElement {
 	 * Decrements the number of tokens by 1.
 	 * @throws OutOfTokensException Throws Exception when there are no tokens left.
 	 */
-	public void decrementTokens() throws OutOfTokensException {
+	protected void decrementTokens() throws OutOfTokensException {
 		
 		if (numberOfTokens <= 0)
 			throw new OutOfTokensException("There are no tokens in place with ID \"" + id + "\"");
@@ -77,7 +104,7 @@ public class Place extends PetrinetElement {
 	 * Adds a place to the set of input places (preset).
 	 * @param p {@link Place} to be added as an Input.
 	 */
-	public void addInput(Transition t) {
+	protected void addInput(Transition t) {
 		inputs.put(t.id, t);
 	}
 
@@ -85,7 +112,7 @@ public class Place extends PetrinetElement {
 	 * Adds a place to the set of output places (postset).
 	 * @param p {@link Place} to be added as an Output.
 	 */
-	public void addOutput(Transition t) {
+	protected void addOutput(Transition t) {
 		outputs.put(t.id,t);
 	}
 

@@ -13,10 +13,11 @@ import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.camera.Camera;
 
+import datamodel.NumberOfTokensListener;
 import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
-
+import datamodel.TransitionActiveListener;
 import control.PetrinetController;
 
 /**
@@ -114,6 +115,16 @@ public class PetrinetGraph extends MultiGraph {
 		node.setAttribute("ui.class", "place");
 		node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
 
+		p.setNumberOfTokensListener(new NumberOfTokensListener() {
+			
+			@Override
+			public void numberChanged(int newNumber) {
+				node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
+				Sprite sprite = spriteMan.getSprite("s" + p.getId());
+				sprite.setAttribute("ui.label", "[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">" );
+			}
+		});
+		
 		return node;
 	}
 
@@ -122,8 +133,9 @@ public class PetrinetGraph extends MultiGraph {
 			return this.getNode(t.getId());
 
 		Node node = this.addPetrinetElement(t, "");
-		node.setAttribute("ui.class", "transition");
-
+		
+		setTransition(node, t.isActive());
+		
 		Map<String, Place> preset = t.getInputs();
 		Map<String, Place> postset = t.getOutputs();
 
@@ -137,11 +149,27 @@ public class PetrinetGraph extends MultiGraph {
 			Node pNode = this.addPlace(p);
 			addEdge(t.getId() + p.getId(), node, pNode);
 		}
-
+		
+			
+		t.setTransitionActiveListener(new TransitionActiveListener() {
+			
+			@Override
+			public void stateChanges(boolean active) {
+				setTransition(node, active);
+			}
+		});
 		return node;
 
 	}
 
+	private void setTransition(Node node, boolean active) {
+		if (active)
+			node.setAttribute("ui.class", "transition_active");
+		else
+			node.setAttribute("ui.class", "transition");
+
+	}
+	
 	public Edge addEdge(String name, Node a, Node b) {
 		Edge edge = this.addEdge(name, a, b, true);
 

@@ -3,6 +3,7 @@ package control;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +54,6 @@ public class PetrinetController {
 			
 			if (m != null) {
 				reachabilityGraph.markStatesInvalid(m.getState(), state.getState());
-				System.out.println("YES");
-			}else {
-				System.out.println("NO");
 			}
 		});
 	}
@@ -75,12 +73,6 @@ public class PetrinetController {
 	public void clickNodeInGraph(String id) {
 		List<Place> placesChanged = petrinet.activate(id);
 		
-		for (Place p: placesChanged) {
-			Node place = petrinetGraph.getNode(p.getId());
-			place.setAttribute("ui.label", PetrinetGraph.placeTokenLabel(p.getNumberOfTokens()));
-			Sprite sprite = petrinetGraph.getSpriteManager().getSprite("s" + p.getId());
-			sprite.setAttribute("ui.label", "[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">" );
-		}
 	}
 	
 	public void onFileOpen(File file) {
@@ -95,39 +87,18 @@ public class PetrinetController {
 
 
 		
-		Map<String, Transition> transitions = petrinet.getTransitions();
-		Map<String, Place> places = petrinet.getPlaces();
+		Iterator<Transition> transitions = petrinet.getTransitions();
+		Iterator<Place> places = petrinet.getPlaces();
 		
-		for (String s: places.keySet()) {
-			petrinetGraph.addPlace(places.get(s));
-		}
-			
-		for (String s: transitions.keySet()) {
-			petrinetGraph.addTransition(transitions.get(s));
-		}
+		
+		while(places.hasNext())
+			petrinetGraph.addPlace(places.next());
+
+		while(transitions.hasNext())
+			petrinetGraph.addTransition(transitions.next());
 		mainFrame.updateSplitPane(this);
 	}
 
-	public void onAddNode() {
 		
-		Node node = reachabilityGraph.addNode("1");
-		node.setAttribute("x", 261.0);
-		node.setAttribute("y", 0.0);
-		Node node2 = reachabilityGraph.addNode("2");
-		node.setAttribute("x", 261.0);
-		node.setAttribute("y", 0.0);
-		node2.setAttribute("x", 261.0);
-		node2.setAttribute("y", 261.0);
-		Node node3 = reachabilityGraph.addNode("3");
-		node.setAttribute("x", 261.0);
-		node.setAttribute("y", 0.0);
-		node3.setAttribute("x", 261.0);
-		node3.setAttribute("y", 261.0);
 
-		reachabilityGraph.addEdge("e1", "1", "2");
-		reachabilityGraph.addEdge("e2", "1", "3");
-		node.setAttribute("x", 261.0);
-		node.setAttribute("y", 0.0);
-
-	}
 }

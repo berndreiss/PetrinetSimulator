@@ -7,14 +7,16 @@
 */
 
 graph {
-	padding: 50px;
+	padding: 70px;
 }
 
 node {
+
 	size: 30px;
 	
 	fill-color: #99ccff;
-	
+
+	text-mode: normal;	
 	text-color: #003366;
 	text-size: 18;
 	text-offset: 0,-5;
@@ -22,41 +24,19 @@ node {
 	stroke-mode: plain;
 	stroke-color: #003366;
 	stroke-width: 1px;
+
 }
 
 
 node.place {
-	size: 30px;
-	
-	fill-color: #99ccff;
-	
-	text-mode: normal;
-	text-color: #003366;
-	text-size: 18;
-	text-offset: 0,-5;
 
-	stroke-mode: plain;
-	stroke-color: #003366;
-	stroke-width: 1px;
 
 }
 
 node.transition {
 
-	size: 30px;
-	
-	fill-color: #99ccff;
-	
-	text-color: #003366;
-	text-size: 18;
-	text-offset: 0,-5;
-
-	stroke-mode: plain;
-
 	shape: box;
-	text-style: bold;		
-	stroke-color: #0000ff;
-	stroke-width: 3px;
+
 
 }
 
@@ -65,11 +45,10 @@ node.transition {
    zusaetzliches Attribut "highlight" fuer einen Knoten, der
    hervorgehoben werden soll
 */
-node.highlight {
+node.transition_active {
 
 
 	shape: box;
-	text-style: bold;		
 	stroke-color: #0000ff;
 	stroke-width: 3px;
 }

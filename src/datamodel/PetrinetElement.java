@@ -7,8 +7,8 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 	protected String id;
 	protected String name;
 	
-	protected float x;
-	protected float y;
+	protected double x;
+	protected double y;
 	
 
 	/**
@@ -36,19 +36,19 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 		
 	}
 
-	public float getX() {
+	public double getX() {
 		return x;
 	}
 	
-	public void setX(float x) {
+	public void setX(double x) {
 		this.x=x;
 	}
 
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 	
-	public void setY(float y) {
+	public void setY(double y) {
 		this.y=y;
 	}
 

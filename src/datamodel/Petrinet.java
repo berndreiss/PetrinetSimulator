@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,27 +32,54 @@ public class Petrinet {
 		this.originalArcIds = new HashMap<String, String>();
 	}
 
-	public void setTransitions(Map<String, Transition> transitions) {
-		this.transitions = transitions;
+	public Iterator<Transition> getTransitions() {
+
+		ArrayList<Transition> transitionsIterable = new ArrayList<Transition>();
+
+		for (String s : transitions.keySet()) {
+			Transition t = transitions.get(s);
+			transitionsIterable.add(t);
+		}
+		return transitionsIterable.iterator();
 	}
 
-	public Map<String, Transition> getTransitions() {
-		return transitions;
+	public Iterator<Place> getPlaces() {
+
+		ArrayList<Place> placesIterable = new ArrayList<Place>();
+
+		for (String s : places.keySet()) {
+			Place p = places.get(s);
+			placesIterable.add(p);
+		}
+		return placesIterable.iterator();
 	}
 
-	public Map<String, String> getOriginalArcIds(){
-		return originalArcIds;
-	}
-	
-	public void setPlaces(Map<String, Place> places) {
-		this.places = places;
-
-		for (String s : places.keySet())
-			System.out.println(s);
+	public Place getPlace(String id) {
+		return places.get(id);
 	}
 
-	public Map<String, Place> getPlaces() {
-		return places;
+	public Transition getTransition(String id) {
+		return transitions.get(id);
+	}
+
+	public PetrinetElement getPetrinetElement(String id) {
+		PetrinetElement element = places.get(id);
+		if (element == null)
+			element = transitions.get(id);
+		return element;
+	}
+
+	public void setTokens(String id, int numberOfTokens) {
+		if (!places.containsKey(id))
+			return;
+		Place p = places.get(id);
+
+		if (p.getNumberOfTokens() != numberOfTokens)
+			if (petrinetStateChangedListener != null)
+				petrinetStateChangedListener.onChange(null);
+
+		p.setNumberOfTokens(numberOfTokens);
+
 	}
 
 	public void addTransition(Transition t) throws DuplicateIdException {
@@ -69,16 +97,22 @@ public class Petrinet {
 	}
 
 	public void addInput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getId()))
+		if (!places.containsKey(p.getId())) {
 			addPlace(p);
+			if (petrinetStateChangedListener != null)
+				petrinetStateChangedListener.onChange(null);
+		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
 		t.addInput(p);
 	}
 
 	public void addOutput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getId()))
+		if (!places.containsKey(p.getId())) {
 			addPlace(p);
+			if (petrinetStateChangedListener != null)
+				petrinetStateChangedListener.onChange(null);
+		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
 		t.addOutput(p);
@@ -108,6 +142,10 @@ public class Petrinet {
 		return originalArcIds.get(arcId);
 	}
 
+	public void addOriginalArcId(String source, String target, String id) {
+		originalArcIds.put(source + target, id);
+	}
+
 	public void print() {
 		System.out.println("Places:");
 		for (String s : places.keySet()) {
@@ -118,6 +156,11 @@ public class Petrinet {
 		for (String s : transitions.keySet()) {
 			Transition t = transitions.get(s);
 			System.out.println(t.getId() + ", " + t.getName());
+			Map<String, Place> places = t.getInputs();
+			for (String st : places.keySet()) {
+				Place p = places.get(st);
+				System.out.println(p.id + " " + p.getNumberOfTokens());
+			}
 		}
 
 	}

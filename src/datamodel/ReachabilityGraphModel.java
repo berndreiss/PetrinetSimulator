@@ -2,6 +2,7 @@ package datamodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,11 +35,14 @@ public class ReachabilityGraphModel {
 
 		List<Integer> placeTokens = new ArrayList<Integer>();
 
-		for (String s : petrinet.getPlaces().keySet()) {
-			Place p = petrinet.getPlaces().get(s);
+		Iterator<Place> places = petrinet.getPlaces();
+		
+		while (places.hasNext()) {
+			Place p = places.next();
 			sb.append(p.getNumberOfTokens());
 			placeTokens.add(p.getNumberOfTokens());
 		}
+
 		String newStateString = sb.toString();
 		ReachabilityState newState;
 		if (reachabilityStates.containsKey(newStateString)) {
@@ -61,9 +65,8 @@ public class ReachabilityGraphModel {
 			return null;
 		
 		for (ReachabilityState s: state.getPredecessors()) {
-			ReachabilityState tempState =  checkIfStateIsBackwardsValid(s, state);
+			ReachabilityState tempState =  checkIfStateIsBackwardsValid(s, new HashMap<String, String>(), state);
 			
-			System.out.println(tempState);
 			if (tempState != null)
 				return tempState;
 		}
@@ -71,29 +74,21 @@ public class ReachabilityGraphModel {
 		return null;
 	}
 
-	private ReachabilityState checkIfStateIsBackwardsValid(ReachabilityState state, ReachabilityState originalState) {
+	private ReachabilityState checkIfStateIsBackwardsValid(ReachabilityState state, Map<String,String> visitedStates,  ReachabilityState originalState) {
 
-		if (state == originalState )
+		
+		
+		if (visitedStates.containsKey(state.getState()))
 				return null;
 
-		
-			
-		
-		System.out.println(originalState.getState());
-		System.out.println(state.getState());
-		
+		visitedStates.put(state.getState(), "");
 		
 		if (originalState.isBiggerThan(state)) {
-			System.out.println("is bigger");
-			System.out.println(state.getState());
 			return state;
-
-		}else{
-			System.out.println("is not bigger");
 		}
 			
 		for (ReachabilityState s : state.getPredecessors()) {
-			ReachabilityState tempState = checkIfStateIsBackwardsValid(s, originalState);
+			ReachabilityState tempState = checkIfStateIsBackwardsValid(s, visitedStates, originalState);
 			if (tempState != null)
 				return tempState;
 		}

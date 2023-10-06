@@ -82,8 +82,7 @@ public class Transition extends PetrinetElement {
 			p.incrementTokens();
 			returnList.add(p);
 		}
-		setActive(checkActive());
-
+		
 		return returnList;
 	}
 	
@@ -91,15 +90,23 @@ public class Transition extends PetrinetElement {
 		return active;
 	}
 	
+	protected void updateActivationStatus() {
+		setActive(checkActive());
+	}
+	
+	public void setTransitionActiveListener(TransitionActiveListener transitionActiveListener) {
+		this.transitionActiveListener = transitionActiveListener;
+	}
+	
 	//returns false if one of the places in the input does not have tokens
 	//returns true otherwise
 	private boolean checkActive() {
-		
+				
 		if (inputs.isEmpty())
 			return false;
 		
 		for (String s: inputs.keySet()) {
-			Place p = (Place) inputs.get(s);
+			Place p = inputs.get(s);
 			if (!p.hasTokens())
 				return false;
 		}
@@ -110,7 +117,7 @@ public class Transition extends PetrinetElement {
 	 * Adds a place to the set of input places (preset).
 	 * @param p {@link Place} to be added as an Input.
 	 */
-	public void addInput(Place p) {
+	protected void addInput(Place p) {
 		inputs.put(p.id, p);
 		p.outputs.put(this.id, this);
 		setActive(checkActive());
@@ -131,7 +138,7 @@ public class Transition extends PetrinetElement {
 	 * Adds a place to the set of output places (postset).
 	 * @param p {@link Place} to be added as an Output.
 	 */
-	public void addOutput(Place p) {
+	protected void addOutput(Place p) {
 		outputs.put(p.id,p);
 		p.inputs.put(this.id, this);
 	}

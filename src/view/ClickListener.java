@@ -1,8 +1,14 @@
 package view;
 
+import org.graphstream.algorithm.Toolkit;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
+import org.graphstream.ui.view.ViewerPipe;
 
 import control.PetrinetController;
+import datamodel.PetrinetElement;
 
 /**
  * Dieser Listener reagiert auf Klicks in der Anzeige des Graphen.
@@ -20,7 +26,9 @@ public class ClickListener implements ViewerListener {
 	 * Referenz auf die DemoFrame Instanz 
 	 */
 	private PetrinetController controller;
-
+	
+	private double x=Double.MAX_VALUE;
+	private double y=Double.MAX_VALUE;
 
 	/**
 	 * Erzeugt einen neuen ClickListener, der auf verschiedene Mausaktionen reagieren kann.
@@ -32,34 +40,45 @@ public class ClickListener implements ViewerListener {
 
 	@Override
 	public void viewClosed(String viewName) {
-		System.out.println("ClickListener - viewClosed: " + viewName);
 		// wird nicht verwendet
 	}
 
 	@Override
 	public void buttonPushed(String id) {
-		System.out.println("ClickListener - buttonPushed: " + id);
 
+		PetrinetElement e = controller.getPetrinet().getPetrinetElement(id);
+		this.x = e.getX();
+		this.y = e.getY();
+		
 		// den frame darüber informieren, dass der Knoten id angeklickt wurde 
-		controller.clickNodeInGraph(id);
 	}
 
 	@Override
 	public void buttonReleased(String id) {
-		System.out.println("ClickListener - buttonReleased: " + id);
+		PetrinetElement e = controller.getPetrinet().getPetrinetElement(id);
+		
+		if (this.x == e.getX() && this.y == e.getY())	
+			controller.clickNodeInGraph(id);
+
+		resetCoordinates();
 		// wird nicht verwendet
 	}
 
 	@Override
 	public void mouseOver(String id) {
-		System.out.println("ClickListener - mouseOver: " + id);
 		// wird nicht verwendet
 		
 	}
 
 	@Override
 	public void mouseLeft(String id) {
-		System.out.println("ClickListener - mouseLeft: " + id);
 		// wird nicht verwendet
 	}
+
+	
+	private void resetCoordinates() {
+		this.x = Integer.MAX_VALUE;
+		this.y = Integer.MAX_VALUE;
+	}
+	
 }
