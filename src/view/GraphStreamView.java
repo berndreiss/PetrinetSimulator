@@ -8,7 +8,9 @@ import java.util.EnumSet;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.tools.Tool;
 
+import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.AttributeSink;
 import org.graphstream.ui.graphicGraph.GraphicElement;
@@ -27,13 +29,13 @@ import datamodel.PetrinetElement;
 
 public class GraphStreamView extends JPanel {
 
-	
 	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller) {
 
 		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
+		
 		// bessere Darstellungsqualität und Antialiasing (Kantenglättung) aktivieren
 		// HINWEIS: Damit diese Attribute eine Auswirkung haben, müssen sie NACH
 		// Erzeugung des SwingViewer gesetzt werden
@@ -66,12 +68,11 @@ public class GraphStreamView extends JPanel {
 		// aber ein "ViewPanel" (und somit auch ein JPanel).
 		ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
 
+
 		// Neue ViewerPipe erzeugen, um über Ereignisse des Viewer informiert
 		// werden zu können
 		ViewerPipe viewerPipe = viewer.newViewerPipe();
 
-
-		
 		// Neuen ClickListener erzeugen, der als ViewerListener auf Ereignisse
 		// der View reagieren kann
 		ClickListener clickListener = new ClickListener(controller);
@@ -79,48 +80,34 @@ public class GraphStreamView extends JPanel {
 		// clickListener als ViewerListener bei der viewerPipe anmelden
 		viewerPipe.addViewerListener(clickListener);
 
-		// Neuen MouseListener beim viewPanel anmelden. Wenn im viewPanel ein
-		// Maus-Button gedrückt oder losgelassen wird, dann wird die Methode
-		// viewerPipe.pump() aufgerufen, um alle bei der viewerPipe angemeldeten
-		// ViewerListener zu informieren (hier also konkret unseren
-		// clickListener).
-		
-//		viewPanel.setMouseManager(new DefaultMouseManager() {
-//			  @Override
-//	            protected void elementAttributeChanged(GraphicElement element, String attribute, Object oldValue, Object newValue) {
-//	                if (element instanceof GraphicNode && attribute.equals("ui.clicked")) {
-//	                    GraphicNode node = (GraphicNode) element;
-//	                    System.out.println("Node " + node.getId() + " position: " + node.getX() + ", " + node.getY());
-//	                }
-//	            }
-//		});
-		
 		EnumSet<InteractiveElement> enumSet = EnumSet.of(InteractiveElement.NODE);
-		
-		
-		viewPanel.addMouseListener(new MouseAdapter(){
+
+		viewPanel.addMouseListener(new MouseAdapter() {
+
+			private GraphicElement element;
 
 			@Override
 			public void mousePressed(MouseEvent me) {
+				element = viewPanel.findGraphicElementAt(enumSet, me.getX(), me.getY());
 				viewerPipe.pump();
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent me) {
-				GraphicElement element = viewPanel.findGraphicElementAt(enumSet, me.getX(),me.getY());
+								
 				if (element != null) {
 					String id = element.getId();
+					PetrinetElement p = controller.getPetrinet().getPetrinetElement(id);
 					double x = element.getX();
 					double y = element.getY();
-					PetrinetElement p = controller.getPetrinet().getPetrinetElement(id);
 					if (p != null)
 						if (p.getX() != x || p.getY() != y) {
 							p.setX(x);
 							p.setY(y);
-					}
-
-					
+						}
+					element = null;
 				}
+
 				viewerPipe.pump();
 			}
 		});

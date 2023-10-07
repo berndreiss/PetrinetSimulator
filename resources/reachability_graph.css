@@ -6,12 +6,12 @@
 	Style-Angabe fuer einen Knoten
 */
 graph {
-	padding: 50px;
+	padding: 100px;
 }
 
 node {
 	shape: box;
-	size: 80px,35px;
+	size: 120px,35px;
 	
 	fill-color: #99ccff;
 	
@@ -43,9 +43,7 @@ node.m_mark{
 */
 node.highlight {
 
-
-	shape: box;
-	text-style: bold;		
+	text-style: bold;
 	stroke-color: #0000ff;
 	stroke-width: 3px;
 }

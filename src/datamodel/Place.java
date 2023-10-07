@@ -90,11 +90,12 @@ public class Place extends PetrinetElement {
 	 * Decrements the number of tokens by 1.
 	 * @throws OutOfTokensException Throws Exception when there are no tokens left.
 	 */
-	protected void decrementTokens() throws OutOfTokensException {
+	protected void decrementTokens(){
 		
-		if (numberOfTokens <= 0)
-			throw new OutOfTokensException("There are no tokens in place with ID \"" + id + "\"");
-				
+		if (numberOfTokens <= 0) {
+			System.out.println("There are no tokens in place with ID \"" + id + "\"");
+			return;
+		}
 		
 		setNumberOfTokens(numberOfTokens-1);
 

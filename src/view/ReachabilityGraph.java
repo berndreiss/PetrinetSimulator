@@ -9,6 +9,9 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import datamodel.PetrinetState;
+import datamodel.ReachabilityState;
+
 public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
@@ -26,8 +29,11 @@ public class ReachabilityGraph extends MultiGraph {
 	public ReachabilityGraph(String id) {
 		super(id);
 
+
+		//TODO: mark inital node
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
+		
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
@@ -43,7 +49,7 @@ public class ReachabilityGraph extends MultiGraph {
 		if (currentNode == null) {
 			node = this.addNode(id);
 			node.setAttribute("ui.label", id);
-			currentNode = node;
+			setCurrent(node);
 			return node;
 		}
 		if (this.getNode(id) != null) {
@@ -69,9 +75,14 @@ public class ReachabilityGraph extends MultiGraph {
 			sprite.setPosition(0.5);
 
 		}
-		currentNode = node;
+		setCurrent(node);
 
 		return node;
+	}
+	
+	public void setCurrentState(PetrinetState state) {
+		
+		setCurrent(getNode(state.getState()));
 	}
 	
 
@@ -91,4 +102,26 @@ public class ReachabilityGraph extends MultiGraph {
 		if(nodeMMarked != null)
 			nodeMMarked.setAttribute("ui.class", "m_mark");
 	}
+	
+	public void setCurrent(Node node) {
+		
+		if (node == null)
+			return;
+		
+		if (currentNode == null) {
+			currentNode = node;
+			currentNode.setAttribute("ui.class", "highlight");
+			return;
+		}
+		
+		if (node != currentNode) {
+			currentNode.setAttribute("ui.class", "node");
+			node.setAttribute("ui.class", "highlight");
+			currentNode = node;
+
+		}
+		
+		
+	}
+
 }

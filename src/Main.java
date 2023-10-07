@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -34,11 +35,10 @@ public class Main {
 		System.setProperty("sun.java2d.uiScale", "1.0");
 		//System.setProperty("gs.ui.layout", "org.graphstream.ui.layout.springbox.implementations.BarnesHutLayout");
 
-
 		// Frame erzeugen
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JFrame mainFrame = new MainFrame("");
+				JFrame mainFrame = new MainFrame("Bernd Reiß 3223442");
 				
 	
 			}

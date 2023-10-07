@@ -12,6 +12,7 @@ public class ReachabilityGraphModel {
 
 	private ReachabilityState currentState;
 
+	
 	private int[] state;
 
 	private Map<String, ReachabilityState> reachabilityStates;
@@ -19,7 +20,7 @@ public class ReachabilityGraphModel {
 	public ReachabilityGraphModel(PetrinetController controller) {
 
 		reachabilityStates = new HashMap<String, ReachabilityState>();
-		addNewState(controller.getPetrinet());
+		addNewState(controller.getPetrinet().getState());
 	}
 
 	public ReachabilityState getState(String state) {
@@ -30,26 +31,20 @@ public class ReachabilityGraphModel {
 		return currentState.getState();
 	}
 
-	public ReachabilityState addNewState(Petrinet petrinet) {
-		StringBuilder sb = new StringBuilder();
-
-		List<Integer> placeTokens = new ArrayList<Integer>();
-
-		Iterator<Place> places = petrinet.getPlaces();
+	public void setCurrentState(PetrinetState state) {
+		currentState = reachabilityStates.get(state.getState());
+	}
+	
+	public ReachabilityState addNewState(PetrinetState petrinetState) {
 		
-		while (places.hasNext()) {
-			Place p = places.next();
-			sb.append(p.getNumberOfTokens());
-			placeTokens.add(p.getNumberOfTokens());
-		}
-
-		String newStateString = sb.toString();
+		
+		String newStateString = petrinetState.getState();
 		ReachabilityState newState;
 		if (reachabilityStates.containsKey(newStateString)) {
 			newState = reachabilityStates.get(newStateString);
 			newState.addPredecessor(currentState);
 		} else {
-			newState = new ReachabilityState(newStateString, placeTokens, currentState);
+			newState = new ReachabilityState(petrinetState, currentState);
 			reachabilityStates.put(newStateString, newState);
 		}
 		if (currentState != null)

@@ -23,15 +23,17 @@ import datamodel.PetrinetElement;
 public class ClickListener implements ViewerListener {
 
 	/**
-	 * Referenz auf die DemoFrame Instanz 
+	 * Referenz auf die DemoFrame Instanz
 	 */
 	private PetrinetController controller;
-	
-	private double x=Double.MAX_VALUE;
-	private double y=Double.MAX_VALUE;
+
+	private double x = Double.MAX_VALUE;
+	private double y = Double.MAX_VALUE;
 
 	/**
-	 * Erzeugt einen neuen ClickListener, der auf verschiedene Mausaktionen reagieren kann.
+	 * Erzeugt einen neuen ClickListener, der auf verschiedene Mausaktionen
+	 * reagieren kann.
+	 * 
 	 * @param controller Referenz auf die DemoFrame Instanz
 	 */
 	public ClickListener(PetrinetController controller) {
@@ -47,17 +49,19 @@ public class ClickListener implements ViewerListener {
 	public void buttonPushed(String id) {
 
 		PetrinetElement e = controller.getPetrinet().getPetrinetElement(id);
-		this.x = e.getX();
-		this.y = e.getY();
-		
-		// den frame darüber informieren, dass der Knoten id angeklickt wurde 
+
+		if (e != null) {
+			this.x = e.getX();
+			this.y = e.getY();
+		}
+		// den frame darüber informieren, dass der Knoten id angeklickt wurde
 	}
 
 	@Override
 	public void buttonReleased(String id) {
 		PetrinetElement e = controller.getPetrinet().getPetrinetElement(id);
-		
-		if (this.x == e.getX() && this.y == e.getY())	
+
+		if (e != null && this.x == e.getX() && this.y == e.getY())
 			controller.clickNodeInGraph(id);
 
 		resetCoordinates();
@@ -67,7 +71,7 @@ public class ClickListener implements ViewerListener {
 	@Override
 	public void mouseOver(String id) {
 		// wird nicht verwendet
-		
+
 	}
 
 	@Override
@@ -75,10 +79,9 @@ public class ClickListener implements ViewerListener {
 		// wird nicht verwendet
 	}
 
-	
 	private void resetCoordinates() {
 		this.x = Integer.MAX_VALUE;
 		this.y = Integer.MAX_VALUE;
 	}
-	
+
 }

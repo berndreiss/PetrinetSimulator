@@ -1,19 +1,20 @@
 package datamodel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class ReachabilityState {
 
-	private String state;
-	private List<Integer> placeTokens;
+public class ReachabilityState{
+
+	private PetrinetState petrinetState;
+	
 	private List<ReachabilityState> predecessors;
 	private List<ReachabilityState> successors;
 
-	public ReachabilityState(String state, List<Integer> placeTokens, ReachabilityState predecessor) {
-		this.state = state;
-		this.placeTokens = placeTokens;
-
+	public ReachabilityState(PetrinetState petrinetState, ReachabilityState predecessor) {
+		this.petrinetState = petrinetState;
+		
 		predecessors = new ArrayList<ReachabilityState>();
 		successors = new ArrayList<ReachabilityState>();
 		if (predecessor != null)
@@ -21,7 +22,7 @@ public class ReachabilityState {
 	}
 
 	public String getState() {
-		return state;
+		return petrinetState.getState();
 	}
 
 	public List<ReachabilityState> getPredecessors() {
@@ -50,14 +51,17 @@ public class ReachabilityState {
 		return compareStates(other, (i,j)->i>j);
 	}
 	private boolean compareStates(ReachabilityState other, ReachabilityComparator comparator) {
-		if (this.placeTokens.size() != other.placeTokens.size())
+		if (this.petrinetState.placeTokensSize() != other.petrinetState.placeTokensSize())
 			return false;
 		
 		boolean differenceInItemFlag = false;
 		
-		for (int i=0; i<placeTokens.size();i++) {
-			int thisPlaceTokens = this.placeTokens.get(i);
-			int otherPlaceTokens = other.placeTokens.get(i);
+		Iterator<Integer> thisIt = this.petrinetState.getPlaceTokens();
+		Iterator<Integer> otherIt = other.petrinetState.getPlaceTokens();
+		
+		while (thisIt.hasNext()) {
+			int thisPlaceTokens = thisIt.next();
+			int otherPlaceTokens = otherIt.next();
 			
 			if (comparator.compare(thisPlaceTokens, otherPlaceTokens))
 				return false;

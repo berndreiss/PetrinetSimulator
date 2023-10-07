@@ -1,6 +1,8 @@
 package view;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Edge;
@@ -70,6 +72,10 @@ public class PetrinetGraph extends MultiGraph {
 
 	private PetrinetController controller;
 
+	private int padding;
+
+	private String markedNode;
+
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
@@ -113,18 +119,24 @@ public class PetrinetGraph extends MultiGraph {
 
 		Node node = addPetrinetElement(p, " <" + p.getNumberOfTokens() + ">");
 		node.setAttribute("ui.class", "place");
-		node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
+
+		String label = placeTokenLabel(p.getNumberOfTokens());
+		node.setAttribute("ui.label", label);
 
 		p.setNumberOfTokensListener(new NumberOfTokensListener() {
-			
+
 			@Override
 			public void numberChanged(int newNumber) {
 				node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
 				Sprite sprite = spriteMan.getSprite("s" + p.getId());
-				sprite.setAttribute("ui.label", "[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">" );
+				sprite.setAttribute("ui.label",
+						"[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">");
+
+				// System.out.println(sprite.getLabel(sprite.getId()));
+
 			}
 		});
-		
+
 		return node;
 	}
 
@@ -133,9 +145,9 @@ public class PetrinetGraph extends MultiGraph {
 			return this.getNode(t.getId());
 
 		Node node = this.addPetrinetElement(t, "");
-		
+
 		setTransition(node, t.isActive());
-		
+
 		Map<String, Place> preset = t.getInputs();
 		Map<String, Place> postset = t.getOutputs();
 
@@ -149,10 +161,9 @@ public class PetrinetGraph extends MultiGraph {
 			Node pNode = this.addPlace(p);
 			addEdge(t.getId() + p.getId(), node, pNode);
 		}
-		
-			
+
 		t.setTransitionActiveListener(new TransitionActiveListener() {
-			
+
 			@Override
 			public void stateChanges(boolean active) {
 				setTransition(node, active);
@@ -169,7 +180,7 @@ public class PetrinetGraph extends MultiGraph {
 			node.setAttribute("ui.class", "transition");
 
 	}
-	
+
 	public Edge addEdge(String name, Node a, Node b) {
 		Edge edge = this.addEdge(name, a, b, true);
 
@@ -225,14 +236,46 @@ public class PetrinetGraph extends MultiGraph {
 		// Sprite auf Knoten setzen
 		spriteMark.attachToNode(id);
 	}
-	
+
 	public static String placeTokenLabel(int numberOfTokens) {
 		if (numberOfTokens == 0)
 			return "";
-		
+
 		if (numberOfTokens > 9)
 			return ">9";
 		return String.valueOf(numberOfTokens);
+	}
+
+	public void toggleNodeMark(String id) {
+
+		if (id == null) {
+			if (markedNode != null) {
+				getNode(markedNode).setAttribute("ui.class", "place");
+				markedNode = null;
+			}
+			return;
+		}
+
+
+		if (id.equals(markedNode)) {
+			getNode(id).setAttribute("ui.class", "place");
+			markedNode = null;
+		} else {
+			if (markedNode != null)
+				getNode(markedNode).setAttribute("ui.class", "place");
+			getNode(id).setAttribute("ui.class", "place_highlight");
+			markedNode = id;
+		}
+
+	}
+	
+	public String getMarkedNode() {
+		return markedNode;
+	}
+
+	public void reset() {
+		toggleNodeMark(null);
+		
 	}
 
 }

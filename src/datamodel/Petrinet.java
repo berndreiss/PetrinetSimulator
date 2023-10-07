@@ -20,9 +20,11 @@ public class Petrinet {
 										// get function
 	private Map<String, String> originalArcIds;
 
-	private PetrinetStateChangedListener petrinetStateChangedListener;
+	private TransitionFiredListener petrinetStateChangedListener;
+	
+	private PetrinetState orgiginalState;
 
-	public void addPetrinetStateChangedListener(PetrinetStateChangedListener petrinetStateChangedListener) {
+	public void addPetrinetStateChangedListener(TransitionFiredListener petrinetStateChangedListener) {
 		this.petrinetStateChangedListener = petrinetStateChangedListener;
 	}
 
@@ -30,8 +32,35 @@ public class Petrinet {
 		this.transitions = new HashMap<String, Transition>();
 		this.places = new TreeMap<String, Place>(TREE_COMPARATOR);
 		this.originalArcIds = new HashMap<String, String>();
+		this.orgiginalState = getState();
 	}
 
+	
+	public void setCurrenStateOriginalState() {
+		orgiginalState = getState();
+	}
+	
+	public PetrinetState getState() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("(");
+
+		List<Integer> placeTokens = new ArrayList<Integer>();
+
+		Iterator<Place> places = getPlaces();
+		
+		while (places.hasNext()) {
+			Place p = places.next();
+			sb.append(p.getNumberOfTokens()+"|");
+			placeTokens.add(p.getNumberOfTokens());
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append(")");
+
+		
+		return new PetrinetState(sb.toString(), placeTokens);
+	}
+	
 	public Iterator<Transition> getTransitions() {
 
 		ArrayList<Transition> transitionsIterable = new ArrayList<Transition>();
@@ -76,7 +105,7 @@ public class Petrinet {
 
 		if (p.getNumberOfTokens() != numberOfTokens)
 			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onChange(null);
+				petrinetStateChangedListener.onFire(null);
 
 		p.setNumberOfTokens(numberOfTokens);
 
@@ -93,14 +122,14 @@ public class Petrinet {
 			throw new DuplicateIdException("Id already exists");
 		places.put(p.getId(), p);
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onChange(null);
+			petrinetStateChangedListener.onFire(null);
 	}
 
 	public void addInput(Place p, Transition t) throws DuplicateIdException {
 		if (!places.containsKey(p.getId())) {
 			addPlace(p);
 			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onChange(null);
+				petrinetStateChangedListener.onFire(null);
 		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -111,7 +140,7 @@ public class Petrinet {
 		if (!places.containsKey(p.getId())) {
 			addPlace(p);
 			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onChange(null);
+				petrinetStateChangedListener.onFire(null);
 		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -124,17 +153,15 @@ public class Petrinet {
 		return false;
 	}
 
-	public List<Place> activate(String id) {
+	public void fireTransition(String id) {
 		if (!isTransition(id))
-			return new ArrayList<Place>();
+			return;
 
 		Transition t = transitions.get(id);
-		List<Place> changedPlaces = t.activate();
+		boolean fired = t.fire();
 
-		if (changedPlaces.size() > 0 && petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onChange(t);
-
-		return changedPlaces;
+		if (fired && petrinetStateChangedListener != null)
+			petrinetStateChangedListener.onFire(t);
 
 	}
 
@@ -146,6 +173,30 @@ public class Petrinet {
 		originalArcIds.put(source + target, id);
 	}
 
+
+	public void reset() {
+		setState(orgiginalState);
+	}
+
+	public void setState(PetrinetState state) {
+		Iterator<Place> placesIt = getPlaces();
+		Iterator<Integer> integerIt = state.getPlaceTokens();
+
+		if (places.size() == state.placeTokensSize()) {
+			while (placesIt.hasNext()) {
+				Place p = placesIt.next();
+				p.setNumberOfTokens(integerIt.next());
+			}
+				
+			
+		}
+			
+		
+	}
+
+	/**
+	 * Prints the Petrinet to the terminal. Mainly for debugging purposes.
+	 */
 	public void print() {
 		System.out.println("Places:");
 		for (String s : places.keySet()) {
@@ -162,6 +213,24 @@ public class Petrinet {
 				System.out.println(p.id + " " + p.getNumberOfTokens());
 			}
 		}
+
+	}
+
+	public void incrementPlace(String markedPlace) {
+		if (!places.containsKey(markedPlace))
+			return;
+		Place p = places.get(markedPlace);
+		p.incrementTokens();
+		orgiginalState = this.getState();
+
+	}
+
+	public void decrementPlace(String markedPlace) {
+		if (!places.containsKey(markedPlace))
+			return;
+		Place p = places.get(markedPlace);
+		p.decrementTokens();		
+		orgiginalState = this.getState();
 
 	}
 
