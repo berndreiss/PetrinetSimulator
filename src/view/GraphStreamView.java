@@ -20,6 +20,7 @@ import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.swing_viewer.util.DefaultMouseManager;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.camera.Camera;
 import org.graphstream.ui.view.util.InteractiveElement;
@@ -35,7 +36,6 @@ public class GraphStreamView extends JPanel {
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
-		
 		// bessere Darstellungsqualität und Antialiasing (Kantenglättung) aktivieren
 		// HINWEIS: Damit diese Attribute eine Auswirkung haben, müssen sie NACH
 		// Erzeugung des SwingViewer gesetzt werden
@@ -68,17 +68,47 @@ public class GraphStreamView extends JPanel {
 		// aber ein "ViewPanel" (und somit auch ein JPanel).
 		ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
 
-
 		// Neue ViewerPipe erzeugen, um über Ereignisse des Viewer informiert
 		// werden zu können
 		ViewerPipe viewerPipe = viewer.newViewerPipe();
 
-		// Neuen ClickListener erzeugen, der als ViewerListener auf Ereignisse
-		// der View reagieren kann
-		ClickListener clickListener = new ClickListener(controller);
+		if (graph instanceof PetrinetGraph) {
+			// Neuen ClickListener erzeugen, der als ViewerListener auf Ereignisse
+			// der View reagieren kann
+			ClickListener clickListener = new ClickListener(controller);
 
-		// clickListener als ViewerListener bei der viewerPipe anmelden
-		viewerPipe.addViewerListener(clickListener);
+			// clickListener als ViewerListener bei der viewerPipe anmelden
+			viewerPipe.addViewerListener(clickListener);
+
+		}
+		
+		if (graph instanceof ReachabilityGraph) {
+			System.out.println("TEST");
+			viewerPipe.addViewerListener(new ViewerListener() {
+				
+				@Override
+				public void viewClosed(String viewName) {
+				}
+				
+				@Override
+				public void mouseOver(String id) {
+				}
+				
+				@Override
+				public void mouseLeft(String id) {
+				}
+				
+				@Override
+				public void buttonReleased(String id) {
+				}
+				
+				@Override
+				public void buttonPushed(String id) {
+					controller.reachabilityNodeClicked(id);
+				}
+			});
+			
+		}
 
 		EnumSet<InteractiveElement> enumSet = EnumSet.of(InteractiveElement.NODE);
 
@@ -94,7 +124,7 @@ public class GraphStreamView extends JPanel {
 
 			@Override
 			public void mouseReleased(MouseEvent me) {
-								
+
 				if (element != null) {
 					String id = element.getId();
 					PetrinetElement p = controller.getPetrinet().getPetrinetElement(id);
@@ -111,7 +141,6 @@ public class GraphStreamView extends JPanel {
 				viewerPipe.pump();
 			}
 		});
-
 		// Zoom per Mausrad ermöglichen
 		viewPanel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {

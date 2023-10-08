@@ -10,13 +10,16 @@ graph {
 }
 
 node {
+
+
 	shape: box;
-	size: 120px,35px;
+
+	size: 125px,30px;
 	
 	fill-color: #99ccff;
 	
 	text-color: #003366;
-	text-size: 18;
+	text-size: 12;
 	text-offset: 0,-5;
 
 	stroke-mode: plain;
@@ -24,11 +27,87 @@ node {
 	stroke-width: 1px;
 }
 
+node.initial_m{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m.png');
+
+}
+
+node.initial_m_highlight{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m.png');
+	
+}
+
+node.initial_m__mark{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m_mark.png');
+
+}
+
+node.inital_highlight_m__mark{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m_mark.png');
+	
+}
 
 node.m{
 	
 	fill-color: #ffff00;
 
+}
+
+node.m_highlight{
+	fill-color: #ffff00;
+	stroke-width: 3px;
 }
 
 node.m_mark{
@@ -37,27 +116,36 @@ node.m_mark{
 
 }
 
+node.m_mark_highlight{
+	fill-color: #ff0000;
+	stroke-width: 3px;
+
+
+}
+
+node.initial{
+	fill-color: #d3d3d3;
+
+}
+
+
+node.initial_highlight{
+	fill-color: #d3d3d3;
+	stroke-color: #000000;
+	stroke-width: 3px;
+}
+
 /*
    zusaetzliches Attribut "highlight" fuer einen Knoten, der
    hervorgehoben werden soll
 */
 node.highlight {
 
-	text-style: bold;
 	stroke-color: #0000ff;
 	stroke-width: 3px;
 }
 
 
-/*
-   zusaetzliches Attribut "bild" fuer einen Knoten mit einer Abbildung
-*/
-node.bild {
-	shape: rounded-box;
-	size: 50;
-	fill-mode: image-scaled;
-	fill-image: url('images/logo_grau.png');
-}
 
 /*
 	Style-Angabe fuer eine Kante
@@ -87,12 +175,4 @@ sprite.edgeLabel {
 	text-offset: 0,-3;
 }
 
-/*
-	Style-Angabe fuer ein Sprite, das einen Knoten markiert
-*/
-sprite.mark {
-	shape: cross;   
-	fill-color: rgba(255,0,0,175);   		
-	size: 40;
-	z-index: 5;
-}
+

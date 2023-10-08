@@ -99,12 +99,15 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	private Node addPetrinetElement(PetrinetElement e, String spriteAddition) {
+		if (controller.getHeadless())
+			return null;
+
 		Node node = this.addNode(e.getId());
 		node.setAttribute("xy", e.getX(), e.getY());
 
 		Sprite sprite = spriteMan.addSprite("s" + e.getId());
 		sprite.setAttribute("ui.class", "nodeLabel");
-		sprite.setAttribute("ui.label", "[" + e.getId() + "] " + e.getName() + spriteAddition);
+		sprite.setAttribute("ui.label", getElementLabel(e) + spriteAddition);
 		sprite.attachToNode(node.getId());
 		sprite.setPosition(0.5);
 
@@ -112,6 +115,8 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public Node addPlace(Place p) {
+		if (controller.getHeadless())
+			return null;
 
 		// return the node if it already exists
 		if (this.getNode(p.getId()) != null)
@@ -127,6 +132,9 @@ public class PetrinetGraph extends MultiGraph {
 
 			@Override
 			public void numberChanged(int newNumber) {
+				if (controller.getHeadless())
+					return;
+				
 				node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
 				Sprite sprite = spriteMan.getSprite("s" + p.getId());
 				sprite.setAttribute("ui.label",
@@ -141,6 +149,9 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public Node addTransition(Transition t) {
+		if (controller.getHeadless())
+			return null;
+
 		if (this.getNode(t.getId()) != null)
 			return this.getNode(t.getId());
 
@@ -166,6 +177,9 @@ public class PetrinetGraph extends MultiGraph {
 
 			@Override
 			public void stateChanges(boolean active) {
+				if (controller.getHeadless())
+					return;
+
 				setTransition(node, active);
 			}
 		});
@@ -174,6 +188,9 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	private void setTransition(Node node, boolean active) {
+		if (controller.getHeadless())
+			return;
+
 		if (active)
 			node.setAttribute("ui.class", "transition_active");
 		else
@@ -182,6 +199,9 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public Edge addEdge(String name, Node a, Node b) {
+		if (controller.getHeadless())
+			return null;
+
 		Edge edge = this.addEdge(name, a, b, true);
 
 //		Edge edge1 = this.addEdge(name+"1", a, b, true);
@@ -211,6 +231,9 @@ public class PetrinetGraph extends MultiGraph {
 	 * @param id Id des Knotens, bei dem das Hervorheben getauscht werden soll
 	 */
 	public void toggleNodeHighlight(String id) {
+		if (controller.getHeadless())
+			return;
+
 		Node node = this.getNode(id);
 
 		if (node.hasAttribute("ui.class")) {
@@ -226,6 +249,8 @@ public class PetrinetGraph extends MultiGraph {
 	 * @param id Id des angeklickten Knotens
 	 */
 	public void markLastClickedNode(String id) {
+		if (controller.getHeadless())
+			return;
 
 		if (spriteMark == null) {
 			// Sprite erzeugen, das zur Markierung des zuletzt angeklickten Knotens dient
@@ -247,6 +272,8 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public void toggleNodeMark(String id) {
+		if (controller.getHeadless())
+			return;
 
 		if (id == null) {
 			if (markedNode != null) {
@@ -255,7 +282,6 @@ public class PetrinetGraph extends MultiGraph {
 			}
 			return;
 		}
-
 
 		if (id.equals(markedNode)) {
 			getNode(id).setAttribute("ui.class", "place");
@@ -268,14 +294,25 @@ public class PetrinetGraph extends MultiGraph {
 		}
 
 	}
-	
+
 	public String getMarkedNode() {
+		if (controller.getHeadless())
+			return null;
+
 		return markedNode;
 	}
 
 	public void reset() {
+		if (controller.getHeadless())
+			return;
+
 		toggleNodeMark(null);
-		
+
+	}
+
+	public static String getElementLabel(PetrinetElement e) {
+		return "[" + e.getId() + "] " + e.getName();
+
 	}
 
 }

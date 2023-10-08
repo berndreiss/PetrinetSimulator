@@ -43,9 +43,11 @@ public class MainFrame extends JFrame {
 		textArea = new JTextArea();
 		
 		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
-		
+		splitPane.setDefaultRatio(0.8);
 		this.controller = new PetrinetController(this);
 
+//		controller.setHeadless(true);
+		
 		updateGraphSplitPane(controller);
 		
 		splitPane.setGetComponentInterface(new GetComponentInterface() {
@@ -133,7 +135,28 @@ public class MainFrame extends JFrame {
 		
 	}
 	
+	public void repaintGraphs(int i) {
+		if (i == 0) {
+			graphSplitPane.getLeftComponent().repaint();
+			return;
+		}
+		if (i == 1) {
+			graphSplitPane.getRightComponent().repaint();
+			return;
+		}
+		graphSplitPane.getLeftComponent().repaint();
+		graphSplitPane.getRightComponent().repaint();
+	
+	}
+	
 	public JSplitPane getGraphPane() {
 		return graphSplitPane;
+	}
+	public void print(String s) {
+		textArea.append(s);
+	}
+	
+	public void clearText() {
+		textArea.setText("");
 	}
 }

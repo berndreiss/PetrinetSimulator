@@ -23,145 +23,59 @@ public class PetrinetToolbar extends JToolBar {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String IMAGE_ROOT_FOLDER = "/images/PetrinetToolbar/";
+	private static final String IMAGE_ROOT_FOLDER = "/resources/images/PetrinetToolbar/";
 
 	private PetrinetController controller;
 
 	public PetrinetToolbar(PetrinetController controller) {
 		this.controller = controller;
 
+		// TODO add set view to default button
+
 		this.setMinimumSize(new Dimension(this.getWidth(), this.getHeight() * 2));
 
-		JButton previousButton = makeToolbarButton(ToolbarImage.LEFT, new ActionListener() {
+		JButton previousButton = makeToolbarButton(ToolbarImage.LEFT,
+				e -> controller.onFileOpen(getPreviousFile(controller)), "Open the previous file", "previous");
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, e -> controller.onFileOpen(getNextFile(controller)),
+				"Open the next file", "next");
 
-				File currentFile = controller.getCurrentFile();
-				if (currentFile == null || !currentFile.exists())
-					return;
-				
-				File directory = currentFile.getParentFile();
-				
-				if (directory == null || !directory.isDirectory())
-					return;
-				
-				File[] files = directory.listFiles();
-				
-				TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
-				
-				
-				for (File f: files)
-					if (f.getName().contains(".pnml"))
-						tree.put(f.getName(), f);
-				
-				String previousFileString = tree.lowerKey(currentFile.getName());
-	
-				if (previousFileString == null)
-					return;
-				
-				File previousFile = tree.get(previousFileString);
+		JButton restartButton = makeToolbarButton(ToolbarImage.RESTART, e -> controller.resetPetrinet(),
+				"Reset the petrinet graph", "Reset p");
 
-				if (previousFile != null)
-					controller.onFileOpen(previousFile);
-					
-			}
-			
-		}, "Open the previous file", "previous");
+		JButton plusButton = makeToolbarButton(ToolbarImage.PLUS, e -> {
+			String markedPlace = controller.getPetrinetGraph().getMarkedNode();
 
-		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, new ActionListener() {
+			if (markedPlace == null)
+				return;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				File currentFile = controller.getCurrentFile();
-				if (currentFile == null || !currentFile.exists())
-					return;
-				
-				File directory = currentFile.getParentFile();
-				
-				if (directory == null || !directory.isDirectory())
-					return;
-				
-				File[] files = directory.listFiles();
-				
-				TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
-				
-				
-				for (File f: files)
-					if (f.getName().contains(".pnml"))
-						tree.put(f.getName(), f);
-				
-				String nextFileString = tree.higherKey(currentFile.getName());
-	
-				if (nextFileString == null)
-					return;
-				
-				File nextFile = tree.get(nextFileString);
+			controller.incrementPlace(markedPlace);
 
-				if (nextFile != null)
-					controller.onFileOpen(nextFile);
-			}
-		}, "Open the next file", "next");
-
-		JButton restartButton = makeToolbarButton(ToolbarImage.RESTART, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.resetPetrinet();
-			}
-		}, "Reset the petrinet graph", "Reset p");
-
-		JButton plusButton = makeToolbarButton(ToolbarImage.PLUS, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String markedPlace = controller.getPetrinetGraph().getMarkedNode();
-
-				if (markedPlace == null)
-					return;
-
-				controller.incrementPlace(markedPlace);
-
-				controller.getPetrinet().setCurrenStateOriginalState();
-				controller.resetPetrinet();
-			}
+			controller.getPetrinet().setCurrenStateOriginalState();
+			controller.resetPetrinet();
 		}, "Adds a token to a selected place", "plus");
 
-		JButton minusButton = makeToolbarButton(ToolbarImage.MINUS, new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String markedPlace = controller.getPetrinetGraph().getMarkedNode();
+		JButton minusButton = makeToolbarButton(ToolbarImage.MINUS, e -> {
+			String markedPlace = controller.getPetrinetGraph().getMarkedNode();
 
-				if (markedPlace == null)
-					return;
+			if (markedPlace == null)
+				return;
 
-				controller.decrementPlace(markedPlace);
+			controller.decrementPlace(markedPlace);
 
-				controller.getPetrinet().setCurrenStateOriginalState();
-				controller.resetPetrinet();				
-			}
+			controller.getPetrinet().setCurrenStateOriginalState();
+			controller.resetPetrinet();
 		}, "Removes a token from a selected place", "minus");
-		
-		JButton resetButton = makeToolbarButton(ToolbarImage.RESET, new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.resetReachabilityGraph();
-			}
-		}, "Reset the reachability graph", "Reset r");
-		
-		JButton undoButton = makeToolbarButton(ToolbarImage.UNDO, new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+		JButton resetButton = makeToolbarButton(ToolbarImage.RESET, e -> controller.resetReachabilityGraph(), "Reset the reachability graph", "reset r");
 
-			}
-		}, "Undo last step", "undo");
+		JButton analyseButton = makeToolbarButton(ToolbarImage.ANALYSE, e -> controller.analyse(), "Analyse petrinet and create reachability graph", "analyse");
+		
+		JButton undoButton = makeToolbarButton(ToolbarImage.UNDO, e->{}, "Undo last step", "undo");
 
 		this.add(previousButton);
 		this.add(nextButton);
+		this.add(analyseButton);
 		this.add(restartButton);
 		this.add(plusButton);
 		this.add(minusButton);
@@ -174,6 +88,9 @@ public class PetrinetToolbar extends JToolBar {
 		String imgLocation = IMAGE_ROOT_FOLDER + toolbarImage + ".png";
 		String imagePath = System.getProperty("user.dir");
 
+		System.out.println(imagePath);
+		System.out.println("HERE");
+		
 		JButton button = new JButton() {
 
 			// Changing the getToolTipLocation() method to show it above the button because
@@ -226,7 +143,8 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	private enum ToolbarImage {
-		RESTART("restart"), RESET("delete"), PLUS("plus"), MINUS("minus"), LEFT("left"), RIGHT("right"), UNDO("undo");
+		ANALYSE("stats"), RESTART("restart"), RESET("delete"), PLUS("plus"), MINUS("minus"), LEFT("left"), RIGHT("right"),
+		UNDO("undo");
 
 		private String name;
 
@@ -240,6 +158,61 @@ public class PetrinetToolbar extends JToolBar {
 			return name;
 		}
 
+	}
+
+	private File getPreviousFile(PetrinetController controller) {
+		File currentFile = controller.getCurrentFile();
+		if (currentFile == null || !currentFile.exists())
+			return null;
+
+		File directory = currentFile.getParentFile();
+
+		if (directory == null || !directory.isDirectory())
+			return null;
+
+		File[] files = directory.listFiles();
+
+		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
+
+		for (File f : files)
+			if (f.getName().contains(".pnml"))
+				tree.put(f.getName(), f);
+
+		String previousFileString = tree.lowerKey(currentFile.getName());
+
+		if (previousFileString == null)
+			return null;
+
+		File previousFile = tree.get(previousFileString);
+
+		return previousFile;
+	}
+
+	private File getNextFile(PetrinetController controller) {
+		File currentFile = controller.getCurrentFile();
+		if (currentFile == null || !currentFile.exists())
+			return null;
+
+		File directory = currentFile.getParentFile();
+
+		if (directory == null || !directory.isDirectory())
+			return null;
+
+		File[] files = directory.listFiles();
+
+		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
+
+		for (File f : files)
+			if (f.getName().contains(".pnml"))
+				tree.put(f.getName(), f);
+
+		String nextFileString = tree.higherKey(currentFile.getName());
+
+		if (nextFileString == null)
+			return null;
+
+		File nextFile = tree.get(nextFileString);
+		return nextFile;
 	}
 
 }

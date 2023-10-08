@@ -10,15 +10,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import util.IterableHashMap;
+import util.IterableTreeMap;
+
 public class Petrinet {
 
 	public static final Comparator<String> TREE_COMPARATOR = String.CASE_INSENSITIVE_ORDER;
 
-	private Map<String, Transition> transitions;// set of transitions represented by a map since the Set interface does
+	private IterableHashMap<String, Transition> transitions;// set of transitions represented by a map since the Set interface does
 												// not provide a get function
-	private Map<String, Place> places;// set of places represented by a map since the Set interface does not provide a
+	private IterableTreeMap<String, Place> places;// set of places represented by a map since the Set interface does not provide a
 										// get function
-	private Map<String, String> originalArcIds;
+	private IterableHashMap<String, String> originalArcIds;
 
 	private TransitionFiredListener petrinetStateChangedListener;
 	
@@ -29,12 +32,22 @@ public class Petrinet {
 	}
 
 	public Petrinet() {
-		this.transitions = new HashMap<String, Transition>();
-		this.places = new TreeMap<String, Place>(TREE_COMPARATOR);
-		this.originalArcIds = new HashMap<String, String>();
+		this.transitions = new IterableHashMap<String, Transition>();
+		this.places = new IterableTreeMap<String, Place>(TREE_COMPARATOR);
+		this.originalArcIds = new IterableHashMap<String, String>();
 		this.orgiginalState = getState();
 	}
 
+	
+	public List<String> getActiveTransitions(){
+		ArrayList<String> activeTransitions = new ArrayList<String>();
+		
+		for (Transition t : getTransitions())
+			if (t.isActive())
+				activeTransitions.add(t.getId());
+		
+		return activeTransitions;
+	}
 	
 	public void setCurrenStateOriginalState() {
 		orgiginalState = getState();
@@ -47,10 +60,8 @@ public class Petrinet {
 
 		List<Integer> placeTokens = new ArrayList<Integer>();
 
-		Iterator<Place> places = getPlaces();
 		
-		while (places.hasNext()) {
-			Place p = places.next();
+		for (Place p: places) {
 			sb.append(p.getNumberOfTokens()+"|");
 			placeTokens.add(p.getNumberOfTokens());
 		}
@@ -61,26 +72,13 @@ public class Petrinet {
 		return new PetrinetState(sb.toString(), placeTokens);
 	}
 	
-	public Iterator<Transition> getTransitions() {
-
-		ArrayList<Transition> transitionsIterable = new ArrayList<Transition>();
-
-		for (String s : transitions.keySet()) {
-			Transition t = transitions.get(s);
-			transitionsIterable.add(t);
-		}
-		return transitionsIterable.iterator();
+	
+	public Iterable<Transition> getTransitions() {
+		return transitions;
 	}
 
-	public Iterator<Place> getPlaces() {
-
-		ArrayList<Place> placesIterable = new ArrayList<Place>();
-
-		for (String s : places.keySet()) {
-			Place p = places.get(s);
-			placesIterable.add(p);
-		}
-		return placesIterable.iterator();
+	public Iterable<Place> getPlaces() {
+		return places;
 	}
 
 	public Place getPlace(String id) {
@@ -153,9 +151,9 @@ public class Petrinet {
 		return false;
 	}
 
-	public void fireTransition(String id) {
+	public Petrinet fireTransition(String id) {
 		if (!isTransition(id))
-			return;
+			return this;
 
 		Transition t = transitions.get(id);
 		boolean fired = t.fire();
@@ -163,6 +161,7 @@ public class Petrinet {
 		if (fired && petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onFire(t);
 
+		return this;
 	}
 
 	public String getOriginalArcId(String arcId) {
@@ -179,12 +178,10 @@ public class Petrinet {
 	}
 
 	public void setState(PetrinetState state) {
-		Iterator<Place> placesIt = getPlaces();
 		Iterator<Integer> integerIt = state.getPlaceTokens();
 
 		if (places.size() == state.placeTokensSize()) {
-			while (placesIt.hasNext()) {
-				Place p = placesIt.next();
+			for (Place p: places) {
 				p.setNumberOfTokens(integerIt.next());
 			}
 				
@@ -233,5 +230,6 @@ public class Petrinet {
 		orgiginalState = this.getState();
 
 	}
+	
 
 }

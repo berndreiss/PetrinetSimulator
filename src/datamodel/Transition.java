@@ -106,7 +106,7 @@ public class Transition extends PetrinetElement {
 	private boolean checkActive() {
 
 		if (inputs.isEmpty())
-			return false;
+			return true;
 
 		for (String s : inputs.keySet()) {
 			Place p = inputs.get(s);
