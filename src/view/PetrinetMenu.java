@@ -69,7 +69,7 @@ public class PetrinetMenu extends JMenuBar {
 
 			if (result == 0) {
 				File file = fileChooser.getSelectedFile();
-				controller.onFileOpen(file);
+				controller.getFrame().onFileOpen(file);
 				lastFileForFileChooser = file.getParentFile();
 			}
 			

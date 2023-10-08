@@ -49,6 +49,9 @@ public class ReachabilityGraphModel {
 
 	public ReachabilityState addNewState(PetrinetState petrinetState, Transition t) {
 
+		if (currentState != null && currentState.getPetrinetState() == petrinetState)
+			return currentState;
+		
 		String newStateString = petrinetState.getState();
 		ReachabilityState newState;
 		if (reachabilityStates.containsKey(newStateString)) {

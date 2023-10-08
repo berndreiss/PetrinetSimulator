@@ -44,6 +44,8 @@ public class ReachabilityState {
 	}
 
 	public void addSuccessor(ReachabilityState newSuccessor, Transition t) {
+		if (newSuccessor == this)
+			return;
 		successors.add(newSuccessor);
 		String mapString = this.getState() + newSuccessor.getState();
 		if (!transitionMap.containsKey(mapString)) 
@@ -69,6 +71,8 @@ public class ReachabilityState {
 	}
 
 	public void addPredecessor(ReachabilityState newPredecessor, Transition t) {
+		if (newPredecessor == null)
+			return;
 		predecessors.add(newPredecessor);
 		String mapString = newPredecessor.getState()+this.getState();
 		if (!transitionMap.containsKey(mapString)) 

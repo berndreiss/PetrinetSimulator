@@ -35,9 +35,9 @@ public class PetrinetToolbar extends JToolBar {
 		this.setMinimumSize(new Dimension(this.getWidth(), this.getHeight() * 2));
 
 		JButton previousButton = makeToolbarButton(ToolbarImage.LEFT,
-				e -> controller.onFileOpen(getPreviousFile(controller)), "Open the previous file", "previous");
+				e -> controller.getFrame().onFileOpen(getPreviousFile(controller)), "Open the previous file", "previous");
 
-		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, e -> controller.onFileOpen(getNextFile(controller)),
+		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, e -> controller.getFrame().onFileOpen(getNextFile(controller)),
 				"Open the next file", "next");
 
 		JButton restartButton = makeToolbarButton(ToolbarImage.RESTART, e -> controller.resetPetrinet(),
@@ -71,6 +71,8 @@ public class PetrinetToolbar extends JToolBar {
 
 		JButton analyseButton = makeToolbarButton(ToolbarImage.ANALYSE, e -> controller.analyse(), "Analyse petrinet and create reachability graph", "analyse");
 		
+		JButton clearTextButton = makeToolbarButton(ToolbarImage.CLEAR_TEXT, e -> controller.getFrame().clearText(), "Clear text area", "clear");
+		
 		JButton undoButton = makeToolbarButton(ToolbarImage.UNDO, e->{}, "Undo last step", "undo");
 
 		this.add(previousButton);
@@ -80,6 +82,7 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(plusButton);
 		this.add(minusButton);
 		this.add(resetButton);
+		this.add(clearTextButton);
 		this.add(undoButton);
 	}
 
@@ -144,7 +147,7 @@ public class PetrinetToolbar extends JToolBar {
 
 	private enum ToolbarImage {
 		ANALYSE("stats"), RESTART("restart"), RESET("delete"), PLUS("plus"), MINUS("minus"), LEFT("left"), RIGHT("right"),
-		UNDO("undo");
+		UNDO("undo"), CLEAR_TEXT("input");
 
 		private String name;
 

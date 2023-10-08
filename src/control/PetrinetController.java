@@ -15,6 +15,7 @@ import javax.print.DocFlavor.READER;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -35,6 +36,7 @@ import view.MainFrame;
 import view.PetrinetGraph;
 import view.ReachabilityGraph;
 import view.ResizableSplitPane;
+import view.GetComponentInterface;
 import view.GraphStreamView;
 
 public class PetrinetController {
@@ -61,7 +63,15 @@ public class PetrinetController {
 	public PetrinetController(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		this.petrinetGraph = new PetrinetGraph(this);
+		
 		init();
+	}
+
+	public PetrinetController(MainFrame mainFrame, File file) {
+		this.mainFrame = mainFrame;
+		this.petrinetGraph = new PetrinetGraph(this);
+
+		onFileOpen(file);
 	}
 
 	private void init() {
@@ -139,7 +149,6 @@ public class PetrinetController {
 		if (file == null)
 			return;
 
-		mainFrame.clearText();
 		this.currentFile = file;
 
 		mainFrame.setStatusLabel(file.getName());
@@ -230,19 +239,26 @@ public class PetrinetController {
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 		analyser.analyse();
 		this.analysed = true;
-		mainFrame.print(getResults());
+		mainFrame.print(MainFrame.formatStringForAnalysesOutput(getResults()));
 	}
 
-	public String getResults() {
-		if (!analysed)
-			return "";
+	public String[] getResults() {
+		String[] strings = {"","",""};
+		if (!analysed || currentFile == null)
+			return strings;
 		boolean isValid = reachabilityGraphModel.getInvalidState() == null;
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(currentFile.getName());
-		sb.append(" | ");
+		
+		strings[0] = sb.toString();
+		
+		sb = new StringBuilder();
 		sb.append(isValid?"ja":"nein");
-		sb.append(" | ");
+		strings[1] = sb.toString();
+		
+		sb = new StringBuilder();
+		
 		if (!isValid) {
 			sb.append(transitionsToMMarked.size());
 			sb.append(": (");
@@ -279,8 +295,8 @@ public class PetrinetController {
 			}
 			sb.append(stateCount + " / " + edgeCount);
 		}
-
-		return sb.toString();
+		strings[2] = sb.toString();
+		return strings;
 	}
 
 	public boolean stateIsValid() {
