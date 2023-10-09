@@ -35,7 +35,6 @@ public class Petrinet {
 		this.transitions = new IterableHashMap<String, Transition>();
 		this.places = new IterableTreeMap<String, Place>(TREE_COMPARATOR);
 		this.originalArcIds = new IterableHashMap<String, String>();
-		this.orgiginalState = getState();
 	}
 
 	
@@ -48,30 +47,7 @@ public class Petrinet {
 		
 		return activeTransitions;
 	}
-	
-	public void setCurrenStateOriginalState() {
-		orgiginalState = getState();
-	}
-	
-	public PetrinetState getState() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("(");
-
-		List<Integer> placeTokens = new ArrayList<Integer>();
-
-		
-		for (Place p: places) {
-			sb.append(p.getNumberOfTokens()+"|");
-			placeTokens.add(p.getNumberOfTokens());
-		}
-		sb.deleteCharAt(sb.length()-1);
-		sb.append(")");
-
-		
-		return new PetrinetState(sb.toString(), placeTokens);
-	}
-	
+			
 	
 	public Iterable<Transition> getTransitions() {
 		return transitions;
@@ -218,7 +194,6 @@ public class Petrinet {
 			return;
 		Place p = places.get(markedPlace);
 		p.incrementTokens();
-		orgiginalState = this.getState();
 
 	}
 
@@ -227,8 +202,20 @@ public class Petrinet {
 			return;
 		Place p = places.get(markedPlace);
 		p.decrementTokens();		
-		orgiginalState = this.getState();
 
+	}
+	
+	public String getStateString() {
+	StringBuilder sb = new StringBuilder();
+		
+		sb.append("(");
+
+		for (Place p: getPlaces()) {
+			sb.append(p.getNumberOfTokens()+"|");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append(")");
+		return sb.toString();
 	}
 	
 

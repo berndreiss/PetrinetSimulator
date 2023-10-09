@@ -1,47 +1,33 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
-import org.graphstream.ui.swing_viewer.ViewPanel;
-
-import control.PetrinetController;
-import datamodel.Petrinet;
+import control.MainController;
 
 public class MainFrame extends JFrame {
 
-	private ResizableSplitPane graphSplitPane;
+	public static final double GRAPH_PERCENT = 0.5;
+	
 	private ResizableSplitPane splitPane;
 
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 
-	private PetrinetController controller;
 	private JLabel statusLabel;
 
+	private MainController controller;
 	public MainFrame(String title) {
 		super(title);
-
 		textArea = new JTextArea();
 
 		scrollPane = new JScrollPane(textArea);
@@ -50,26 +36,9 @@ public class MainFrame extends JFrame {
 		splitPane.setDefaultRatio(0.8);
 		splitPane.setRightComponent(scrollPane);
 
-		this.controller = new PetrinetController(this);
+		controller = new MainController(this);
 
-//		controller.setHeadless(true);
-
-		updateGraphSplitPane(controller);
-
-		splitPane.setGetComponentInterface(new GetComponentInterface() {
-
-			@Override
-			public Component getRightComponent() {
-				return scrollPane;
-			}
-
-			@Override
-			public Component getLeftComponent() {
-				return graphSplitPane;
-			}
-		});
-
-		JMenuBar menuBar = new PetrinetMenu(this, controller);
+		JMenuBar menuBar = new PetrinetMenu(controller);
 
 		this.setJMenuBar(menuBar);
 
@@ -78,7 +47,6 @@ public class MainFrame extends JFrame {
 		toolbar.setFloatable(false);
 
 		this.add(toolbar, BorderLayout.NORTH);
-
 		add(splitPane, BorderLayout.CENTER);
 
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
@@ -102,84 +70,23 @@ public class MainFrame extends JFrame {
 		// Konfiguriere weitere Parameter des Haupt-Frame
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
+		
 	}
 
-	public void setStatusLabel(String status) {
-		statusLabel.setText(status);
-	}
-
-	public void onFileOpen(File file) {
-		controller.onFileOpen(file);
+	public ResizableSplitPane getSplitPane() {
+		return splitPane;
 	}
 	
-	public void updateGraphSplitPane(PetrinetController controller) {
-
-		// Füge das JPanel zum Haupt-Frame hinzu
-		if (graphSplitPane != null) {
-			splitPane.remove(graphSplitPane);
-		}
-		
-		graphSplitPane = new ResizableSplitPane(this, JSplitPane.HORIZONTAL_SPLIT, new GetComponentInterface() {
-
-			@Override
-			public Component getRightComponent() {
-				return GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller);
-
-			}
-
-			@Override
-			public Component getLeftComponent() {
-				return GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller);
-			}
-		});
-
-		
-		if (splitPane.getGetComponentInterface() != null)
-			splitPane.onResized();
-		splitPane.revalidate();
-		this.revalidate();
-
-	}
-
-	public void repaintGraphs(int i) {
-		if (i == 0) {
-			graphSplitPane.getLeftComponent().repaint();
-			return;
-		}
-		if (i == 1) {
-			graphSplitPane.getRightComponent().repaint();
-			return;
-		}
-		graphSplitPane.getLeftComponent().repaint();
-		graphSplitPane.getRightComponent().repaint();
-
-	}
-
-	public JSplitPane getGraphPane() {
-		return graphSplitPane;
-	}
-
 	public void print(String s) {
 		textArea.append(s);
 	}
 
-	public void clearText() {
+	public void clearTextArea() {
 		textArea.setText("");
 	}
-
-	public static String formatStringForAnalysesOutput(String[] strings) {
-
-		if (strings.length != 3) {
-			if (strings.length > 3)
-				System.out.println("String-Array is too long.");
-			else
-				System.out.println("String-Array is too short.");
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-
-		String format = "%-50s | %-10s | %-50s\n";
-
-		return String.format(format, strings[0], " " + strings[1], " " + strings[2]);
+	
+	public void setStatusLabel(String status) {
+		statusLabel.setText(status);
 	}
+
 }

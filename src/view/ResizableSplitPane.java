@@ -21,87 +21,65 @@ public class ResizableSplitPane extends JSplitPane {
 	private JSplitPane container;
 	private Dimension preferredSize;
 
-	private GetComponentInterface getComponentInterface;
-
 	public ResizableSplitPane(JFrame parent, int splitOrientation) {
-		super(splitOrientation, new JPanel(), new JPanel());
+		this(parent, splitOrientation, new JPanel(), new JPanel());
+	}
+	public ResizableSplitPane(JFrame parent, int splitOrientation, Component left, Component right) {
+		super(splitOrientation, left, right);
 
 		this.parent = parent;
 		this.defaultDividerRatio = 0.5;
 
-		init();
-	}
-
-	public ResizableSplitPane(JFrame parent, int splitOrientation, GetComponentInterface getComponentInterface) {
-		super(splitOrientation, new JPanel(), new JPanel());
-		this.parent = parent;
-		this.getComponentInterface = getComponentInterface;
-
-		init();
-		this.setLeftComponent(new ResizingPanel(getComponentInterface.getLeftComponent(), preferredSize));
-
-		this.setRightComponent(new ResizingPanel(getComponentInterface.getRightComponent(), preferredSize));
+		initialize();
 
 	}
 
-	private void init() {
-		this.defaultDividerRatio = 0.5;
-		preferredSize = new Dimension((int) (parent.getWidth() / 2 - 10), (int) (parent.getHeight() * 0.5));
-		parent.addComponentListener(new FrameResizeAdapter());
 
+	@Override
+	public void setRightComponent(Component comp) {
+		super.setRightComponent(comp);
+		if (parent != null)
+			initialize();
+	}
+	
+	@Override
+	public void setLeftComponent(Component comp) {
+		super.setLeftComponent(comp);
+		if (parent != null)
+			initialize();
 	}
 
+	private void initialize() {
+		preferredSize = new Dimension((int) (parent.getWidth() / 2 - 10), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
+		
+		Dimension zeroSize = new Dimension(0, 0);
+		
+		Component left = getLeftComponent();
+		Component right = getRightComponent();
+
+		left.setPreferredSize(preferredSize);
+		left.setMinimumSize(zeroSize);
+		left.addComponentListener(new PanelResizedAdapter());
+		
+		right.setPreferredSize(preferredSize);
+		right.setMinimumSize(zeroSize);
+		
+		
+		parent.addComponentListener(new FrameResizeAdapter());		
+		setDividerLocation(defaultDividerRatio);
+
+	}
 	public void setDefaultRatio(double ratio) {
 		this.defaultDividerRatio = ratio;
 	}
 
-	public void setGetComponentInterface(GetComponentInterface getComponentInterface) {
-		this.getComponentInterface = getComponentInterface;
-		this.setLeftComponent(new ResizingPanel(getComponentInterface.getLeftComponent(), preferredSize));
-
-		this.setRightComponent(new ResizingPanel(getComponentInterface.getRightComponent(), preferredSize));
-
-	}
 
 	private class FrameResizeAdapter extends ComponentAdapter {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
+			setDividerLocation(defaultDividerRatio);
 
-			onResized();
-		}
-
-	}
-
-	public GetComponentInterface getGetComponentInterface() {
-		return getComponentInterface;
-	}
-
-	public void onResized() {
-		Dimension oldSizeLeft = getLeftComponent().getSize();
-		remove(getLeftComponent());
-		setLeftComponent(new ResizingPanel(getComponentInterface.getLeftComponent(), oldSizeLeft));
-		Dimension oldSizeRight = getRightComponent().getSize();
-		remove(getRightComponent());
-		setRightComponent(new ResizingPanel(getComponentInterface.getRightComponent(), oldSizeRight));
-		setDividerLocation(defaultDividerRatio);
-	}
-
-	private class ResizingPanel extends JPanel {
-
-		private static final long serialVersionUID = 1L;
-
-		public ResizingPanel(Component component, Dimension size) {
-			this.setLayout(new BorderLayout());
-			this.add(component, BorderLayout.CENTER);
-			this.addComponentListener(new PanelResizedAdapter());
-			Dimension zeroSize = new Dimension(0, 0);
-
-			this.setMinimumSize(zeroSize);
-
-			this.setPreferredSize(size);
-
-//			this.setSize(size);
 		}
 
 	}

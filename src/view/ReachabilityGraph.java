@@ -11,7 +11,7 @@ import org.graphstream.ui.spriteManager.SpriteManager;
 
 import control.PetrinetController;
 import datamodel.PetrinetState;
-import datamodel.ReachabilityState;
+import datamodel.PetrinetState;
 import datamodel.Transition;
 
 public class ReachabilityGraph extends MultiGraph {

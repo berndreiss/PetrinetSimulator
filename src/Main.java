@@ -26,6 +26,7 @@ import propra.pnml.PNMLWopedParser;
 import util.PNMLParser;
 import view.DemoFrame;
 import view.MainFrame;
+import view.PetrinetPanel;
 import view.PetrinetGraph;
 
 public class Main {
@@ -38,7 +39,7 @@ public class Main {
 		// Frame erzeugen
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JFrame mainFrame = new MainFrame("Bernd Reiß 3223442");
+				new MainFrame("Bernd Reiß 3223442");
 				
 	
 			}
