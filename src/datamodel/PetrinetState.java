@@ -105,8 +105,10 @@ public class PetrinetState {
 		return transitionList;
 	}
 
-	public void setM(PetrinetState m) {
+	public void setM(PetrinetState m, StateChangeListener stateChangeListener) {
 		this.m = m;
+		if (stateChangeListener != null)
+			stateChangeListener.onMarkInvalid(m, this);
 	}
 
 	public PetrinetState getM() {

@@ -11,6 +11,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.camera.Camera;
@@ -76,6 +77,7 @@ public class PetrinetGraph extends MultiGraph {
 
 	private String markedNode;
 
+	private ViewPanel viewPanel;
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
@@ -92,6 +94,10 @@ public class PetrinetGraph extends MultiGraph {
 
 		SpringBox layout = new SpringBox(false);
 
+	}
+	
+	public void setViewPanel(ViewPanel viewPanel) {
+		this.viewPanel = viewPanel;
 	}
 
 	public SpriteManager getSpriteManager() {
@@ -174,9 +180,9 @@ public class PetrinetGraph extends MultiGraph {
 		}
 
 		t.setTransitionActiveListener(new TransitionActiveListener() {
-
+			
 			@Override
-			public void stateChanges(boolean active) {
+			public void onStateChanged(boolean active) {
 				if (controller.getHeadless())
 					return;
 
@@ -272,9 +278,6 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public void toggleNodeMark(String id) {
-		if (controller.getHeadless())
-			return;
-
 		if (id == null) {
 			if (markedNode != null) {
 				getNode(markedNode).setAttribute("ui.class", "place");

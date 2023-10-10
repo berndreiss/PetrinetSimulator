@@ -14,7 +14,7 @@ public class ReachabilityGraphModel {
 	private PetrinetState currentState;
 
 	private PetrinetState invalidState;
-	
+
 	private PetrinetState initialState;
 
 	private IterableHashMap<String, PetrinetState> petrinetStates;
@@ -24,7 +24,7 @@ public class ReachabilityGraphModel {
 	public ReachabilityGraphModel(PetrinetController controller) {
 
 		petrinetStates = new IterableHashMap<String, PetrinetState>();
-		initialState = addNewState(controller.getPetrinet(), null);
+		addNewState(controller.getPetrinet(), null);
 	}
 
 	public Iterable<PetrinetState> getStates() {
@@ -50,32 +50,36 @@ public class ReachabilityGraphModel {
 	}
 
 	public PetrinetState addNewState(Petrinet petrinet, Transition t) {
-
+		
 		PetrinetState petrinetState;
 		String petrinetStateString = petrinet.getStateString();
-		
+
 		if (petrinetStates.containsKey(petrinetStateString)) {
 			petrinetState = petrinetStates.get(petrinetStateString);
 			if (currentState != null && currentState == petrinetState)
 				return currentState;
-		}
-		else {
+		} else {
 			petrinetState = new PetrinetState(petrinet);
 			petrinetStates.put(petrinetStateString, petrinetState);
 		}
 
-		petrinetState.addPredecessor(currentState, t);
 
-
-		if (currentState != null)
+		if (currentState != null) {
+			petrinetState.addPredecessor(currentState, t);
 			currentState.addSuccessor(petrinetState, t);
+		}
+		
+		if (t == null) {
+			initialState = petrinetState;
 
-		if (stateChangeListener != null)
+		}
+
+		if (stateChangeListener != null && t != null)
 			stateChangeListener.onAdd(petrinetState, currentState, t);
 
 		setNewCurrentState(petrinetState);
-		
-		return currentState;
+
+		return petrinetState;
 	}
 
 	private void setNewCurrentState(PetrinetState newState) {
@@ -91,22 +95,20 @@ public class ReachabilityGraphModel {
 			return;
 
 		for (PetrinetState s : currentState.getPredecessors()) {
-			PetrinetState state = checkIfStateIsBackwardsValid(s, new ArrayList<PetrinetState>(),
-					currentState);
+			PetrinetState state = checkIfStateIsBackwardsValid(s, new ArrayList<PetrinetState>(), currentState);
 
 			if (state != null) {
 				invalidState = currentState;
-				currentState.setM(state);
+				currentState.setM(state, stateChangeListener);
 				return;
 			}
 		}
 
 	}
 
-	private PetrinetState checkIfStateIsBackwardsValid(PetrinetState state,
-			List<PetrinetState> visitedStates, PetrinetState originalState) {
+	private PetrinetState checkIfStateIsBackwardsValid(PetrinetState state, List<PetrinetState> visitedStates,
+			PetrinetState originalState) {
 
-		
 		if (visitedStates.contains(state))
 			return null;
 
@@ -130,7 +132,7 @@ public class ReachabilityGraphModel {
 		return petrinetStates.containsKey(id);
 	}
 
-	public void setReachabilityStateChangeListener(StateChangeListener reachabilityStateChangeListener) {
+	public void setStateChangeListener(StateChangeListener reachabilityStateChangeListener) {
 		this.stateChangeListener = reachabilityStateChangeListener;
 	}
 
@@ -141,30 +143,65 @@ public class ReachabilityGraphModel {
 	public PetrinetState getInitialState() {
 		return initialState;
 	}
-	
-	private void removeState(PetrinetState petrinetState) {
+
+	private void removeStateEdges(PetrinetState petrinetState) {
 		if (!petrinetStates.containsKey(petrinetState.getState()))
 			return;
-				
-		for (PetrinetState p: petrinetState.getPredecessors())
+
+		for (PetrinetState p : petrinetState.getPredecessors())
 			petrinetState.removePredecessor(p, stateChangeListener);
-		
-		for (PetrinetState p: petrinetState.getSuccessors())
+
+		for (PetrinetState p : petrinetState.getSuccessors())
 			petrinetState.removeSuccessor(p, stateChangeListener);
-		
-		
-		petrinetStates.remove(petrinetState.getState());
-		if (stateChangeListener != null)
-			stateChangeListener.onRemove(petrinetState);
+
 	}
 
 	public void reset() {
+		reset(null);
+	}
+
+	private void reset(Petrinet petrinet) {
 		
-		for (PetrinetState ps: petrinetStates) {
-			if (ps != initialState)
-				removeState(ps);
-		}
+		if (petrinetStates.size() <= 1)
+			return;
+		
+		for (PetrinetState ps : petrinetStates) {
 			
+			removeStateEdges(ps);
+			if (ps== initialState)
+				continue;
+			removeStateFromGraph(ps);
+		}
+
+		petrinetStates.clear();
+
+		if (petrinet != null) {
+			PetrinetState newState = addNewState(petrinet, null);
+			setCurrentState(newState);
+		} else {
+
+			petrinetStates.put(initialState.getState(), initialState);
+//			stateChangeListener.onSetInitial(initialState);
+			setCurrentState(initialState);
+		}
+
+	}
+
+	private void removeStateFromGraph(PetrinetState ps) {
+		if (stateChangeListener != null)
+			stateChangeListener.onRemove(ps);
+	}
+
+	public void resetTo(Petrinet petrinet) {
+		reset();
+		petrinetStates.clear();
+		removeStateFromGraph(initialState);
+		PetrinetState state = addNewState(petrinet, null);
+		stateChangeListener.onSetInitial(state);
+	}
+
+	public void setInitial() {
 		setCurrentState(initialState);
 	}
+
 }

@@ -23,12 +23,10 @@ public class Petrinet {
 										// get function
 	private IterableHashMap<String, String> originalArcIds;
 
-	private TransitionFiredListener petrinetStateChangedListener;
+	private PetrinetChangeListener petrinetChangeListener;
 	
-	private PetrinetState orgiginalState;
-
-	public void addPetrinetStateChangedListener(TransitionFiredListener petrinetStateChangedListener) {
-		this.petrinetStateChangedListener = petrinetStateChangedListener;
+	public void setPetrinetChangeListener(PetrinetChangeListener petrinetChangeListener) {
+		this.petrinetChangeListener = petrinetChangeListener;
 	}
 
 	public Petrinet() {
@@ -78,8 +76,8 @@ public class Petrinet {
 		Place p = places.get(id);
 
 		if (p.getNumberOfTokens() != numberOfTokens)
-			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onFire(null);
+			if (petrinetChangeListener != null)
+				petrinetChangeListener.onChanged(this);;
 
 		p.setNumberOfTokens(numberOfTokens);
 
@@ -95,15 +93,15 @@ public class Petrinet {
 		if (transitions.containsKey(p.getId()) || places.containsKey(p.getId()))
 			throw new DuplicateIdException("Id already exists");
 		places.put(p.getId(), p);
-		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onFire(null);
+		if (petrinetChangeListener != null)
+			petrinetChangeListener.onChanged(this);;
 	}
 
 	public void addInput(Place p, Transition t) throws DuplicateIdException {
 		if (!places.containsKey(p.getId())) {
 			addPlace(p);
-			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onFire(null);
+			if (petrinetChangeListener != null)
+				petrinetChangeListener.onChanged(this);
 		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -113,8 +111,8 @@ public class Petrinet {
 	public void addOutput(Place p, Transition t) throws DuplicateIdException {
 		if (!places.containsKey(p.getId())) {
 			addPlace(p);
-			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onFire(null);
+			if (petrinetChangeListener != null)
+				petrinetChangeListener.onChanged(this);
 		}
 		if (!transitions.containsKey(t.getId()))
 			addTransition(t);
@@ -134,8 +132,8 @@ public class Petrinet {
 		Transition t = transitions.get(id);
 		boolean fired = t.fire();
 
-		if (fired && petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onFire(t);
+		if (fired && petrinetChangeListener != null)
+			petrinetChangeListener.onTransitionFire(t);
 
 		return this;
 	}
@@ -148,10 +146,6 @@ public class Petrinet {
 		originalArcIds.put(source + target, id);
 	}
 
-
-	public void reset() {
-		setState(orgiginalState);
-	}
 
 	public void setState(PetrinetState state) {
 		Iterator<Integer> integerIt = state.getPlaceTokens();

@@ -135,7 +135,7 @@ public class Transition extends PetrinetElement {
 
 		this.active = active;
 		if (transitionActiveListener != null)
-			transitionActiveListener.stateChanges(active);
+			transitionActiveListener.onStateChanged(active);
 	}
 
 	/**

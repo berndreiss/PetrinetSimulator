@@ -9,6 +9,7 @@ import java.util.Set;
 import control.PetrinetController;
 import datamodel.Petrinet;
 import datamodel.PetrinetState;
+import datamodel.ReachabilityGraphModel;
 import datamodel.Transition;
 
 public class PetrinetAnalyser {
@@ -30,19 +31,23 @@ public class PetrinetAnalyser {
 	public boolean analyse() {
 		
 		
-		Petrinet initialPetrinet = controller.getPetrinet();
-		this.originalState = initialPetrinet.getState();
+		
+		this.originalState = controller.getReachabilityGraphModel().getInitialState();
 
+		Petrinet initialPetrinet = controller.getPetrinet();
+		
+		ReachabilityGraphModel reachabilityGraphModel = controller.getReachabilityGraphModel();
+		
 		List<String> transitionList = initialPetrinet.getActiveTransitions();
 		
 		for (String s: transitionList) {
-			Petrinet newPetrinet = initialPetrinet.fireTransition(s);
+			initialPetrinet.fireTransition(s);
 			if (!controller.stateIsValid()) {
 				controller.resetPetrinet();
 				controller.updateReachabilityGraph();
 				return false;
 			}
-			analyseState(newPetrinet.getState(), s);
+			analyseState(reachabilityGraphModel.getCurrentState(), s);
 			if (!controller.stateIsValid()) {
 				controller.resetPetrinet();
 				controller.updateReachabilityGraph();
@@ -69,10 +74,10 @@ public class PetrinetAnalyser {
 
 		
 		for (String s: transitionList) {
-			Petrinet newPetrinet = petrinet.fireTransition(s);
+			petrinet.fireTransition(s);
 			if (!controller.stateIsValid())
 				return;
-			analyseState(newPetrinet.getState(), s);
+			analyseState(petrinetState, s);
 			controller.setState(petrinetState);
 			
 			

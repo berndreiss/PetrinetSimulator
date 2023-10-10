@@ -2,5 +2,5 @@ package datamodel;
 
 public interface TransitionActiveListener {
 
-	void stateChanges(boolean active);
+	void onStateChanged(boolean active);
 }

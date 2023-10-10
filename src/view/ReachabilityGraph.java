@@ -8,9 +8,11 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing_viewer.ViewPanel;
 
 import control.PetrinetController;
 import datamodel.PetrinetState;
+import datamodel.StateChangeListener;
 import datamodel.PetrinetState;
 import datamodel.Transition;
 
@@ -30,6 +32,8 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private Node nodeMMarked;
 	private PetrinetController controller;
+	
+	private ViewPanel viewPanel;
 
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
@@ -41,22 +45,87 @@ public class ReachabilityGraph extends MultiGraph {
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
+		
+		init();
 
 	}
 
-	public Node addState(String id, Transition t) {
+	private void init() {
+		initialNode = addState(controller.getReachabilityGraphModel().getInitialState(),null,null);
+		setHighlight(initialNode);
+		
+		controller.getReachabilityGraphModel().setStateChangeListener(new StateChangeListener() {
+			
+			@Override
+			public void onSetInitial(PetrinetState state) {
+				initialNode = addState(state,null, null);
+				setHighlight(initialNode);
+			}
+			
+			@Override
+			public void onSetCurrent(PetrinetState state) {
+				setCurrentState(state);
+			}
+			
+			@Override
+			public void onRemoveEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
+				removeStateEdge(stateSource, stateTarget, t);
+			}
+			
+			@Override
+			public void onRemove(PetrinetState state) {
+				Node node = removeState(state);
+				if (currentNode == node)
+					currentNode = null;
+				if (initialNode == node)
+					initialNode = null;
+				if (nodeM == node || nodeMMarked == node) {
+					Node mOld = nodeM;
+					Node mMarkedOld = nodeMMarked;
+					
+					nodeM = null;
+					nodeMMarked = null;
+					setHighlight(mOld);
+					setHighlight(nodeMMarked);
+				}
+				
+			}
+			
+		
+			@Override
+			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
+				addState(state, predecessor, t);
+			}
 
-		String transitionLabel = t==null?"":PetrinetGraph.getElementLabel(t);
+			@Override
+			public void onMarkInvalid(PetrinetState m, PetrinetState mMarked) {
+				markStatesInvalid(m.getState(), mMarked.getState());
+			}
+		});
+	}
+	
+	public void reinitialize() {
+		removeNode(initialNode);
+		init();
+	}
+	
+	public void setViewPanel(ViewPanel viewPanel) {
+		this.viewPanel = viewPanel;
+	}
+
+	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
+//TODO can i remove all headlesses?
+		
 		if (controller.getHeadless())
 			return null;
 		
 		Node node;
+		String id = state.getState();
+		String transitionLabel = t==null?"":PetrinetGraph.getElementLabel(t);
 
 		if (currentNode == null) {
 			node = this.addNode(id);
-			node.setAttribute("ui.class", "initial");
 			node.setAttribute("ui.label", id);
-			initialNode = node;
 			setCurrent(node);
 			return node;
 		}
@@ -72,8 +141,13 @@ public class ReachabilityGraph extends MultiGraph {
 			node.setAttribute("ui.label", id);
 
 		}
-		if (this.getEdge(currentNode.getId() + id +transitionLabel) == null) {
-			Edge e = this.addEdge(currentNode.getId() + id+transitionLabel, currentNode, node, true);
+
+		if (predecessor == null)
+			return node;
+		
+		Node predNode = getNode(predecessor.getState());
+		if (this.getEdge(predecessor.getState() + id +transitionLabel) == null) {
+			Edge e = this.addEdge(predecessor.getState() + id+transitionLabel, predNode, node, true);
 			Sprite sprite = spriteMan.addSprite("s" + e.getId());
 			sprite.setAttribute("ui.class", "edgeLabel");
 			sprite.setAttribute("ui.label", transitionLabel);
@@ -82,19 +156,18 @@ public class ReachabilityGraph extends MultiGraph {
 			sprite.setPosition(0.5);
 
 		}
-		setCurrent(node);
 
 		return node;
 	}
 
-	public void setCurrentState(PetrinetState state) {
+	private void setCurrentState(PetrinetState state) {
 		if (controller.getHeadless())
 			return;
 		
 		setCurrent(getNode(state.getState()));
 	}
 
-	public void markStatesInvalid(String m, String mMark) {
+	private void markStatesInvalid(String m, String mMark) {
 		if (controller.getHeadless())
 			return;
 		
@@ -110,7 +183,7 @@ public class ReachabilityGraph extends MultiGraph {
 		setHighlight(nodeMMarked);
 	}
 
-	public void setCurrent(Node node) {
+	private void setCurrent(Node node) {
 		if (controller.getHeadless())
 			return;
 		
@@ -132,6 +205,19 @@ public class ReachabilityGraph extends MultiGraph {
 		}
 
 	}
+	
+	private void removeStateEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
+		String edgeString = stateSource.getState() + stateTarget.getState() + PetrinetGraph.getElementLabel(t);
+		removeEdge(edgeString);
+		spriteMan.removeSprite("s" + edgeString);
+	}
+	
+	private Node removeState(PetrinetState state) {
+		spriteMan.removeSprite("s" + state.getState());
+		return removeNode(state.getState());
+		
+	}
+
 
 	private void setHighlight(Node node) {
 		if (controller.getHeadless())

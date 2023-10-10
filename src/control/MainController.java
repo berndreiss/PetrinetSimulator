@@ -124,8 +124,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onRestart() {
-		// TODO Auto-generated method stub
-		
+		petrinetPanel.resetPetrinet();
 	}
 
 
@@ -138,7 +137,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onMinus() {
-		petrinetPanel.decrementPlace();
 		
 		if (petrinetPanel.getController().getFileChanged())
 			parent.setStatusLabel("*" + currentFile.getName());
@@ -148,7 +146,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onReset() {
-		petrinetPanel.resetPetrinet();
+		petrinetPanel.getController().resetReachabilityGraph();
 	}
 
 
