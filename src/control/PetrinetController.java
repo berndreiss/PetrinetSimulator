@@ -1,31 +1,15 @@
 package control;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.print.DocFlavor.READER;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.ui.graphicGraph.GraphicElement;
-import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
@@ -39,18 +23,12 @@ import datamodel.PetrinetState;
 import datamodel.PetrinetChangeListener;
 import datamodel.Place;
 import datamodel.ReachabilityGraphModel;
-import datamodel.PetrinetState;
-import datamodel.StateChangeListener;
 import datamodel.Transition;
 import util.PNMLParser;
 import util.PetrinetAnalyser;
-import view.PetrinetPanel;
 import view.PetrinetGraph;
 import view.ReachabilityGraph;
-import view.ResizableSplitPane;
 import view.ClickListener;
-import view.GetComponentInterface;
-import view.GraphStreamView;
 
 public class PetrinetController {
 
@@ -62,21 +40,13 @@ public class PetrinetController {
 	private ViewPanel petrinetViewPanel;
 	private ViewPanel reachabilityViewPanel;
 
-	private PetrinetPanel petrinetPanel;
 
 	private File currentFile;
 
 	private boolean fileChanged;
 	private boolean headless;
-	private boolean analysed;
 
-	private List<String> transitionsToMMarked;
-	private String m;
-	private String mMarked;
-
-
-	public PetrinetController(PetrinetPanel petrinetPanel, File file, boolean headless) {
-		this.petrinetPanel = petrinetPanel;
+	public PetrinetController(File file, boolean headless) {
 		this.headless = headless;
 		this.petrinetGraph = new PetrinetGraph(this);
 		if (file == null)
@@ -89,7 +59,7 @@ public class PetrinetController {
 			petrinetGraph.setViewPanel(petrinetViewPanel);
 
 		}
-			
+
 	}
 
 	private void init() {
@@ -102,16 +72,19 @@ public class PetrinetController {
 			reachabilityGraph.setViewPanel(reachabilityViewPanel);
 		}
 		petrinet.setPetrinetChangeListener(new PetrinetChangeListener() {
-			
+
 			@Override
 			public void onTransitionFire(Transition t) {
 				PetrinetState state = reachabilityGraphModel.addNewState(petrinet, t);
 				reachabilityGraphModel.checkIfCurrentStateIsBackwardsValid();
 			}
-			
+
 			@Override
 			public void onChanged(Petrinet petrinet) {
-				reachabilityGraphModel.resetTo(petrinet);
+				reachabilityGraphModel.reset();
+				reachabilityGraphModel.removeState(reachabilityGraphModel.getInitialState());
+				reachabilityGraphModel.addNewState(petrinet, null);
+				System.out.println(reachabilityGraphModel.getInitialState().getState());
 				
 			}
 		});
@@ -129,7 +102,7 @@ public class PetrinetController {
 	public ReachabilityGraph getReachabilityGraph() {
 		return reachabilityGraph; // TODOchange when ready!
 	}
-	
+
 	public ReachabilityGraphModel getReachabilityGraphModel() {
 		return reachabilityGraphModel;
 	}
@@ -147,7 +120,7 @@ public class PetrinetController {
 			petrinet.fireTransition(id);
 		if (pe instanceof Place)
 			petrinetGraph.toggleNodeMark(id);
-		
+
 	}
 
 	public void onFileOpen(File file) {
@@ -163,8 +136,6 @@ public class PetrinetController {
 
 		init();
 
-
-		
 		if (!headless) {
 			this.petrinetGraph = new PetrinetGraph(this);
 
@@ -188,40 +159,25 @@ public class PetrinetController {
 	}
 
 	public void incrementPlace(String markedPlace) {
-		
+
 		petrinet.incrementPlace(markedPlace);
 
-		reachabilityGraphModel.reset();
-		reachabilityGraphModel = new ReachabilityGraphModel(this);
-		reachabilityGraph.reinitialize();
-		
 		if (!fileChanged) {
 			fileChanged = true;
 		}
-	}
-
-	public void repaint() {
-		ResizableSplitPane splitPane = (ResizableSplitPane) petrinetPanel.getGraphPane();
-		splitPane.getLeftComponent().repaint();
-		splitPane.getRightComponent().repaint();
-	}
-
-	public PetrinetPanel getFrame() {
-		return petrinetPanel;
-	}
-
-	public File getCurrentFile() {
-		return currentFile;
 	}
 
 	public void decrementPlace(String markedPlace) {
 		petrinet.decrementPlace(markedPlace);
-		if (!headless)
-			resetReachabilityGraph();
 
 		if (!fileChanged) {
 			fileChanged = true;
 		}
+	}
+
+
+	public File getCurrentFile() {
+		return currentFile;
 	}
 
 	public void resetReachabilityGraph() {
@@ -236,158 +192,58 @@ public class PetrinetController {
 		reachabilityGraphModel.setCurrentState(state);
 	}
 
-	public void analyse() {
-		
-		resetReachabilityGraph();
-		
+	public String[] analyse() {
+
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
-		analyser.analyse();
-		this.analysed = true;
+
+		
+		return getResults(analyser);
+
 	}
 
-	public String[] getResults() {
-		String[] strings = {"","",""};
-		if (!analysed || currentFile == null)
+	private String[] getResults(PetrinetAnalyser analyser) {
+		String[] strings = { "", "", "" };
+
+		if (currentFile == null)
 			return strings;
-		boolean isValid = reachabilityGraphModel.getInvalidState() == null;
+
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(currentFile.getName());
-		
+		sb.append(currentFile.getName() + " ");
 		strings[0] = sb.toString();
-		
+
 		sb = new StringBuilder();
-		sb.append(isValid?"ja":"nein");
+		sb.append(analyser.isFinite() ? " yes" : " no");
 		strings[1] = sb.toString();
-		
+
 		sb = new StringBuilder();
-		
-		if (!isValid) {
-			sb.append(transitionsToMMarked.size());
+
+		if (!analyser.isFinite()) {
+			sb.append(" " + analyser.getTransitionsToMMarked().size());
 			sb.append(": (");
-			for (String s : transitionsToMMarked)
+			for (String s : analyser.getTransitionsToMMarked())
 				sb.append(s + ",");
 			sb.deleteCharAt(sb.length() - 1);
 			sb.append(");");
 
 			sb.append(" ");
-			sb.append(m);
+			sb.append(analyser.getM());
 			sb.append(" ");
-			sb.append(mMarked);
+			sb.append(analyser.getMMarked());
 
 		} else {
 
-			int stateCount = 0;
-			int edgeCount = 0;
-
-			Set<String> edges = new HashSet<String>();
-
-			for (PetrinetState rs : reachabilityGraphModel.getStates()) {
-
-				for (PetrinetState ss : rs.getSuccessors()) {
-					for (Transition t : rs.getSuccessorTransitions(ss)) {
-						String edgesString = rs.getState() + ss.getState() + t.getId();
-						if (!edges.contains(edgesString)) {
-							edges.add(edgesString);
-							edgeCount++;
-						}
-					}
-				}
-
-				stateCount++;
-			}
-			sb.append(stateCount + " / " + edgeCount);
+			sb.append(" " + analyser.getStateCount() + " / " + analyser.getEdgeCount());
 		}
 		strings[2] = sb.toString();
 		return strings;
-	}
-
-	public boolean stateIsValid() {
-		return reachabilityGraphModel.getCurrentState().getM() == null;
-	}
-
-	public void setState(PetrinetState petrinetState) {
-
-		petrinet.setState(petrinetState);
-		reachabilityGraphModel.setCurrentState(petrinetState);
-
-	}
-
-	public void setHeadless(boolean headless) {
-		this.headless = headless;
-
 	}
 
 	public boolean getHeadless() {
 		return headless;
 	}
 
-	public void updateReachabilityGraph() {
 
-		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
-		if (invalidState != null) {
-
-			m = invalidState.getM().getState();
-			mMarked = invalidState.getState();
-			transitionsToMMarked = new ArrayList<String>();
-
-			List<PetrinetState> pathToM = invalidState.getListToOtherState(invalidState.getM());
-
-			List<PetrinetState> pathToInitial = invalidState.getM()
-					.getListToOtherState(reachabilityGraphModel.getInitialState());
-			PetrinetState currentState = reachabilityGraphModel.getCurrentState();
-
-			
-	
-			ArrayList<Transition> transitionList = new ArrayList<Transition>();
-			
-			if (pathToInitial != null) {
-
-				for (int i = pathToInitial.size() - 1; i >= 0; i--) {
-
-					PetrinetState nextState = pathToInitial.get(i);
-
-					Transition transition = currentState.getFirstSuccessorTransition(nextState);
-					
-					transitionList.add(transition);
-					
-					currentState = pathToInitial.get(i);
-				}
-
-			}
-
-			for (int i = pathToM.size() - 1; i >= 0; i--) {
-
-				PetrinetState nextState = pathToM.get(i);
-
-				Transition transition = currentState.getFirstSuccessorTransition(nextState);
-				transitionsToMMarked.add(transition.getId());
-
-				transitionList.add(transition);
-				
-				currentState = pathToM.get(i);
-			}
-
-			Transition transition = currentState.getFirstSuccessorTransition(invalidState);
-
-			if (transition != null)
-				transitionsToMMarked.add(transition.getId());
-
-			transitionList.add(transition);
-			
-			reachabilityGraphModel.reset();
-			petrinet.setState(reachabilityGraphModel.getInitialState());
-
-			
-			//TODO: why have been null transitions been added? -> look into reachabilitygraphmodel
-			for (Transition t: transitionList) {
-				if (t != null)
-					petrinet.fireTransition(t.getId());
-			}
-			return;
-		}
-	}
-	
 	public boolean getFileChanged() {
 		return fileChanged;
 	}
@@ -530,7 +386,5 @@ public class PetrinetController {
 	public ViewPanel getReachabilityViewPanel() {
 		return reachabilityViewPanel;
 	}
-
-
 
 }

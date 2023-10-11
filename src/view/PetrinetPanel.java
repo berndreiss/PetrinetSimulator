@@ -59,7 +59,7 @@ public class PetrinetPanel extends JPanel {
 	public PetrinetPanel(MainController mainController, File file, boolean headless) {
 		this.mainController = mainController;
 
-		this.controller = new PetrinetController(this, file, headless);
+		this.controller = new PetrinetController(file, headless);
 
 		setLayout(new BorderLayout());
 
@@ -68,44 +68,9 @@ public class PetrinetPanel extends JPanel {
 			ViewPanel right = controller.getReachabilityViewPanel();
 			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT, left, right);
 			add(graphSplitPane, BorderLayout.CENTER);
-		} else {
-			JPanel dummyPanel = new JPanel();
-			dummyPanel.setPreferredSize(new Dimension(mainController.getFrame().getWidth(), (int) (mainController.getFrame().getWidth()*MainFrame.GRAPH_PERCENT)));
-			add(dummyPanel, BorderLayout.CENTER);
-		}
-//		updateGraphSplitPane(controller);
-
-//		splitPane.setGetComponentInterface(new GetComponentInterface() {
-//
-//			@Override
-//			public Component getRightComponent() {
-//				return scrollPane;
-//			}
-//
-//			@Override
-//			public Component getLeftComponent() {
-//				return graphSplitPane;
-//			}
-//		});
-
+		} 
 	}
 
-	public void updateGraphSplitPane() {
-
-//		ResizableSplitPane splitPane = mainController.getFrame().getSplitPane();
-//
-//		// Füge das JPanel zum Haupt-Frame hinzu
-//		if (graphSplitPane != null) {
-//			splitPane.remove(graphSplitPane);
-//		}
-//
-//
-////		viewerPipePetrinet.pump();
-//
-//		splitPane.revalidate();
-//		this.revalidate();
-
-	}
 
 	public void repaintGraphs(int i) {
 		if (i == 0) {
@@ -124,22 +89,8 @@ public class PetrinetPanel extends JPanel {
 	public JSplitPane getGraphPane() {
 		return graphSplitPane;
 	}
+	
 
-	public static String formatStringForAnalysesOutput(String[] strings) {
-
-		if (strings.length != 3) {
-			if (strings.length > 3)
-				System.out.println("String-Array is too long.");
-			else
-				System.out.println("String-Array is too short.");
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-
-		String format = "%-50s | %-10s | %-50s\n";
-
-		return String.format(format, strings[0], " " + strings[1], " " + strings[2]);
-	}
 
 	public void incrementPlace() {
 		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
@@ -168,17 +119,21 @@ public class PetrinetPanel extends JPanel {
 		controller.resetPetrinet();
 	}
 
-	public void analyse() {
-		controller.analyse();
-	}
-
 	public PetrinetController getController() {
 		return controller;
 	}
 
-	public String getResult() {
-
-		return formatStringForAnalysesOutput(controller.getResults());
+	public String[] analyse() {
+		return controller.analyse();
+		
+	}
+	
+	public void reloadFile() {
+		controller.onFileOpen(getCurrentFile());
+	}
+	
+	public File getCurrentFile() {
+		return controller.getCurrentFile();
 	}
 
 }

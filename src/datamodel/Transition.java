@@ -19,7 +19,7 @@ public class Transition extends PetrinetElement {
 	private Map<String, Place> inputs;// set of places that serve as input
 	private Map<String, Place> outputs;// set of places that serve as output
 
-	private boolean active;
+	private boolean active;//TODO change all occurrences to "activated"
 	private TransitionActiveListener transitionActiveListener;
 
 	/**
@@ -145,7 +145,6 @@ public class Transition extends PetrinetElement {
 	 */
 	protected void addOutput(Place p) {
 		outputs.put(p.id, p);
-		p.inputs.put(this.id, this);
 	}
 
 	public Map<String, Place> getInputs() {

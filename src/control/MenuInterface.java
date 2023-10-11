@@ -6,7 +6,7 @@ public interface MenuInterface {
 
 	void onReload();
 	
-	void onAdd();
+	void onAnalyseMany();
 	
 	void onClose();
 	

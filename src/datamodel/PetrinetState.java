@@ -2,9 +2,11 @@ package datamodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import util.IterableHashMap;
 
@@ -13,7 +15,6 @@ public class PetrinetState {
 	private String state;
 	private List<Integer> placeTokens;
 
-	
 	private PetrinetState m;
 
 	private IterableHashMap<String, PetrinetState> predecessors;
@@ -27,25 +28,23 @@ public class PetrinetState {
 		predecessors = new IterableHashMap<String, PetrinetState>();
 		successors = new IterableHashMap<String, PetrinetState>();
 		placeTokens = new ArrayList<Integer>();
-		
-	
-		for (Place p: petrinet.getPlaces()) {
+
+		for (Place p : petrinet.getPlaces()) {
 			placeTokens.add(p.getNumberOfTokens());
 		}
 
-		
 		this.state = petrinet.getStateString();
-		
+
 	}
 
 	public String getState() {
 		return state;
 	}
-	
-	public Iterator<Integer> getPlaceTokens(){
+
+	public Iterator<Integer> getPlaceTokens() {
 		return placeTokens.iterator();
 	}
-	
+
 	public int placeTokensSize() {
 		return placeTokens.size();
 	}
@@ -59,13 +58,11 @@ public class PetrinetState {
 	}
 
 	public void addSuccessor(PetrinetState newSuccessor, Transition t) {
-		if (newSuccessor == this)
-			return;
 		successors.put(newSuccessor.getState(), newSuccessor);
 		String mapString = this.getState() + newSuccessor.getState();
-		if (!transitionMap.containsKey(mapString)) 
+		if (!transitionMap.containsKey(mapString))
 			transitionMap.put(mapString, new ArrayList<Transition>());
-		
+
 		List<Transition> transitionList = transitionMap.get(mapString);
 		if (!transitionList.contains(t))
 			transitionList.add(t);
@@ -77,10 +74,11 @@ public class PetrinetState {
 		List<Transition> transitionList = transitionMap.get(this.getState() + successor.getState());
 		return transitionList;
 	}
+
 	public Transition getFirstSuccessorTransition(PetrinetState successor) {
 		if (!successors.containsKey(successor.getState()))
 			return null;
-		for (Transition t: transitionMap.get(this.getState() + successor.getState()))
+		for (Transition t : transitionMap.get(this.getState() + successor.getState()))
 			return t;
 		return null;
 	}
@@ -89,10 +87,10 @@ public class PetrinetState {
 		if (newPredecessor == null)
 			return;
 		predecessors.put(newPredecessor.getState(), newPredecessor);
-		String mapString = newPredecessor.getState()+this.getState();
-		if (!transitionMap.containsKey(mapString)) 
+		String mapString = newPredecessor.getState() + this.getState();
+		if (!transitionMap.containsKey(mapString))
 			transitionMap.put(mapString, new ArrayList<Transition>());
-		
+
 		List<Transition> transitionList = transitionMap.get(mapString);
 		if (!transitionList.contains(t))
 			transitionList.add(t);
@@ -155,78 +153,130 @@ public class PetrinetState {
 		boolean compare(int i, int j);
 	}
 
-	
+	public List<PetrinetState> getPathToOtherState(PetrinetState other) {
 
-	public List<PetrinetState> getListToOtherState(PetrinetState other){
-		
-		return getListToOther(this, other, new ArrayList<PetrinetState>());
+		List<PetrinetState> list = getPathToOther(this, other, new HashSet<PetrinetState>(), new ArrayList<PetrinetState>());
+		if (list.contains(this))
+			list.remove(this);
+		return list;
 	}
 
-	private List<PetrinetState> getListToOther(PetrinetState state, PetrinetState other, List<PetrinetState> visited){
+	private List<PetrinetState> getPathToOther(PetrinetState state, PetrinetState other, Set<PetrinetState> visited,
+			ArrayList<PetrinetState> path) {
 		if (visited.contains(state))
 			return null;
-		
+
 		if (state == other) {
-			return visited;
+			return path;
 		}
-		visited.add(state);
-		for (PetrinetState rs: state.getPredecessors()) {
-			List<PetrinetState> list = getListToOther(rs, other, visited);
-			if (list != null)
-				return visited;
-			visited.remove(rs);
+		if (state != this)
+			visited.add(state);
+		for (PetrinetState rs : state.getPredecessors()) {
+			List<PetrinetState> list = getPathToOther(rs, other, visited, path);
+			if (list != null) {
+				
+				if (path.contains(state)) {//circle!
+					path.clear();
+					return path;
+				}
+				path.add(state);
+				return path;
+			}
 		}
 		return null;
 	}
-	
-	public Iterable<String> getTransitionMapKeys(){
-		return transitionMap.keySet();
-	}
 
+
+	public boolean hasEdges() {
+		return transitionMap.size() >0;
+	}
+	
 	public void removePredecessor(PetrinetState petrinetState, StateChangeListener stateChangeListener) {
 		if (!predecessors.containsKey(petrinetState.getState()))
-				return;
-		
+			return;
+
 		List<Transition> transitions = transitionMap.get(petrinetState.getState() + getState());
-		
-		for (Transition t: transitions) {
+
+		if (transitions == null)//case when PetrinetState was its own successor/predecessor
+			return;
+
+		for (Transition t : transitions) {
 			if (stateChangeListener != null)
 				stateChangeListener.onRemoveEdge(petrinetState, this, t);
 		}
 		transitionMap.remove(petrinetState.getState() + getState());
-		
+
 		predecessors.remove(petrinetState.getState());
-		
+
 		petrinetState.removeSuccessor(this, null);
-		
+
 	}
 
 	public void removeSuccessor(PetrinetState petrinetState, StateChangeListener stateChangeListener) {
-	
+
 		if (!successors.containsKey(petrinetState.getState()))
 			return;
-		
+
 		List<Transition> transitions = transitionMap.get(getState() + petrinetState.getState());
+
+		if (transitions == null)//case when PetrinetState was its own successor/predecessor
+			return;
 		
-		for (Transition t: transitions) {
+		for (Transition t : transitions) {
 			if (stateChangeListener != null)
 				stateChangeListener.onRemoveEdge(this, petrinetState, t);
 		}
 		transitionMap.remove(getState() + petrinetState.getState());
-		
+
 		successors.remove(petrinetState.getState());
-		
+
 		petrinetState.removePredecessor(this, null);
 
-		
 	}
 
 	public int getPredecessorsSize() {
 		return predecessors.size();
 	}
-	
+
 	public int getSuccessorsSize() {
 		return successors.size();
 	}
 
+	public void removeAllPredecessors(StateChangeListener stateChangeListener) {
+		ArrayList<String> predecessorStrings = new ArrayList<String>();
+		
+		for (String s: predecessors.keySet()) 
+			predecessorStrings.add(s);
+		
+		for (String s: predecessorStrings)
+			removePredecessor(predecessors.get(s), stateChangeListener);
+		
+	}
+	public void removeAllSuccessors(StateChangeListener stateChangeListener) {
+		ArrayList<String> successorStrings = new ArrayList<String>();
+		
+		for (String s: successors.keySet())
+			successorStrings.add(s);
+		
+		for (String s: successorStrings)
+			removeSuccessor(successors.get(s), stateChangeListener);
+		
+	}
+
+//	public void print() {
+//		System.out.println("STATE: " + getState());
+//		System.out.println("PREDECESSORS: ");
+//		for (PetrinetState ps: predecessors)
+//			ps.print();
+//		
+//		System.out.println("SUCCESSORS:");
+//		for (PetrinetState ps: successors)
+//			ps.print();
+//		
+//		System.out.println("TRANSITION MAP:");
+//		
+//		for (String s : transitionMap.keySet())
+//			System.out.println(s);
+//			
+//	}
 }

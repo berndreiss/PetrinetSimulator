@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
@@ -29,7 +30,8 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 		textArea = new JTextArea();
-
+		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		
 		scrollPane = new JScrollPane(textArea);
 
 		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);

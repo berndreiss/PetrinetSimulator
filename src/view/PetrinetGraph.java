@@ -138,16 +138,10 @@ public class PetrinetGraph extends MultiGraph {
 
 			@Override
 			public void numberChanged(int newNumber) {
-				if (controller.getHeadless())
-					return;
-				
 				node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
 				Sprite sprite = spriteMan.getSprite("s" + p.getId());
 				sprite.setAttribute("ui.label",
 						"[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">");
-
-				// System.out.println(sprite.getLabel(sprite.getId()));
-
 			}
 		});
 

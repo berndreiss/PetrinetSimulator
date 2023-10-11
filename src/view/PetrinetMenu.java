@@ -41,7 +41,7 @@ public class PetrinetMenu extends JMenuBar {
 
 		reloadMenuItem.addActionListener(e -> controller.onReload());
 
-		analyseManyMenuItem.addActionListener(e -> controller.onAdd());
+		analyseManyMenuItem.addActionListener(e -> controller.onAnalyseMany());
 
 		closeMenuItem.addActionListener(e -> controller.onClose());
 

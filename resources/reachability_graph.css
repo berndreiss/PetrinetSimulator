@@ -163,6 +163,12 @@ edge {
 	*/
 }
 
+edge.highlight{
+	
+	fill-color: #0000ff;
+	size: 3px;
+}
+
 /*
 	Style-Angabe fuer ein Sprite, dass als Label für eine Kante benutzt wird
 */

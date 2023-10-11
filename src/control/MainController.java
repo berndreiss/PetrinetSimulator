@@ -1,12 +1,13 @@
 package control;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.filechooser.FileFilter;
 
 import view.MainFrame;
@@ -15,16 +16,20 @@ import view.PetrinetPanel;
 public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	private File lastDirectory;
-	private File currentFile;
 	private MainFrame parent;
 	
-	private PetrinetPanel petrinetPanel;
+	private PetrinetPanel currentPetrinetPanel;
 	
 	public MainController(MainFrame parent) {
 		this.parent = parent;
-		petrinetPanel = new PetrinetPanel(this, null, true);
-
-		parent.getSplitPane().setLeftComponent(petrinetPanel);
+		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
+		init();
+	}
+	
+	private void init() {
+		JPanel dummyPanel = new JPanel();
+		dummyPanel.setPreferredSize(new Dimension(getFrame().getWidth(), (int) (getFrame().getWidth()*MainFrame.GRAPH_PERCENT)));
+		parent.getSplitPane().setLeftComponent(dummyPanel);
 	}
 	
 	public MainFrame getFrame() {
@@ -33,15 +38,116 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	
 	private void setNewPanel(File file) {
 		parent.setStatusLabel(file.getName());
-		currentFile = file;
-		parent.getSplitPane().remove(petrinetPanel);
-		petrinetPanel = new PetrinetPanel(this, file);
-		parent.getSplitPane().setLeftComponent(petrinetPanel);
+		JSplitPane splitPane = parent.getSplitPane();
+		splitPane.remove(splitPane.getLeftComponent());
+		currentPetrinetPanel = new PetrinetPanel(this, file);
+		parent.getSplitPane().setLeftComponent(currentPetrinetPanel);
 	}
 	
 	@Override
 	public void onOpen() {
 		JFileChooser fileChooser = new JFileChooser();
+
+		setFileChosserFilter(fileChooser);
+		
+		fileChooser.setCurrentDirectory(lastDirectory);
+		int result = fileChooser.showOpenDialog(parent);
+
+		if (result == 0) {
+			File file = fileChooser.getSelectedFile();
+			setNewPanel(file);
+			lastDirectory = file.getParentFile();
+		}
+		
+	}
+
+	@Override
+	public void onReload() {
+		if (currentPetrinetPanel == null)
+			return;
+		setNewPanel(currentPetrinetPanel.getCurrentFile());
+	}
+
+	@Override
+	public void onAnalyseMany() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setMultiSelectionEnabled(true);
+
+		setFileChosserFilter(fileChooser);
+		
+		fileChooser.setCurrentDirectory(lastDirectory);
+
+		int result = fileChooser.showOpenDialog(parent);
+
+		
+		if (! (result == JFileChooser.APPROVE_OPTION))
+			return;
+		
+			
+		File[] files = fileChooser.getSelectedFiles();
+		
+		lastDirectory = files[0].getParentFile();
+		
+		String[][] results = new String[files.length][3];
+		
+		int counter = 0;
+		
+		for (File f: files) {
+			PetrinetController controller = new PetrinetController(f, true);
+			results[counter] = controller.analyse();
+			counter++;
+		}
+		parent.print(printResults(results));
+		
+	}
+	
+	private static String printResults(String[][] strings) {
+	    String[] header = {"File", " Finite ", " Nodes/Edges -- Path length; m, m'"};
+
+		int max1 = header[0].length(), max2 = header[1].length(), max3 = header[2].length();
+
+
+	    for (String[] s : strings) {
+	        max1 = Math.max(max1, s[0].length());
+	        max2 = Math.max(max2, s[1].length());
+	        max3 = Math.max(max3, s[2].length());
+	    }
+
+	    
+
+	    String format = "%-" + max1 + "s|%-" + max2 + "s|%-" + max3 + "s\n";
+
+	    StringBuilder sb = new StringBuilder();
+	    
+	    sb.append(formatStringForAnalysesOutput(header, format));
+	    
+	    header[0] = String.format("%-" + max1 + "s", " ").replace(' ', '-');
+	    header[1] = String.format("%-" + max2 + "s", " ").replace(' ', '-');
+	    header[2] = String.format("%-" + max3 + "s", " ").replace(' ', '-');
+
+	    sb.append(formatStringForAnalysesOutput(header, format));
+	    
+	    for (String[] s: strings)
+	        sb.append(formatStringForAnalysesOutput(s, format));
+	    
+	    sb.append("\n\n");
+	    return sb.toString();
+	}
+
+	private static String formatStringForAnalysesOutput(String[] strings, String format) {
+
+	    if (strings.length != 3) {
+	        if (strings.length > 3)
+	            System.out.println("String-Array is too long.");
+	        else
+	            System.out.println("String-Array is too short.");
+	        return null;
+	    }
+
+	    return String.format(format, strings[0], strings[1], strings[2]);
+	}
+
+	private void setFileChosserFilter(JFileChooser fileChooser) {
 		fileChooser.setFileFilter(new FileFilter() {
 
 			@Override
@@ -58,35 +164,11 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 			}
 		});
 
-		if (lastDirectory == null)
-			lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
-
-		fileChooser.setCurrentDirectory(lastDirectory);
-		int result = fileChooser.showOpenDialog(parent);
-
-		if (result == 0) {
-			File file = fileChooser.getSelectedFile();
-			setNewPanel(file);
-			lastDirectory = file.getParentFile();
-		}
-		
 	}
-
-	@Override
-	public void onReload() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAdd() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void onClose() {
-		// TODO Auto-generated method stub
+		currentPetrinetPanel = null;
+		init();
 	}
 
 	@Override
@@ -106,6 +188,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	@Override
 	public void onPrevious() {
 
+		if (currentPetrinetPanel == null)
+			return;
+		
 		File previousFile = getPreviousFile();
 		
 		if (previousFile != null)
@@ -115,6 +200,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onNext() {
+		if (currentPetrinetPanel == null)
+			return;
 		File nextFile = getNextFile();
 		
 		if (nextFile != null)
@@ -124,36 +211,37 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onRestart() {
-		petrinetPanel.resetPetrinet();
+		currentPetrinetPanel.resetPetrinet();
 	}
 
 
 	@Override
 	public void onPlus() {
-		petrinetPanel.incrementPlace();
-		parent.setStatusLabel("*" + currentFile.getName());
+		currentPetrinetPanel.incrementPlace();
+		parent.setStatusLabel("*" + currentPetrinetPanel.getCurrentFile().getName());
 	}
 
 
 	@Override
 	public void onMinus() {
 		
-		if (petrinetPanel.getController().getFileChanged())
-			parent.setStatusLabel("*" + currentFile.getName());
+		currentPetrinetPanel.decrementPlace();
+		
+		if (currentPetrinetPanel.getController().getFileChanged())
+			parent.setStatusLabel("*" + currentPetrinetPanel.getCurrentFile().getName());
 		
 	}
 
 
 	@Override
 	public void onReset() {
-		petrinetPanel.getController().resetReachabilityGraph();
+		currentPetrinetPanel.getController().resetReachabilityGraph();
 	}
 
 
 	@Override
 	public void onAnalyse() {
-		petrinetPanel.analyse();
-		parent.print(petrinetPanel.getResult());
+		currentPetrinetPanel.analyse();
 	}
 
 
@@ -183,6 +271,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	
 	
 	private File getPreviousFile() {
+		File currentFile = currentPetrinetPanel.getCurrentFile();
 		if (currentFile == null || !currentFile.exists())
 			return null;
 
@@ -210,6 +299,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	}
 
 	private File getNextFile() {
+		File currentFile = currentPetrinetPanel.getCurrentFile();
+		
 		if (currentFile == null || !currentFile.exists())
 			return null;
 

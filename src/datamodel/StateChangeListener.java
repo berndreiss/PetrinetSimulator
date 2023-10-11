@@ -2,8 +2,7 @@ package datamodel;
 
 public interface StateChangeListener {
 
-	void onSetCurrent(PetrinetState state);
-	void onSetInitial(PetrinetState state);
+	void onSetCurrent(PetrinetState state, boolean reset);
 	void onMarkInvalid(PetrinetState m, PetrinetState mMarked);
 	void onAdd(PetrinetState state, PetrinetState predecessor, Transition t);
 	void onRemove(PetrinetState state);

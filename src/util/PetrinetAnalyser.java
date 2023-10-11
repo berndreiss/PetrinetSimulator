@@ -1,5 +1,6 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,72 +17,164 @@ public class PetrinetAnalyser {
 	
 	private PetrinetController controller;
 	
-	private Set<String> handledSet;
+	private Petrinet petrinet;
 	
-	private PetrinetState originalState;
+	private ReachabilityGraphModel reachabilityGraphModel;
 	
-	private boolean invalidStateEncountered;
+	private boolean finite = true;
+	
+	private int edges;
+	private int nodes;
+	
+	private List<String> transitionsToMMarked;
+	private String m;
+	private String mMarked;
+
 	
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
-		this.handledSet = new HashSet<String>();
+		analyse();
+		if (!finite) {
+			updateReachabilityGraph();
+			m = reachabilityGraphModel.getInvalidState().getM().getState();
+			mMarked = reachabilityGraphModel.getInvalidState().getState();
+		}
 	}
 
 	
-	public boolean analyse() {
+	private boolean analyse() {
 		
+	
 		
+		reachabilityGraphModel = controller.getReachabilityGraphModel();
+		reachabilityGraphModel.reset();
+		petrinet = controller.getPetrinet();
 		
-		this.originalState = controller.getReachabilityGraphModel().getInitialState();
+		Set<PetrinetState> visited = new HashSet<PetrinetState>();
+		
+		return analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
+		
 
-		Petrinet initialPetrinet = controller.getPetrinet();
+	}
+	
+	private boolean analyseState(PetrinetState state, Set<PetrinetState> visited) {
+
+		if (visited.contains(state))
+			return true;
+
+		nodes++;
 		
-		ReachabilityGraphModel reachabilityGraphModel = controller.getReachabilityGraphModel();
+		visited.add(state);
+		petrinet.setState(state);
 		
-		List<String> transitionList = initialPetrinet.getActiveTransitions();
-		
-		for (String s: transitionList) {
-			initialPetrinet.fireTransition(s);
-			if (!controller.stateIsValid()) {
-				controller.resetPetrinet();
-				controller.updateReachabilityGraph();
+		for (Transition t: petrinet.getActiveTransitions()) {
+			petrinet.fireTransition(t.getId());
+			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
+			if (!stateValid) {
+				finite = false;
 				return false;
 			}
-			analyseState(reachabilityGraphModel.getCurrentState(), s);
-			if (!controller.stateIsValid()) {
-				controller.resetPetrinet();
-				controller.updateReachabilityGraph();
-				return false;
-			}
-			controller.resetPetrinet();
+			edges++;
+			analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
+			reachabilityGraphModel.setCurrentState(state);
+			petrinet.setState(state);
 			
 		}
-		controller.updateReachabilityGraph();
+		
 		return true;
 	}
 	
-	private void analyseState(PetrinetState petrinetState, String transition) {
-		String fireString = petrinetState.getState() + transition;
-		
-		if (handledSet.contains(fireString))
-			return;
-
-		handledSet.add(fireString);
-
-		Petrinet petrinet = controller.getPetrinet();
-		
-		List<String> transitionList = petrinet.getActiveTransitions();
-
-		
-		for (String s: transitionList) {
-			petrinet.fireTransition(s);
-			if (!controller.stateIsValid())
-				return;
-			analyseState(petrinetState, s);
-			controller.setState(petrinetState);
-			
-			
-		}
-		return;
+	public boolean isFinite() {
+		return finite;
 	}
+
+
+	public int getStateCount() {
+		return nodes;
+	}
+	
+	public int getEdgeCount() {
+		return edges;
+	}
+	
+	public String getM() {
+		return m;
+	}
+	
+	public String getMMarked() {
+		return mMarked;
+	}
+	
+	public List<String> getTransitionsToMMarked(){
+		return transitionsToMMarked;
+	}
+	
+	private void updateReachabilityGraph() {
+
+		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
+		if (invalidState != null) {
+
+			m = invalidState.getM().getState();
+			mMarked = invalidState.getState();
+			transitionsToMMarked = new ArrayList<String>();
+
+			List<PetrinetState> pathToM = invalidState.getPathToOtherState(invalidState.getM());
+
+			List<PetrinetState> pathToInitial = invalidState.getM()
+					.getPathToOtherState(reachabilityGraphModel.getInitialState());
+			PetrinetState currentState = reachabilityGraphModel.getInitialState();
+			PetrinetState initialState = reachabilityGraphModel.getInitialState();
+
+			ArrayList<Transition> transitionList = new ArrayList<Transition>();
+
+			Transition transition;
+
+			if (pathToInitial != null) {
+				for (PetrinetState nextState : pathToInitial) {
+
+					transition = currentState.getFirstSuccessorTransition(nextState);
+
+					transitionList.add(transition);
+
+					currentState = nextState;
+				}
+
+			}
+
+			if (initialState != invalidState.getM()) {
+				transition = currentState.getFirstSuccessorTransition(invalidState.getM());
+
+				transitionList.add(transition);
+
+				currentState = invalidState.getM();
+			}
+			if (pathToM != null) {
+				for (PetrinetState nextState : pathToM) {
+
+					transition = currentState.getFirstSuccessorTransition(nextState);
+					transitionsToMMarked.add(transition.getId());
+
+					transitionList.add(transition);
+
+					currentState = nextState;
+				}
+			}
+			transition = currentState.getFirstSuccessorTransition(invalidState);
+
+			if (transition != null)
+				transitionsToMMarked.add(transition.getId());
+
+			transitionList.add(transition);
+
+
+			reachabilityGraphModel.reset();
+			
+			for (Transition t : transitionList) {
+				if (t != null)
+					petrinet.fireTransition(t.getId());
+			}
+			return;
+		}
+	}
+
 }

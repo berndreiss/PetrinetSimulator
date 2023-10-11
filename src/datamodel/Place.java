@@ -12,19 +12,9 @@ public class Place extends PetrinetElement {
 	
 	private NumberOfTokensListener numberOfTokensListener;
 	
-	protected Map<String, Transition> inputs = new HashMap<String, Transition>();//set of places that serve as input
 	protected Map<String, Transition> outputs = new HashMap<String, Transition>();//set of places that serve as output
 
-	public Place(String id, String name, int initialTokens) {
-		this.id = id;
-		this.name = name;
-		this.numberOfTokens = initialTokens;
-	}
-	
-	public Place(String id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+
 
 	public Place(String id) {
 		this.id = id;
@@ -53,7 +43,6 @@ public class Place extends PetrinetElement {
 		this.numberOfTokens = numberOfTokens;
 
 		if (numberOfTokens == 0) {
-
 			for (String s: outputs.keySet()) {
 				Transition t = outputs.get(s);
 				t.updateActivationStatus();
@@ -61,15 +50,13 @@ public class Place extends PetrinetElement {
 		}
 		
 		if (hadNoTokens && numberOfTokens > 0) {
-			
-			
 			for (String s: outputs.keySet()) {
 				Transition t = outputs.get(s);
 				t.updateActivationStatus();
 
 			}
 		}
-		
+
 		if (numberOfTokensListener != null)
 			numberOfTokensListener.numberChanged(numberOfTokens);
 		
@@ -90,23 +77,15 @@ public class Place extends PetrinetElement {
 	 * Decrements the number of tokens by 1.
 	 * @throws OutOfTokensException Throws Exception when there are no tokens left.
 	 */
-	protected void decrementTokens(){
+	protected boolean decrementTokens(){
 		
 		if (numberOfTokens <= 0) {
 			System.out.println("There are no tokens in place with ID \"" + id + "\"");
-			return;
+			return false;
 		}
 		
 		setNumberOfTokens(numberOfTokens-1);
-
-	}
-
-	/**
-	 * Adds a place to the set of input places (preset).
-	 * @param p {@link Place} to be added as an Input.
-	 */
-	protected void addInput(Transition t) {
-		inputs.put(t.id, t);
+		return true;
 	}
 
 	/**
@@ -117,13 +96,7 @@ public class Place extends PetrinetElement {
 		outputs.put(t.id,t);
 	}
 
-	public Map<String, Transition> getInputs(){
-		return inputs;
-	}
 	
-	public Map<String, Transition> getOutputs(){
-		return outputs;
-	}
 	
 
 }

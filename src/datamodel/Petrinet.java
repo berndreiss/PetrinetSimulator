@@ -36,12 +36,12 @@ public class Petrinet {
 	}
 
 	
-	public List<String> getActiveTransitions(){
-		ArrayList<String> activeTransitions = new ArrayList<String>();
+	public Iterable<Transition> getActiveTransitions(){
+		ArrayList<Transition> activeTransitions = new ArrayList<Transition>();
 		
 		for (Transition t : getTransitions())
 			if (t.isActive())
-				activeTransitions.add(t.getId());
+				activeTransitions.add(t);
 		
 		return activeTransitions;
 	}
@@ -98,23 +98,23 @@ public class Petrinet {
 	}
 
 	public void addInput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getId())) {
+		if (!places.containsKey(p.getId())) {//needs to be here in case arcs are added before places from files
 			addPlace(p);
 			if (petrinetChangeListener != null)
 				petrinetChangeListener.onChanged(this);
 		}
-		if (!transitions.containsKey(t.getId()))
+		if (!transitions.containsKey(t.getId()))//needs to be here in case arcs are added before places from files
 			addTransition(t);
 		t.addInput(p);
 	}
 
 	public void addOutput(Place p, Transition t) throws DuplicateIdException {
-		if (!places.containsKey(p.getId())) {
+		if (!places.containsKey(p.getId())) {//needs to be here in case arcs are added before places from files
 			addPlace(p);
 			if (petrinetChangeListener != null)
 				petrinetChangeListener.onChanged(this);
 		}
-		if (!transitions.containsKey(t.getId()))
+		if (!transitions.containsKey(t.getId()))//needs to be here in case arcs are added before places from files
 			addTransition(t);
 		t.addOutput(p);
 	}
@@ -184,18 +184,21 @@ public class Petrinet {
 	}
 
 	public void incrementPlace(String markedPlace) {
-		if (!places.containsKey(markedPlace))
+		if (!places.containsKey(markedPlace))//should not happen -> here for safety reasons
 			return;
 		Place p = places.get(markedPlace);
 		p.incrementTokens();
-
+		if (petrinetChangeListener != null)
+			petrinetChangeListener.onChanged(this);
 	}
 
 	public void decrementPlace(String markedPlace) {
-		if (!places.containsKey(markedPlace))
+		if (!places.containsKey(markedPlace))//should not happen -> here for safety reasons
 			return;
 		Place p = places.get(markedPlace);
-		p.decrementTokens();		
+		boolean decremented = p.decrementTokens();	
+		if (petrinetChangeListener != null && decremented)
+			petrinetChangeListener.onChanged(this);
 
 	}
 	
