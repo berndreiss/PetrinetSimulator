@@ -13,7 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import view.MainFrame;
 import view.PetrinetPanel;
 
-public class MainController implements MenuInterface, PetrinetToolbarInterface{
+public class MainController implements MenuInterface, PetrinetToolbarInterface, EditorToolbarInterface{
 
 	private File lastDirectory;
 	private MainFrame parent;
@@ -45,6 +45,11 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	}
 	
 	@Override
+	public void onNew() {
+		//TODO implement
+	}
+	
+	@Override
 	public void onOpen() {
 		JFileChooser fileChooser = new JFileChooser();
 
@@ -68,6 +73,15 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 		setNewPanel(currentPetrinetPanel.getCurrentFile());
 	}
 
+	@Override
+	public void onSave() {
+		//TODO implement
+	}
+	
+	@Override
+	public void onSaveAs() {
+		//TODO implement
+	}
 	@Override
 	public void onAnalyseMany() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -175,6 +189,16 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 	public void onExit() {
 		System.exit(0);
 	}
+	
+	@Override
+	public void onOpenEditor() {
+		//TODO implement
+	}
+
+	@Override
+	public void onCloseEditor() {
+		//TODO implement
+	}
 
 	@Override
 	public void onInfo() {
@@ -211,12 +235,18 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onRestart() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		currentPetrinetPanel.resetPetrinet();
 	}
 
 
 	@Override
 	public void onPlus() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		currentPetrinetPanel.incrementPlace();
 		parent.setStatusLabel("*" + currentPetrinetPanel.getCurrentFile().getName());
 	}
@@ -224,6 +254,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onMinus() {
+		if (currentPetrinetPanel == null)
+			return;
 		
 		currentPetrinetPanel.decrementPlace();
 		
@@ -235,12 +267,18 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onReset() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		currentPetrinetPanel.getController().resetReachabilityGraph();
 	}
 
 
 	@Override
 	public void onAnalyse() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		currentPetrinetPanel.analyse();
 	}
 
@@ -253,6 +291,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onUndo() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		// TODO Auto-generated method stub
 		
 	}
@@ -260,6 +301,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 
 	@Override
 	public void onRedo() {
+		if (currentPetrinetPanel == null)
+			return;
+
 		// TODO Auto-generated method stub
 		
 	}
@@ -325,6 +369,37 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface{
 		File nextFile = tree.get(nextFileString);
 		return nextFile;
 	}
+
+	@Override
+	public void onAddPlace() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAddTransition() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAddEdge() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAddLabel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRemoveComponent() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import util.IterableHashMap;
+
 /**
  * Class representing transitions in petri nets. Every transition has a set of
  * places (see {@link Place}) serve as input (preset) and a set of places (see
@@ -16,8 +18,8 @@ import java.util.Set;
  */
 public class Transition extends PetrinetElement {
 
-	private Map<String, Place> inputs;// set of places that serve as input
-	private Map<String, Place> outputs;// set of places that serve as output
+	private IterableHashMap<String, Place> inputs;// set of places that serve as input
+	private IterableHashMap<String, Place> outputs;// set of places that serve as output
 
 	private boolean active;//TODO change all occurrences to "activated"
 	private TransitionActiveListener transitionActiveListener;
@@ -41,7 +43,7 @@ public class Transition extends PetrinetElement {
 	 * @param name Name of the transition.
 	 */
 	public Transition(String id, String name) {
-		this(id, name, new HashMap<String, Place>(), new HashMap<String, Place>());
+		this(id, name, new IterableHashMap<String, Place>(), new IterableHashMap<String, Place>());
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class Transition extends PetrinetElement {
 	 * @param preset  {@link Set} of initial input places.
 	 * @param postset {@link Set} of initial output places.
 	 */
-	public Transition(String id, String name, Map<String, Place> inputs, Map<String, Place> outputs) {
+	public Transition(String id, String name, IterableHashMap<String, Place> inputs, IterableHashMap<String, Place> outputs) {
 		this.id = id;
 		this.name = name;
 		this.inputs = inputs;
@@ -145,14 +147,57 @@ public class Transition extends PetrinetElement {
 	 */
 	protected void addOutput(Place p) {
 		outputs.put(p.id, p);
+		p.inputs.put(this.id, this);
 	}
 
-	public Map<String, Place> getInputs() {
+	public Iterable<Place> getInputs() {
 		return inputs;
 	}
 
-	public Map<String, Place> getOutputs() {
+	public Iterable<Place> getOutputs() {
 		return outputs;
 	}
 
+	public void remove(PetrinetComponentChangedListener petrinetComponentChangedListener) {
+		
+		ArrayList<String> inputStrings = new ArrayList<String>();
+		
+		for (Place p: inputs)
+			inputStrings.add(p.getId());
+		
+		for(String s: inputStrings) {
+			removeInput(inputs.get(s));
+			if (petrinetComponentChangedListener != null)
+				petrinetComponentChangedListener.onEdgeRemoved(s + getId());
+		}
+		
+		ArrayList<String> outputStrings = new ArrayList<String>();
+		
+		for (Place p: outputs)
+			outputStrings.add(p.getId());
+
+		for(String s: outputStrings) {
+			removeOutput(outputs.get(s));
+			if (petrinetComponentChangedListener != null)
+				petrinetComponentChangedListener.onEdgeRemoved(getId() + s);
+		}
+
+	}
+
+	public void removeInput(Place p) {
+		if (!inputs.containsKey(p.getId()))
+			return;
+		inputs.remove(p.getId());
+		p.removeOutput(this);
+		
+	}
+	
+	public void removeOutput(Place p) {
+		if (!outputs.containsKey(p.getId()))
+			return;
+		outputs.remove(p.getId());
+		p.removeInput(this);
+	}
+	
+	
 }

@@ -186,7 +186,6 @@ public class PetrinetState {
 		return null;
 	}
 
-
 	public boolean hasEdges() {
 		return transitionMap.size() >0;
 	}

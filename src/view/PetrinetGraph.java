@@ -17,6 +17,8 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.camera.Camera;
 
 import datamodel.NumberOfTokensListener;
+import datamodel.Petrinet;
+import datamodel.PetrinetComponentChangedListener;
 import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
@@ -71,125 +73,148 @@ public class PetrinetGraph extends MultiGraph {
 	 */
 	private Sprite spriteMark;
 
-	private PetrinetController controller;
 
 	private int padding;
 
 	private String markedNode;
 
-	private ViewPanel viewPanel;
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
 	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach C.
 	 */
-	public PetrinetGraph(PetrinetController controller) {
+	public PetrinetGraph(Petrinet petrinet) {
 		super("Beispiel");
-		this.controller = controller;
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
 
-		SpringBox layout = new SpringBox(false);
-
+		petrinet.setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
+			
+			@Override
+			public void onTransitionStateChanged(Transition transition) {
+				Node node = getNode(transition.getId());
+				
+				if (node == null)
+					return;
+				setTransition(node, transition.isActive());
+			}
+			
+			@Override
+			public void onSetPetrinetElementName(PetrinetElement element) {
+				Sprite sprite = spriteMan.getSprite("s" + element.getId());
+				if (sprite == null)
+					return;
+				sprite.setAttribute("ui.label", getElementLabel(element));
+			}
+			
+			@Override
+			public void onPlaceTokenCountChanged(Place place) {
+				Node node = getNode(place.getId());
+				if (node == null)
+					return;
+				node.setAttribute("ui.label", placeTokenLabel(place.getNumberOfTokens()));
+			}
+			
+			@Override
+			public void onPetrinetElementSetCoordinates(PetrinetElement element, float x, float y) {
+				Node node = getNode(element.getId());
+				if (node == null)
+					return;
+				
+				node.setAttribute("xy", x,y);
+			}
+			
+			@Override
+			public void onPetrinetElementRemoved(PetrinetElement element) {
+				Node node = removeNode(element.getId());
+				
+				if (node == null)
+					return;
+				spriteMan.removeSprite("s" + element.getId());
+				if (markedNode.equals(element.getId()))
+					markedNode = null;
+				
+			}
+			
+			@Override
+			public void onPetrinetElementAdded(PetrinetElement element) {
+				if (element instanceof Place)
+					addPlace((Place) element);
+				if (element instanceof Transition)
+					addTransition((Transition) element);
+				
+			}
+			
+			@Override
+			public void onEdgeRemoved(String edge) {
+				Edge e = removeEdge(edge);
+				if (e== null)
+					return;
+				spriteMan.removeSprite("s" + edge);
+			}
+			
+			@Override
+			public void onEdgeAdded(PetrinetElement source, PetrinetElement target, String id) {
+				Node sourceNode = getNode(source.getId());
+				Node targetNode = getNode(target.getId());
+				
+				if (sourceNode == null || targetNode == null)
+					return;
+				
+				addPetrinetEdge(sourceNode, targetNode, id);
+			}
+		});
+		
 	}
 	
-	public void setViewPanel(ViewPanel viewPanel) {
-		this.viewPanel = viewPanel;
-	}
 
-	public SpriteManager getSpriteManager() {
-		return spriteMan;
-	}
 
-	private Node addPetrinetElement(PetrinetElement e, String spriteAddition) {
-		if (controller.getHeadless())
-			return null;
+	private Node addPetrinetElement(PetrinetElement e) {
 
 		Node node = this.addNode(e.getId());
 		node.setAttribute("xy", e.getX(), e.getY());
 
 		Sprite sprite = spriteMan.addSprite("s" + e.getId());
 		sprite.setAttribute("ui.class", "nodeLabel");
-		sprite.setAttribute("ui.label", getElementLabel(e) + spriteAddition);
+		sprite.setAttribute("ui.label", getElementLabel(e));
 		sprite.attachToNode(node.getId());
 		sprite.setPosition(0.5);
 
 		return node;
 	}
 
-	public Node addPlace(Place p) {
-		if (controller.getHeadless())
-			return null;
+	private Node addPlace(Place p) {
 
 		// return the node if it already exists
 		if (this.getNode(p.getId()) != null)
 			return this.getNode(p.getId());
 
-		Node node = addPetrinetElement(p, " <" + p.getNumberOfTokens() + ">");
+		Node node = addPetrinetElement(p);
 		node.setAttribute("ui.class", "place");
 
 		String label = placeTokenLabel(p.getNumberOfTokens());
 		node.setAttribute("ui.label", label);
 
-		p.setNumberOfTokensListener(new NumberOfTokensListener() {
-
-			@Override
-			public void numberChanged(int newNumber) {
-				node.setAttribute("ui.label", placeTokenLabel(p.getNumberOfTokens()));
-				Sprite sprite = spriteMan.getSprite("s" + p.getId());
-				sprite.setAttribute("ui.label",
-						"[" + p.getId() + "] " + p.getName() + " <" + p.getNumberOfTokens() + ">");
-			}
-		});
-
 		return node;
 	}
 
-	public Node addTransition(Transition t) {
-		if (controller.getHeadless())
-			return null;
+	private Node addTransition(Transition t) {
 
 		if (this.getNode(t.getId()) != null)
 			return this.getNode(t.getId());
 
-		Node node = this.addPetrinetElement(t, "");
+		Node node = this.addPetrinetElement(t);
 
 		setTransition(node, t.isActive());
 
-		Map<String, Place> preset = t.getInputs();
-		Map<String, Place> postset = t.getOutputs();
-
-		for (String s : preset.keySet()) {
-			Place p = (Place) preset.get(s);
-			Node pNode = this.addPlace(p);
-			addEdge(p.getId() + t.getId(), pNode, node);
-		}
-		for (String s : postset.keySet()) {
-			Place p = (Place) postset.get(s);
-			Node pNode = this.addPlace(p);
-			addEdge(t.getId() + p.getId(), node, pNode);
-		}
-
-		t.setTransitionActiveListener(new TransitionActiveListener() {
-			
-			@Override
-			public void onStateChanged(boolean active) {
-				if (controller.getHeadless())
-					return;
-
-				setTransition(node, active);
-			}
-		});
 		return node;
 
 	}
 
 	private void setTransition(Node node, boolean active) {
-		if (controller.getHeadless())
-			return;
 
 		if (active)
 			node.setAttribute("ui.class", "transition_active");
@@ -198,32 +223,21 @@ public class PetrinetGraph extends MultiGraph {
 
 	}
 
-	public Edge addEdge(String name, Node a, Node b) {
-		if (controller.getHeadless())
-			return null;
+	private Edge addPetrinetEdge(Node a, Node b, String id) {
 
+		String name = a.getId() + b.getId();
 		Edge edge = this.addEdge(name, a, b, true);
 
 //		Edge edge1 = this.addEdge(name+"1", a, b, true);
 		Sprite sprite = spriteMan.addSprite("s" + name);
 		sprite.setAttribute("ui.class", "edgeLabel");
-		sprite.setAttribute("ui.label", "[" + controller.getPetrinet().getOriginalArcId(name) + "]");
+		sprite.setAttribute("ui.label", "[" + id + "]");
 		sprite.attachToEdge(name);
 		sprite.setPosition(0.5);
 
 		return edge;
 	}
 
-	/**
-	 * Liefert einen Text zu einem Knoten, der für die Ausgabe verwendet wird.
-	 * 
-	 * @param id Id des Knotens, zu dem der Text ermittelt werden soll
-	 * @return Ausgabe-Text zu einem Knoten
-	 */
-	public String getOutputText(String id) {
-		Node node = this.getNode(id);
-		return new String("Der Knoten \"" + node.getAttribute("ui.label") + "\" hat die ID \"" + node.getId() + "\"");
-	}
 
 	/**
 	 * Das Hervorheben des Knotens wegnehmen oder setzen.
@@ -231,8 +245,6 @@ public class PetrinetGraph extends MultiGraph {
 	 * @param id Id des Knotens, bei dem das Hervorheben getauscht werden soll
 	 */
 	public void toggleNodeHighlight(String id) {
-		if (controller.getHeadless())
-			return;
 
 		Node node = this.getNode(id);
 
@@ -249,8 +261,6 @@ public class PetrinetGraph extends MultiGraph {
 	 * @param id Id des angeklickten Knotens
 	 */
 	public void markLastClickedNode(String id) {
-		if (controller.getHeadless())
-			return;
 
 		if (spriteMark == null) {
 			// Sprite erzeugen, das zur Markierung des zuletzt angeklickten Knotens dient
@@ -293,22 +303,24 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public String getMarkedNode() {
-		if (controller.getHeadless())
-			return null;
 
 		return markedNode;
 	}
 
 	public void reset() {
-		if (controller.getHeadless())
-			return;
 
 		toggleNodeMark(null);
 
 	}
 
 	public static String getElementLabel(PetrinetElement e) {
-		return "[" + e.getId() + "] " + e.getName();
+		if (e.getName() == null)
+			return "";
+		String base = "[" + e.getId() + "] " + e.getName();
+		if (e instanceof Place)
+			return base + " <" + ((Place) e).getNumberOfTokens() + ">";
+		
+		return base;
 
 	}
 

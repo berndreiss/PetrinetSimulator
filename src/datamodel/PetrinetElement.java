@@ -59,6 +59,8 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 		
 		return 1;
 	}
+
+
 	
 	
 	

@@ -6,7 +6,7 @@
 	Style-Angabe fuer einen Knoten
 */
 graph {
-	padding: 100px;
+	padding: 50px;
 }
 
 node {
@@ -165,7 +165,7 @@ edge {
 
 edge.highlight{
 	
-	fill-color: #0000ff;
+	fill-color: #000000;
 	size: 3px;
 }
 

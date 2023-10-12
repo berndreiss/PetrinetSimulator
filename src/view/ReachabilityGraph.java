@@ -168,8 +168,9 @@ public class ReachabilityGraph extends MultiGraph {
 		}
 		newEdge.setAttribute("ui.class", "highlight");
 		
-		if (currentEdge != null)
+		if (currentEdge != null && currentEdge != newEdge)
 			currentEdge.setAttribute("ui.class", "edge");
+		
 		currentEdge = newEdge;
 
 		return node;

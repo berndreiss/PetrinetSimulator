@@ -45,16 +45,23 @@ public class PetrinetToolbar extends JToolBar {
 		JButton clearTextButton = makeToolbarButton(ToolbarImage.CLEAR_TEXT, e -> controller.onClear(), "Clear text area", "clear");
 		
 		JButton undoButton = makeToolbarButton(ToolbarImage.UNDO, e->controller.onUndo(), "Undo last step", "undo");
-
+		
+		JButton redoButton = makeToolbarButton(ToolbarImage.REDO, e->controller.onRedo(), "Redo last step", "redo");
+		
+		JButton openEditButton = makeToolbarButton(ToolbarImage.EDITOR, e->controller.onOpenEditor(), "Open Editor", "editor");
+		
 		this.add(previousButton);
 		this.add(nextButton);
 		this.add(analyseButton);
 		this.add(restartButton);
+		this.add(resetButton);
 		this.add(plusButton);
 		this.add(minusButton);
-		this.add(resetButton);
 		this.add(clearTextButton);
 		this.add(undoButton);
+		this.add(redoButton);
+		this.add(openEditButton);
+		
 	}
 
 	private JButton makeToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText,
@@ -108,7 +115,6 @@ public class PetrinetToolbar extends JToolBar {
 			@Override
 			public void mouseExited(MouseEvent me) {
 				ToolTipManager.sharedInstance().setEnabled(false);
-//				controller.getFrame().updateSplitPane(controller);
 			}
 		});
 		return button;
@@ -117,7 +123,7 @@ public class PetrinetToolbar extends JToolBar {
 
 	private enum ToolbarImage {
 		ANALYSE("stats"), RESTART("restart"), RESET("delete"), PLUS("plus"), MINUS("minus"), LEFT("left"), RIGHT("right"),
-		UNDO("undo"), CLEAR_TEXT("input");
+		UNDO("undo"), REDO("redo"),  CLEAR_TEXT("input"), EDITOR("edit");
 
 		private String name;
 

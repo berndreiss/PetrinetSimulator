@@ -38,6 +38,7 @@ public class PetrinetAnalyser {
 			updateReachabilityGraph();
 			m = reachabilityGraphModel.getInvalidState().getM().getState();
 			mMarked = reachabilityGraphModel.getInvalidState().getState();
+			controller.resetPetrinet();
 		}
 	}
 

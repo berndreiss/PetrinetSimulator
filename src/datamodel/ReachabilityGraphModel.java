@@ -21,10 +21,10 @@ public class ReachabilityGraphModel {
 
 	private StateChangeListener stateChangeListener;
 
-	public ReachabilityGraphModel(PetrinetController controller) {
+	public ReachabilityGraphModel(Petrinet petrinet) {
 
 		petrinetStates = new IterableHashMap<String, PetrinetState>();
-		addNewState(controller.getPetrinet(), null);
+		addNewState(petrinet, null);
 	}
 
 	public Iterable<PetrinetState> getStates() {
@@ -45,11 +45,17 @@ public class ReachabilityGraphModel {
 
 	public void setCurrentState(PetrinetState state) {
 		setNewCurrentState(petrinetStates.get(state.getState()), true);
-		
+
 	}
 
 	public PetrinetState addNewState(Petrinet petrinet, Transition t) {
 
+		if (petrinet == null) {
+			if (initialState != null) {
+				initialState = null;
+			}
+			return null;
+		}
 		PetrinetState petrinetState;
 		String petrinetStateString = petrinet.getStateString();
 
@@ -74,7 +80,7 @@ public class ReachabilityGraphModel {
 			stateChangeListener.onAdd(petrinetState, currentState, t);
 
 		setNewCurrentState(petrinetState, false);
-
+		checkIfCurrentStateIsBackwardsValid();
 		return petrinetState;
 	}
 
@@ -155,8 +161,7 @@ public class ReachabilityGraphModel {
 				initialState.removeAllPredecessors(stateChangeListener);
 			return;
 		}
-			
-		
+
 		for (PetrinetState ps : petrinetStates) {
 			ps.removeAllPredecessors(stateChangeListener);
 			ps.removeAllSuccessors(stateChangeListener);
@@ -169,12 +174,12 @@ public class ReachabilityGraphModel {
 		if (petrinet != null) {
 			addNewState(petrinet, null);
 		} else {
-
-			petrinetStates.put(initialState.getState(), initialState);
+			if (initialState != null) {
+				petrinetStates.put(initialState.getState(), initialState);
 //			stateChangeListener.onSetInitial(initialState);
-			setCurrentState(initialState);
+				setCurrentState(initialState);
+			}
 		}
-
 	}
 
 	private void removeStateFromGraph(PetrinetState ps) {
@@ -185,7 +190,7 @@ public class ReachabilityGraphModel {
 	public void removeState(PetrinetState state) {
 		if (currentState == state)
 			currentState = null;
-		
+
 		if (state.hasEdges()) {
 			state.removeAllPredecessors(stateChangeListener);
 			if (state != initialState)

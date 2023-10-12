@@ -2,6 +2,10 @@ package control;
 
 public interface PetrinetToolbarInterface {
 
+	void onOpen();
+	
+	void onSave();
+	
 	void onPrevious();
 	
 	void onNext();
@@ -23,4 +27,6 @@ public interface PetrinetToolbarInterface {
 	void onRedo();
 
 	void onSetDefault();
+	
+	void onOpenEditor();
 }
