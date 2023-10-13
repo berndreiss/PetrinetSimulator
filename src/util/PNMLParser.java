@@ -3,11 +3,8 @@ package util;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import datamodel.DuplicateIdException;
 import datamodel.Petrinet;
-import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
 import propra.pnml.PNMLWopedParser;
@@ -27,20 +24,12 @@ public class PNMLParser extends PNMLWopedParser {
 
 	@Override
 	public void newTransition(final String id) {
-		try {
 			petrinet.addTransition(new Transition(id));
-		} catch (DuplicateIdException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
 	public void newPlace(final String id) {
-		try {
 			petrinet.addPlace(new Place(id));
-		} catch (DuplicateIdException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -52,7 +41,7 @@ public class PNMLParser extends PNMLWopedParser {
 		float xF = Float.parseFloat(x);
 		float yF = Float.parseFloat(y);
 
-		petrinet.setCoordinates(id, xF, yF);
+		petrinet.setCoordinates(id, xF, -yF);
 
 	}
 
@@ -78,24 +67,10 @@ public class PNMLParser extends PNMLWopedParser {
 			String source = a.getSource();
 			String target = a.getTarget();
 
-			petrinet.addOriginalArcId(source, target, a.getId());
-
-			Transition transition;
-			Place place;
-
 			if (petrinet.getTransition(source) != null) {
-				try {
 					petrinet.addOutput(petrinet.getPlace(target), petrinet.getTransition(source), a.getId());
-				} catch (DuplicateIdException e) {
-					e.printStackTrace();
-				}
-				;
 			} else {
-				try {
 					petrinet.addInput(petrinet.getPlace(source), petrinet.getTransition(target), a.getId());
-				} catch (DuplicateIdException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 

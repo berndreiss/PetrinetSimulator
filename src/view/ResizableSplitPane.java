@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -10,15 +9,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.graphstream.ui.swing_viewer.ViewPanel;
 
-import control.PetrinetController;
 
 public class ResizableSplitPane extends JSplitPane {
 
+	private static final long serialVersionUID = 1L;
 	private double defaultDividerRatio = 0.5;
 	private JFrame parent;
-	private JSplitPane container;
 	private Dimension preferredSize;
 
 	public ResizableSplitPane(JFrame parent, int splitOrientation) {

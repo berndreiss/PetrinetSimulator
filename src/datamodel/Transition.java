@@ -1,13 +1,9 @@
 package datamodel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import util.IterableHashMap;
+import util.IterableMap;
 
 /**
  * Class representing transitions in petri nets. Every transition has a set of
@@ -18,8 +14,8 @@ import util.IterableHashMap;
  */
 public class Transition extends PetrinetElement {
 
-	private IterableHashMap<String, Place> inputs;// set of places that serve as input
-	private IterableHashMap<String, Place> outputs;// set of places that serve as output
+	private IterableMap<String, Place> inputs;// set of places that serve as input
+	private IterableMap<String, Place> outputs;// set of places that serve as output
 
 	private boolean active;//TODO change all occurrences to "activated"
 	private TransitionActiveListener transitionActiveListener;
@@ -43,7 +39,7 @@ public class Transition extends PetrinetElement {
 	 * @param name Name of the transition.
 	 */
 	public Transition(String id, String name) {
-		this(id, name, new IterableHashMap<String, Place>(), new IterableHashMap<String, Place>());
+		this(id, name, new IterableMap<String, Place>(), new IterableMap<String, Place>());
 	}
 
 	/**
@@ -55,7 +51,7 @@ public class Transition extends PetrinetElement {
 	 * @param preset  {@link Set} of initial input places.
 	 * @param postset {@link Set} of initial output places.
 	 */
-	public Transition(String id, String name, IterableHashMap<String, Place> inputs, IterableHashMap<String, Place> outputs) {
+	public Transition(String id, String name, IterableMap<String, Place> inputs, IterableMap<String, Place> outputs) {
 		this.id = id;
 		this.name = name;
 		this.inputs = inputs;
@@ -106,7 +102,6 @@ public class Transition extends PetrinetElement {
 	// returns false if one of the places in the input does not have tokens
 	// returns true otherwise
 	private boolean checkActive() {
-
 		if (inputs.isEmpty())
 			return true;
 
@@ -124,8 +119,11 @@ public class Transition extends PetrinetElement {
 	 * @param p {@link Place} to be added as an Input.
 	 */
 	protected void addInput(Place p) {
+		
+		if (inputs.containsKey(p.getId()))
+			return;
 		inputs.put(p.id, p);
-		p.outputs.put(this.id, this);
+		p.addOutput(this);
 		setActive(checkActive());
 
 	}
@@ -146,8 +144,10 @@ public class Transition extends PetrinetElement {
 	 * @param p {@link Place} to be added as an Output.
 	 */
 	protected void addOutput(Place p) {
+		if (outputs.containsKey(p.getId()))
+			return;
 		outputs.put(p.id, p);
-		p.inputs.put(this.id, this);
+		p.addInput(this);
 	}
 
 	public Iterable<Place> getInputs() {
@@ -156,32 +156,6 @@ public class Transition extends PetrinetElement {
 
 	public Iterable<Place> getOutputs() {
 		return outputs;
-	}
-
-	public void remove(PetrinetComponentChangedListener petrinetComponentChangedListener) {
-		
-		ArrayList<String> inputStrings = new ArrayList<String>();
-		
-		for (Place p: inputs)
-			inputStrings.add(p.getId());
-		
-		for(String s: inputStrings) {
-			removeInput(inputs.get(s));
-			if (petrinetComponentChangedListener != null)
-				petrinetComponentChangedListener.onEdgeRemoved(s + getId());
-		}
-		
-		ArrayList<String> outputStrings = new ArrayList<String>();
-		
-		for (Place p: outputs)
-			outputStrings.add(p.getId());
-
-		for(String s: outputStrings) {
-			removeOutput(outputs.get(s));
-			if (petrinetComponentChangedListener != null)
-				petrinetComponentChangedListener.onEdgeRemoved(getId() + s);
-		}
-
 	}
 
 	public void removeInput(Place p) {

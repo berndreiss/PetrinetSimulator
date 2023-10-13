@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import util.IterableHashMap;
+import util.IterableMap;
 
 public class PetrinetState {
 
@@ -17,16 +16,16 @@ public class PetrinetState {
 
 	private PetrinetState m;
 
-	private IterableHashMap<String, PetrinetState> predecessors;
-	private IterableHashMap<String, PetrinetState> successors;
+	private IterableMap<String, PetrinetState> predecessors;
+	private IterableMap<String, PetrinetState> successors;
 
 	private HashMap<String, List<Transition>> transitionMap;
 
 	public PetrinetState(Petrinet petrinet) {
 
 		transitionMap = new HashMap<String, List<Transition>>();
-		predecessors = new IterableHashMap<String, PetrinetState>();
-		successors = new IterableHashMap<String, PetrinetState>();
+		predecessors = new IterableMap<String, PetrinetState>();
+		successors = new IterableMap<String, PetrinetState>();
 		placeTokens = new ArrayList<Integer>();
 
 		for (Place p : petrinet.getPlaces()) {

@@ -42,67 +42,67 @@ public class PetrinetPanel extends JPanel {
 	}
 
 
-	public void repaintGraphs(int i) {
-		if (i == 0) {
-			graphSplitPane.getLeftComponent().repaint();
-			return;
-		}
-		if (i == 1) {
-			graphSplitPane.getRightComponent().repaint();
-			return;
-		}
-		graphSplitPane.getLeftComponent().repaint();
-		graphSplitPane.getRightComponent().repaint();
+//	public void repaintGraphs(int i) {
+//		if (i == 0) {
+//			graphSplitPane.getLeftComponent().repaint();
+//			return;
+//		}
+//		if (i == 1) {
+//			graphSplitPane.getRightComponent().repaint();
+//			return;
+//		}
+//		graphSplitPane.getLeftComponent().repaint();
+//		graphSplitPane.getRightComponent().repaint();
+//
+//	}
 
-	}
-
-	public JSplitPane getGraphPane() {
-		return graphSplitPane;
-	}
-	
-
-
-	public void incrementPlace() {
-		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
-
-		if (markedPlace == null)
-			return;
-
-		controller.incrementPlace(markedPlace);
-
-	}
-
-	public void decrementPlace() {
-
-		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
-
-		if (markedPlace == null)
-			return;
-
-		controller.decrementPlace(markedPlace);
+//	public JSplitPane getGraphPane() {
+//		return graphSplitPane;
+//	}
+//	
 
 
-	}
+//	public void incrementPlace() {
+//		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
+//
+//		if (markedPlace == null)
+//			return;
+//
+//		controller.incrementPlace(markedPlace);
+//
+//	}
 
-	public void resetPetrinet() {
-		controller.resetPetrinet();
-	}
+//	public void decrementPlace() {
+//
+//		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
+//
+//		if (markedPlace == null)
+//			return;
+//
+//		controller.decrementPlace(markedPlace);
+//
+//
+//	}
+
+//	public void resetPetrinet() {
+//		controller.resetPetrinet();
+//	}
 
 	public PetrinetController getController() {
 		return controller;
 	}
 
-	public String[] analyse() {
-		return controller.analyse();
-		
-	}
+//	public String[] analyse() {
+//		return controller.analyse();
+//		
+//	}
 	
-	public void reloadFile() {
-		controller.reload();
-	}
+//	public void reloadFile() {
+//		controller.reload();
+//	}
 	
-	public File getCurrentFile() {
-		return controller.getCurrentFile();
-	}
+//	public File getCurrentFile() {
+//		return controller.getCurrentFile();
+//	}
 
 }

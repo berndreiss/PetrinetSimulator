@@ -1,29 +1,16 @@
 package view;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
-import org.graphstream.ui.swing_viewer.ViewPanel;
-import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.camera.Camera;
 
-import datamodel.NumberOfTokensListener;
 import datamodel.Petrinet;
 import datamodel.PetrinetComponentChangedListener;
 import datamodel.PetrinetElement;
 import datamodel.Place;
 import datamodel.Transition;
-import datamodel.TransitionActiveListener;
-import control.PetrinetController;
 
 /**
  * Die Klasse DemoGraph implementiert einen Graphen mittels GraphStream. Die
@@ -73,10 +60,7 @@ public class PetrinetGraph extends MultiGraph {
 	 */
 	private Sprite spriteMark;
 
-
-	private int padding;
-
-	private String markedNode;
+	private PetrinetElement markedNode;
 
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
@@ -92,16 +76,16 @@ public class PetrinetGraph extends MultiGraph {
 		spriteMan = new SpriteManager(this);
 
 		petrinet.setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
-			
+
 			@Override
 			public void onTransitionStateChanged(Transition transition) {
 				Node node = getNode(transition.getId());
-				
+
 				if (node == null)
 					return;
-				setTransition(node, transition.isActive());
+				setTransitionNormal(transition);
 			}
-			
+
 			@Override
 			public void onSetPetrinetElementName(PetrinetElement element) {
 				Sprite sprite = spriteMan.getSprite("s" + element.getId());
@@ -109,7 +93,7 @@ public class PetrinetGraph extends MultiGraph {
 					return;
 				sprite.setAttribute("ui.label", getElementLabel(element));
 			}
-			
+
 			@Override
 			public void onPlaceTokenCountChanged(Place place) {
 				Node node = getNode(place.getId());
@@ -117,60 +101,58 @@ public class PetrinetGraph extends MultiGraph {
 					return;
 				node.setAttribute("ui.label", placeTokenLabel(place.getNumberOfTokens()));
 			}
-			
+
 			@Override
 			public void onPetrinetElementSetCoordinates(PetrinetElement element, float x, float y) {
 				Node node = getNode(element.getId());
 				if (node == null)
 					return;
-				
-				node.setAttribute("xy", x,y);
+
+				node.setAttribute("xy", x, y);
 			}
-			
+
 			@Override
 			public void onPetrinetElementRemoved(PetrinetElement element) {
 				Node node = removeNode(element.getId());
-				
+
 				if (node == null)
 					return;
 				spriteMan.removeSprite("s" + element.getId());
-				if (markedNode.equals(element.getId()))
+				if (markedNode==element)
 					markedNode = null;
-				
+
 			}
-			
+
 			@Override
 			public void onPetrinetElementAdded(PetrinetElement element) {
 				if (element instanceof Place)
 					addPlace((Place) element);
 				if (element instanceof Transition)
 					addTransition((Transition) element);
-				
+		
 			}
-			
+
 			@Override
 			public void onEdgeRemoved(String edge) {
 				Edge e = removeEdge(edge);
-				if (e== null)
+				if (e == null)
 					return;
 				spriteMan.removeSprite("s" + edge);
 			}
-			
+
 			@Override
 			public void onEdgeAdded(PetrinetElement source, PetrinetElement target, String id) {
 				Node sourceNode = getNode(source.getId());
 				Node targetNode = getNode(target.getId());
-				
+
 				if (sourceNode == null || targetNode == null)
 					return;
-				
+
 				addPetrinetEdge(sourceNode, targetNode, id);
 			}
 		});
-		
-	}
-	
 
+	}
 
 	private Node addPetrinetElement(PetrinetElement e) {
 
@@ -208,20 +190,12 @@ public class PetrinetGraph extends MultiGraph {
 
 		Node node = this.addPetrinetElement(t);
 
-		setTransition(node, t.isActive());
+		setTransitionNormal(t);
 
 		return node;
 
 	}
 
-	private void setTransition(Node node, boolean active) {
-
-		if (active)
-			node.setAttribute("ui.class", "transition_active");
-		else
-			node.setAttribute("ui.class", "transition");
-
-	}
 
 	private Edge addPetrinetEdge(Node a, Node b, String id) {
 
@@ -237,7 +211,6 @@ public class PetrinetGraph extends MultiGraph {
 
 		return edge;
 	}
-
 
 	/**
 	 * Das Hervorheben des Knotens wegnehmen oder setzen.
@@ -281,28 +254,54 @@ public class PetrinetGraph extends MultiGraph {
 		return String.valueOf(numberOfTokens);
 	}
 
-	public void toggleNodeMark(String id) {
-		if (id == null) {
+	public void toggleNodeMark(PetrinetElement pe) {
+
+		if (pe == null) {
 			if (markedNode != null) {
-				getNode(markedNode).setAttribute("ui.class", "place");
+				if (markedNode instanceof Transition)
+					setTransitionNormal(markedNode);
+				else
+					getNode(markedNode.getId()).setAttribute("ui.class", "place");
+
 				markedNode = null;
+				return;
 			}
+
+		}
+
+		if (pe == markedNode) {
+			if (pe instanceof Transition)
+				setTransitionNormal(pe);
+			else
+				getNode(pe.getId()).setAttribute("ui.class", "place");
+			markedNode = null;
+			return;
+		}
+		
+		if (markedNode != null){
+			if (markedNode instanceof Transition)
+				setTransitionNormal(markedNode);
+			else
+				getNode(markedNode.getId()).setAttribute("ui.class", "place");
+
+			if (pe instanceof Transition)
+				getNode(pe.getId()).setAttribute("ui.class", "transition_edit");
+			else
+				getNode(pe.getId()).setAttribute("ui.class", "place_highlight");
+
+			markedNode = pe;
 			return;
 		}
 
-		if (id.equals(markedNode)) {
-			getNode(id).setAttribute("ui.class", "place");
-			markedNode = null;
-		} else {
-			if (markedNode != null)
-				getNode(markedNode).setAttribute("ui.class", "place");
-			getNode(id).setAttribute("ui.class", "place_highlight");
-			markedNode = id;
-		}
+		if (pe instanceof Transition)
+			getNode(pe.getId()).setAttribute("ui.class", "transition_edit");
+		else
+			getNode(pe.getId()).setAttribute("ui.class", "place_highlight");
 
+		markedNode = pe;
 	}
 
-	public String getMarkedNode() {
+	public PetrinetElement getMarkedNode() {
 
 		return markedNode;
 	}
@@ -314,14 +313,27 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	public static String getElementLabel(PetrinetElement e) {
-		if (e.getName() == null)
-			return "";
+
 		String base = "[" + e.getId() + "] " + e.getName();
 		if (e instanceof Place)
 			return base + " <" + ((Place) e).getNumberOfTokens() + ">";
-		
+
 		return base;
 
+	}
+
+	public void setTransitionNormal(PetrinetElement pe) {
+		if (pe == null || !(pe instanceof Transition))
+			return;
+
+		Transition t = (Transition) pe;
+
+		String id = t.getId();
+		Node node = getNode(id);
+		if (t.isActive())
+			node.setAttribute("ui.class", "transition_activated");
+		else
+			node.setAttribute("ui.class", "transition");
 	}
 
 }

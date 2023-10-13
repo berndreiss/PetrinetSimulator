@@ -2,28 +2,24 @@ package datamodel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
-import util.IterableHashMap;
-import util.IterableTreeMap;
+
+import util.IterableMap;
 
 public class Petrinet {
 
+	//TODO edge ids are not removed when edge removed!!!!!!!!!!!!!!!!!!
+	
 	public static final Comparator<String> TREE_COMPARATOR = String.CASE_INSENSITIVE_ORDER;
 
-	private IterableHashMap<String, Transition> transitions;// set of transitions represented by a map since the Set
+	private IterableMap<String, Transition> transitions;// set of transitions represented by a map since the Set
 															// interface does
 	// not provide a get function
-	private IterableTreeMap<String, Place> places;// set of places represented by a map since the Set interface does not
+	private IterableMap<String, Place> places;// set of places represented by a map since the Set interface does not
 													// provide a
 	// get function
-	private IterableHashMap<String, String> originalArcIds;
+	private IterableMap<String, String> originalArcIds;
 
 	private PetrinetStateChangedListener petrinetStateChangedListener;
 	private PetrinetComponentChangedListener petrinetComponentChangedListener;
@@ -37,9 +33,9 @@ public class Petrinet {
 	}
 
 	public Petrinet() {
-		this.transitions = new IterableHashMap<String, Transition>();
-		this.places = new IterableTreeMap<String, Place>(TREE_COMPARATOR);
-		this.originalArcIds = new IterableHashMap<String, String>();
+		this.transitions = new IterableMap<String, Transition>();
+		this.places = new IterableMap<String, Place>(TREE_COMPARATOR);
+		this.originalArcIds = new IterableMap<String, String>();
 	}
 
 	public Iterable<Transition> getActiveTransitions() {
@@ -95,14 +91,45 @@ public class Petrinet {
 		if (element == null)
 			return;
 		
+		
 		if (element instanceof Place) {
+			
 			Place p = (Place) element;				
-			p.remove(petrinetComponentChangedListener);
+			
+			ArrayList<Transition> inputs = new ArrayList<Transition>();
+			ArrayList<Transition> outputs = new ArrayList<Transition>();	
+			
+			for (Transition t: p.getInputs())
+				inputs.add(t);
+			
+			for (Transition t: inputs)
+				removeEdge(t, p);
+				
+			for (Transition t: p.getOutputs())
+				outputs.add(t);
+			
+			for (Transition t: outputs)
+				removeEdge(p, t);
+			
 			places.remove(p.getId());
 		}
 		if (element instanceof Transition) {
 			Transition t = (Transition) element;
-			t.remove(petrinetComponentChangedListener);
+			ArrayList<Place> inputs = new ArrayList<Place>();
+			ArrayList<Place> outputs = new ArrayList<Place>();	
+			
+			for (Place p: t.getInputs())
+				inputs.add(p);
+			
+			for (Place p: inputs)
+				removeEdge(p, t);
+				
+			for (Place p: t.getOutputs())
+				outputs.add(p);
+			
+			for (Place p: outputs)
+				removeEdge(t, p);
+
 			transitions.remove(t.getId());
 			
 		}
@@ -114,9 +141,10 @@ public class Petrinet {
 
 	}
 
-	public void addTransition(Transition t) throws DuplicateIdException {
+	public void addTransition(Transition t) {
 		if (transitions.containsKey(t.getId()) || places.containsKey(t.getId()))
-			throw new DuplicateIdException("Id already exists");
+			return;
+		
 		transitions.put(t.getId(), t);
 
 		t.setTransitionActiveListener(activated -> {
@@ -130,9 +158,9 @@ public class Petrinet {
 
 	}
 
-	public void addPlace(Place p) throws DuplicateIdException {
+	public void addPlace(Place p){
 		if (transitions.containsKey(p.getId()) || places.containsKey(p.getId()))
-			throw new DuplicateIdException("Id already exists");
+			return;
 		places.put(p.getId(), p);
 
 		p.setNumberOfTokensListener(newNumber -> {
@@ -163,7 +191,7 @@ public class Petrinet {
 
 	}
 
-	public void addInput(Place p, Transition t, String id) throws DuplicateIdException {
+	public boolean addInput(Place p, Transition t, String id) {
 		if (!places.containsKey(p.getId())) {// needs to be here in case arcs are added before places from files
 			addPlace(p);
 			if (petrinetStateChangedListener != null)
@@ -171,33 +199,65 @@ public class Petrinet {
 		}
 		if (!transitions.containsKey(t.getId()))// needs to be here in case arcs are added before places from files
 			addTransition(t);
+		
+		if (originalArcIds.containsKey(p.getId() + t.getId()))
+			return false;
+		
+		originalArcIds.put(p.getId() + t.getId(), id);
 		t.addInput(p);
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onEdgeAdded(p, t, id);
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
+		return true;
 	}
 
-	public void addOutput(Place p, Transition t, String id) throws DuplicateIdException {
+	public boolean addOutput(Place p, Transition t, String id) {
 		if (!places.containsKey(p.getId())) {// needs to be here in case arcs are added before places from files
 			addPlace(p);
 		}
 		if (!transitions.containsKey(t.getId()))// needs to be here in case arcs are added before places from files
 			addTransition(t);
+
+		if (originalArcIds.containsKey(t.getId()+p.getId()))
+			return false;
+		
+		originalArcIds.put(t.getId()+p.getId(), id);
+		
 		t.addOutput(p);
 
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onEdgeAdded(t, p, id);
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
+		
+		return true;
 
 	}
 
-	public void removeEdge(String source, String target) {
+	public void removeEdge(PetrinetElement source, PetrinetElement target) {
 
-		// TODO implement
+		
+		
+		if (source instanceof Place) {
+			Place place = (Place) source;
+			Transition transition = (Transition) target;
+			place.removeOutput(transition);
+			transition.removeInput(place);
+		}else {
+			Place place = (Place) target;
+			Transition transition = (Transition) source;
+			place.removeInput(transition);
+			transition.removeOutput(place);
+
+		}
+		
+		String key = source.getId() + target.getId();
+		
+		originalArcIds.remove(key);
+		
 		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onEdgeRemoved(source + target);
+			petrinetComponentChangedListener.onEdgeRemoved(key);
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
 
@@ -227,11 +287,11 @@ public class Petrinet {
 		return originalArcIds.get(arcId);
 	}
 
-	public void addOriginalArcId(String source, String target, String id) {
-		originalArcIds.put(source + target, id);
-	}
-
 	public void setState(PetrinetState state) {
+		
+		if (state == null)
+			return;
+		
 		Iterator<Integer> integerIt = state.getPlaceTokens();
 
 		if (places.size() == state.placeTokensSize()) {
@@ -311,6 +371,13 @@ public class Petrinet {
 	public boolean hasPlaces() {
 		
 		return places.size()>0;
+	}
+	
+	public boolean hasEdgeWithId(String id) {
+		for (String s: originalArcIds.values())
+			if (s.equals(id))
+				return true;
+		return false;
 	}
 
 }

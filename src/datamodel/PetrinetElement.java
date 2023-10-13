@@ -1,11 +1,9 @@
 package datamodel;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class PetrinetElement implements Comparable<Transition>{
 	protected String id;
-	protected String name;
+	protected String name = "";
 	
 	protected double x;
 	protected double y;
@@ -60,9 +58,6 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 		return 1;
 	}
 
-
-	
-	
 	
 
 }

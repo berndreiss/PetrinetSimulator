@@ -1,20 +1,10 @@
 package control;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.util.EnumSet;
 
-import org.graphstream.graph.Graph;
-import org.graphstream.ui.graphicGraph.GraphicElement;
-import org.graphstream.ui.swing_viewer.SwingViewer;
+import javax.swing.JOptionPane;
+
 import org.graphstream.ui.swing_viewer.ViewPanel;
-import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.ViewerListener;
-import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.ui.view.util.InteractiveElement;
 
 import datamodel.Petrinet;
 import datamodel.PetrinetElement;
@@ -23,11 +13,12 @@ import datamodel.PetrinetStateChangedListener;
 import datamodel.Place;
 import datamodel.ReachabilityGraphModel;
 import datamodel.Transition;
+import util.Editor;
 import util.PNMLParser;
 import util.PetrinetAnalyser;
 import view.PetrinetGraph;
 import view.ReachabilityGraph;
-import view.ClickListener;
+import view.GraphStreamView;
 
 public class PetrinetController {
 
@@ -35,6 +26,8 @@ public class PetrinetController {
 	private PetrinetGraph petrinetGraph;
 	private ReachabilityGraph reachabilityGraph;
 	private ReachabilityGraphModel reachabilityGraphModel;
+	
+	private Editor editor;
 
 	private ViewPanel petrinetViewPanel;
 	private ViewPanel reachabilityViewPanel;
@@ -42,25 +35,30 @@ public class PetrinetController {
 	private File file;
 
 	private boolean fileChanged;
+	private boolean isNewFile;
 	private boolean headless;
+
+	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
+
 
 	public PetrinetController(File file, boolean headless) {
 		this.headless = headless;
 		this.file = file;
+		this.editor = new Editor(this);
 		init();
 	}
 
 	private void init() {
 		this.petrinet = new Petrinet();
+		if (!headless)
+			this.petrinetGraph = new PetrinetGraph(petrinet);
 
-		if (file != null) {
-
-			if (!headless)
-				this.petrinetGraph = new PetrinetGraph(petrinet);
-
+		if (file != null)
 			new PNMLParser(file, this.petrinet);
+		else {
+			file = new File("New File");
+			isNewFile = true;
 		}
-
 		if (!headless) {
 		}
 		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
@@ -69,9 +67,8 @@ public class PetrinetController {
 
 			this.reachabilityGraph = new ReachabilityGraph(this);
 
-			this.petrinetViewPanel = initGraphStreamView(petrinetGraph);
-			this.reachabilityViewPanel = initGraphStreamView(reachabilityGraph);
-			reachabilityGraph.setViewPanel(reachabilityViewPanel);
+			this.petrinetViewPanel = GraphStreamView.initGraphStreamView(petrinetGraph, this);
+			this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(reachabilityGraph, this);
 		}
 
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
@@ -92,6 +89,10 @@ public class PetrinetController {
 		});
 	}
 
+	public Editor getEditor() {
+		return editor;
+	}
+	
 	public Petrinet getPetrinet() {
 		return petrinet;
 	}
@@ -116,10 +117,14 @@ public class PetrinetController {
 
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
 
-		if (pe instanceof Transition)
-			petrinet.fireTransition(id);
-		if (pe instanceof Place)
-			petrinetGraph.toggleNodeMark(id);
+		if (toolbarMode == ToolbarMode.VIEWER) {
+			if (pe instanceof Transition)
+				petrinet.fireTransition(id);
+			if (pe instanceof Place)
+				petrinetGraph.toggleNodeMark(pe);
+		} 
+		if (toolbarMode == ToolbarMode.EDITOR)
+			editor.clickedNodeInGraph(pe);
 	}
 
 	public void resetPetrinet() {
@@ -132,17 +137,17 @@ public class PetrinetController {
 		return null;
 	}
 
-	public void incrementPlace(String markedPlace) {
+	public void incrementMarkedPlace() {
 
-		petrinet.incrementPlace(markedPlace);
+		petrinet.incrementPlace(petrinetGraph.getMarkedNode().getId());
 
 		if (!fileChanged) {
 			fileChanged = true;
 		}
 	}
 
-	public void decrementPlace(String markedPlace) {
-		petrinet.decrementPlace(markedPlace);
+	public void decrementMarkedPlace() {
+		petrinet.decrementPlace(petrinetGraph.getMarkedNode().getId());
 
 		if (!fileChanged) {
 			fileChanged = true;
@@ -160,7 +165,6 @@ public class PetrinetController {
 
 	public void reachabilityNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
-
 		petrinet.setState(state);
 		reachabilityGraphModel.setCurrentState(state);
 	}
@@ -219,135 +223,8 @@ public class PetrinetController {
 		return fileChanged;
 	}
 
-	public ViewPanel initGraphStreamView(Graph graph) {// TODO change to private
-
-		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
-		// Swing
-		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-
-		// bessere Darstellungsqualität und Antialiasing (Kantenglättung) aktivieren
-		// HINWEIS: Damit diese Attribute eine Auswirkung haben, müssen sie NACH
-		// Erzeugung des SwingViewer gesetzt werden
-		graph.setAttribute("ui.quality");
-		graph.setAttribute("ui.antialias");
-
-		// Das Auto-Layout für den Graphen kann aktiviert oder deaktiviert
-		// werden.
-		// Auto-Layout deaktivieren: Die explizit hinzugefügten Koordinaten
-		// werden genutzt (wie in DemoGraph).
-		// Achtung: Falls keine Koordinaten definiert wurden, liegen alle Knoten
-		// übereinander.)
-		if (graph instanceof PetrinetGraph)
-			viewer.disableAutoLayout();
-		else
-			viewer.enableAutoLayout();
-		// Auto-Layout aktivieren: GraphStream generiert ein möglichst
-		// übersichtliches Layout
-		// (und ignoriert hinzugefügte Koordinaten)
-		// viewer.enableAutoLayout();
-
-		// Eine DefaultView zum Viewer hinzufügen, die jedoch nicht automatisch
-		// in einen JFrame integriert werden soll (daher Parameter "false"). Das
-		// zurückgelieferte ViewPanel ist eine Unterklasse von JPanel, so dass
-		// es später einfach in unsere Swing-GUI integriert werden kann. Es gilt
-		// folgende Vererbungshierarchie:
-		// DefaultView extends ViewPanel extends JPanel implements View
-		// Hinweis:
-		// In den Tutorials wird "View" als Rückgabetyp angegeben, es ist
-		// aber ein "ViewPanel" (und somit auch ein JPanel).
-		ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
-
-		// Neue ViewerPipe erzeugen, um über Ereignisse des Viewer informiert
-		// werden zu können
-		ViewerPipe viewerPipe = viewer.newViewerPipe();
-
-		if (graph instanceof PetrinetGraph) {
-			// Neuen ClickListener erzeugen, der als ViewerListener auf Ereignisse
-			// der View reagieren kann
-			ClickListener clickListener = new ClickListener(this);
-
-			// clickListener als ViewerListener bei der viewerPipe anmelden
-			viewerPipe.addViewerListener(clickListener);
-
-		}
-
-		if (graph instanceof ReachabilityGraph) {
-			viewerPipe.addViewerListener(new ViewerListener() {
-
-				@Override
-				public void viewClosed(String viewName) {
-				}
-
-				@Override
-				public void mouseOver(String id) {
-				}
-
-				@Override
-				public void mouseLeft(String id) {
-				}
-
-				@Override
-				public void buttonReleased(String id) {
-				}
-
-				@Override
-				public void buttonPushed(String id) {
-					reachabilityNodeClicked(id);
-				}
-			});
-
-		}
-
-		EnumSet<InteractiveElement> enumSet = EnumSet.of(InteractiveElement.NODE);
-
-		viewPanel.addMouseListener(new MouseAdapter() {
-
-			private GraphicElement element;
-
-			@Override
-			public void mousePressed(MouseEvent me) {
-				element = viewPanel.findGraphicElementAt(enumSet, me.getX(), me.getY());
-				viewerPipe.pump();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent me) {
-
-				if (element != null) {
-					String id = element.getId();
-					PetrinetElement p = getPetrinet().getPetrinetElement(id);
-					double x = element.getX();
-					double y = element.getY();
-					if (p != null)
-						if (p.getX() != x || p.getY() != y) {
-							p.setX(x);
-							p.setY(y);
-						}
-					element = null;
-				}
-
-				viewerPipe.pump();
-			}
-		});
-		// Zoom per Mausrad ermöglichen
-		viewPanel.addMouseWheelListener(new MouseWheelListener() {
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				double zoomLevel = viewPanel.getCamera().getViewPercent();
-				if (e.getWheelRotation() == -1) {
-					zoomLevel -= 0.1;
-					if (zoomLevel < 0.1) {
-						zoomLevel = 0.1;
-					}
-				}
-				if (e.getWheelRotation() == 1) {
-					zoomLevel += 0.1;
-				}
-				viewPanel.getCamera().setViewPercent(zoomLevel);
-			}
-		});
-
-		return viewPanel;
-
+	public boolean isNewFile() {
+		return isNewFile;
 	}
 
 	public ViewPanel getPetrinetViewPanel() {
@@ -356,6 +233,22 @@ public class PetrinetController {
 
 	public ViewPanel getReachabilityViewPanel() {
 		return reachabilityViewPanel;
+	}
+
+	public void setToolbarMode(ToolbarMode toolbarMode) {
+		if (toolbarMode == ToolbarMode.EDITOR)
+			resetReachabilityGraph();
+		if (toolbarMode == ToolbarMode.VIEWER) {
+			PetrinetElement toggledElement = petrinetGraph.getMarkedNode();
+			if (toggledElement != null && toggledElement instanceof Transition)
+				petrinetGraph.toggleNodeMark(toggledElement);
+		}
+		this.toolbarMode = toolbarMode;
+	}
+
+	public void clickedEmpty(double x, double y) {
+		if (toolbarMode == ToolbarMode.EDITOR)
+			editor.clickedEmpty(x, y);
 	}
 
 }

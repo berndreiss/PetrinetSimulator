@@ -1,4 +1,4 @@
-package datamodel;import com.lowagie.text.Element;
+package datamodel;
 
 public interface PetrinetComponentChangedListener {
 

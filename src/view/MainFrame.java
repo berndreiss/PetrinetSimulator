@@ -2,23 +2,28 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
 import control.MainController;
+import control.ToolbarMode;
 
 public class MainFrame extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final double GRAPH_PERCENT = 0.5;
-	
+
 	private ResizableSplitPane splitPane;
 
 	private JScrollPane scrollPane;
@@ -26,37 +31,57 @@ public class MainFrame extends JFrame {
 
 	private JLabel statusLabel;
 
+	private JToolBar viewerToolbar;
+	private JToolBar editorToolbar;
+
 	private MainController controller;
+
+	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
+
 	public MainFrame(String title) {
 		super(title);
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		
+
 		scrollPane = new JScrollPane(textArea);
 
 		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
 		splitPane.setDefaultRatio(0.8);
 		splitPane.setRightComponent(scrollPane);
 
+		// Erzeuge ein Label, welches als Statuszeile dient, ...
+		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
+		statusLabel = new JLabel();
+		// ... und füge es zum Haupt-Frame hinzu
+		this.add(statusLabel, BorderLayout.SOUTH);
+
+		
 		controller = new MainController(this);
 
 		JMenuBar menuBar = new PetrinetMenu(controller);
 
 		this.setJMenuBar(menuBar);
 
-		JToolBar toolbar = new PetrinetToolbar(controller);
+		viewerToolbar = new PetrinetToolbar(controller);
 
-		toolbar.setFloatable(false);
+		editorToolbar = new EditorToolbar(controller);
 
-		this.add(toolbar, BorderLayout.NORTH);
+		viewerToolbar.setFloatable(false);
+		editorToolbar.setFloatable(false);
+
+		editorToolbar.setVisible(false);
+
+		JPanel toolbarPanel = new JPanel();
+
+		FlowLayout toolbarPanelLayout = new FlowLayout();
+		toolbarPanelLayout.setAlignment(FlowLayout.LEFT);
+		toolbarPanel.setLayout(toolbarPanelLayout);
+		toolbarPanel.add(viewerToolbar);
+		toolbarPanel.add(editorToolbar);
+
+		this.add(toolbarPanel, BorderLayout.NORTH);
 		add(splitPane, BorderLayout.CENTER);
 
-		// Erzeuge ein Label, welches als Statuszeile dient, ...
-		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
-		statusLabel = new JLabel("java.version = " + System.getProperty("java.version") + "  |  user.dir = "
-				+ System.getProperty("user.dir"));
-		// ... und füge es zum Haupt-Frame hinzu
-		this.add(statusLabel, BorderLayout.SOUTH);
 
 //		f.setSize(400, 240);
 //	      f.setLocationRelativeTo(null);
@@ -72,13 +97,13 @@ public class MainFrame extends JFrame {
 		// Konfiguriere weitere Parameter des Haupt-Frame
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-		
+
 	}
 
 	public ResizableSplitPane getSplitPane() {
 		return splitPane;
 	}
-	
+
 	public void print(String s) {
 		textArea.append(s);
 	}
@@ -86,9 +111,29 @@ public class MainFrame extends JFrame {
 	public void clearTextArea() {
 		textArea.setText("");
 	}
-	
+
 	public void setStatusLabel(String status) {
 		statusLabel.setText(status);
+	}
+	
+	public ToolbarMode getTooolbarMode() {
+		return toolbarMode;
+	}
+
+	public void setToolBarMode(ToolbarMode toolbarMode) {
+		if (toolbarMode == null)
+			return;
+		if (this.toolbarMode == ToolbarMode.EDITOR)
+			editorToolbar.setVisible(false);
+		if (this.toolbarMode == ToolbarMode.VIEWER)
+			viewerToolbar.setVisible(false);
+
+		if (toolbarMode == ToolbarMode.EDITOR)
+			editorToolbar.setVisible(true);
+		if (toolbarMode == ToolbarMode.VIEWER)
+			viewerToolbar.setVisible(true);
+
+		this.toolbarMode = toolbarMode;
 	}
 
 }

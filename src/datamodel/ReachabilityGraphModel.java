@@ -1,13 +1,9 @@
 package datamodel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import control.PetrinetController;
-import util.IterableHashMap;
+import util.IterableMap;
 
 public class ReachabilityGraphModel {
 
@@ -17,13 +13,13 @@ public class ReachabilityGraphModel {
 
 	private PetrinetState initialState;
 
-	private IterableHashMap<String, PetrinetState> petrinetStates;
+	private IterableMap<String, PetrinetState> petrinetStates;
 
 	private StateChangeListener stateChangeListener;
 
 	public ReachabilityGraphModel(Petrinet petrinet) {
 
-		petrinetStates = new IterableHashMap<String, PetrinetState>();
+		petrinetStates = new IterableMap<String, PetrinetState>();
 		addNewState(petrinet, null);
 	}
 
@@ -50,7 +46,7 @@ public class ReachabilityGraphModel {
 
 	public PetrinetState addNewState(Petrinet petrinet, Transition t) {
 
-		if (petrinet == null) {
+		if (petrinet == null || !petrinet.hasPlaces()) {
 			if (initialState != null) {
 				initialState = null;
 			}

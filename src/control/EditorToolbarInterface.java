@@ -7,7 +7,7 @@ public interface EditorToolbarInterface {
 	void onAddTransition();
 	void onAddEdge();
 	void onAddLabel();
-	
+	void onRemoveEdge();
 	void onRemoveComponent();
 	void onCloseEditor();
 }

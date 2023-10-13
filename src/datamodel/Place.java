@@ -1,10 +1,8 @@
 package datamodel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import util.IterableHashMap;
+import util.IterableMap;
 
 /**
  * Class that represents places in petri nets. Each place has a number of
@@ -16,10 +14,10 @@ public class Place extends PetrinetElement {
 
 	private NumberOfTokensListener numberOfTokensListener;
 
-	protected IterableHashMap<String, Transition> outputs = new IterableHashMap<String, Transition>();// set of places
+	protected IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();// set of places
 																										// that serve as
 																										// output
-	protected IterableHashMap<String, Transition> inputs = new IterableHashMap<String, Transition>();// set of places
+	protected IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();// set of places
 	// that represent inputs from transitions
 	
 	public Place(String id) {
@@ -108,32 +106,7 @@ public class Place extends PetrinetElement {
 	protected void addInput(Transition t) {
 		inputs.put(t.id, t);
 	}
-	protected void remove(PetrinetComponentChangedListener petrinetComponentChangedListener) {
-		
-		ArrayList<String> inputStrings = new ArrayList<String>();	
-		
-		for (Transition t: inputs)
-			inputStrings.add(t.getId());
-		
-		for (String s: inputStrings) {
-			Transition t = inputs.get(s);
-			t.removeOutput(this);
-			if (petrinetComponentChangedListener != null)
-				petrinetComponentChangedListener.onEdgeRemoved(t.getId() + getId());
-		}
-		ArrayList<String> outputStrings = new ArrayList<String>();
-		
-		for (Transition t: outputs)
-			outputStrings.add(t.getId());
-		
-		for (String s: outputStrings) {
-			Transition t = outputs.get(s);
-			t.removeInput(this);
-			if (petrinetComponentChangedListener != null)
-				petrinetComponentChangedListener.onEdgeRemoved(getId() + t.getId());
-		}
-	}
-
+	
 	protected Iterable<Transition> getOutputs() {
 		return outputs;
 	}

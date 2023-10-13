@@ -35,7 +35,7 @@ node.place {
 
 node.place_highlight {
 
-	stroke-color: #0000ff;
+	stroke-color: #ff0000;
 	stroke-width: 3px;
 }
 
@@ -52,7 +52,7 @@ node.transition {
    zusaetzliches Attribut "highlight" fuer einen Knoten, der
    hervorgehoben werden soll
 */
-node.transition_active {
+node.transition_activated {
 
 
 	shape: box;
@@ -60,6 +60,13 @@ node.transition_active {
 	stroke-width: 3px;
 }
 
+node.transition_edit {
+
+
+	shape: box;
+	stroke-color: #ff0000;
+	stroke-width: 3px;
+}
 
 /*
    zusaetzliches Attribut "bild" fuer einen Knoten mit einer Abbildung
