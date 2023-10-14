@@ -100,6 +100,9 @@ public class PetrinetGraph extends MultiGraph {
 				if (node == null)
 					return;
 				node.setAttribute("ui.label", placeTokenLabel(place.getNumberOfTokens()));
+				Sprite sprite = spriteMan.getSprite("s" + place.getId());
+				
+				sprite.setAttribute("ui.label", getElementLabel(place));
 			}
 
 			@Override

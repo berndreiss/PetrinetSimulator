@@ -13,6 +13,7 @@ import datamodel.PetrinetStateChangedListener;
 import datamodel.Place;
 import datamodel.ReachabilityGraphModel;
 import datamodel.Transition;
+import propra.pnml.PNMLWopedWriter;
 import util.Editor;
 import util.PNMLParser;
 import util.PetrinetAnalyser;
@@ -35,7 +36,6 @@ public class PetrinetController {
 	private File file;
 
 	private boolean fileChanged;
-	private boolean isNewFile;
 	private boolean headless;
 
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
@@ -55,10 +55,7 @@ public class PetrinetController {
 
 		if (file != null)
 			new PNMLParser(file, this.petrinet);
-		else {
-			file = new File("New File");
-			isNewFile = true;
-		}
+		
 		if (!headless) {
 		}
 		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
@@ -223,10 +220,6 @@ public class PetrinetController {
 		return fileChanged;
 	}
 
-	public boolean isNewFile() {
-		return isNewFile;
-	}
-
 	public ViewPanel getPetrinetViewPanel() {
 		return petrinetViewPanel;
 	}
@@ -249,6 +242,34 @@ public class PetrinetController {
 	public void clickedEmpty(double x, double y) {
 		if (toolbarMode == ToolbarMode.EDITOR)
 			editor.clickedEmpty(x, y);
+	}
+
+	public void writeToFile() {
+		writeToFile(getCurrentFile());
+	}
+	
+	public void writeToFile(File file) {
+
+		PNMLWopedWriter writer = new PNMLWopedWriter(file);
+		writer.startXMLDocument();
+
+		for (Place p: petrinet.getPlaces())
+			writer.addPlace(p.getId(), p.getName(), String.valueOf(p.getX()), String.valueOf(-p.getY()), String.valueOf(p.getNumberOfTokens()));
+		for (Transition t: petrinet.getTransitions()) {
+			writer.addTransition(t.getId(), t.getName(), String.valueOf(t.getX()), String.valueOf(-t.getY()));
+			for (Place p: t.getInputs()) 
+				writer.addArc(petrinet.getOriginalArcId(p.getId()+t.getId()), p.getId(), t.getId());
+			for (Place p: t.getOutputs()) 
+				writer.addArc(petrinet.getOriginalArcId(t.getId()+p.getId()), t.getId(),p.getId());
+		}
+		
+		writer.finishXMLDocument();
+		
+		this.file = file;
+			
+		
+		
+		
 	}
 
 }
