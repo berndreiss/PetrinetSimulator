@@ -6,11 +6,15 @@ public interface MenuInterface {
 		
 	void onOpen();
 
+	void onOpenInNewTab();
+	
 	void onSave();
 	
 	void onSaveAs();
 	
 	void onReload();
+	
+	void onMergeWith();
 	
 	void onAnalyseMany();
 	

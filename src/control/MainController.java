@@ -8,6 +8,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import view.MainFrame;
@@ -27,32 +30,93 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	private void init() {
-		JPanel dummyPanel = new JPanel();
-		dummyPanel.setPreferredSize(
-				new Dimension(getFrame().getWidth(), (int) (getFrame().getWidth() * MainFrame.GRAPH_PERCENT)));
-		parent.getSplitPane().setLeftComponent(dummyPanel);
-		parent.setStatusLabel("java.version = " + System.getProperty("java.version") + "  |  user.dir = "
-				+ System.getProperty("user.dir"));
+		parent.setEmtpy();
+		setStatusLabel();
+
+		parent.getTabbedPane().addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JTabbedPane tabbedPane = parent.getTabbedPane();
+				int index = tabbedPane.getSelectedIndex();
+
+				if (index < 0)
+					return;
+
+				System.out.println(index);
+
+				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
+				currentPetrinetPanel = panel;
+
+				parent.setStatusLabel(getStatusLabel());
+			}
+
+		});
 	}
 
 	public MainFrame getFrame() {
 		return parent;
 	}
 
-	private void setNewPanel(File file) {
-		if (file == null) {
-			parent.setStatusLabel("*New File");
-		} else {
-			parent.setStatusLabel(file.getName());
-		}
-		JSplitPane splitPane = parent.getSplitPane();
-		splitPane.remove(splitPane.getLeftComponent());
+	private void setStatusLabel() {
 
-		currentPetrinetPanel = new PetrinetPanel(this, file);
-		parent.getSplitPane().setLeftComponent(currentPetrinetPanel);
+		JTabbedPane tabbedPane = parent.getTabbedPane();
 
-		currentPetrinetPanel.getController().setToolbarMode(getFrame().getTooolbarMode());
+		String labelString = getStatusLabel();
+
+		parent.setStatusLabel(labelString);
+		int index = tabbedPane.getSelectedIndex();
+		if (index >= 0)
+			tabbedPane.setTitleAt(index, getTabString(labelString));
+
 	}
+
+	private String getStatusLabel() {
+
+		if (currentPetrinetPanel == null) {
+			return "java.version = " + System.getProperty("java.version") + "  |  user.dir = "
+					+ System.getProperty("user.dir");
+		}
+
+		PetrinetController controller = currentPetrinetPanel.getController();
+		File file = controller.getCurrentFile();
+
+		if (file == null)
+			return "*New File";
+
+		else if (controller.getFileChanged())
+			return "*" + file.getName();
+
+		else
+			return file.getName();
+
+	}
+
+	private void setNewPanel(File file, boolean newTab) {
+
+		PetrinetPanel newPanel = new PetrinetPanel(this, file);
+
+		newPanel.getController().setToolbarMode(getFrame().getTooolbarMode());
+		currentPetrinetPanel = newPanel;
+
+		JTabbedPane tabbedPane = parent.getTabbedPane();
+
+		if (tabbedPane.getTabCount() == 0) {
+			parent.setTabbedPane();
+			newTab = true;
+		}
+		if (newTab) {
+			tabbedPane.add(getStatusLabel(), currentPetrinetPanel);
+			tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+			
+		} else {
+
+		}
+
+//		setStatusLabel();
+
+	}
+
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
 		PetrinetController controller = currentPetrinetPanel.getController();
@@ -62,12 +126,39 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	@Override
 	public void onNew() {
-		setNewPanel(null);
-		setToolbarMode(ToolbarMode.EDITOR);
+			setNewPanel(null, false);
+
 	}
 
 	@Override
 	public void onOpen() {
+
+		JTabbedPane tabbedPane = parent.getTabbedPane();
+
+		if (tabbedPane.getTabCount() == 0) {
+			onOpenInNewTab();
+			return;
+		}
+
+		File file = getFile();
+		if (file == null)
+			return;
+
+		setNewPanel(file, false);
+
+	}
+
+	@Override
+	public void onOpenInNewTab() {
+		File file = getFile();
+		if (file == null)
+			return;
+
+		setNewPanel(file, true);
+	}
+
+	private File getFile() {
+
 		JFileChooser fileChooser = new JFileChooser();
 
 		setFileChosserFilter(fileChooser);
@@ -77,10 +168,21 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
-			setNewPanel(file);
 			lastDirectory = file.getParentFile();
+			return file;
 		}
+		return null;
+	}
 
+	private String getTabString(String fileName) {
+		if (fileName == null)
+			return null;
+
+		if (fileName.length() > 13) {
+			fileName = fileName.substring(0, 9);
+			return fileName + "...";
+		} else
+			return fileName;
 	}
 
 	@Override
@@ -92,8 +194,31 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (controller.getCurrentFile() == null)
 			return;
 
-		setNewPanel(controller.getCurrentFile());
+		setNewPanel(controller.getCurrentFile(), false);
 
+	}
+
+	@Override
+	public void onMergeWith() {
+
+		if (currentPetrinetPanel == null)
+			return;
+
+		PetrinetController controller = currentPetrinetPanel.getController();
+
+		JFileChooser fileChooser = new JFileChooser();
+
+		setFileChosserFilter(fileChooser);
+
+		fileChooser.setCurrentDirectory(lastDirectory);
+		int result = fileChooser.showOpenDialog(parent);
+
+		if (result == 0) {
+			File file = fileChooser.getSelectedFile();
+			currentPetrinetPanel.getController().mergeWith(file);
+			lastDirectory = file.getParentFile();
+		}
+		setStatusLabel();
 	}
 
 	@Override
@@ -105,7 +230,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (controller.getCurrentFile() == null)
 			onSaveAs();
 		controller.writeToFile();
-		getFrame().setStatusLabel(controller.getCurrentFile().getName());
+		setStatusLabel();
 	}
 
 	@Override
@@ -119,12 +244,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		fileChooser.setCurrentDirectory(lastDirectory);
 		int result = fileChooser.showOpenDialog(parent);
-
+		System.out.println(result);
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
-			controller.writeToFile(file);
 			lastDirectory = file.getParentFile();
-			getFrame().setStatusLabel(file.getName());
+
+			controller.writeToFile(file);
+			setStatusLabel();
 		}
 
 	}
@@ -260,8 +386,11 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		File previousFile = getPreviousFile();
 
-		if (previousFile != null)
-			setNewPanel(previousFile);
+		if (previousFile != null) {
+			setNewPanel(previousFile, false);
+
+		}
+
 	}
 
 	@Override
@@ -270,8 +399,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 			return;
 		File nextFile = getNextFile();
 
-		if (nextFile != null)
-			setNewPanel(nextFile);
+		if (nextFile != null) {
+			setNewPanel(nextFile, false);
+		}
 	}
 
 	@Override
@@ -288,11 +418,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 			return;
 		PetrinetController controller = currentPetrinetPanel.getController();
 
-		controller.incrementMarkedPlace();
-		if (controller.getCurrentFile() == null)
-			parent.setStatusLabel("*" + "New File");
-		else
-			parent.setStatusLabel("*" + controller.getCurrentFile().getName());
+		boolean changed = controller.incrementMarkedPlace();
+		if (changed)
+			setStatusLabel();
 
 	}
 
@@ -308,10 +436,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (!controller.getFileChanged())
 			return;
 
-		if (controller.getCurrentFile() == null)
-			parent.setStatusLabel("*" + "New File");
-		else
-			parent.setStatusLabel("*" + controller.getCurrentFile().getName());
+		setStatusLabel();
 	}
 
 	@Override

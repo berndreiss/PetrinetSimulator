@@ -54,7 +54,7 @@ public class PetrinetController {
 			this.petrinetGraph = new PetrinetGraph(petrinet);
 
 		if (file != null)
-			new PNMLParser(file, this.petrinet);
+			new PNMLParser(file, petrinet);
 		
 		if (!headless) {
 		}
@@ -134,21 +134,26 @@ public class PetrinetController {
 		return null;
 	}
 
-	public void incrementMarkedPlace() {
+	public boolean incrementMarkedPlace() {
 
-		petrinet.incrementPlace(petrinetGraph.getMarkedNode().getId());
+		
+		boolean changed = petrinet.incrementPlace(petrinetGraph.getMarkedNode());
 
-		if (!fileChanged) {
+		if (changed && !fileChanged) {
 			fileChanged = true;
 		}
+		
+		return changed;
 	}
 
-	public void decrementMarkedPlace() {
-		petrinet.decrementPlace(petrinetGraph.getMarkedNode().getId());
+	public boolean decrementMarkedPlace() {
+		boolean changed = petrinet.decrementPlace(petrinetGraph.getMarkedNode());
 
-		if (!fileChanged) {
+		if (changed && !fileChanged) {
 			fileChanged = true;
 		}
+		
+		return changed;
 	}
 
 	public File getCurrentFile() {
@@ -267,8 +272,15 @@ public class PetrinetController {
 		
 		this.file = file;
 			
+		fileChanged = false;
 		
 		
+		
+	}
+
+	public void mergeWith(File file) {
+		if (file != null)
+			new PNMLParser(file, this.petrinet);
 		
 	}
 

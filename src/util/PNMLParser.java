@@ -14,9 +14,16 @@ public class PNMLParser extends PNMLWopedParser {
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
 	private Petrinet petrinet;
 
+	public PNMLParser(File pnml) {
+		this(pnml, null);
+	}
+	
 	public PNMLParser(File pnml, Petrinet petrinet) {
 		super(pnml);
-		this.petrinet = petrinet;
+		if (petrinet == null)
+			this.petrinet = new Petrinet();
+		else
+			this.petrinet = petrinet;
 		this.initParser();
 		this.parse();
 		handleTransitions();
@@ -98,5 +105,9 @@ public class PNMLParser extends PNMLWopedParser {
 		public String getTarget() {
 			return target;
 		}
+	}
+	
+	public Petrinet getPetrinet() {
+		return petrinet;
 	}
 }

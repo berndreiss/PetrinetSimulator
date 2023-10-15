@@ -5,13 +5,16 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
@@ -26,6 +29,7 @@ public class MainFrame extends JFrame {
 
 	private ResizableSplitPane splitPane;
 
+	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 
@@ -49,6 +53,13 @@ public class MainFrame extends JFrame {
 		splitPane.setDefaultRatio(0.8);
 		splitPane.setRightComponent(scrollPane);
 
+		setEmtpy();
+
+		
+		tabbedPane = new JTabbedPane();
+
+
+		
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
 		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
 		statusLabel = new JLabel();
@@ -57,6 +68,7 @@ public class MainFrame extends JFrame {
 
 		
 		controller = new MainController(this);
+
 
 		JMenuBar menuBar = new PetrinetMenu(controller);
 
@@ -135,5 +147,23 @@ public class MainFrame extends JFrame {
 
 		this.toolbarMode = toolbarMode;
 	}
+	
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
 
+	public void setTabbedPane() {
+		splitPane.remove(splitPane.getLeftComponent());
+		splitPane.setLeftComponent(tabbedPane);
+	}
+
+	public void setEmtpy() {
+		splitPane.remove(splitPane.getLeftComponent());
+		JPanel dummyPanel = new JPanel();
+		dummyPanel.setPreferredSize(
+				new Dimension(getWidth(), (int) (getHeight() * MainFrame.GRAPH_PERCENT)));
+		getSplitPane().setLeftComponent(dummyPanel);
+
+	}
+	
 }

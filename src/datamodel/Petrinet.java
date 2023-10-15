@@ -323,28 +323,36 @@ public class Petrinet {
 
 	}
 
-	public void incrementPlace(String markedPlace) {
-		if (!places.containsKey(markedPlace))// should not happen -> here for safety reasons
-			return;
+	public boolean incrementPlace(PetrinetElement markedPlace) {
+		if (markedPlace == null)
+			return false;
+		if (!places.containsKey(markedPlace.getId()))// should not happen -> here for safety reasons
+			return false;
 
-		Place p = places.get(markedPlace);
+		Place p = (Place) markedPlace;
 		p.incrementTokens();
 
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
 
+		return true;
 	}
 
-	public void decrementPlace(String markedPlace) {
-		if (!places.containsKey(markedPlace))// should not happen -> here for safety reasons
-			return;
-		Place p = places.get(markedPlace);
+	public boolean decrementPlace(PetrinetElement markedPlace) {
+		if (markedPlace == null)
+			return false;
+		
+		if (!places.containsKey(markedPlace.getId()))// should not happen -> here for safety reasons
+			return false;
+		
+		Place p = (Place) markedPlace;
 		boolean decremented = p.decrementTokens();
 		if (!decremented)
-			return;
+			return false;
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
 
+		return true;
 	}
 
 	public String getStateString() {
