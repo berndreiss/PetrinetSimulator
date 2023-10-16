@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -22,19 +23,8 @@ public class AbstractToolbar extends JToolBar {
 		String imgLocation = IMAGE_ROOT_FOLDER + toolbarImage + ".png";
 		String imagePath = System.getProperty("user.dir");
 
-		JButton button = new JButton() {
-
-			private static final long serialVersionUID = 1L;
-
-			// TODO is this issue resolved without overriding the method?
-			// Changing the getToolTipLocation() method to show it above the button because
-			// it keeps interfering with the rendering of GraphStreams
-//			@Override
-//			public Point getToolTipLocation(MouseEvent event) {
-//				// Display the tooltip 5 pixels above the button's top edge
-//				return new Point(event.getX(), -getToolTipText().length());
-//			}
-		};
+		JButton button = new JButton();
+		
 		button.addActionListener(actionListener);
 		button.setToolTipText(toolTipText);
 
@@ -54,23 +44,6 @@ public class AbstractToolbar extends JToolBar {
 		button.setMaximumSize(size);
 		button.setSize(size);
 		button.setPreferredSize(size);
-
-		// repaint graph components when mouse leaves because tooltips mess with graph
-		// rendering
-		button.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseEntered(MouseEvent me) {
-
-				ToolTipManager.sharedInstance().setEnabled(true);
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent me) {
-				ToolTipManager.sharedInstance().setEnabled(false);
-			}
-		});
 		return button;
 
 	}

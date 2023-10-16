@@ -13,46 +13,55 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import util.OnEditedListener;
 import view.MainFrame;
 import view.PetrinetPanel;
 
-public class MainController implements MenuInterface, PetrinetToolbarInterface, EditorToolbarInterface {
+public class MainController implements MenuInterface, PetrinetToolbarInterface, EditorToolbarInterface, OnEditedListener {
 
 	private File lastDirectory;
 	private MainFrame parent;
 
 	private PetrinetPanel currentPetrinetPanel;
 
+	private boolean tabAdded;
+	
 	public MainController(MainFrame parent) {
 		this.parent = parent;
 		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
-		init();
-	}
-
-	private void init() {
-		parent.setEmtpy();
 		setStatusLabel();
 
 		parent.getTabbedPane().addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
+				
+				if (tabAdded) {
+					tabAdded = false;//prevent component at selected index to update editorToolbar with outdated instance of PetrinetPanel and therefore highlighting buttons that should not be highlighted
+					return;
+				}
+					
 				JTabbedPane tabbedPane = parent.getTabbedPane();
 				int index = tabbedPane.getSelectedIndex();
 
 				if (index < 0)
 					return;
 
-				System.out.println(index);
-
 				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
 
 				parent.setStatusLabel(getStatusLabel());
+				setToolbarMode(currentPetrinetPanel.getController().getToolbarMode());
+
+				if (currentPetrinetPanel.getController().getToolbarMode() == ToolbarMode.EDITOR) {
+					getFrame().getEditorToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
+				}
 			}
 
 		});
+
 	}
+
 
 	public MainFrame getFrame() {
 		return parent;
@@ -94,26 +103,36 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	private void setNewPanel(File file, boolean newTab) {
 
+		tabAdded = true;
+		
 		PetrinetPanel newPanel = new PetrinetPanel(this, file);
-
-		newPanel.getController().setToolbarMode(getFrame().getTooolbarMode());
+		
 		currentPetrinetPanel = newPanel;
+
+		if (file == null)
+			setToolbarMode(ToolbarMode.EDITOR);
+		else
+			setToolbarMode(ToolbarMode.VIEWER);
+
+		getFrame().getEditorToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
 
 		JTabbedPane tabbedPane = parent.getTabbedPane();
 
 		if (tabbedPane.getTabCount() == 0) {
-			parent.setTabbedPane();
 			newTab = true;
 		}
 		if (newTab) {
-			tabbedPane.add(getStatusLabel(), currentPetrinetPanel);
+			tabbedPane.add(getTabString(getStatusLabel()), currentPetrinetPanel);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
 			
 		} else {
+			int index = tabbedPane.getSelectedIndex();
+			tabbedPane.insertTab(getTabString(getStatusLabel()), null, currentPetrinetPanel, null, index);
+			tabbedPane.setSelectedIndex(index);
+
+			tabbedPane.remove(index+1);
 
 		}
-
-//		setStatusLabel();
 
 	}
 
@@ -143,8 +162,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		File file = getFile();
 		if (file == null)
 			return;
-
-		setNewPanel(file, false);
 
 	}
 
@@ -189,6 +206,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	public void onReload() {
 		if (currentPetrinetPanel == null)
 			return;
+		
 		PetrinetController controller = currentPetrinetPanel.getController();
 
 		if (controller.getCurrentFile() == null)
@@ -244,7 +262,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		fileChooser.setCurrentDirectory(lastDirectory);
 		int result = fileChooser.showOpenDialog(parent);
-		System.out.println(result);
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
 			lastDirectory = file.getParentFile();
@@ -350,9 +367,20 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	@Override
 	public void onClose() {
-		currentPetrinetPanel = null;
-		init();
-		getFrame().setToolBarMode(ToolbarMode.VIEWER);
+		
+		
+		JTabbedPane tabbedPane = getFrame().getTabbedPane();
+		
+		int index = tabbedPane.getSelectedIndex();
+		
+		tabbedPane.remove(index);
+		
+		if (tabbedPane.getTabCount() == 0) {
+			currentPetrinetPanel = null;
+			setStatusLabel();
+		}
+//		init();
+//		getFrame().setToolBarMode(ToolbarMode.VIEWER);
 	}
 
 	@Override
@@ -561,12 +589,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 				return;
 			}
 		}
-		boolean added = controller.getEditor().toggleAddPlace(id);
+		boolean addToggled = controller.getEditor().toggleAddPlace(id);
 
-		if (!added)
+		if (!addToggled)
 			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
 					JOptionPane.INFORMATION_MESSAGE);
-
+		else
+			getFrame().getEditorToolbar().toggleAddPlaceButton();
 	}
 
 	@Override
@@ -587,12 +616,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 				return;
 			}
 		}
-		boolean added = controller.getEditor().toggleAddTransition(id);
+		boolean addToggled = controller.getEditor().toggleAddTransition(id);
 
-		if (!added)
+		if (!addToggled)
 			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
 					JOptionPane.INFORMATION_MESSAGE);
-
+		else
+			getFrame().getEditorToolbar().toggleAddTransitionButton();
 	}
 
 	@Override
@@ -600,8 +630,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		PetrinetController controller = currentPetrinetPanel.getController();
 		String id = null;
 
-		if (!controller.getEditor().addsTransition()) {
-			id = JOptionPane.showInputDialog(null, "Enter id for transition:");
+		if (!controller.getEditor().addsEdge()) {
+			id = JOptionPane.showInputDialog(null, "Enter id for edge:");
 
 			if (id == null)
 				return;
@@ -611,29 +641,58 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 				return;
 			}
 		}
-		boolean added = controller.getEditor().toggleAddEdge(id);
+		boolean addToggled = controller.getEditor().toggleAddEdge(id);
 
-		if (!added)
+		if (!addToggled)
 			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
 					JOptionPane.INFORMATION_MESSAGE);
+		else
+			getFrame().getEditorToolbar().toggleAddEdgeButton();
 	}
 
 	@Override
 	public void onAddLabel() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onRemoveComponent() {
 		PetrinetController controller = currentPetrinetPanel.getController();
-
 		controller.getEditor().removeComponent();
+		setStatusLabel();
 	}
 
 	@Override
 	public void onRemoveEdge() {
 		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
+		getFrame().getEditorToolbar().toggleRemoveEdgeButton();
+	}
+
+	@Override
+	public void onPlaceAdded() {
+		getFrame().getEditorToolbar().toggleAddPlaceButton();
+		setStatusLabel();
+		
+	}
+
+	@Override
+	public void onTransitionAdded() {
+		getFrame().getEditorToolbar().toggleAddTransitionButton();
+		setStatusLabel();
+		
+	}
+
+	@Override
+	public void onEdgeAdded() {
+		getFrame().getEditorToolbar().toggleAddEdgeButton();
+		setStatusLabel();
+		
+	}
+
+	@Override
+	public void onEdgeRemoved() {
+		getFrame().getEditorToolbar().toggleRemoveEdgeButton();
+		setStatusLabel();
+		
 	}
 
 }

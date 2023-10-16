@@ -106,9 +106,6 @@ public class PetrinetController {
 		return reachabilityGraphModel;
 	}
 
-	public void reload() {
-		init();
-	}
 
 	public void clickNodeInGraph(String id) {
 
@@ -232,6 +229,12 @@ public class PetrinetController {
 	public ViewPanel getReachabilityViewPanel() {
 		return reachabilityViewPanel;
 	}
+	
+	public ToolbarMode getToolbarMode() {
+		
+		return toolbarMode;
+	}
+	
 
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 		if (toolbarMode == ToolbarMode.EDITOR)
@@ -283,5 +286,10 @@ public class PetrinetController {
 			new PNMLParser(file, this.petrinet);
 		
 	}
+
+	public void setFileChanged(boolean changed) {
+		fileChanged = changed;
+	}
+	
 
 }

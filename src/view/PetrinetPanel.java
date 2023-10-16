@@ -31,6 +31,8 @@ public class PetrinetPanel extends JPanel {
 
 		this.controller = new PetrinetController(file, headless);
 
+		controller.getEditor().setOnEditedListener(mainController);
+		
 		setLayout(new BorderLayout());
 
 		if (!headless) {

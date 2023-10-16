@@ -17,8 +17,15 @@ public class Editor {
 	private String edgeToAddId;
 	private PetrinetElement[] removeEdge;
 
-	public Editor(PetrinetController controller) {
+	private OnEditedListener onEditedListener;
+	
+	public Editor(PetrinetController controller){
 		this.controller = controller;
+	}
+
+	
+	public void setOnEditedListener(OnEditedListener onEditedListener) {
+		this.onEditedListener = onEditedListener;
 	}
 
 	public boolean toggleAddPlace(String id) {
@@ -175,6 +182,8 @@ public class Editor {
 						boolean added = addNewEdge();
 						if (added) {
 							controller.getPetrinetGraph().toggleNodeMark(null);
+							controller.setFileChanged(true);
+							onEditedListener.onEdgeAdded();
 							return;
 						} else
 							JOptionPane.showMessageDialog(null, "Invalid operation: edge already exists.", "",
@@ -204,6 +213,8 @@ public class Editor {
 						controller.getPetrinet().removeEdge(removeEdge[0], removeEdge[1]);
 						removeEdge = null;
 						controller.getPetrinetGraph().toggleNodeMark(null);
+						controller.setFileChanged(true);
+						onEditedListener.onEdgeRemoved();
 						return;
 					} else {
 						JOptionPane.showMessageDialog(null, "Invalid operation: edge does not exist.", "",
@@ -227,6 +238,8 @@ public class Editor {
 
 			controller.getPetrinet().addPlace(placeToAdd);
 			placeToAdd = null;
+			controller.setFileChanged(true);
+			onEditedListener.onPlaceAdded();
 		}
 		if (addsTransition()) {
 			transitionToAdd.setX(x);
@@ -234,6 +247,8 @@ public class Editor {
 
 			controller.getPetrinet().addTransition(transitionToAdd);
 			transitionToAdd = null;
+			controller.setFileChanged(true);
+			onEditedListener.onTransitionAdded();
 		}
 	}
 

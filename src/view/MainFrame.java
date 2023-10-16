@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 
 import control.MainController;
 import control.ToolbarMode;
+import util.OnEditedListener;
 
 public class MainFrame extends JFrame {
 
@@ -40,8 +41,7 @@ public class MainFrame extends JFrame {
 
 	private MainController controller;
 
-	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
-
+	
 	public MainFrame(String title) {
 		super(title);
 		textArea = new JTextArea();
@@ -49,16 +49,18 @@ public class MainFrame extends JFrame {
 
 		scrollPane = new JScrollPane(textArea);
 
-		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
-		splitPane.setDefaultRatio(0.8);
-		splitPane.setRightComponent(scrollPane);
 
-		setEmtpy();
+//		setEmtpy();
 
 		
 		tabbedPane = new JTabbedPane();
 
 
+		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
+		splitPane.setDefaultRatio(0.8);
+		splitPane.setLeftComponent(tabbedPane);
+		splitPane.setRightComponent(scrollPane);
+	
 		
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
 		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
@@ -128,42 +130,41 @@ public class MainFrame extends JFrame {
 		statusLabel.setText(status);
 	}
 	
-	public ToolbarMode getTooolbarMode() {
-		return toolbarMode;
-	}
 
 	public void setToolBarMode(ToolbarMode toolbarMode) {
 		if (toolbarMode == null)
 			return;
-		if (this.toolbarMode == ToolbarMode.EDITOR)
-			editorToolbar.setVisible(false);
-		if (this.toolbarMode == ToolbarMode.VIEWER)
-			viewerToolbar.setVisible(false);
 
-		if (toolbarMode == ToolbarMode.EDITOR)
+		if (toolbarMode == ToolbarMode.EDITOR) {
 			editorToolbar.setVisible(true);
-		if (toolbarMode == ToolbarMode.VIEWER)
+			viewerToolbar.setVisible(false);
+		}
+		if (toolbarMode == ToolbarMode.VIEWER) {
 			viewerToolbar.setVisible(true);
-
-		this.toolbarMode = toolbarMode;
+			editorToolbar.setVisible(false);
+		}
 	}
 	
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
 
-	public void setTabbedPane() {
-		splitPane.remove(splitPane.getLeftComponent());
-		splitPane.setLeftComponent(tabbedPane);
+	public EditorToolbar getEditorToolbar() {
+		return (EditorToolbar) editorToolbar;
 	}
+	
+//	public void setTabbedPane() {
+//		splitPane.remove(splitPane.getLeftComponent());
+//		splitPane.setLeftComponent(tabbedPane);
+//	}
 
-	public void setEmtpy() {
-		splitPane.remove(splitPane.getLeftComponent());
-		JPanel dummyPanel = new JPanel();
-		dummyPanel.setPreferredSize(
-				new Dimension(getWidth(), (int) (getHeight() * MainFrame.GRAPH_PERCENT)));
-		getSplitPane().setLeftComponent(dummyPanel);
-
-	}
+//	public void setEmtpy() {
+//		splitPane.remove(splitPane.getLeftComponent());
+//		JPanel dummyPanel = new JPanel();
+//		dummyPanel.setPreferredSize(
+//				new Dimension(getWidth(), (int) (getHeight() * MainFrame.GRAPH_PERCENT)));
+//		getSplitPane().setLeftComponent(dummyPanel);
+//
+//	}
 	
 }
