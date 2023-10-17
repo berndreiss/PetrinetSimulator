@@ -36,14 +36,15 @@ public class MainFrame extends JFrame {
 
 	private JLabel statusLabel;
 
-	private JToolBar viewerToolbar;
-	private JToolBar editorToolbar;
+	private PetrinetToolbar toolbar;
 
 	private MainController controller;
 
 	
 	public MainFrame(String title) {
 		super(title);
+		setLayout(new BorderLayout());
+		
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
@@ -57,7 +58,6 @@ public class MainFrame extends JFrame {
 		splitPane.setLeftComponent(tabbedPane);
 		splitPane.setRightComponent(scrollPane);
 		splitPane.setDefaultRatio(0.8);
-		splitPane.initialize();
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
 		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
 		statusLabel = new JLabel();
@@ -72,24 +72,13 @@ public class MainFrame extends JFrame {
 
 		this.setJMenuBar(menuBar);
 
-		viewerToolbar = new PetrinetToolbar(controller);
+		toolbar = new PetrinetToolbar(controller);
 
-		editorToolbar = new EditorToolbar(controller);
 
-		viewerToolbar.setFloatable(false);
-		editorToolbar.setFloatable(false);
 
-		editorToolbar.setVisible(false);
 
-		JPanel toolbarPanel = new JPanel();
 
-		FlowLayout toolbarPanelLayout = new FlowLayout();
-		toolbarPanelLayout.setAlignment(FlowLayout.LEFT);
-		toolbarPanel.setLayout(toolbarPanelLayout);
-		toolbarPanel.add(viewerToolbar);
-		toolbarPanel.add(editorToolbar);
-
-		this.add(toolbarPanel, BorderLayout.NORTH);
+		this.add(toolbar, BorderLayout.NORTH);
 		add(splitPane, BorderLayout.CENTER);
 
 
@@ -126,29 +115,15 @@ public class MainFrame extends JFrame {
 		statusLabel.setText(status);
 	}
 	
-
-	public void setToolBarMode(ToolbarMode toolbarMode) {
-		if (toolbarMode == null)
-			return;
-
-		if (toolbarMode == ToolbarMode.EDITOR) {
-			editorToolbar.setVisible(true);
-			viewerToolbar.setVisible(false);
-		}
-		if (toolbarMode == ToolbarMode.VIEWER) {
-			viewerToolbar.setVisible(true);
-			editorToolbar.setVisible(false);
-		}
-	}
 	
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
 
-	public EditorToolbar getEditorToolbar() {
-		return (EditorToolbar) editorToolbar;
+
+	public PetrinetToolbar getToolbar() {
+		return toolbar;
 	}
-	
 //	public void setTabbedPane() {
 //		splitPane.remove(splitPane.getLeftComponent());
 //		splitPane.setLeftComponent(tabbedPane);

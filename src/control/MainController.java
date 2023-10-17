@@ -1,5 +1,6 @@
 package control;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.TreeMap;
@@ -18,7 +19,7 @@ import view.MainFrame;
 import view.PetrinetPanel;
 
 public class MainController
-		implements MenuInterface, PetrinetToolbarInterface, EditorToolbarInterface, OnEditedListener {
+		implements MenuInterface, PetrinetToolbarInterface, OnEditedListener {
 
 	private File lastDirectory;
 	private MainFrame parent;
@@ -57,7 +58,7 @@ public class MainController
 				setToolbarMode(currentPetrinetPanel.getController().getToolbarMode());
 
 				if (currentPetrinetPanel.getController().getToolbarMode() == ToolbarMode.EDITOR) {
-					getFrame().getEditorToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
+					getFrame().getToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
 				}
 			}
 
@@ -116,7 +117,7 @@ public class MainController
 		else
 			setToolbarMode(ToolbarMode.VIEWER);
 
-		getFrame().getEditorToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
+		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
 
 		JTabbedPane tabbedPane = parent.getTabbedPane();
 
@@ -135,13 +136,12 @@ public class MainController
 			tabbedPane.remove(index + 1);
 
 		}
-
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
 		PetrinetController controller = currentPetrinetPanel.getController();
 		controller.setToolbarMode(toolbarMode);
-		getFrame().setToolBarMode(toolbarMode);
+		getFrame().getToolbar().setToolbarMode(toolbarMode);
 	}
 
 	@Override
@@ -642,7 +642,7 @@ public class MainController
 			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
 					JOptionPane.INFORMATION_MESSAGE);
 		else
-			getFrame().getEditorToolbar().toggleAddEdgeButton();
+			getFrame().getToolbar().toggleAddEdgeButton();
 	}
 
 	@Override
@@ -664,22 +664,34 @@ public class MainController
 	@Override
 	public void onRemoveEdge() {
 		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
-		getFrame().getEditorToolbar().toggleRemoveEdgeButton();
+		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
 
 
 	@Override
 	public void onEdgeAdded() {
-		getFrame().getEditorToolbar().toggleAddEdgeButton();
+		getFrame().getToolbar().toggleAddEdgeButton();
 		setStatusLabel();
 
 	}
 
 	@Override
 	public void onEdgeRemoved() {
-		getFrame().getEditorToolbar().toggleRemoveEdgeButton();
+		getFrame().getToolbar().toggleRemoveEdgeButton();
 		setStatusLabel();
 
+	}
+
+	@Override
+	public void onZoomIn() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onZoomOut() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

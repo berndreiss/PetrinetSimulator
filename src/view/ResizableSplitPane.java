@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -8,6 +9,7 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 
@@ -16,13 +18,13 @@ public class ResizableSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
 	private double defaultDividerRatio = 0.5;
-	private JFrame parent;
+	private MainFrame parent;
 	private Dimension preferredSize;
 
-	public ResizableSplitPane(JFrame parent, int splitOrientation) {
+	public ResizableSplitPane(MainFrame parent, int splitOrientation) {
 		this(parent, splitOrientation, new JPanel(), new JPanel());
 	}
-	public ResizableSplitPane(JFrame parent, int splitOrientation, Component left, Component right) {
+	public ResizableSplitPane(MainFrame parent, int splitOrientation, Component left, Component right) {
 		super(splitOrientation, left, right);
 
 		this.parent = parent;
@@ -47,8 +49,15 @@ public class ResizableSplitPane extends JSplitPane {
 			initialize();
 	}
 
-	public void initialize() {
-		preferredSize = new Dimension((int) (parent.getWidth() / 2 - 10), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
+	private void initialize() {
+		
+		int westAndEastComponentsWidth = 0;
+		
+		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL)
+			westAndEastComponentsWidth += parent.getToolbar().getWidth();
+		
+		preferredSize = new Dimension((int) (parent.getWidth() / 2-10-westAndEastComponentsWidth), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
+		
 		
 		Dimension zeroSize = new Dimension(0, 0);
 		
@@ -94,9 +103,7 @@ public class ResizableSplitPane extends JSplitPane {
 				defaultDividerRatio = (double) getLeftComponent().getHeight()
 						/ (getLeftComponent().getHeight() + getRightComponent().getHeight());
 
-			getLeftComponent().repaint();// arrows on edges are not rendering properly without repaint
-			getRightComponent().repaint();// arrows on edges are not rendering properly without repaint
-		}
+			}
 
 	}
 

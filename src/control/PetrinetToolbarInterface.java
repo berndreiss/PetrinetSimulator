@@ -28,5 +28,28 @@ public interface PetrinetToolbarInterface {
 
 	void onSetDefault();
 	
+	void onZoomIn();
+	
+	void onZoomOut();
+	
 	void onOpenEditor();
+
+	
+	
+	//Additional functions for Editor
+	void onAddPlace();
+
+	void onAddTransition();
+	
+	void onAddEdge();
+	
+	void onAddLabel();
+	
+	void onRemoveEdge();
+	
+	void onRemoveComponent();
+	
+	void onCloseEditor();
+
+	
 }

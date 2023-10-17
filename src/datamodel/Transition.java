@@ -123,8 +123,8 @@ public class Transition extends PetrinetElement {
 		if (inputs.containsKey(p.getId()))
 			return;
 		inputs.put(p.id, p);
-		p.addOutput(this);
 		setActive(checkActive());
+		p.addOutput(this);
 
 	}
 
@@ -162,6 +162,7 @@ public class Transition extends PetrinetElement {
 		if (!inputs.containsKey(p.getId()))
 			return;
 		inputs.remove(p.getId());
+		setActive(checkActive());
 		p.removeOutput(this);
 		
 	}
