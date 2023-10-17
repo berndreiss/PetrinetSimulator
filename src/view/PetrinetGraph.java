@@ -1,5 +1,8 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -62,6 +65,7 @@ public class PetrinetGraph extends MultiGraph {
 
 	private PetrinetElement markedNode;
 
+
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
@@ -74,6 +78,7 @@ public class PetrinetGraph extends MultiGraph {
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
+
 
 		petrinet.setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
 
@@ -101,17 +106,17 @@ public class PetrinetGraph extends MultiGraph {
 					return;
 				node.setAttribute("ui.label", placeTokenLabel(place.getNumberOfTokens()));
 				Sprite sprite = spriteMan.getSprite("s" + place.getId());
-				
+
 				sprite.setAttribute("ui.label", getElementLabel(place));
 			}
 
 			@Override
-			public void onPetrinetElementSetCoordinates(PetrinetElement element, float x, float y) {
+			public void onPetrinetElementSetCoordinates(PetrinetElement element) {
 				Node node = getNode(element.getId());
 				if (node == null)
 					return;
 
-				node.setAttribute("xy", x, y);
+				node.setAttribute("xy", element.getX(), element.getY());
 			}
 
 			@Override
@@ -121,18 +126,20 @@ public class PetrinetGraph extends MultiGraph {
 				if (node == null)
 					return;
 				spriteMan.removeSprite("s" + element.getId());
-				if (markedNode==element)
+				if (markedNode == element)
 					markedNode = null;
 
 			}
 
 			@Override
 			public void onPetrinetElementAdded(PetrinetElement element) {
+
+				element.setX(element.getX() - 200);
 				if (element instanceof Place)
 					addPlace((Place) element);
 				if (element instanceof Transition)
 					addTransition((Transition) element);
-		
+
 			}
 
 			@Override
@@ -157,6 +164,7 @@ public class PetrinetGraph extends MultiGraph {
 
 	}
 
+
 	private Node addPetrinetElement(PetrinetElement e) {
 
 		Node node = this.addNode(e.getId());
@@ -166,7 +174,7 @@ public class PetrinetGraph extends MultiGraph {
 		sprite.setAttribute("ui.class", "nodeLabel");
 		sprite.setAttribute("ui.label", getElementLabel(e));
 		sprite.attachToNode(node.getId());
-		sprite.setPosition(0.5);
+//		sprite.setPosition(0.5);
 
 		return node;
 	}
@@ -198,7 +206,6 @@ public class PetrinetGraph extends MultiGraph {
 		return node;
 
 	}
-
 
 	private Edge addPetrinetEdge(Node a, Node b, String id) {
 
@@ -280,8 +287,8 @@ public class PetrinetGraph extends MultiGraph {
 			markedNode = null;
 			return;
 		}
-		
-		if (markedNode != null){
+
+		if (markedNode != null) {
 			if (markedNode instanceof Transition)
 				setTransitionNormal(markedNode);
 			else

@@ -71,7 +71,7 @@ public class GraphStreamView {
 			public void mousePressed(MouseEvent me) {
 				element = viewPanel.findGraphicElementAt(enumSet, me.getX(), me.getY());
 				viewerPipe.pump();
-				
+
 			}
 
 			@Override
@@ -99,11 +99,7 @@ public class GraphStreamView {
 							}
 						element = null;
 					}
-				}
-				else {
-					if (graph instanceof PetrinetGraph)
-						controller.clickedEmpty(me.getX(), me.getY());
-				}
+				} 
 
 				viewerPipe.pump();
 			}

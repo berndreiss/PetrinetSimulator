@@ -50,18 +50,14 @@ public class MainFrame extends JFrame {
 		scrollPane = new JScrollPane(textArea);
 
 
-//		setEmtpy();
-
-		
 		tabbedPane = new JTabbedPane();
 
-
 		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
-		splitPane.setDefaultRatio(0.8);
+		
 		splitPane.setLeftComponent(tabbedPane);
 		splitPane.setRightComponent(scrollPane);
-	
-		
+		splitPane.setDefaultRatio(0.8);
+		splitPane.initialize();
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
 		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
 		statusLabel = new JLabel();

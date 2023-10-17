@@ -119,13 +119,3 @@ sprite.nodeLabel {
 	text-offset: 0,25;
 }
 
-
-/*
-	Style-Angabe fuer ein Sprite, das einen Knoten markiert
-*/
-sprite.mark {
-	shape: cross;   
-	fill-color: rgba(255,0,0,175);   		
-	size: 40;
-	z-index: 5;
-}

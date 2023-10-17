@@ -15,10 +15,6 @@ public class EditorToolbar extends AbstractToolbar {
 
 	private Color buttonHighlightColor = Color.LIGHT_GRAY;
 
-	private JButton addPlaceButton;
-
-	private JButton addTransitionButton;
-
 	private JButton addEdgeButton;
 
 	private JButton removeEdgeButton;
@@ -39,10 +35,10 @@ public class EditorToolbar extends AbstractToolbar {
 		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, e -> controller.onNext(), "Open the next file",
 				"next");
 
-		addPlaceButton = makeToolbarButton(ToolbarImage.ADD_PLACE, e -> controller.onAddPlace(), "Add place",
+		JButton addPlaceButton = makeToolbarButton(ToolbarImage.ADD_PLACE, e -> controller.onAddPlace(), "Add place",
 				"add place");
 
-		addTransitionButton = makeToolbarButton(ToolbarImage.ADD_TRANSITION, e -> controller.onAddTransition(),
+		JButton addTransitionButton = makeToolbarButton(ToolbarImage.ADD_TRANSITION, e -> controller.onAddTransition(),
 				"Add transition", "add trans");
 
 		JButton deleteComponentButton = makeToolbarButton(ToolbarImage.DELETE_COMPONENT,
@@ -59,6 +55,8 @@ public class EditorToolbar extends AbstractToolbar {
 		JButton minusButton = makeToolbarButton(ToolbarImage.MINUS, e -> controller.onMinus(),
 				"Removes a token from a selected place", "minus");
 
+		JButton addLabelButton = makeToolbarButton(ToolbarImage.ADD_LABEL, e->controller.onAddLabel(), "Add label to element", "add label");
+		
 		JButton setDefaultButton = makeToolbarButton(ToolbarImage.DEFAULT, e -> controller.onSetDefault(),
 				"Reset split panes", "reset pane");
 
@@ -76,46 +74,14 @@ public class EditorToolbar extends AbstractToolbar {
 		this.add(removeEdgeButton);
 		this.add(plusButton);
 		this.add(minusButton);
+		this.add(addLabelButton);
 		this.add(setDefaultButton);
 		this.add(closeEditorButton);
-	}
-
-	public void toggleAddPlaceButton() {
-		if (addPlaceButton.getBackground() == buttonDefaultColor) {
-			addPlaceButton.setBackground(buttonHighlightColor);
-
-			if (addTransitionButton.getBackground() == buttonHighlightColor)
-				addTransitionButton.setBackground(buttonDefaultColor);
-			if (addEdgeButton.getBackground() == buttonHighlightColor)
-				addEdgeButton.setBackground(buttonDefaultColor);
-			if (removeEdgeButton.getBackground() == buttonHighlightColor)
-				removeEdgeButton.setBackground(buttonDefaultColor);
-
-		} else
-			addPlaceButton.setBackground(buttonDefaultColor);
-	}
-
-	public void toggleAddTransitionButton() {
-		if (addTransitionButton.getBackground() == buttonDefaultColor) {
-			addTransitionButton.setBackground(buttonHighlightColor);
-			if (addPlaceButton.getBackground() == buttonHighlightColor)
-				addPlaceButton.setBackground(buttonDefaultColor);
-			if (addEdgeButton.getBackground() == buttonHighlightColor)
-				addEdgeButton.setBackground(buttonDefaultColor);
-			if (removeEdgeButton.getBackground() == buttonHighlightColor)
-				removeEdgeButton.setBackground(buttonDefaultColor);
-
-		} else
-			addTransitionButton.setBackground(buttonDefaultColor);
 	}
 
 	public void toggleAddEdgeButton() {
 		if (addEdgeButton.getBackground() == buttonDefaultColor) {
 			addEdgeButton.setBackground(buttonHighlightColor);
-			if (addPlaceButton.getBackground() == buttonHighlightColor)
-				addPlaceButton.setBackground(buttonDefaultColor);
-			if (addTransitionButton.getBackground() == buttonHighlightColor)
-				addTransitionButton.setBackground(buttonDefaultColor);
 			if (removeEdgeButton.getBackground() == buttonHighlightColor)
 				removeEdgeButton.setBackground(buttonDefaultColor);
 
@@ -126,10 +92,6 @@ public class EditorToolbar extends AbstractToolbar {
 	public void toggleRemoveEdgeButton() {
 		if (removeEdgeButton.getBackground() == buttonDefaultColor) {
 			removeEdgeButton.setBackground(buttonHighlightColor);
-			if (addPlaceButton.getBackground() == buttonHighlightColor)
-				addPlaceButton.setBackground(buttonDefaultColor);
-			if (addTransitionButton.getBackground() == buttonHighlightColor)
-				addTransitionButton.setBackground(buttonDefaultColor);
 			if (addEdgeButton.getBackground() == buttonHighlightColor)
 				addEdgeButton.setBackground(buttonDefaultColor);
 		}else
@@ -137,8 +99,6 @@ public class EditorToolbar extends AbstractToolbar {
 	}
 	
 	public void resetButtons() {
-		addPlaceButton.setBackground(buttonDefaultColor);
-		addTransitionButton.setBackground(buttonDefaultColor);
 		addEdgeButton.setBackground(buttonDefaultColor);
 		removeEdgeButton.setBackground(buttonDefaultColor);
 	}
@@ -146,10 +106,6 @@ public class EditorToolbar extends AbstractToolbar {
 	public void setToolbarTo(Editor editor) {
 		resetButtons();
 		
-		if (editor.addsPlace())
-			toggleAddPlaceButton();
-		if (editor.addsTransition())
-			toggleAddTransitionButton();
 		if (editor.addsEdge())
 			toggleAddEdgeButton();
 		if (editor.removesEdge())

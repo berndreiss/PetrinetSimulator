@@ -11,8 +11,6 @@ public class Editor {
 
 	private PetrinetController controller;
 
-	private Place placeToAdd;
-	private Transition transitionToAdd;
 	private PetrinetElement[] addEdge;
 	private String edgeToAddId;
 	private PetrinetElement[] removeEdge;
@@ -28,52 +26,34 @@ public class Editor {
 		this.onEditedListener = onEditedListener;
 	}
 
-	public boolean toggleAddPlace(String id) {
+	public boolean addPlace(String id) {
+
 
 		if (controller.getPetrinet().getPlace(id) != null)
 			return false;
+		Place placeToAdd = new Place(id);
+		controller.getPetrinet().addPlace(placeToAdd);
+		controller.getPetrinet().setAddedElementPosition(placeToAdd);
+		controller.setFileChanged(true);
 
-		if (addsPlace()) {
-			placeToAdd = null;
-			return true;
-		}
-		placeToAdd = new Place(id);
-		if (addsTransition())
-			transitionToAdd = null;
-		if (addsEdge())
-			addEdge = null;
-		if (removesEdge())
-			removeEdge = null;
 		return true;
 	}
 
-	public boolean addsPlace() {
-		return placeToAdd != null;
-	}
 
-	public boolean toggleAddTransition(String id) {
+	public boolean addTransition(String id) {
 
 		if (controller.getPetrinet().getTransition(id) != null)
 			return false;
 
-		if (addsTransition()) {
-			transitionToAdd = null;
-			return true;
-		}
-		transitionToAdd = new Transition(id);
-		if (addsPlace())
-			placeToAdd = null;
-		if (addsEdge())
-			addEdge = null;
-		if (removesEdge())
-			removeEdge = null;
+
+		Transition transitionToAdd = new Transition(id);
+		controller.getPetrinet().addTransition(transitionToAdd);
+		controller.getPetrinet().setAddedElementPosition(transitionToAdd);
+		controller.setFileChanged(true);
+
 		return true;
 	}
 
-	public boolean addsTransition() {
-
-		return transitionToAdd != null;
-	}
 
 	public boolean toggleAddEdge(String id) {
 		if (addsEdge()) {
@@ -89,10 +69,7 @@ public class Editor {
 		if (markedNode != null)
 			addEdge[0] = markedNode;
 
-		if (addsPlace())
-			placeToAdd = null;
-		if (addsTransition())
-			transitionToAdd = null;
+
 		if (removesEdge())
 			removeEdge = null;
 		return true;
@@ -109,10 +86,6 @@ public class Editor {
 		if (markedNode != null)
 			removeEdge[0] = markedNode;
 
-		if (addsPlace())
-			placeToAdd = null;
-		if (addsTransition())
-			transitionToAdd = null;
 		if (addsEdge())
 			addEdge = null;
 		return true;
@@ -134,6 +107,7 @@ public class Editor {
 			return;
 
 		controller.getPetrinet().removePetrinetElement(markedElement.getId());
+		controller.setFileChanged(true);
 
 	}
 
@@ -165,10 +139,6 @@ public class Editor {
 
 	public void clickedNodeInGraph(PetrinetElement pe) {
 
-		if (addsPlace() || addsTransition()) {
-			clickedEmpty(pe.getX(), pe.getY());
-			return;
-		}
 
 		if (addsEdge()) {
 			if (addEdge[0] == null)
@@ -231,25 +201,5 @@ public class Editor {
 
 	}
 
-	public void clickedEmpty(double x, double y) {
-		if (addsPlace()) {
-			placeToAdd.setX(x);
-			placeToAdd.setY(y);
-
-			controller.getPetrinet().addPlace(placeToAdd);
-			placeToAdd = null;
-			controller.setFileChanged(true);
-			onEditedListener.onPlaceAdded();
-		}
-		if (addsTransition()) {
-			transitionToAdd.setX(x);
-			transitionToAdd.setY(y);
-
-			controller.getPetrinet().addTransition(transitionToAdd);
-			transitionToAdd = null;
-			controller.setFileChanged(true);
-			onEditedListener.onTransitionAdded();
-		}
-	}
 
 }

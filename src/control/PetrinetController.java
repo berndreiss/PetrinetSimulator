@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import org.graphstream.algorithm.util.FibonacciHeap.Node;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
 import datamodel.Petrinet;
@@ -247,10 +248,7 @@ public class PetrinetController {
 		this.toolbarMode = toolbarMode;
 	}
 
-	public void clickedEmpty(double x, double y) {
-		if (toolbarMode == ToolbarMode.EDITOR)
-			editor.clickedEmpty(x, y);
-	}
+	
 
 	public void writeToFile() {
 		writeToFile(getCurrentFile());
@@ -289,6 +287,19 @@ public class PetrinetController {
 
 	public void setFileChanged(boolean changed) {
 		fileChanged = changed;
+	}
+
+	public void setLabel(String label) {
+		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
+		if (markedNode == null)
+			return;
+		
+		if (markedNode.getName().equals(label))
+			return;
+		
+		petrinet.setPetrinetElementName(markedNode.getId(), label);
+	
+		setFileChanged(true);
 	}
 	
 

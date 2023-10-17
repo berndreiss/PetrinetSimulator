@@ -3,7 +3,7 @@ package datamodel;
 public interface PetrinetComponentChangedListener {
 
 	void onPetrinetElementAdded(PetrinetElement element);
-	void onPetrinetElementSetCoordinates(PetrinetElement element, float x, float y);
+	void onPetrinetElementSetCoordinates(PetrinetElement element);
 	void onPetrinetElementRemoved(PetrinetElement element);
 	void onEdgeAdded(PetrinetElement source, PetrinetElement target, String id);
 	void onEdgeRemoved(String edge);

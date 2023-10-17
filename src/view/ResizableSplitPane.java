@@ -8,6 +8,7 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 
 
@@ -46,7 +47,7 @@ public class ResizableSplitPane extends JSplitPane {
 			initialize();
 	}
 
-	private void initialize() {
+	public void initialize() {
 		preferredSize = new Dimension((int) (parent.getWidth() / 2 - 10), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
 		
 		Dimension zeroSize = new Dimension(0, 0);
@@ -62,8 +63,9 @@ public class ResizableSplitPane extends JSplitPane {
 		right.setMinimumSize(zeroSize);
 		
 		
-		parent.addComponentListener(new FrameResizeAdapter());		
-		setDividerLocation(defaultDividerRatio);
+		parent.addComponentListener(new FrameResizeAdapter());
+		SwingUtilities.invokeLater(() -> setDividerLocation(defaultDividerRatio));//wait for all pending Swing events to be processed, so the size of left and right components is set correctly and it doesn't collide to the left
+//		setDividerLocation(defaultDividerRatio);
 
 	}
 	public void setDefaultRatio(double ratio) {
