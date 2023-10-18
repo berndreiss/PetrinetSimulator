@@ -1,5 +1,8 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -8,13 +11,17 @@ import org.graphstream.ui.spriteManager.SpriteManager;
 
 import control.PetrinetController;
 import datamodel.PetrinetState;
-import datamodel.StateChangeListener;
+import datamodel.ReachabilityStateChangeListener;
 import datamodel.Transition;
 
 public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
+	private final static int LEVEL_OFFSET = 100;
+	
+	private final static int FARTHEST_POINT_X = 10000;
+	
 	private SpriteManager spriteMan;
 
 	private Node initialNode;
@@ -27,30 +34,30 @@ public class ReachabilityGraph extends MultiGraph {
 	private Node nodeMMarked;
 	private PetrinetController controller;
 
+	private List<List<Node>> listHierarchy;
+	
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
 		this.controller = controller;
 
-		// TODO: mark inital node
+		listHierarchy = new ArrayList<List<Node>>();
+		
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
 
-		init();
-
-	}
-
-	private void init() {
 		PetrinetState initialState = controller.getReachabilityGraphModel().getInitialState();
 
 		if (initialState != null) {
-
+			
 			initialNode = addState(controller.getReachabilityGraphModel().getInitialState(), null, null);
 			setHighlight(initialNode);
+			addNodeToLevel(initialNode, 0);
+
 		}
-		controller.getReachabilityGraphModel().setStateChangeListener(new StateChangeListener() {
+		controller.getReachabilityGraphModel().setStateChangeListener(new ReachabilityStateChangeListener() {
 
 			@Override
 			public void onSetCurrent(PetrinetState state, boolean reset) {
@@ -95,8 +102,11 @@ public class ReachabilityGraph extends MultiGraph {
 
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
-				addState(state, predecessor, t);
+				Node node = addState(state, predecessor, t);
+				addNodeToLevel(node, state.getLevel());
 			}
+
+
 
 			@Override
 			public void onMarkInvalid(PetrinetState m, PetrinetState mMarked) {
@@ -106,6 +116,27 @@ public class ReachabilityGraph extends MultiGraph {
 		});
 	}
 
+	private void addNodeToLevel(Node node, int level) {
+		
+		if (listHierarchy.size() < level)
+			return;
+		
+		if (listHierarchy.size()==level) 
+			listHierarchy.add(new ArrayList<Node>());
+
+		List<Node> nodeList = listHierarchy.get(level);
+		
+		nodeList.add(node);
+		
+		int xOffset = FARTHEST_POINT_X / nodeList.size();
+		int xCounter = xOffset/2;
+		
+		for (Node n: nodeList) {
+			n.setAttribute("xy", xCounter, -LEVEL_OFFSET * level );
+			xCounter += xOffset;
+		}
+
+	}
 	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
 //TODO can i remove all headlesses?
 

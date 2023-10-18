@@ -1,6 +1,6 @@
 package datamodel;
 
-public interface StateChangeListener {
+public interface ReachabilityStateChangeListener {
 
 	void onSetCurrent(PetrinetState state, boolean reset);
 	void onMarkInvalid(PetrinetState m, PetrinetState mMarked);

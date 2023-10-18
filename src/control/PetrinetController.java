@@ -31,9 +31,6 @@ public class PetrinetController {
 	
 	private Editor editor;
 
-	private ViewPanel petrinetViewPanel;
-	private ViewPanel reachabilityViewPanel;
-
 	private File file;
 
 	private boolean fileChanged;
@@ -65,8 +62,6 @@ public class PetrinetController {
 
 			this.reachabilityGraph = new ReachabilityGraph(this);
 
-			this.petrinetViewPanel = GraphStreamView.initGraphStreamView(petrinetGraph, this);
-			this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(reachabilityGraph, this);
 		}
 
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
@@ -223,13 +218,6 @@ public class PetrinetController {
 		return fileChanged;
 	}
 
-	public ViewPanel getPetrinetViewPanel() {
-		return petrinetViewPanel;
-	}
-
-	public ViewPanel getReachabilityViewPanel() {
-		return reachabilityViewPanel;
-	}
 	
 	public ToolbarMode getToolbarMode() {
 		

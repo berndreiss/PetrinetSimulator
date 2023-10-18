@@ -3,10 +3,13 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 import control.PetrinetToolbarInterface;
 import control.ToolbarMode;
@@ -45,7 +48,19 @@ public class PetrinetToolbar extends JToolBar {
 
 	public PetrinetToolbar(PetrinetToolbarInterface controller) {
 
-		//implement ZOOM
+		addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+
+				//force toolbar to be horizontal when not docked so that it is detectable, that it has docked to east or west (being vertical)
+				//important for setting the divisor correctly in ResizableSplitPane
+				if ("ancestor".equals(evt.getPropertyName())) {
+                    if (evt.getNewValue() == null)
+                    	setOrientation(SwingConstants.HORIZONTAL);
+                }							
+			}
+		});
 		
 		JButton openButton = makeToolbarButton(ToolbarImage.OPEN, e -> controller.onOpen(), "Open file", "open");
 
@@ -184,7 +199,7 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 	
-
+	
 	private JButton makeToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText,
 			String altText) {
 		String imgLocation = IMAGE_ROOT_FOLDER + toolbarImage + ".png";

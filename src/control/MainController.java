@@ -1,8 +1,14 @@
 package control;
 
+import static view.MainFrame.GRAPH_SPLIT_PANE_DEFAULT_RATIO;
+import static view.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
@@ -17,9 +23,9 @@ import javax.swing.filechooser.FileFilter;
 import util.OnEditedListener;
 import view.MainFrame;
 import view.PetrinetPanel;
+import view.ResizableSplitPane;
 
-public class MainController
-		implements MenuInterface, PetrinetToolbarInterface, OnEditedListener {
+public class MainController implements MenuInterface, PetrinetToolbarInterface, OnEditedListener {
 
 	private File lastDirectory;
 	private MainFrame parent;
@@ -136,6 +142,7 @@ public class MainController
 			tabbedPane.remove(index + 1);
 
 		}
+		setStatusLabel();
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
@@ -380,8 +387,6 @@ public class MainController
 			currentPetrinetPanel = null;
 			setStatusLabel();
 		}
-//		init();
-//		getFrame().setToolBarMode(ToolbarMode.VIEWER);
 	}
 
 	@Override
@@ -413,7 +418,7 @@ public class MainController
 		if (currentPetrinetPanel == null)
 			return;
 
-		File previousFile = getPreviousFile();
+		File previousFile = getFileFromCurrentFile(FileEnum.PREVIOUS_FILE);
 
 		if (previousFile != null) {
 			setNewPanel(previousFile, false);
@@ -426,11 +431,49 @@ public class MainController
 	public void onNext() {
 		if (currentPetrinetPanel == null)
 			return;
-		File nextFile = getNextFile();
+		File nextFile = getFileFromCurrentFile(FileEnum.NEXT_FILE);
 
 		if (nextFile != null) {
 			setNewPanel(nextFile, false);
 		}
+	}
+
+	private enum FileEnum {
+		NEXT_FILE, PREVIOUS_FILE;
+	}
+
+	private File getFileFromCurrentFile(FileEnum fileEnum) {
+		PetrinetController controller = currentPetrinetPanel.getController();
+
+		File currentFile = controller.getCurrentFile();
+
+		if (currentFile == null || !currentFile.exists())
+			return null;
+
+		File directory = currentFile.getParentFile();
+
+		if (directory == null || !directory.isDirectory())
+			return null;
+
+		File[] files = directory.listFiles();
+
+		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
+
+		for (File f : files)
+			if (f.getName().endsWith(".pnml"))
+				tree.put(f.getName(), f);
+
+		String soughtFileString = null;
+		if (fileEnum == FileEnum.NEXT_FILE)
+			soughtFileString = tree.higherKey(currentFile.getName());
+		if (fileEnum == FileEnum.PREVIOUS_FILE)
+			soughtFileString = tree.lowerKey(currentFile.getName());
+
+		if (soughtFileString == null)
+			return null;
+
+		File nextFile = tree.get(soughtFileString);
+		return nextFile;
 	}
 
 	@Override
@@ -482,7 +525,8 @@ public class MainController
 			return;
 		PetrinetController controller = currentPetrinetPanel.getController();
 
-		controller.analyse();
+		String[][] result = { controller.analyse() };
+		parent.print(printResults(result));
 	}
 
 	@Override
@@ -510,67 +554,18 @@ public class MainController
 
 	@Override
 	public void onSetDefault() {
-		// TODO Auto-generated method stub
-	}
 
-	private File getPreviousFile() {
-		PetrinetController controller = currentPetrinetPanel.getController();
+		ResizableSplitPane mainSplitPane = parent.getSplitPane();
 
-		File currentFile = controller.getCurrentFile();
-		if (currentFile == null || !currentFile.exists())
-			return null;
+		mainSplitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
+		mainSplitPane.resetDivider();
 
-		File directory = currentFile.getParentFile();
+		if (currentPetrinetPanel == null)
+			return;
 
-		if (directory == null || !directory.isDirectory())
-			return null;
-
-		File[] files = directory.listFiles();
-
-		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
-
-		for (File f : files)
-			if (f.getName().contains(".pnml"))
-				tree.put(f.getName(), f);
-
-		String previousFileString = tree.lowerKey(currentFile.getName());
-
-		if (previousFileString == null)
-			return null;
-
-		File previousFile = tree.get(previousFileString);
-
-		return previousFile;
-	}
-
-	private File getNextFile() {
-		PetrinetController controller = currentPetrinetPanel.getController();
-
-		File currentFile = controller.getCurrentFile();
-
-		if (currentFile == null || !currentFile.exists())
-			return null;
-
-		File directory = currentFile.getParentFile();
-
-		if (directory == null || !directory.isDirectory())
-			return null;
-
-		File[] files = directory.listFiles();
-
-		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
-
-		for (File f : files)
-			if (f.getName().contains(".pnml"))
-				tree.put(f.getName(), f);
-
-		String nextFileString = tree.higherKey(currentFile.getName());
-
-		if (nextFileString == null)
-			return null;
-
-		File nextFile = tree.get(nextFileString);
-		return nextFile;
+		ResizableSplitPane graphSplitPane = currentPetrinetPanel.getGraphSplitPane();
+		graphSplitPane.setDefaultRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
+		graphSplitPane.resetDivider();
 	}
 
 	@Override
@@ -627,15 +622,15 @@ public class MainController
 		PetrinetController controller = currentPetrinetPanel.getController();
 		String id = null;
 
-			id = JOptionPane.showInputDialog(null, "Enter id for edge:");
+		id = JOptionPane.showInputDialog(null, "Enter id for edge:");
 
-			if (id == null)
-				return;
-			if (id.trim().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Invalid id: the id cannot be empty.", "",
-						JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
+		if (id == null)
+			return;
+		if (id.trim().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Invalid id: the id cannot be empty.", "",
+					JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 		boolean addToggled = controller.getEditor().toggleAddEdge(id);
 
 		if (!addToggled)
@@ -648,7 +643,14 @@ public class MainController
 	@Override
 	public void onAddLabel() {
 
-		String label = JOptionPane.showInputDialog(null, "Enter id for edge:");
+		// TODO sometimes label is set to null!
+		if (!currentPetrinetPanel.nodeMarked())
+			return;
+
+		String label = JOptionPane.showInputDialog(null, "Enter label for element:");
+
+		if (label == null)
+			return;
 
 		currentPetrinetPanel.getController().setLabel(label);
 		setStatusLabel();
@@ -667,7 +669,6 @@ public class MainController
 		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
 
-
 	@Override
 	public void onEdgeAdded() {
 		getFrame().getToolbar().toggleAddEdgeButton();
@@ -684,14 +685,18 @@ public class MainController
 
 	@Override
 	public void onZoomIn() {
-		// TODO Auto-generated method stub
-		
+		if (currentPetrinetPanel == null)
+			return;
+
+		currentPetrinetPanel.zoomIn();
 	}
 
 	@Override
 	public void onZoomOut() {
-		// TODO Auto-generated method stub
-		
+		if (currentPetrinetPanel == null)
+			return;
+
+		currentPetrinetPanel.zoomOut();
 	}
 
 }

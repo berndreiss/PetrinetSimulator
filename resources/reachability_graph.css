@@ -151,7 +151,8 @@ node.highlight {
 	Style-Angabe fuer eine Kante
 */
 edge {
-	shape: line;
+/*
+	shape: line;*/
 	fill-color: #003366;
 	
 	arrow-shape: arrow;

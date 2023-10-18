@@ -15,7 +15,7 @@ public class ReachabilityGraphModel {
 
 	private IterableMap<String, PetrinetState> petrinetStates;
 
-	private StateChangeListener stateChangeListener;
+	private ReachabilityStateChangeListener stateChangeListener;
 
 	public ReachabilityGraphModel(Petrinet petrinet) {
 
@@ -58,7 +58,7 @@ public class ReachabilityGraphModel {
 		if (petrinetStates.containsKey(petrinetStateString)) {
 			petrinetState = petrinetStates.get(petrinetStateString);
 		} else {
-			petrinetState = new PetrinetState(petrinet);
+			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getLevel()+1);
 			petrinetStates.put(petrinetStateString, petrinetState);
 		}
 
@@ -131,7 +131,7 @@ public class ReachabilityGraphModel {
 		return petrinetStates.containsKey(id);
 	}
 
-	public void setStateChangeListener(StateChangeListener reachabilityStateChangeListener) {
+	public void setStateChangeListener(ReachabilityStateChangeListener reachabilityStateChangeListener) {
 		this.stateChangeListener = reachabilityStateChangeListener;
 	}
 

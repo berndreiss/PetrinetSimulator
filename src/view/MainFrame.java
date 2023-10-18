@@ -28,6 +28,10 @@ public class MainFrame extends JFrame {
 
 	public static final double GRAPH_PERCENT = 0.5;
 
+	public static final double SPLIT_PANE_DEFAULT_RATIO = 0.8;
+	
+	public static final double GRAPH_SPLIT_PANE_DEFAULT_RATIO = 0.5;
+
 	private ResizableSplitPane splitPane;
 
 	private JTabbedPane tabbedPane;
@@ -57,7 +61,7 @@ public class MainFrame extends JFrame {
 		
 		splitPane.setLeftComponent(tabbedPane);
 		splitPane.setRightComponent(scrollPane);
-		splitPane.setDefaultRatio(0.8);
+		splitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
 		// Erzeuge ein Label, welches als Statuszeile dient, ...
 		// ... und zeige dort ein paar hilfreiche Systeminfos an, ...
 		statusLabel = new JLabel();

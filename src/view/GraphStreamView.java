@@ -37,10 +37,10 @@ public class GraphStreamView {
 		// werden genutzt (wie in DemoGraph).
 		// Achtung: Falls keine Koordinaten definiert wurden, liegen alle Knoten
 		// übereinander.)
-		if (graph instanceof PetrinetGraph)
+//		if (graph instanceof PetrinetGraph)
 			viewer.disableAutoLayout();
-		else
-			viewer.enableAutoLayout();
+//		else
+//			viewer.enableAutoLayout();
 		// Auto-Layout aktivieren: GraphStream generiert ein möglichst
 		// übersichtliches Layout
 		// (und ignoriert hinzugefügte Koordinaten)

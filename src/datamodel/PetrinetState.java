@@ -20,8 +20,10 @@ public class PetrinetState {
 	private IterableMap<String, PetrinetState> successors;
 
 	private HashMap<String, List<Transition>> transitionMap;
+	
+	private int level;
 
-	public PetrinetState(Petrinet petrinet) {
+	public PetrinetState(Petrinet petrinet, int level) {
 
 		transitionMap = new HashMap<String, List<Transition>>();
 		predecessors = new IterableMap<String, PetrinetState>();
@@ -33,7 +35,7 @@ public class PetrinetState {
 		}
 
 		this.state = petrinet.getStateString();
-
+		this.level = level;
 	}
 
 	public String getState() {
@@ -54,6 +56,10 @@ public class PetrinetState {
 
 	public Iterable<PetrinetState> getSuccessors() {
 		return successors;
+	}
+	
+	public int getLevel() {
+		return level;
 	}
 
 	public void addSuccessor(PetrinetState newSuccessor, Transition t) {
@@ -102,7 +108,7 @@ public class PetrinetState {
 		return transitionList;
 	}
 
-	public void setM(PetrinetState m, StateChangeListener stateChangeListener) {
+	public void setM(PetrinetState m, ReachabilityStateChangeListener stateChangeListener) {
 		this.m = m;
 		if (stateChangeListener != null)
 			stateChangeListener.onMarkInvalid(m, this);
@@ -189,7 +195,7 @@ public class PetrinetState {
 		return transitionMap.size() >0;
 	}
 	
-	public void removePredecessor(PetrinetState petrinetState, StateChangeListener stateChangeListener) {
+	public void removePredecessor(PetrinetState petrinetState, ReachabilityStateChangeListener stateChangeListener) {
 		if (!predecessors.containsKey(petrinetState.getState()))
 			return;
 
@@ -210,7 +216,7 @@ public class PetrinetState {
 
 	}
 
-	public void removeSuccessor(PetrinetState petrinetState, StateChangeListener stateChangeListener) {
+	public void removeSuccessor(PetrinetState petrinetState, ReachabilityStateChangeListener stateChangeListener) {
 
 		if (!successors.containsKey(petrinetState.getState()))
 			return;
@@ -240,7 +246,7 @@ public class PetrinetState {
 		return successors.size();
 	}
 
-	public void removeAllPredecessors(StateChangeListener stateChangeListener) {
+	public void removeAllPredecessors(ReachabilityStateChangeListener stateChangeListener) {
 		ArrayList<String> predecessorStrings = new ArrayList<String>();
 		
 		for (String s: predecessors.keySet()) 
@@ -250,7 +256,7 @@ public class PetrinetState {
 			removePredecessor(predecessors.get(s), stateChangeListener);
 		
 	}
-	public void removeAllSuccessors(StateChangeListener stateChangeListener) {
+	public void removeAllSuccessors(ReachabilityStateChangeListener stateChangeListener) {
 		ArrayList<String> successorStrings = new ArrayList<String>();
 		
 		for (String s: successors.keySet())

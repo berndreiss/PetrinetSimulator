@@ -20,6 +20,7 @@ public class ResizableSplitPane extends JSplitPane {
 	private double defaultDividerRatio = 0.5;
 	private MainFrame parent;
 	private Dimension preferredSize;
+	private int toolbarOffSet;
 
 	public ResizableSplitPane(MainFrame parent, int splitOrientation) {
 		this(parent, splitOrientation, new JPanel(), new JPanel());
@@ -51,12 +52,13 @@ public class ResizableSplitPane extends JSplitPane {
 
 	private void initialize() {
 		
-		int westAndEastComponentsWidth = 0;
+		toolbarOffSet = 0;
 		
-		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL)
-			westAndEastComponentsWidth += parent.getToolbar().getWidth();
+		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL) {
+			toolbarOffSet += parent.getToolbar().getWidth();
+		}
+		preferredSize = new Dimension((int) (parent.getWidth() / 2-10-toolbarOffSet / 2), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
 		
-		preferredSize = new Dimension((int) (parent.getWidth() / 2-10-westAndEastComponentsWidth), (int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
 		
 		
 		Dimension zeroSize = new Dimension(0, 0);
@@ -81,6 +83,9 @@ public class ResizableSplitPane extends JSplitPane {
 		this.defaultDividerRatio = ratio;
 	}
 
+	public void resetDivider() {
+		initialize();
+	}
 
 	private class FrameResizeAdapter extends ComponentAdapter {
 
@@ -106,5 +111,7 @@ public class ResizableSplitPane extends JSplitPane {
 			}
 
 	}
+	
+	
 
 }

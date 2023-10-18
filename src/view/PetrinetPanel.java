@@ -16,6 +16,10 @@ public class PetrinetPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private ResizableSplitPane graphSplitPane;
+	
+	private ViewPanel petrinetViewPanel;
+	private ViewPanel reachabilityViewPanel;
+
 
 	private PetrinetController controller;
 
@@ -33,17 +37,34 @@ public class PetrinetPanel extends JPanel {
 
 		controller.getEditor().setOnEditedListener(mainController);
 		
+		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller);
+		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller);
+
+		
 		setLayout(new BorderLayout());
 
 		if (!headless) {
-			ViewPanel left = controller.getPetrinetViewPanel();
-			ViewPanel right = controller.getReachabilityViewPanel();
-			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT, left, right);
+			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT, petrinetViewPanel, reachabilityViewPanel);
 			add(graphSplitPane, BorderLayout.CENTER);
 		} 
 	}
 
+	public ResizableSplitPane getGraphSplitPane() {
+		return graphSplitPane;
+	}
+	
+	public void zoomIn() {
+		double zoom = petrinetViewPanel.getCamera().getViewPercent();
+		
+		if (zoom > 0.1)
+			petrinetViewPanel.getCamera().setViewPercent(zoom-0.1);
+	}
 
+	public void zoomOut() {
+		double zoom = petrinetViewPanel.getCamera().getViewPercent();
+		
+		petrinetViewPanel.getCamera().setViewPercent(zoom+0.1);
+	}
 //	public void repaintGraphs(int i) {
 //		if (i == 0) {
 //			graphSplitPane.getLeftComponent().repaint();
@@ -92,6 +113,10 @@ public class PetrinetPanel extends JPanel {
 
 	public PetrinetController getController() {
 		return controller;
+	}
+
+	public boolean nodeMarked() {
+		return controller.getPetrinetGraph().getMarkedNode() != null;
 	}
 
 //	public String[] analyse() {
