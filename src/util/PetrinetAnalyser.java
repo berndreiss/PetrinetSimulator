@@ -3,6 +3,7 @@ package util;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import control.PetrinetController;
@@ -27,6 +28,8 @@ public class PetrinetAnalyser {
 	private List<String> transitionsToMMarked;
 	private String m;
 	private String mMarked;
+	
+	//TODO Handle edge case transition with no input producing (0) -> (2)
 
 	
 	public PetrinetAnalyser(PetrinetController controller) {
@@ -50,7 +53,7 @@ public class PetrinetAnalyser {
 		petrinet = controller.getPetrinet();
 		
 		Set<PetrinetState> visited = new HashSet<PetrinetState>();
-		
+		System.out.println(reachabilityGraphModel.getCurrentPetrinetState().getState());		
 		return analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
 		
 
@@ -60,7 +63,6 @@ public class PetrinetAnalyser {
 
 		if (visited.contains(state))
 			return true;
-
 		nodes++;
 		
 		visited.add(state);
@@ -68,6 +70,8 @@ public class PetrinetAnalyser {
 		
 		for (Transition t: petrinet.getActiveTransitions()) {
 			petrinet.fireTransition(t.getId());
+			
+			
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
 			if (!stateValid) {
 				finite = false;

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
@@ -16,10 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import datamodel.PetrinetState;
 import util.OnEditedListener;
 import view.MainFrame;
 import view.PetrinetPanel;
@@ -143,6 +146,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		}
 		setStatusLabel();
+		
+
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {

@@ -1,8 +1,14 @@
 package control;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.graphstream.algorithm.util.FibonacciHeap.Node;
 import org.graphstream.ui.swing_viewer.ViewPanel;
@@ -80,6 +86,8 @@ public class PetrinetController {
 				reachabilityGraphModel.addNewState(petrinet, null);
 			}
 		});
+		
+
 	}
 
 	public Editor getEditor() {
@@ -168,8 +176,13 @@ public class PetrinetController {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
+		if (!headless)
+			reachabilityGraph.analysisCompleted();
+		
 		return getResults(analyser);
 
+
+		
 	}
 
 	private String[] getResults(PetrinetAnalyser analyser) {

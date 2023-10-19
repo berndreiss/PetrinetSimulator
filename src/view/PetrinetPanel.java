@@ -2,14 +2,18 @@ package view;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.HashSet;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
 import control.MainController;
 import control.PetrinetController;
+import datamodel.PetrinetState;
 
 public class PetrinetPanel extends JPanel {
 
@@ -37,16 +41,19 @@ public class PetrinetPanel extends JPanel {
 
 		controller.getEditor().setOnEditedListener(mainController);
 		
-		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller);
-		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller);
+		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller, mainController.getFrame());
+		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller, mainController.getFrame());
 
-		
 		setLayout(new BorderLayout());
 
 		if (!headless) {
 			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT, petrinetViewPanel, reachabilityViewPanel);
 			add(graphSplitPane, BorderLayout.CENTER);
 		} 
+
+		
+		
+
 	}
 
 	public ResizableSplitPane getGraphSplitPane() {

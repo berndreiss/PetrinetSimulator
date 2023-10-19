@@ -1,10 +1,19 @@
 package view;
 
+import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.EnumSet;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.graphicGraph.GraphicElement;
@@ -20,7 +29,7 @@ import datamodel.PetrinetElement;
 
 public class GraphStreamView {
 
-	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller) {
+	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller, JFrame parent) {
 		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -38,7 +47,7 @@ public class GraphStreamView {
 		// Achtung: Falls keine Koordinaten definiert wurden, liegen alle Knoten
 		// übereinander.)
 //		if (graph instanceof PetrinetGraph)
-			viewer.disableAutoLayout();
+		viewer.disableAutoLayout();
 //		else
 //			viewer.enableAutoLayout();
 		// Auto-Layout aktivieren: GraphStream generiert ein möglichst
@@ -60,6 +69,24 @@ public class GraphStreamView {
 		// Neue ViewerPipe erzeugen, um über Ereignisse des Viewer informiert
 		// werden zu können
 		ViewerPipe viewerPipe = viewer.newViewerPipe();
+
+		
+		parent.addComponentListener(new ComponentAdapter() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				
+				viewer.replayGraph(graph);
+			}
+		});
+
+		if (graph instanceof ReachabilityGraph)
+			((ReachabilityGraph) graph).setAnalysisCompletedListener(() -> {
+			
+				Dimension currentSize = parent.getSize();
+				parent.setSize(currentSize.width + 1, currentSize.height);
+				parent.setSize(currentSize);
+			});
 
 		EnumSet<InteractiveElement> enumSet = EnumSet.of(InteractiveElement.NODE);
 
@@ -99,8 +126,7 @@ public class GraphStreamView {
 							}
 						element = null;
 					}
-				} 
-
+				}
 				viewerPipe.pump();
 			}
 		});
@@ -123,6 +149,43 @@ public class GraphStreamView {
 
 		return viewPanel;
 
+	}
+
+	private static void simulateMouseClickOnPanel(ViewPanel viewPanel) {
+
+		System.out.println("MOUSECLICK");
+
+		Robot robot = null;
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	    // Move the mouse to the desired x, y position
+
+		Point locationOnScreen = viewPanel.getLocationOnScreen();
+		
+		int x = locationOnScreen.x;
+		int y = locationOnScreen.y;
+	    robot.mouseMove(x, y);
+
+		System.out.println(x + ", " + y);
+		
+		MouseEvent press = new MouseEvent(viewPanel, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1,
+				false);
+		MouseEvent release = new MouseEvent(viewPanel, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y,
+				1, false);
+		MouseEvent clicked = new MouseEvent(viewPanel, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, x, y, 1,
+				false);
+
+		SwingUtilities.invokeLater(() -> {
+			viewPanel.dispatchEvent(press);
+			viewPanel.dispatchEvent(release);
+			viewPanel.dispatchEvent(clicked);
+		});
+		
 	}
 
 }

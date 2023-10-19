@@ -3,7 +3,10 @@ package view;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
@@ -19,8 +22,10 @@ public class ReachabilityGraph extends MultiGraph {
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
 	private final static int LEVEL_OFFSET = 100;
-	
-	private final static int FARTHEST_POINT_X = 10000;
+
+	private final static int FARTHEST_POINT_X = 1000;
+
+	private AnalysisCompletedListener analysisCompletedListener;
 	
 	private SpriteManager spriteMan;
 
@@ -36,12 +41,17 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private List<List<Node>> listHierarchy;
 	
+	private Graph currentGraph;
+	
+
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
 		this.controller = controller;
 
-		listHierarchy = new ArrayList<List<Node>>();
+		currentGraph = this;
 		
+		listHierarchy = new ArrayList<List<Node>>();
+
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
@@ -51,10 +61,9 @@ public class ReachabilityGraph extends MultiGraph {
 		PetrinetState initialState = controller.getReachabilityGraphModel().getInitialState();
 
 		if (initialState != null) {
-			
+
 			initialNode = addState(controller.getReachabilityGraphModel().getInitialState(), null, null);
 			setHighlight(initialNode);
-			addNodeToLevel(initialNode, 0);
 
 		}
 		controller.getReachabilityGraphModel().setStateChangeListener(new ReachabilityStateChangeListener() {
@@ -69,7 +78,6 @@ public class ReachabilityGraph extends MultiGraph {
 					currentEdge = null;
 
 				}
-
 			}
 
 			@Override
@@ -97,16 +105,16 @@ public class ReachabilityGraph extends MultiGraph {
 					else
 						setHighlight(mOld);
 				}
+				
 
 			}
 
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 				Node node = addState(state, predecessor, t);
-				addNodeToLevel(node, state.getLevel());
+				repaintNodes();
+	
 			}
-
-
 
 			@Override
 			public void onMarkInvalid(PetrinetState m, PetrinetState mMarked) {
@@ -116,30 +124,59 @@ public class ReachabilityGraph extends MultiGraph {
 		});
 	}
 
+	
 	private void addNodeToLevel(Node node, int level) {
-		
+
 		if (listHierarchy.size() < level)
 			return;
-		
-		if (listHierarchy.size()==level) 
+
+		if (listHierarchy.size() == level)
 			listHierarchy.add(new ArrayList<Node>());
 
 		List<Node> nodeList = listHierarchy.get(level);
-		
+
 		nodeList.add(node);
-		
-		int xOffset = FARTHEST_POINT_X / nodeList.size();
-		int xCounter = xOffset/2;
-		
-		for (Node n: nodeList) {
-			n.setAttribute("xy", xCounter, -LEVEL_OFFSET * level );
-			xCounter += xOffset;
-		}
+
+//		if ()
 
 	}
-	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
-//TODO can i remove all headlesses?
 
+	private void repaintNodes() {
+
+		for (List<Node> nodeList : listHierarchy) {
+
+			if (nodeList.size() == 0)
+				continue;
+			
+			int xOffset = FARTHEST_POINT_X / nodeList.size();
+			int xCounter = xOffset / 2;
+			
+//			System.out.println(4/2);
+//			System.out.println(5/2);
+//
+//			System.out.println("Level " + listHierarchy.indexOf(nodeList));
+//			System.out.println("Number of Nodes: " + nodeList.size());
+//			System.out.println("Initial xOffset: " + xOffset);
+
+			int additionalLayerOffset = 10;
+			
+			for (Node n : nodeList) {
+				if (nodeList.indexOf(n) < (double) (nodeList.size()/2))
+					n.setAttribute("xy", xCounter-additionalLayerOffset*listHierarchy.size(), -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
+				if (nodeList.indexOf(n) > (double) (nodeList.size()/2))
+					n.setAttribute("xy", xCounter+additionalLayerOffset*listHierarchy.size(), -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
+				else
+					n.setAttribute("xy", xCounter, -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
+					
+				xCounter += xOffset;
+			}
+		}
+		
+//		System.out.println("\n");
+	}
+
+	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
+		
 		Node node;
 		String id = state.getState();
 		String transitionLabel = t == null ? "" : PetrinetGraph.getElementLabel(t);
@@ -149,7 +186,7 @@ public class ReachabilityGraph extends MultiGraph {
 		if (node == null) {
 			node = addNode(id);
 			node.setAttribute("ui.label", id);
-
+			addNodeToLevel(node, state.getLevel());
 		}
 
 		if (initialNode == null) {
@@ -189,16 +226,13 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	private void setCurrentState(PetrinetState state) {
-		if (controller.getHeadless())
-			return;
-
+		
 		setCurrent(getNode(state.getState()));
+		
 	}
 
 	private void markStatesInvalid(String m, String mMark) {
-		if (controller.getHeadless())
-			return;
-
+		
 		Node oldM = nodeM;
 		Node oldMMarked = nodeMMarked;
 
@@ -212,9 +246,7 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	private void setCurrent(Node node) {
-		if (controller.getHeadless())
-			return;
-
+		
 		if (node == null)
 			return;
 
@@ -238,18 +270,20 @@ public class ReachabilityGraph extends MultiGraph {
 		String edgeString = stateSource.getState() + stateTarget.getState() + PetrinetGraph.getElementLabel(t);
 		Edge removedEdge = removeEdge(edgeString);
 		spriteMan.removeSprite("s" + edgeString);
+		repaintNodes();
 		return removedEdge;
 	}
 
 	private Node removeState(PetrinetState state) {
 		spriteMan.removeSprite("s" + state.getState());
+		
+		listHierarchy.get(state.getLevel()).remove(getNode(state.getState()));
+		repaintNodes();
 		return removeNode(state.getState());
 
 	}
 
 	private void setHighlight(Node node) {
-		if (controller.getHeadless())
-			return;
 
 		if (node == null)
 			return;
@@ -306,5 +340,14 @@ public class ReachabilityGraph extends MultiGraph {
 		}
 		node.setAttribute("ui.class", "node");
 
+	}
+	
+	public void setAnalysisCompletedListener(AnalysisCompletedListener analysisCompletedListener) {
+		this.analysisCompletedListener = analysisCompletedListener;
+	}
+	
+	//adjust arrow heads
+	public void analysisCompleted() {
+		analysisCompletedListener.onAnalysisCompleted();
 	}
 }
