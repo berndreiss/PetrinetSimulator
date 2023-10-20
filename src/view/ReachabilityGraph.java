@@ -21,9 +21,6 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
-	private final static int LEVEL_OFFSET = 100;
-
-	private final static int FARTHEST_POINT_X = 1000;
 
 	private AnalysisCompletedListener analysisCompletedListener;
 	
@@ -37,21 +34,15 @@ public class ReachabilityGraph extends MultiGraph {
 	private Node nodeM;
 
 	private Node nodeMMarked;
-	private PetrinetController controller;
 
-	private List<List<Node>> listHierarchy;
 	
-	private Graph currentGraph;
-	
+	private ReachabilityLayout layoutManager;
 
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
-		this.controller = controller;
 
-		currentGraph = this;
+		layoutManager = new ReachabilityLayout();
 		
-		listHierarchy = new ArrayList<List<Node>>();
-
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
@@ -64,6 +55,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 			initialNode = addState(controller.getReachabilityGraphModel().getInitialState(), null, null);
 			setHighlight(initialNode);
+			layoutManager.add(initialNode);
 
 		}
 		controller.getReachabilityGraphModel().setStateChangeListener(new ReachabilityStateChangeListener() {
@@ -112,8 +104,7 @@ public class ReachabilityGraph extends MultiGraph {
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 				Node node = addState(state, predecessor, t);
-				repaintNodes();
-	
+				layoutManager.add(getNode(predecessor == null ? null: predecessor.getState()), node);
 			}
 
 			@Override
@@ -125,55 +116,6 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	
-	private void addNodeToLevel(Node node, int level) {
-
-		if (listHierarchy.size() < level)
-			return;
-
-		if (listHierarchy.size() == level)
-			listHierarchy.add(new ArrayList<Node>());
-
-		List<Node> nodeList = listHierarchy.get(level);
-
-		nodeList.add(node);
-
-//		if ()
-
-	}
-
-	private void repaintNodes() {
-
-		for (List<Node> nodeList : listHierarchy) {
-
-			if (nodeList.size() == 0)
-				continue;
-			
-			int xOffset = FARTHEST_POINT_X / nodeList.size();
-			int xCounter = xOffset / 2;
-			
-//			System.out.println(4/2);
-//			System.out.println(5/2);
-//
-//			System.out.println("Level " + listHierarchy.indexOf(nodeList));
-//			System.out.println("Number of Nodes: " + nodeList.size());
-//			System.out.println("Initial xOffset: " + xOffset);
-
-			int additionalLayerOffset = 10;
-			
-			for (Node n : nodeList) {
-				if (nodeList.indexOf(n) < (double) (nodeList.size()/2))
-					n.setAttribute("xy", xCounter-additionalLayerOffset*listHierarchy.size(), -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
-				if (nodeList.indexOf(n) > (double) (nodeList.size()/2))
-					n.setAttribute("xy", xCounter+additionalLayerOffset*listHierarchy.size(), -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
-				else
-					n.setAttribute("xy", xCounter, -LEVEL_OFFSET * listHierarchy.indexOf(nodeList));
-					
-				xCounter += xOffset;
-			}
-		}
-		
-//		System.out.println("\n");
-	}
 
 	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
 		
@@ -186,7 +128,6 @@ public class ReachabilityGraph extends MultiGraph {
 		if (node == null) {
 			node = addNode(id);
 			node.setAttribute("ui.label", id);
-			addNodeToLevel(node, state.getLevel());
 		}
 
 		if (initialNode == null) {
@@ -270,15 +211,12 @@ public class ReachabilityGraph extends MultiGraph {
 		String edgeString = stateSource.getState() + stateTarget.getState() + PetrinetGraph.getElementLabel(t);
 		Edge removedEdge = removeEdge(edgeString);
 		spriteMan.removeSprite("s" + edgeString);
-		repaintNodes();
 		return removedEdge;
 	}
 
 	private Node removeState(PetrinetState state) {
 		spriteMan.removeSprite("s" + state.getState());
 		
-		listHierarchy.get(state.getLevel()).remove(getNode(state.getState()));
-		repaintNodes();
 		return removeNode(state.getState());
 
 	}
