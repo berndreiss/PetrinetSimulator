@@ -14,33 +14,12 @@ import util.IterableMap;
  */
 public class Transition extends PetrinetElement {
 
-	private IterableMap<String, Place> inputs;// set of places that serve as input
-	private IterableMap<String, Place> outputs;// set of places that serve as output
+	private IterableMap<String, Place> inputs = new IterableMap<String, Place>();// set of places that serve as input
+	private IterableMap<String, Place> outputs = new IterableMap<String, Place>();// set of places that serve as output
 
 	private boolean active;//TODO change all occurrences to "activated"
 	private TransitionActiveListener transitionActiveListener;
 
-	/**
-	 * A new instance of Transition is created. If arguments for preset and postset
-	 * are not passed preset and postset are initialized as {@link HashSet}.
-	 * 
-	 * @param id   Id of the transition.
-	 * @param name Name of the transition.
-	 */
-	public Transition(String id) {
-		this(id, "");
-	}
-
-	/**
-	 * A new instance of Transition is created. If arguments for preset and postset
-	 * are not passed preset and postset are initialized as {@link HashSet}.
-	 * 
-	 * @param id   Id of the transition.
-	 * @param name Name of the transition.
-	 */
-	public Transition(String id, String name) {
-		this(id, name, new IterableMap<String, Place>(), new IterableMap<String, Place>());
-	}
 
 	/**
 	 * A new instance of Transition is created. Initial sets of input places
@@ -51,18 +30,15 @@ public class Transition extends PetrinetElement {
 	 * @param preset  {@link Set} of initial input places.
 	 * @param postset {@link Set} of initial output places.
 	 */
-	public Transition(String id, String name, IterableMap<String, Place> inputs, IterableMap<String, Place> outputs) {
-		this.id = id;
-		this.name = name;
-		this.inputs = inputs;
-		this.outputs = outputs;
+	protected Transition(String id) {
+		super(id);
 		this.active = checkActive();
 	}
 
 	/**
 	 * Activates a transition if it is active. If any place in the set of inputs
 	 * does not have tokens, it does not activate. Otherwise it Decrements the
-	 * number of tokens for all places in the input and increments the number of
+	 * number of tokens for all places in the T and increments the number of
 	 * tokens for all places in the output.
 	 * 
 	 * @return
@@ -74,6 +50,7 @@ public class Transition extends PetrinetElement {
 
 		// decrement tokens
 		for (String s : inputs.keySet()) {
+			System.out.println(s);
 			Place p = (Place) inputs.get(s);
 			p.decrementTokens();
 
@@ -116,13 +93,13 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Adds a place to the set of input places (preset).
 	 * 
-	 * @param p {@link Place} to be added as an Input.
+	 * @param p {@link Place} to be added as Input.
 	 */
 	protected void addInput(Place p) {
 		
 		if (inputs.containsKey(p.getId()))
 			return;
-		inputs.put(p.id, p);
+		inputs.put(p.getId(), p);
 		setActive(checkActive());
 		p.addOutput(this);
 
@@ -146,7 +123,7 @@ public class Transition extends PetrinetElement {
 	protected void addOutput(Place p) {
 		if (outputs.containsKey(p.getId()))
 			return;
-		outputs.put(p.id, p);
+		outputs.put(p.getId(), p);
 		p.addInput(this);
 	}
 

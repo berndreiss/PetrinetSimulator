@@ -45,20 +45,21 @@ public class PetrinetController {
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
 
-	public PetrinetController(File file, boolean headless) {
+	public PetrinetController(File file, boolean headless) throws PetrinetException {
 		this.headless = headless;
 		this.file = file;
 		this.editor = new Editor(this);
 		init();
 	}
 
-	private void init() {
+	private void init() throws PetrinetException {
 		this.petrinet = new Petrinet();
+		
 		if (!headless)
 			this.petrinetGraph = new PetrinetGraph(petrinet);
 
 		if (file != null)
-			new PNMLParser(file, petrinet);
+				new PNMLParser(file, petrinet);
 		
 		if (!headless) {
 		}
@@ -282,7 +283,12 @@ public class PetrinetController {
 
 	public void mergeWith(File file) {
 		if (file != null)
-			new PNMLParser(file, this.petrinet);
+			try {
+				new PNMLParser(file, this.petrinet);
+			} catch (PetrinetException e) {
+				JOptionPane.showMessageDialog(null, "File could not be parsed -> " + e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
 		
 	}
 

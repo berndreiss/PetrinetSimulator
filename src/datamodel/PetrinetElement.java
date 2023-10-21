@@ -2,13 +2,17 @@ package datamodel;
 
 
 public abstract class PetrinetElement implements Comparable<Transition>{
-	protected String id;
-	protected String name = "";
+	private String id;
+	private String name = "";
 	
-	protected double x;
-	protected double y;
+	private double x;
+	private double y;
 	
 
+	public PetrinetElement(String id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Returns the id of the node.
 	 * @return Id of the node.
@@ -29,7 +33,7 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 	 * Set the name of the node.
 	 * @param name Name for node.
 	 */
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 		
 	}
@@ -38,7 +42,7 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 		return x;
 	}
 	
-	public void setX(double x) {
+	protected void setX(double x) {
 		this.x=x;
 	}
 
@@ -46,13 +50,13 @@ public abstract class PetrinetElement implements Comparable<Transition>{
 		return y;
 	}
 	
-	public void setY(double y) {
+	protected void setY(double y) {
 		this.y=y;
 	}
 
 	@Override
 	public int compareTo(Transition o) {
-		if (this.id.equals(o.id))
+		if (this.id.equals(o.getId()))
 			return 0;
 		
 		return 1;

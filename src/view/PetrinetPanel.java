@@ -13,6 +13,7 @@ import org.graphstream.ui.swing_viewer.ViewPanel;
 
 import control.MainController;
 import control.PetrinetController;
+import control.PetrinetException;
 import datamodel.PetrinetState;
 
 public class PetrinetPanel extends JPanel {
@@ -27,15 +28,15 @@ public class PetrinetPanel extends JPanel {
 
 	private PetrinetController controller;
 
-	public PetrinetPanel(MainController mainController) {
+	public PetrinetPanel(MainController mainController) throws PetrinetException {
 		this(mainController, null, false);
 	}
 
-	public PetrinetPanel(MainController mainController, File file) {
+	public PetrinetPanel(MainController mainController, File file) throws PetrinetException {
 		this(mainController, file, false);
 	}
 
-	public PetrinetPanel(MainController mainController, File file, boolean headless) {
+	public PetrinetPanel(MainController mainController, File file, boolean headless) throws PetrinetException {
 
 		this.controller = new PetrinetController(file, headless);
 

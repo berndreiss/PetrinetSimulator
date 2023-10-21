@@ -134,7 +134,6 @@ public class PetrinetGraph extends MultiGraph {
 			@Override
 			public void onPetrinetElementAdded(PetrinetElement element) {
 
-				element.setX(element.getX() - 200);
 				if (element instanceof Place)
 					addPlace((Place) element);
 				if (element instanceof Transition)
@@ -274,10 +273,11 @@ public class PetrinetGraph extends MultiGraph {
 					getNode(markedNode.getId()).setAttribute("ui.class", "place");
 
 				markedNode = null;
-				return;
 			}
 
+			return;
 		}
+		System.out.println(pe==null);
 
 		if (pe == markedNode) {
 			if (pe instanceof Transition)

@@ -14,14 +14,14 @@ public class Place extends PetrinetElement {
 
 	private NumberOfTokensListener numberOfTokensListener;
 
-	protected IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();// set of places
+	private IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();// set of places
 																										// that serve as
 																										// output
-	protected IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();// set of places
+	private IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();// set of places
 	// that represent inputs from transitions
 	
-	public Place(String id) {
-		this.id = id;
+	protected Place(String id) {
+		super(id);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class Place extends PetrinetElement {
 	protected boolean decrementTokens() {
 
 		if (numberOfTokens <= 0) {
-			System.out.println("There are no tokens in place with ID \"" + id + "\"");
+			System.out.println("There are no tokens in place with ID \"" + this.getId() + "\"");
 			return false;
 		}
 
@@ -101,10 +101,10 @@ public class Place extends PetrinetElement {
 	 * @param p {@link Place} to be added as an Output.
 	 */
 	protected void addOutput(Transition t) {
-		outputs.put(t.id, t);
+		outputs.put(t.getId(), t);
 	}
 	protected void addInput(Transition t) {
-		inputs.put(t.id, t);
+		inputs.put(t.getId(), t);
 	}
 	
 	protected Iterable<Transition> getOutputs() {

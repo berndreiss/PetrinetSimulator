@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import datamodel.DuplicateIdException;
 import datamodel.PetrinetState;
 import util.OnEditedListener;
 import view.MainFrame;
@@ -117,7 +118,15 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		tabAdded = true;
 
-		PetrinetPanel newPanel = new PetrinetPanel(this, file);
+		PetrinetPanel newPanel = null;
+		try {
+			newPanel = new PetrinetPanel(this, file);
+		} catch (PetrinetException e) {
+			JOptionPane.showMessageDialog(null,
+					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
+					JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 
 		currentPetrinetPanel = newPanel;
 
@@ -146,7 +155,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		}
 		setStatusLabel();
-		
 
 	}
 
@@ -309,9 +317,15 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		int counter = 0;
 
 		for (File f : files) {
-			PetrinetController controller = new PetrinetController(f, true);
-			results[counter] = controller.analyse();
-			counter++;
+			PetrinetController controller = null;
+			try {
+				controller = new PetrinetController(f, true);
+				results[counter] = controller.analyse();
+				counter++;
+			} catch (PetrinetException e) {
+				JOptionPane.showMessageDialog(null, "Could not parse file " + f.getName() + " -> " + e.getMessage(), "",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		parent.print(printResults(results));
 
@@ -588,13 +602,15 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		boolean addToggled = controller.getEditor().addPlace(id);
-
-		if (!addToggled)
-			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
+		try {
+			controller.getEditor().addPlace(id);
+		} catch (DuplicateIdException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "",
 					JOptionPane.INFORMATION_MESSAGE);
-		else
-			setStatusLabel();
+			return;
+		}
+
+		setStatusLabel();
 	}
 
 	@Override
@@ -613,13 +629,16 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		boolean addToggled = controller.getEditor().addTransition(id);
-
-		if (!addToggled)
-			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
+		try {
+			controller.getEditor().addTransition(id);
+		} catch (DuplicateIdException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "",
 					JOptionPane.INFORMATION_MESSAGE);
-		else
-			setStatusLabel();
+
+			return;
+		}
+
+		setStatusLabel();
 	}
 
 	@Override

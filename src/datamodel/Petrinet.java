@@ -48,21 +48,22 @@ public class Petrinet {
 		return activeTransitions;
 	}
 
+	// set element relative to others
 	public void setAddedElementPosition(PetrinetElement pe) {
-				
-		if (pe == null || (places.size() + transitions.size())==1)
+
+		if (pe == null || containsElementWithId(pe) || (places.size() + transitions.size()) == 1)
 			return;
-		
+
 		double x = Double.MAX_VALUE;
 		double y = -Double.MAX_VALUE;
-		
+
 		List<PetrinetElement> mostLeftElements = new ArrayList<PetrinetElement>();
-		for (Place p: places) {
+		for (Place p : places) {
 			if (p == pe)
 				continue;
 //			x += p.getX();
 //			y += p.getY();
-			if (p.getX()== x) 
+			if (p.getX() == x)
 				mostLeftElements.add(p);
 
 			if (p.getX() < x) {
@@ -70,18 +71,18 @@ public class Petrinet {
 				mostLeftElements.clear();
 				mostLeftElements.add(p);
 			}
-			
+
 		}
-		
-		for (Transition t: transitions) {
+
+		for (Transition t : transitions) {
 
 			if (t == pe)
 				continue;
 
-			//			x += t.getX();
+			// x += t.getX();
 //			y += t.getY();
 
-			if (t.getX()== x)
+			if (t.getX() == x)
 				mostLeftElements.add(t);
 
 			if (t.getX() < x) {
@@ -89,9 +90,9 @@ public class Petrinet {
 				mostLeftElements.clear();
 				mostLeftElements.add(t);
 			}
-			
+
 		}
-		
+
 //		int size = places.size() + transitions.size()-1;
 //		if (size > 0) {
 //		if (size == 1)
@@ -101,16 +102,24 @@ public class Petrinet {
 //		y /= size;
 //		}
 		PetrinetElement leftHightestElement = null;
-		
-		for (PetrinetElement p: mostLeftElements) {
+
+		for (PetrinetElement p : mostLeftElements) {
 			if (p.getY() > y) {
 				leftHightestElement = p;
 				y = p.getY();
 			}
 		}
 
-		setCoordinates(pe.getId(), leftHightestElement.getX(), leftHightestElement.getY()+20);
+		setCoordinates(pe.getId(), leftHightestElement.getX(), leftHightestElement.getY() + 20);
 
+	}
+
+	public boolean containsElementWithId(PetrinetElement pe) {
+		return containsElementWithId(pe.getId());
+	}
+
+	public boolean containsElementWithId(String id) {
+		return places.get(id) != null ^ transitions.get(id) != null;
 	}
 
 	public Iterable<Transition> getTransitions() {
@@ -167,13 +176,23 @@ public class Petrinet {
 				inputs.add(t);
 
 			for (Transition t : inputs)
-				removeEdge(t, p);
+				try {
+					removeEdge(t, p);
+				} catch (InvalidEdgeOperationException e) {
+					System.out.println("Could not remove edge " + t.getId() + p.getId() + " -> " + e.getMessage());
+					e.printStackTrace();
+				}
 
 			for (Transition t : p.getOutputs())
 				outputs.add(t);
 
 			for (Transition t : outputs)
-				removeEdge(p, t);
+				try {
+					removeEdge(p, t);
+				} catch (InvalidEdgeOperationException e) {
+					System.out.println("Could not remove edge " + p.getId() + t.getId() + " -> " + e.getMessage());
+					e.printStackTrace();
+				}
 
 			places.remove(p.getId());
 		}
@@ -186,13 +205,23 @@ public class Petrinet {
 				inputs.add(p);
 
 			for (Place p : inputs)
-				removeEdge(p, t);
+				try {
+					removeEdge(p, t);
+				} catch (InvalidEdgeOperationException e) {
+					System.out.println("Could not remove edge " + p.getId() + t.getId() + " -> " + e.getMessage());
+					e.printStackTrace();
+				}
 
 			for (Place p : t.getOutputs())
 				outputs.add(p);
 
 			for (Place p : outputs)
-				removeEdge(t, p);
+				try {
+					removeEdge(t, p);
+				} catch (InvalidEdgeOperationException e) {
+					System.out.println("Could not remove edge " + t.getId() + p.getId() + " -> " + e.getMessage());
+					e.printStackTrace();
+				}
 
 			transitions.remove(t.getId());
 
@@ -207,11 +236,15 @@ public class Petrinet {
 
 	}
 
-	public void addTransition(Transition t) {
-		if (transitions.containsKey(t.getId()) || places.containsKey(t.getId()))
-			return;
+	public Transition addTransition(String id) throws DuplicateIdException {
 
-		transitions.put(t.getId(), t);
+		if (id == null)
+			return null;
+
+		if (transitions.containsKey(id) || places.containsKey(id))
+			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
+
+		Transition t = transitions.put(id, new Transition(id));
 
 		t.setTransitionActiveListener(activated -> {
 			if (petrinetComponentChangedListener != null)
@@ -222,12 +255,17 @@ public class Petrinet {
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onPetrinetElementAdded(t);
 
+		return t;
 	}
 
-	public void addPlace(Place p) {
-		if (transitions.containsKey(p.getId()) || places.containsKey(p.getId()))
-			return;
-		places.put(p.getId(), p);
+	public Place addPlace(String id) throws DuplicateIdException {
+
+		if (id == null)
+			return null;
+
+		if (transitions.containsKey(id) || places.containsKey(id))
+			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
+		Place p = places.put(id, new Place(id));
 
 		p.setNumberOfTokensListener(newNumber -> {
 			if (petrinetComponentChangedListener != null)
@@ -239,7 +277,7 @@ public class Petrinet {
 			petrinetStateChangedListener.onComponentChanged(this);
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onPetrinetElementAdded(p);
-
+		return p;
 	}
 
 	public void setTokens(String id, int numberOfTokens) {
@@ -257,51 +295,57 @@ public class Petrinet {
 
 	}
 
-	public boolean addInput(Place p, Transition t, String id) {
-		if (!places.containsKey(p.getId())) {// needs to be here in case arcs are added before places from files
-			addPlace(p);
-			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onComponentChanged(this);
-		}
-		if (!transitions.containsKey(t.getId()))// needs to be here in case arcs are added before places from files
-			addTransition(t);
+	public void addEdge(String source, String target, String id) throws InvalidEdgeOperationException {
 
-		if (originalArcIds.containsKey(p.getId() + t.getId()))
-			return false;
+		PetrinetElement sourceElement = getPetrinetElement(source);
 
-		originalArcIds.put(p.getId() + t.getId(), id);
-		t.addInput(p);
-		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onEdgeAdded(p, t, id);
-		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onComponentChanged(this);
-		return true;
+		if (sourceElement == null)
+			throw new InvalidEdgeOperationException("Invalid edge operation: Source \"" + source + "\" is missing.");
+
+		PetrinetElement targetElement = getPetrinetElement(target);
+
+		if (targetElement == null || !containsElementWithId(target))
+			throw new InvalidEdgeOperationException("Invalid edge operation: Target \"" + target + "\" is missing.");
+
+		addEdge(sourceElement, targetElement, id);
 	}
 
-	public boolean addOutput(Place p, Transition t, String id) {
-		if (!places.containsKey(p.getId())) {// needs to be here in case arcs are added before places from files
-			addPlace(p);
-		}
-		if (!transitions.containsKey(t.getId()))// needs to be here in case arcs are added before places from files
-			addTransition(t);
+	public void addEdge(PetrinetElement source, PetrinetElement target, String id)
+			throws InvalidEdgeOperationException {
 
-		if (originalArcIds.containsKey(t.getId() + p.getId()))
-			return false;
+		if (source == null || !containsElementWithId(source))
+			throw new InvalidEdgeOperationException("Invalid edge operation: Source" + source == null ? ""
+					: " \"" + source.getId() + "\"" + " is missing.");
 
-		originalArcIds.put(t.getId() + p.getId(), id);
+		if (target == null || !containsElementWithId(target))
+			throw new InvalidEdgeOperationException("Invalid edge operation: Target " + target == null ? ""
+					: " \"" + target.getId() + "\"" + " is missing.");
 
-		t.addOutput(p);
+		if ((source instanceof Place && target instanceof Place)
+				|| (source instanceof Transition && target instanceof Transition))
+			throw new InvalidEdgeOperationException("Invalid edge operation for given elements (" + source.getId()
+					+ ", " + target.getId() + "): cannot connect two places or two transitions.");
+
+		if (originalArcIds.containsKey(source.getId() + target.getId()))
+			throw new InvalidEdgeOperationException("Invalid edge operation: Edge already exists.");
+
+		originalArcIds.put(source.getId() + target.getId(), id);
+
+		if (source instanceof Transition)
+			((Transition) source).addOutput((Place) target);
+		else
+			((Transition) target).addInput((Place) source);
 
 		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onEdgeAdded(t, p, id);
+			petrinetComponentChangedListener.onEdgeAdded(source, target, id);
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
-
-		return true;
-
 	}
 
-	public void removeEdge(PetrinetElement source, PetrinetElement target) {
+	public void removeEdge(PetrinetElement source, PetrinetElement target) throws InvalidEdgeOperationException {
+
+		if (originalArcIds.get(source.getId() + target.getId()) == null)
+			throw new InvalidEdgeOperationException("Invalid edge operation: Edge does not exist.");
 
 		if (source instanceof Place) {
 			Place place = (Place) source;
@@ -338,6 +382,10 @@ public class Petrinet {
 			return;
 
 		Transition t = transitions.get(id);
+
+		if (t == null)
+			return;
+
 		boolean fired = t.fire();
 
 		if (!fired)
@@ -381,7 +429,7 @@ public class Petrinet {
 			Transition t = transitions.get(s);
 			System.out.println(t.getId() + ", " + t.getName());
 			for (Place p : t.getInputs()) {
-				System.out.println(p.id + " " + p.getNumberOfTokens());
+				System.out.println(p.getId() + " " + p.getNumberOfTokens());
 			}
 		}
 

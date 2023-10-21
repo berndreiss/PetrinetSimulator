@@ -1,9 +1,14 @@
 package util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import control.PetrinetException;
+import datamodel.DuplicateIdException;
+import datamodel.InvalidEdgeOperationException;
 import datamodel.Petrinet;
 import datamodel.Place;
 import datamodel.Transition;
@@ -12,13 +17,18 @@ import propra.pnml.PNMLWopedParser;
 public class PNMLParser extends PNMLWopedParser {
 
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
+	private List<String> places = new ArrayList<String>();
+	private List<String> transitions = new ArrayList<String>();
 	private Petrinet petrinet;
 
-	public PNMLParser(File pnml) {
+	private boolean idCheck = true;
+	
+	
+	public PNMLParser(File pnml) throws PetrinetException {
 		this(pnml, null);
 	}
 	
-	public PNMLParser(File pnml, Petrinet petrinet) {
+	public PNMLParser(File pnml, Petrinet petrinet) throws PetrinetException {
 		super(pnml);
 		if (petrinet == null)
 			this.petrinet = new Petrinet();
@@ -26,25 +36,42 @@ public class PNMLParser extends PNMLWopedParser {
 			this.petrinet = petrinet;
 		this.initParser();
 		this.parse();
+
+		for (String s: places)
+			petrinet.addPlace(s);
+		for (String s: transitions)
+			petrinet.addTransition(s);
+		
+		idCheck = false;
+		this.initParser();
+		this.parse();
+		
 		handleTransitions();
 	}
 
 	@Override
 	public void newTransition(final String id) {
-			petrinet.addTransition(new Transition(id));
+		if (idCheck)
+			transitions.add(id);
 	}
 
 	@Override
 	public void newPlace(final String id) {
-			petrinet.addPlace(new Place(id));
+		
+		if (idCheck)
+			places.add(id);
 	}
 
 	@Override
 	public void newArc(final String id, final String source, final String target) {
+		if (idCheck)
+			return;
 		arcs.put(id, new Arc(id, source, target));
 	}
 
 	public void setPosition(final String id, final String x, final String y) {
+		if (idCheck)
+			return;
 		float xF = Float.parseFloat(x);
 		float yF = Float.parseFloat(y);
 
@@ -54,6 +81,8 @@ public class PNMLParser extends PNMLWopedParser {
 
 	@Override
 	public void setName(final String id, final String name) {
+		if (idCheck)
+			return;
 		
 		petrinet.setPetrinetElementName(id, name);
 
@@ -61,12 +90,16 @@ public class PNMLParser extends PNMLWopedParser {
 
 	@Override
 	public void setTokens(final String id, final String tokens) {
-
+		if (idCheck)
+			return;
+		
 		petrinet.setTokens(id, Integer.parseInt(tokens));
 	}
 
-	private void handleTransitions() {
-
+	private void handleTransitions() throws InvalidEdgeOperationException {
+		if (idCheck)
+			return;
+		
 		for (String s : arcs.keySet()) {
 
 			Arc a = arcs.get(s);
@@ -74,11 +107,7 @@ public class PNMLParser extends PNMLWopedParser {
 			String source = a.getSource();
 			String target = a.getTarget();
 
-			if (petrinet.getTransition(source) != null) {
-					petrinet.addOutput(petrinet.getPlace(target), petrinet.getTransition(source), a.getId());
-			} else {
-					petrinet.addInput(petrinet.getPlace(source), petrinet.getTransition(target), a.getId());
-			}
+			petrinet.addEdge(source, target, a.id);
 		}
 
 	}

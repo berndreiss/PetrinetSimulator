@@ -25,6 +25,7 @@ import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
 
 import control.PetrinetController;
+import datamodel.Petrinet;
 import datamodel.PetrinetElement;
 
 public class GraphStreamView {
@@ -112,13 +113,13 @@ public class GraphStreamView {
 						controller.reachabilityNodeClicked(id);
 					} else {
 
-						PetrinetElement p = controller.getPetrinet().getPetrinetElement(id);
+						Petrinet petrinet = controller.getPetrinet(); 
+						PetrinetElement p = petrinet.getPetrinetElement(id);
 						double x = element.getX();
 						double y = element.getY();
 						if (p != null)
 							if (p.getX() != x || p.getY() != y) {
-								p.setX(x);
-								p.setY(y);
+								petrinet.setCoordinates(id, element.getX(), element.getY());
 							} else {
 
 								if (graph instanceof PetrinetGraph)
