@@ -40,6 +40,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	public MainController(MainFrame parent) {
 		this.parent = parent;
+				
 		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		setStatusLabel();
 
@@ -167,6 +168,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	@Override
 	public void onNew() {
 		setNewPanel(null, false);
+		
 
 	}
 
@@ -566,6 +568,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	public void onRedo() {
 		if (currentPetrinetPanel == null)
 			return;
+		currentPetrinetPanel.getController().getReachabilityGraph().addingLoop();
 
 		// TODO Auto-generated method stub
 
@@ -712,7 +715,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (currentPetrinetPanel == null)
 			return;
 
-		currentPetrinetPanel.zoomIn();
+		currentPetrinetPanel.zoomInPetrinet();
 	}
 
 	@Override
@@ -720,7 +723,29 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (currentPetrinetPanel == null)
 			return;
 
-		currentPetrinetPanel.zoomOut();
+		currentPetrinetPanel.zoomOutPetrinet();
+	}
+
+	@Override
+	public void onZoomInReachability() {
+		if (currentPetrinetPanel == null)
+			return;
+
+		currentPetrinetPanel.zoomInReachability();		
+	}
+
+	@Override
+	public void onZoomOutReachability() {
+		if (currentPetrinetPanel == null)
+			return;
+
+		currentPetrinetPanel.zoomOutReachability();				
+	}
+
+	@Override
+	public void onToggleAutoLayout() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

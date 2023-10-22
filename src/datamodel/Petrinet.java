@@ -244,8 +244,10 @@ public class Petrinet {
 		if (transitions.containsKey(id) || places.containsKey(id))
 			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
 
-		Transition t = transitions.put(id, new Transition(id));
+		Transition t = new Transition(id);
 
+		transitions.put(id, t);
+		
 		t.setTransitionActiveListener(activated -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onTransitionStateChanged(t);
@@ -265,8 +267,8 @@ public class Petrinet {
 
 		if (transitions.containsKey(id) || places.containsKey(id))
 			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
-		Place p = places.put(id, new Place(id));
-
+		Place p = new Place(id);
+		places.put(id, p); 
 		p.setNumberOfTokensListener(newNumber -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onPlaceTokenCountChanged(p);

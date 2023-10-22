@@ -8,32 +8,30 @@ import java.util.List;
 import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.spriteManager.Sprite;
+import org.graphstream.ui.spriteManager.SpriteManager;
 
 import util.IterableMap;
 
 public class ReachabilityLayout {
 
-	private final static int LEVEL_OFFSET = 100;
-
-	private int ADDITIONAL_LEVEL_OFFSET = 0;
-
-	private boolean addedOffsetLastLevel = false;
-	
-	private final static int LEVEL_MAXIMUM = 6;
-
-	private final static int FARTHEST_POINT_X = 1000;
-
 	private final static Dimension NODE_SIZE = new Dimension(125, 30);
 
-	private final static double SPACE_BETWEEN_NODES = NODE_SIZE.getWidth() / 5;
+	private Dimension screenSize = new Dimension(1000, 500);
+
+	private static int maxRowCount = 0;
 
 	private List<List<LayoutNode>> listHierarchy;
 
 	private IterableMap<String, LayoutNode> nodeMap;
 
-	public ReachabilityLayout() {
+	private SpriteManager spriteMan;
+
+	public ReachabilityLayout(SpriteManager spriteMan) {
+		this.spriteMan = spriteMan;
 		listHierarchy = new ArrayList<List<LayoutNode>>();
 		nodeMap = new IterableMap<String, ReachabilityLayout.LayoutNode>();
+
 	}
 
 	public void add(Node node) {
@@ -137,35 +135,61 @@ public class ReachabilityLayout {
 		if (!added)
 			nodeList.add(node);
 
+		if (nodeList.size() > maxRowCount)
+			maxRowCount = nodeList.size();
+
 	}
 
 	private void repaintNodes() {
 
 		int lvl = 0;
 
-		double additionalSpace = (listHierarchy.size() > LEVEL_MAXIMUM ? listHierarchy.size() : 0)  * 50;
-		for (List<LayoutNode> nodeList : listHierarchy) {
+		
 
-			System.out.println("LEVEL " + lvl++);
+		double heightUnit = (screenSize.getHeight()) / (listHierarchy.size()>1? listHierarchy.size()- 1:1);
+
+
+		int levelMaximum = (int) (screenSize.getHeight() / (NODE_SIZE.getHeight() * 2));
+
+		
+//		double additionalSpace = (listHierarchy.size() > LEVEL_MAXIMUM ? listHierarchy.size() : 0)  * 50;
+		double additionalSpace = 0;
+
+//		circlify();
+//		if (true)
+//			return;
+		if (listHierarchy.size() > levelMaximum) {
+//			circlify();
+//			return;
+		}
+
+		for (List<LayoutNode> nodeList : listHierarchy) {
 
 			if (nodeList.size() == 0)
 				continue;
 
-			double additionalNodeSpace = (additionalSpace / nodeList.size())
-					* (nodeList.get(0).level % 2 == 0 ? 1 : -1);
+//			double additionalNodeSpace = (additionalSpace / nodeList.size())
+//					* (nodeList.get(0).level % 2 == 0 ? 1 : -1);
+
+			int currentLevel = listHierarchy.indexOf(nodeList);
+
+			double additionalNodeSpace = 0;
 
 			if (nodeList.size() == 1) {
 
-				if (listHierarchy.indexOf(nodeList) > 0) {
-					if (listHierarchy.size() > LEVEL_MAXIMUM && !addedOffsetLastLevel && listHierarchy.get(listHierarchy.indexOf(nodeList) - 1).size() == 1) {
-						ADDITIONAL_LEVEL_OFFSET = -LEVEL_OFFSET;
-						addedOffsetLastLevel = true;
-					}
-					else
-						addedOffsetLastLevel = false;
-				}
-				nodeList.get(0).node.setAttribute("xy", 0 + additionalNodeSpace,
-						-(LEVEL_OFFSET * listHierarchy.indexOf(nodeList) + ADDITIONAL_LEVEL_OFFSET));
+//				if (listHierarchy.indexOf(nodeList) > 0) {
+//					if (listHierarchy.size() > LEVEL_MAXIMUM && !addedOffsetLastLevel && listHierarchy.get(listHierarchy.indexOf(nodeList) - 1).size() == 1) {
+//						ADDITIONAL_LEVEL_OFFSET = -LEVEL_OFFSET;
+//						addedOffsetLastLevel = true;
+//					}
+//					else
+//						addedOffsetLastLevel = false;
+//				}
+//				nodeList.get(0).node.setAttribute("xy", 0 + additionalNodeSpace,
+//						-(LEVEL_OFFSET * listHierarchy.indexOf(nodeList) + ADDITIONAL_LEVEL_OFFSET));
+
+				nodeList.get(0).node.setAttribute("xy", screenSize.getWidth() / 2,
+						-(heightUnit * (listHierarchy.indexOf(nodeList))));
 				continue;
 			}
 
@@ -184,18 +208,30 @@ public class ReachabilityLayout {
 
 			}
 
-			double startingX = -lengthOfRow / 2;
+			double weightCount = 0;
+			
+			double widthUnit = (screenSize.getWidth()) / (nodeList.size() - 1);
 
 			for (int i = 0; i < nodeList.size(); i++) {
 
-				startingX += spacing.get(i / 2);
-
 				LayoutNode node = nodeList.get(i);
 
-				node.node.setAttribute("xy", startingX, -(node.level * LEVEL_OFFSET + ADDITIONAL_LEVEL_OFFSET));
+				weightCount += spacing.get(i);
 
-				startingX += spacing.get(i / 2);
+				node.node.setAttribute("xy", (i) * widthUnit, -((node.level) * heightUnit));
+
 			}
+
+//			for (int i = 0; i < nodeList.size(); i++) {
+//
+//				startingX += spacing.get(i / 2);
+//
+//				LayoutNode node = nodeList.get(i);
+//
+//				node.node.setAttribute("xy", startingX, -(node.level * LEVEL_OFFSET + ADDITIONAL_LEVEL_OFFSET));
+//
+//				startingX += spacing.get(i / 2);
+//			}
 
 //			int additionalLayerOffset = 10;
 
@@ -212,12 +248,97 @@ public class ReachabilityLayout {
 		}
 
 //		System.out.println("\n");
-		addedOffsetLastLevel = false;
+//		addedOffsetLastLevel = false;
+	}
+
+	private void circlify() {
+
+		List<LayoutNode> nodesTotal = new ArrayList<ReachabilityLayout.LayoutNode>();
+		List<LayoutNode> left = new ArrayList<ReachabilityLayout.LayoutNode>();
+		List<LayoutNode> right = new ArrayList<ReachabilityLayout.LayoutNode>();
+
+		for (int i = 0; i < listHierarchy.size(); i++) {
+			List<LayoutNode> nodeList = listHierarchy.get(i);
+			nodesTotal.addAll(nodeList);
+		}
+
+		if (nodesTotal.size() <= 1)
+			return;
+
+		LayoutNode[] nodesJoined = new LayoutNode[nodesTotal.size()];
+
+		int circleSpacing = 3;
+		int indexOffset = 0;
+
+		int j = 0;
+		int totalCounter = 0;
+		
+		while (j*circleSpacing + indexOffset < nodesTotal.size()) {
+			nodesJoined[j*circleSpacing + indexOffset] = nodesTotal.get(totalCounter);
+
+			if (((j+1) *circleSpacing  + indexOffset) >= nodesTotal.size() && (indexOffset + 1) < circleSpacing) {
+				j=0;
+				indexOffset++;
+			} else
+				j++;
+			totalCounter++;
+		}
+
+
+//		for (int i = nodesTotal.size() / 2; i < nodesTotal.size() - 1; i++) {
+//			nodesJoined[(i - nodesTotal.size() / 2) * 2 + 1] = nodesTotal.get(i);
+//		}
+
+//		int j = 0;
+//		
+//		System.out.println(left.size());
+//		System.out.println(right.size());
+//		
+//		while (j<left.size() && j< right.size()) {
+//			
+//			nodesJoined.add(left.get(j));
+//			nodesJoined.add(right.get(j));
+//			j++;
+//			
+//		}
+
+//		if (j<left.size())
+//			nodesJoined.add(left.get(j));
+//		if (j<right.size())
+//			nodesJoined.add(right.get(j));
+//			
+//		System.out.println(nodesJoined.size());
+
+//		left.addAll(right);
+
+		double a = screenSize.getWidth();
+		double b = screenSize.getHeight();
+		for (int i = 0; i < nodesJoined.length; i++) {
+
+			LayoutNode layoutNode = nodesJoined[i];
+
+			if (layoutNode == null) {
+				continue;
+			}
+			Node node = nodesJoined[i].node;
+
+			double angle = (Math.PI / 2) + (2 * Math.PI / nodesJoined.length) * i;
+
+			double x = a * Math.cos(angle);
+			double y = b * Math.sin(angle);
+
+			node.setAttribute("xy", x, y);
+
+		}
+
+		for (Sprite s : spriteMan)
+			s.setPosition(0.4);
+
 	}
 
 	private double getSpaceNeedeForNode(LayoutNode node) {
 		if (node.successors.size() == 0)
-			return NODE_SIZE.getWidth() + SPACE_BETWEEN_NODES;
+			return 1;
 
 		double spaceForNode = 0;
 		for (LayoutNode ln : node.children)
@@ -252,5 +373,10 @@ public class ReachabilityLayout {
 		public String getTag() {
 			return parent == null ? "" : parent.getTag() + listHierarchy.get(level).indexOf(this);
 		}
+	}
+
+	public void setScreenSize(Dimension screenSize) {
+		this.screenSize = screenSize;
+		repaintNodes();
 	}
 }

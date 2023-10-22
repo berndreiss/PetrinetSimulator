@@ -1,8 +1,10 @@
 package view;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.graphstream.graph.Edge;
@@ -21,9 +23,8 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
-
 	private AnalysisCompletedListener analysisCompletedListener;
-	
+
 	private SpriteManager spriteMan;
 
 	private Node initialNode;
@@ -35,19 +36,21 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private Node nodeMMarked;
 
-	
 	private ReachabilityLayout layoutManager;
 
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
 
-		layoutManager = new ReachabilityLayout();
-		
+
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
+
+		layoutManager = new ReachabilityLayout(spriteMan);
+	
+
 
 		PetrinetState initialState = controller.getReachabilityGraphModel().getInitialState();
 
@@ -58,6 +61,7 @@ public class ReachabilityGraph extends MultiGraph {
 			layoutManager.add(initialNode);
 
 		}
+
 		controller.getReachabilityGraphModel().setStateChangeListener(new ReachabilityStateChangeListener() {
 
 			@Override
@@ -97,14 +101,13 @@ public class ReachabilityGraph extends MultiGraph {
 					else
 						setHighlight(mOld);
 				}
-				
 
 			}
 
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 				Node node = addState(state, predecessor, t);
-				layoutManager.add(getNode(predecessor == null ? null: predecessor.getState()), node);
+				layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node);
 			}
 
 			@Override
@@ -113,12 +116,26 @@ public class ReachabilityGraph extends MultiGraph {
 			}
 
 		});
+	
 	}
 
-	
+	public void addingLoop() {
+		while (true) {
+			String input = JOptionPane.showInputDialog(null, "Enter id for place:");
 
+			if (input.equals(""))
+				break;
+			
+			Node node = addNode(input.split(",")[0]);
+
+			double x = Double.parseDouble(input.split(",")[1]);
+			double y = Double.parseDouble(input.split(",")[2]);
+			node.setAttribute("xy", x, y);
+		}
+	}
+	
 	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
-		
+
 		Node node;
 		String id = state.getState();
 		String transitionLabel = t == null ? "" : PetrinetGraph.getElementLabel(t);
@@ -167,13 +184,13 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	private void setCurrentState(PetrinetState state) {
-		
+
 		setCurrent(getNode(state.getState()));
-		
+
 	}
 
 	private void markStatesInvalid(String m, String mMark) {
-		
+
 		Node oldM = nodeM;
 		Node oldMMarked = nodeMMarked;
 
@@ -187,7 +204,7 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	private void setCurrent(Node node) {
-		
+
 		if (node == null)
 			return;
 
@@ -216,7 +233,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private Node removeState(PetrinetState state) {
 		spriteMan.removeSprite("s" + state.getState());
-		
+
 		return removeNode(state.getState());
 
 	}
@@ -279,13 +296,18 @@ public class ReachabilityGraph extends MultiGraph {
 		node.setAttribute("ui.class", "node");
 
 	}
-	
+
 	public void setAnalysisCompletedListener(AnalysisCompletedListener analysisCompletedListener) {
 		this.analysisCompletedListener = analysisCompletedListener;
 	}
-	
-	//adjust arrow heads
+
+	// adjust arrow heads
 	public void analysisCompleted() {
 		analysisCompletedListener.onAnalysisCompleted();
+	}
+	
+	public void onScreenSizeChanged(Dimension newSize) {
+		layoutManager.setScreenSize(newSize);
+		
 	}
 }

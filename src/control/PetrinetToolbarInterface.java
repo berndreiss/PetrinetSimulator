@@ -51,5 +51,13 @@ public interface PetrinetToolbarInterface {
 	
 	void onCloseEditor();
 
+	//Additional functions for ReachabilityGraph
+	
+	void onZoomInReachability();
+
+	void onZoomOutReachability();
+
+	void onToggleAutoLayout();
+
 	
 }

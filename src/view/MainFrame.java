@@ -48,7 +48,7 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 		setLayout(new BorderLayout());
-		
+		//TODO set min size
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
@@ -69,6 +69,7 @@ public class MainFrame extends JFrame {
 		this.add(statusLabel, BorderLayout.SOUTH);
 
 		
+
 		controller = new MainController(this);
 
 
