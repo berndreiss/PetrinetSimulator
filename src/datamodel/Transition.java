@@ -50,7 +50,6 @@ public class Transition extends PetrinetElement {
 
 		// decrement tokens
 		for (String s : inputs.keySet()) {
-			System.out.println(s);
 			Place p = (Place) inputs.get(s);
 			p.decrementTokens();
 

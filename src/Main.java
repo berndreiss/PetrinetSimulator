@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.UIManager;
 
@@ -25,38 +26,48 @@ public class Main {
 //		  UIManager.put( "nimbusSelectedText", new Color( 255, 255, 255) );
 //		  UIManager.put( "nimbusSelectionBackground", new Color( 104, 93, 156) );
 //		  UIManager.put( "text", new Color( 230, 230, 230) );
-		  try {
-		    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-		    	if ("Nimbus".equals(info.getName())) {
-		          javax.swing.UIManager.setLookAndFeel(info.getClassName());
-		          break;
-		      }
-		    }
-		  } catch (ClassNotFoundException e) {
-		    e.printStackTrace();
-		  } catch (InstantiationException e) {
-		    e.printStackTrace();
-		  } catch (IllegalAccessException e) {
-		    e.printStackTrace();
-		  } catch (javax.swing.UnsupportedLookAndFeelException e) {
-		    e.printStackTrace();
-		  } catch (Exception e) {
-		    e.printStackTrace();
-		  }
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (javax.swing.UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		
+		list.add(1);
+		
+		for (int i = 0; i< list.size();i++) {
+			list.add(i+1, 2);
+			break;
+		}
+		
+		for (Integer i: list)
+			System.out.println(i);
+		
 		
 		// Frame erzeugen
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new MainFrame("Bernd Reiß 3223442");
-				
-	
+
 			}
 		});
-		
 
-	
-		
-		
 	}
 
 }

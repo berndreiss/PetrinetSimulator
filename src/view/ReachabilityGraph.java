@@ -23,7 +23,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
-	private AnalysisCompletedListener analysisCompletedListener;
+	private ReplayGraphListener replayGraphListener;
 
 	private SpriteManager spriteMan;
 
@@ -297,13 +297,16 @@ public class ReachabilityGraph extends MultiGraph {
 
 	}
 
-	public void setAnalysisCompletedListener(AnalysisCompletedListener analysisCompletedListener) {
-		this.analysisCompletedListener = analysisCompletedListener;
+	public void setReplayGraphListener(ReplayGraphListener replayGraphListener) {
+		this.replayGraphListener = replayGraphListener;
 	}
 
 	// adjust arrow heads
-	public void analysisCompleted() {
-		analysisCompletedListener.onAnalysisCompleted();
+	public void replayGraph() {
+		if (replayGraphListener == null)
+			return;
+		replayGraphListener.onGraphReplay();
+
 	}
 	
 	public void onScreenSizeChanged(Dimension newSize) {

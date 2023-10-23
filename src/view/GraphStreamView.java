@@ -29,8 +29,13 @@ import datamodel.Petrinet;
 import datamodel.PetrinetElement;
 
 public class GraphStreamView {
-
+	
+	private static JFrame mainFrame;
+	
 	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller, JFrame parent) {
+		
+		mainFrame = parent;
+		
 		// Erzeuge Viewer mit passendem Threading-Model für Zusammenspiel mit
 		// Swing
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -74,19 +79,53 @@ public class GraphStreamView {
 		
 		parent.addComponentListener(new ComponentAdapter() {
 			
+			double originalZoom = 1.0;
+			
 			@Override
 			public void componentResized(ComponentEvent e) {
 				
 				viewer.replayGraph(graph);
+				
+				
+				//graph not scaling correctly when having zoomed in or out before
+				if (graph instanceof ReachabilityGraph) {
+					
+					double zoom = viewPanel.getCamera().getViewPercent();
+										
+					if (zoom == 1.0)
+						return;
+						
+//					if (zoomAdjusted) {
+//						zoomAdjusted = false;
+//						System.out.println("HERE");
+//						return;
+//			
+//					
+//					}
+					
+					
+					viewPanel.getCamera().resetView();
+//					viewPanel.getCamera().setViewPercent(zoom);
+//					viewPanel.getCamera().setViewPercent(zoom);
+//					System.out.println(zoom);
+//					zoomAdjusted = true;
+//					counter++;
+//					
+//					if (counter == 2)
+//						System.exit(0);
+					//AAAAND reset arrow heads again
+					adjustArrowHeads();
+//					((ReachabilityGraph) graph).
+				}
+
 			}
+			
 		});
 
 		if (graph instanceof ReachabilityGraph)
-			((ReachabilityGraph) graph).setAnalysisCompletedListener(() -> {
-			
-				Dimension currentSize = parent.getSize();
-				parent.setSize(currentSize.width + 1, currentSize.height);
-				parent.setSize(currentSize);
+			((ReachabilityGraph) graph).setReplayGraphListener(() -> {
+
+				adjustArrowHeads();
 			});
 
 		EnumSet<InteractiveElement> enumSet = EnumSet.of(InteractiveElement.NODE);
@@ -189,4 +228,13 @@ public class GraphStreamView {
 		
 	}
 
+	
+	//for some reason replayGraph() does only work by resizing the window
+
+	public static void adjustArrowHeads() {
+		Dimension currentSize = mainFrame.getSize();
+		mainFrame.setSize(currentSize.width + 1, currentSize.height);
+		mainFrame.setSize(currentSize);
+	}
+	
 }

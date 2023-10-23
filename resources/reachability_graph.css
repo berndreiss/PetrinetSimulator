@@ -147,6 +147,10 @@ node.highlight {
 	stroke-width: 3px;
 }
 
+node.blank{
+	size: 0px; 
+	fill-color: rgba(0,0,0,0);
+}
 
 
 /*

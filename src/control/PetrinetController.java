@@ -178,7 +178,7 @@ public class PetrinetController {
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
 		if (!headless)
-			reachabilityGraph.analysisCompleted();
+			reachabilityGraph.replayGraph();
 		
 		return getResults(analyser);
 
