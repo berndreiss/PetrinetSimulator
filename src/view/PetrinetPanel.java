@@ -42,12 +42,21 @@ public class PetrinetPanel extends JPanel {
 		this.controller = new PetrinetController(file, headless);
 
 		controller.getEditor().setOnEditedListener(mainController);
-
+		
 		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller,
 				mainController.getFrame());
+
+		JPanel petrinetPanel = new JPanel();
+		petrinetPanel.setLayout(new BorderLayout());
+		petrinetPanel.add(petrinetViewPanel, BorderLayout.CENTER);
+		
 		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller,
 				mainController.getFrame());
 
+		JPanel reachabilityPanel = new JPanel();
+		reachabilityPanel.setLayout(new BorderLayout());
+		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
+		
 		reachabilityViewPanel.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent event) {
@@ -58,9 +67,12 @@ public class PetrinetPanel extends JPanel {
 		setLayout(new BorderLayout());
 
 		if (!headless) {
+			
 			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT,
-					petrinetViewPanel, reachabilityViewPanel);
+					petrinetPanel, reachabilityPanel);
 			add(graphSplitPane, BorderLayout.CENTER);
+			
+			
 		}
 
 	}

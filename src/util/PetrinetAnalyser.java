@@ -29,8 +29,8 @@ public class PetrinetAnalyser {
 	private String m;
 	private String mMarked;
 
-	// TODO Handle edge case transition with no input producing (0) -> (2)
 
+	
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
 		analyse();
@@ -63,8 +63,9 @@ public class PetrinetAnalyser {
 		petrinet.setState(state);
 
 		for (Transition t : petrinet.getActiveTransitions()) {
+			System.out.println(petrinet.getStateString() +"->" + t.getId());
 			petrinet.fireTransition(t.getId());
-			System.out.println(t.getId());
+			
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
 			if (!stateValid) {
 				finite = false;

@@ -191,42 +191,6 @@ public class GraphStreamView {
 
 	}
 
-	private static void simulateMouseClickOnPanel(ViewPanel viewPanel) {
-
-		System.out.println("MOUSECLICK");
-
-		Robot robot = null;
-		try {
-			robot = new Robot();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    // Move the mouse to the desired x, y position
-
-		Point locationOnScreen = viewPanel.getLocationOnScreen();
-		
-		int x = locationOnScreen.x;
-		int y = locationOnScreen.y;
-	    robot.mouseMove(x, y);
-
-		System.out.println(x + ", " + y);
-		
-		MouseEvent press = new MouseEvent(viewPanel, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, x, y, 1,
-				false);
-		MouseEvent release = new MouseEvent(viewPanel, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, x, y,
-				1, false);
-		MouseEvent clicked = new MouseEvent(viewPanel, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, x, y, 1,
-				false);
-
-		SwingUtilities.invokeLater(() -> {
-			viewPanel.dispatchEvent(press);
-			viewPanel.dispatchEvent(release);
-			viewPanel.dispatchEvent(clicked);
-		});
-		
-	}
 
 	
 	//for some reason replayGraph() does only work by resizing the window

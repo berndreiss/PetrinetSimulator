@@ -46,20 +46,6 @@ public class Main {
 		}
 
 		
-		
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		
-		list.add(1);
-		
-		for (int i = 0; i< list.size();i++) {
-			list.add(i+1, 2);
-			break;
-		}
-		
-		for (Integer i: list)
-			System.out.println(i);
-		
-		
 		// Frame erzeugen
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

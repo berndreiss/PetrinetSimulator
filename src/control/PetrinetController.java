@@ -26,6 +26,7 @@ import util.PNMLParser;
 import util.PetrinetAnalyser;
 import view.PetrinetGraph;
 import view.ReachabilityGraph;
+import view.ReachabilityGraphTest;
 import view.GraphStreamView;
 
 public class PetrinetController {

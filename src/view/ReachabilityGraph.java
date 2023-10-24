@@ -41,7 +41,6 @@ public class ReachabilityGraph extends MultiGraph {
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
 
-
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
@@ -49,10 +48,10 @@ public class ReachabilityGraph extends MultiGraph {
 		spriteMan = new SpriteManager(this);
 
 		layoutManager = new ReachabilityLayout(spriteMan);
-	
-
 
 		PetrinetState initialState = controller.getReachabilityGraphModel().getInitialState();
+		this.setAttribute("layout.force", 0.01);
+		this.setAttribute("layout.repulsionFactor", 0.01);
 
 		if (initialState != null) {
 
@@ -116,7 +115,7 @@ public class ReachabilityGraph extends MultiGraph {
 			}
 
 		});
-	
+
 	}
 
 	public void addingLoop() {
@@ -125,7 +124,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 			if (input.equals(""))
 				break;
-			
+
 			Node node = addNode(input.split(",")[0]);
 
 			double x = Double.parseDouble(input.split(",")[1]);
@@ -133,7 +132,7 @@ public class ReachabilityGraph extends MultiGraph {
 			node.setAttribute("xy", x, y);
 		}
 	}
-	
+
 	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
 
 		Node node;
@@ -145,6 +144,7 @@ public class ReachabilityGraph extends MultiGraph {
 		if (node == null) {
 			node = addNode(id);
 			node.setAttribute("ui.label", id);
+			node.setAttribute("layout.frozen");
 		}
 
 		if (initialNode == null) {
@@ -308,9 +308,9 @@ public class ReachabilityGraph extends MultiGraph {
 		replayGraphListener.onGraphReplay();
 
 	}
-	
+
 	public void onScreenSizeChanged(Dimension newSize) {
 		layoutManager.setScreenSize(newSize);
-		
+
 	}
 }

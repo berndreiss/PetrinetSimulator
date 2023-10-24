@@ -125,7 +125,8 @@ public class ReachabilityLayout {
 			repaintNodes();
 
 		int loops = 0;
-		while (modified = true) {
+		while (modified = true && loops < 3) {
+			loops++;
 			for (LayoutEdge edge : potentialCulprits) {
 				modified = checkEdgeIntersection(layoutEdge);
 				if (modified)
@@ -258,6 +259,24 @@ public class ReachabilityLayout {
 
 		if (nodeList.size() > maxRowCount)
 			maxRowCount = nodeList.size();
+			
+			
+		boolean hasEmpty = true;
+
+		while (hasEmpty) {
+
+			for (int i = 0; i < nodeList.size(); i++) {
+				LayoutNode ln = nodeList.get(i);
+				if (ln.node == null) {
+					nodeList.remove(i);
+					hasEmpty = true;
+					break;
+				}
+				hasEmpty = false;
+			}
+		}
+		
+		//TODO check all dependencies
 
 	}
 
