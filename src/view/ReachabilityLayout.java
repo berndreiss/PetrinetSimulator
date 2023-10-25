@@ -17,8 +17,9 @@ import util.IterableMap;
 
 public class ReachabilityLayout {
 
-	private final static Dimension NODE_SIZE = new Dimension(125, 30);
+//	private final static Dimension NODE_SIZE = new Dimension(125, 30);
 
+	private final static Dimension NODE_SIZE = new Dimension(30, 30);
 	private Dimension screenSize = new Dimension(1000, 500);
 
 	private static int maxRowCount = 0;
@@ -29,22 +30,18 @@ public class ReachabilityLayout {
 
 	private SpriteManager spriteMan;
 
-	private List<LayoutEdge> potentialCulprits = new ArrayList<ReachabilityLayout.LayoutEdge>();
+	private List<LayoutEdge> potentialCulprits = new ArrayList<LayoutEdge>();
+	private List<LayoutEdge> edges = new ArrayList<LayoutEdge>();
+
+	private enum Direction {
+		LEFT, RIGHT;
+	}
 
 	public ReachabilityLayout(SpriteManager spriteMan) {
 		this.spriteMan = spriteMan;
 		listHierarchy = new ArrayList<List<LayoutNode>>();
 		nodeMap = new IterableMap<String, ReachabilityLayout.LayoutNode>();
 
-//		leftLowerBoundaryNode = graph.addNode(UUID.randomUUID().toString());
-//		leftUpperBoundaryNode = graph.addNode(UUID.randomUUID().toString());
-//		rightLowerBoundaryNode = graph.addNode(UUID.randomUUID().toString());
-//		rightUpperBoundaryNode = graph.addNode(UUID.randomUUID().toString());
-
-//		leftLowerBoundaryNode.setAttribute("ui.class", "blank");
-//		leftUpperBoundaryNode.setAttribute("ui.class", "blank");
-//		rightLowerBoundaryNode.setAttribute("ui.class", "blank");
-//		rightUpperBoundaryNode.setAttribute("ui.class", "blank");
 	}
 
 	public void add(Node node) {
@@ -75,8 +72,8 @@ public class ReachabilityLayout {
 			nodeMap.put(source.getId(), layoutSource);
 			nodeMap.put(target.getId(), layoutTarget);
 
-			layoutSource.successors.add(layoutTarget);
-			layoutTarget.predecessors.add(layoutSource);
+//			layoutSource.successors.add(layoutTarget);
+//			layoutTarget.predecessors.add(layoutSource);
 		}
 
 		else if (layoutSource == null) {
@@ -84,8 +81,8 @@ public class ReachabilityLayout {
 
 			nodeMap.put(source.getId(), layoutSource);
 
-			layoutSource.upwardsSuccessors.add(layoutTarget);
-			layoutTarget.predecessors.add(layoutSource);
+//			layoutSource.upwardsSuccessors.add(layoutTarget);
+//			layoutTarget.predecessors.add(layoutSource);
 		}
 
 		else if (layoutTarget == null) {
@@ -94,46 +91,69 @@ public class ReachabilityLayout {
 
 			nodeMap.put(target.getId(), layoutTarget);
 
-			layoutSource.successors.add(layoutTarget);
-			layoutTarget.predecessors.add(layoutSource);
+//			layoutSource.successors.add(layoutTarget);
+//			layoutTarget.predecessors.add(layoutSource);
 
 		}
 
-		if (Toolkit.nodePosition(source)[0] <= Toolkit.nodePosition(target)[0]) {
+//		if (Toolkit.nodePosition(source)[0] <= Toolkit.nodePosition(target)[0]) {
+//
+//			if (!layoutSource.upwardsSuccessors.contains(layoutTarget))
+//				layoutSource.upwardsSuccessors.add(layoutTarget);
+//		} else {
+//			if (!layoutSource.successors.contains(layoutTarget))
+//				layoutSource.successors.add(layoutTarget);
+//		}
+//		if (!layoutTarget.predecessors.contains(layoutSource))
+//			layoutTarget.predecessors.add(layoutSource);
 
-			if (!layoutSource.upwardsSuccessors.contains(layoutTarget))
-				layoutSource.upwardsSuccessors.add(layoutTarget);
-		} else {
-			if (!layoutSource.successors.contains(layoutTarget))
-				layoutSource.successors.add(layoutTarget);
-		}
-		if (!layoutTarget.predecessors.contains(layoutSource))
-			layoutTarget.predecessors.add(layoutSource);
-
-		repaintNodes();
-
-		if (Math.abs(layoutSource.level - layoutTarget.level) <= 1)
-			return;
-
+		
 		LayoutEdge layoutEdge = new LayoutEdge(layoutSource, layoutTarget);
+		
+		if (!(Math.abs(layoutSource.level - layoutTarget.level) <= 1)) {
 
-		potentialCulprits.add(layoutEdge);
 
-		boolean modified = checkEdgeIntersection(layoutEdge);
-
-		if (modified)
-			repaintNodes();
-
-		int loops = 0;
-		while (modified = true && loops < 3) {
-			loops++;
-			for (LayoutEdge edge : potentialCulprits) {
-				modified = checkEdgeIntersection(layoutEdge);
-				if (modified)
-					repaintNodes();
-
-			}
+			potentialCulprits.add(layoutEdge);
 		}
+		
+//		int edgeIndex;
+		
+	
+//		edges.add()
+		
+		beautify();
+
+		//
+//		boolean modified = checkEdgeIntersection(layoutEdge);
+//
+//		if (modified)
+//			repaintNodes();
+//
+//		int loops = 0;
+//		while (modified = true && loops < 3) {
+//			loops++;
+//			for (LayoutEdge edge : potentialCulprits) {
+//				modified = checkEdgeIntersection(layoutEdge);
+//				if (modified)
+//					repaintNodes();
+//
+//			}
+//		}
+
+	}
+
+	private void checkNodeAgainstPotentialCulprits(LayoutNode node) {
+
+	}
+
+	private Direction getDirection(LayoutEdge edge) {
+		double nearesLeft = Double.MAX_VALUE;
+		double nearesRight = Double.MAX_VALUE;
+
+		for (LayoutEdge culprit : potentialCulprits) {
+		}
+
+		return null;
 
 	}
 
@@ -146,19 +166,58 @@ public class ReachabilityLayout {
 
 		int finalIndex = Math.max(layoutSource.level, layoutTarget.level);
 
+		List<LayoutNode> intersectingNodes = new ArrayList<ReachabilityLayout.LayoutNode>();
+
+		boolean nonNullNodesIntersecting = false;
+
 		for (int i = startIndex + 1; i < finalIndex; i++) {
 
 			List<LayoutNode> nodeList = listHierarchy.get(i);
+
+			if (nodeList.size() == 0)
+				continue;
 
 			for (int j = 0; j < nodeList.size(); j++) {
 
 				LayoutNode ln = nodeList.get(j);
 
-				if (ln.node == null)
-					continue;
+				Point currentNodePosition = new Point(getWidth(nodeList.size(), j), getHeight(i));
 
-				if (edgeIntersectsNode(layoutEdge, ln.node) && layoutSource.node != ln.node
+				if (edgeIntersectsPoint(layoutEdge, currentNodePosition) && layoutSource.node != ln.node
 						&& layoutTarget.node != ln.node) {
+					intersectingNodes.add(ln);
+					if (ln.node != null)
+						nonNullNodesIntersecting = true;
+					continue;
+				}
+
+				// if the LayoutNode is a blank node also check the middle -> if it intersects
+				// we might want to push the node left/right regardless, because there have been
+				// intersectios before and the nodes might need to be pushed further
+				if (ln.node == null) {
+					Point neighboringNodePosition = null;
+
+					if (j > 0) {
+						neighboringNodePosition = new Point(getWidth(nodeList.size(), j - 1), getHeight(i));
+					}
+
+					if (j < nodeList.size() - 1) {
+						neighboringNodePosition = new Point(getWidth(nodeList.size(), j + 1), getHeight(i));
+					}
+
+					if (neighboringNodePosition == null)
+						continue;
+
+					Point middlePosition = new Point((currentNodePosition.x + neighboringNodePosition.x) / 2,
+							(currentNodePosition.y + neighboringNodePosition.y) / 2);
+
+					if (edgeIntersectsPoint(layoutEdge, middlePosition) && layoutSource.node != ln.node
+							&& layoutTarget.node != ln.node) {
+						intersectingNodes.add(ln);
+						continue;
+					}
+
+				}
 
 //					if (finalIndex - startIndex == 2) {
 //
@@ -167,33 +226,47 @@ public class ReachabilityLayout {
 //						break;
 //					}
 
-					System.out.println(j);
-					System.out.println(nodeList.size());
-					System.out.println(j <= (double) (nodeList.size() - 1) / 2);
+//					if (leftIsEmpty(nodeList, j)) {
+//						nodeList.add(j + 1, new LayoutNode(null, null, i));
+//						return true;
+//					}
+//
+//					if (rightIsEmpty(nodeList, j)) {
+//						nodeList.add(j, new LayoutNode(null, null, i));
+//						return true;
+//					}
 
-					if (leftIsEmpty(nodeList, j)) {
-						nodeList.add(j + 1, new LayoutNode(null, null, i));
-						return true;
-					}
-
-					if (rightIsEmpty(nodeList, j)) {
-						nodeList.add(j, new LayoutNode(null, null, i));
-						return true;
-					}
-
-					if (j <= (double) (nodeList.size() - 1) / 2) {
-						System.out.println("Here");
-						nodeList.add(j + 1, new LayoutNode(null, null, i));
-						return true;
-					} else {
-						nodeList.add(j, new LayoutNode(null, null, i));
-						return true;
-					}
-				}
 			}
-
 		}
-		return false;
+
+		if (!nonNullNodesIntersecting || intersectingNodes.size() == 0)
+			return false;
+
+		Direction direction = getDirection(intersectingNodes.get(0));
+
+
+
+		for (LayoutNode ln : intersectingNodes) {
+
+			List<LayoutNode> nodeList = listHierarchy.get(ln.level);
+
+			if (direction == Direction.LEFT) {
+				nodeList.add(nodeList.indexOf(ln) + 1, new LayoutNode(null, null, ln.level));
+			} else {
+				nodeList.add(nodeList.indexOf(ln), new LayoutNode(null, null, ln.level));
+			}
+		}
+		return true;
+	}
+
+	private Direction getDirection(LayoutNode layoutNode) {
+
+		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.level);
+
+		int index = nodeList.indexOf(layoutNode);
+
+		return index <= (double) (nodeList.size() - 1) / 2 ? Direction.LEFT : Direction.RIGHT;
+
 	}
 
 	private boolean leftIsEmpty(List<LayoutNode> nodeList, int startingIndex) {
@@ -259,8 +332,7 @@ public class ReachabilityLayout {
 
 		if (nodeList.size() > maxRowCount)
 			maxRowCount = nodeList.size();
-			
-			
+
 		boolean hasEmpty = true;
 
 		while (hasEmpty) {
@@ -275,8 +347,8 @@ public class ReachabilityLayout {
 				hasEmpty = false;
 			}
 		}
-		
-		//TODO check all dependencies
+
+		// TODO check all dependencies
 
 	}
 
@@ -296,8 +368,6 @@ public class ReachabilityLayout {
 //		leftUpperBoundaryNode.setAttribute("xy", leftMostX - blankXOffSet, topMostY + blankYOffSet);
 //		rightLowerBoundaryNode.setAttribute("xy", rightMostX + blankXOffSet, bottomMostY -blankYOffSet);
 //		rightUpperBoundaryNode.setAttribute("xy", rightMostX + blankXOffSet, topMostY + blankYOffSet);
-
-		double heightUnit = (screenSize.getHeight()) / (listHierarchy.size() > 1 ? listHierarchy.size() - 1 : 1);
 
 		int levelMaximum = (int) (screenSize.getHeight() / (NODE_SIZE.getHeight() * 2));
 
@@ -320,12 +390,6 @@ public class ReachabilityLayout {
 //			double additionalNodeSpace = (additionalSpace / nodeList.size())
 //					* (nodeList.get(0).level % 2 == 0 ? 1 : -1);
 
-			int currentLevel = listHierarchy.indexOf(nodeList);
-
-			double additionalNodeSpace = 0;
-
-			if (nodeList.size() == 1) {
-
 //				if (listHierarchy.indexOf(nodeList) > 0) {
 //					if (listHierarchy.size() > LEVEL_MAXIMUM && !addedOffsetLastLevel && listHierarchy.get(listHierarchy.indexOf(nodeList) - 1).size() == 1) {
 //						ADDITIONAL_LEVEL_OFFSET = -LEVEL_OFFSET;
@@ -336,11 +400,6 @@ public class ReachabilityLayout {
 //				}
 //				nodeList.get(0).node.setAttribute("xy", 0 + additionalNodeSpace,
 //						-(LEVEL_OFFSET * listHierarchy.indexOf(nodeList) + ADDITIONAL_LEVEL_OFFSET));
-
-				nodeList.get(0).node.setAttribute("xy", screenSize.getWidth() / 2,
-						-(heightUnit * (listHierarchy.indexOf(nodeList))));
-				continue;
-			}
 
 //			double lengthOfRow = 0;
 //
@@ -359,8 +418,6 @@ public class ReachabilityLayout {
 //
 //			double weightCount = 0;
 
-			double widthUnit = (screenSize.getWidth()) / (nodeList.size() - 1);
-
 			for (int i = 0; i < nodeList.size(); i++) {
 
 				LayoutNode node = nodeList.get(i);
@@ -370,7 +427,7 @@ public class ReachabilityLayout {
 				if (node.node == null)
 					continue;
 
-				node.node.setAttribute("xy", (i) * widthUnit, -((node.level) * heightUnit));
+				node.node.setAttribute("xy", getWidth(nodeList.size(), i), getHeight(node.level));
 
 			}
 
@@ -402,17 +459,105 @@ public class ReachabilityLayout {
 //		System.out.println("\n");
 //		addedOffsetLastLevel = false;
 
-		int level = 0;
+//		int level = 0;
+//
+//		for (List<LayoutNode> nodeList : listHierarchy) {
+//			System.out.println("LEVEL " + level);
+//			for (LayoutNode ln : nodeList) {
+//				System.out.println(ln.node == null ? "null" : ln.node.getId());
+//			}
+//			level++;
+//		}
+//
+
+//		List<LayoutEdge> edgesToRemove = new ArrayList<ReachabilityLayout.LayoutEdge>();
+//		
+//		for (LayoutEdge edge: potentialCulprits) {
+//			if (getSlope(edge)!=null)
+//				edgesToRemove.add(edge);
+//		}
+//
+//		for (LayoutEdge edge: edgesToRemove) {
+//			potentialCulprits.remove(edge);
+//		}
+//		for (LayoutEdge edge: potentialCulprits) {
+//			System.out.println("POTENTIAL CULPRIT: " + edge.source.node.getId() + " -> " + edge.target.node.getId());
+//		}	
+
+//		System.out.println("\n\n\n\n");
+
+//		boolean modified = false;
+//		
+//		for (LayoutEdge edge: potentialCulprits) {
+//			
+//			if (getSlope(edge)!= null)
+//				continue;
+//			
+//			if (checkEdgeIntersection(edge) && !modified) {
+//				modified = true;
+//				break;
+//			}
+////			if (modified) {
+//////				repaintNodes();
+////				break;
+////			}
+//		}
+//		if (modified)
+//			repaintNodes();
+//		
+	}
+
+	private void beautify() {
+
+		removeBlankNodes();
+
+		
+		boolean workToBeDone = false;
+
+		int loops = 0;//break after 20 loops as a safety measure
+		do {
+			loops++;
+			for (LayoutEdge edge : potentialCulprits) {
+				workToBeDone = checkEdgeIntersection(edge);
+				if (workToBeDone) {
+					repaintNodes();
+					break;
+				}
+
+			}
+		} while (workToBeDone && loops < 20);
+	}
+
+	private void spreadSprites() {
+		
+	}
+	
+	private void removeBlankNodes() {
 
 		for (List<LayoutNode> nodeList : listHierarchy) {
-			System.out.println("LEVEL " + level);
-			for (LayoutNode ln : nodeList) {
-				System.out.println(ln.node == null ? "null" : ln.node.getId());
-			}
-			level++;
-		}
+			List<LayoutNode> nodesToRemove = new ArrayList<ReachabilityLayout.LayoutNode>();
 
-		System.out.println();
+			for (LayoutNode ln : nodeList)
+				if (ln.node == null)
+					nodesToRemove.add(ln);
+
+			for (LayoutNode ln : nodesToRemove)
+				nodeList.remove(ln);
+		}
+		repaintNodes();
+	}
+	
+
+	private double getHeight(int index) {
+		return -(screenSize.getHeight()) / (listHierarchy.size() > 1 ? listHierarchy.size() - 1 : 1) * index;
+	}
+
+	private double getWidth(int listSize, int index) {
+
+		if (listSize == 1)
+			return screenSize.getWidth() / 2;
+
+		return  screenSize.getWidth()* (maxRowCount - listSize +  index *2) / (2*maxRowCount-2);
 	}
 
 	private void circlify() {
@@ -499,6 +644,8 @@ public class ReachabilityLayout {
 
 	}
 
+	
+	//TODO when removing node maxRowCount has to be recalculated
 	private double getSpaceNeedeForNode(LayoutNode node) {
 		if (node.successors.size() == 0)
 			return 1;
@@ -555,30 +702,34 @@ public class ReachabilityLayout {
 	}
 
 	private boolean edgeIntersectsNode(LayoutEdge layoutEdge, Node node) {
+		if (node == null)
+			return false;
+
+		double[] nodePosition = Toolkit.nodePosition(node);
+
+		return edgeIntersectsPoint(layoutEdge, new Point(nodePosition[0], nodePosition[1]));
+	}
+
+	private boolean edgeIntersectsPoint(LayoutEdge layoutEdge, Point point) {
 
 		Node source = layoutEdge.source.node;
 		Node target = layoutEdge.target.node;
 
-		if (node == null)
-			return false;
+		double nodeX = point.x;
+		double nodeY = point.y;
 
 		double[] sourcePosition = Toolkit.nodePosition(source);
 		double[] targetPosition = Toolkit.nodePosition(target);
 
-		double[] nodePosition = Toolkit.nodePosition(node);
 		Point a = new Point(sourcePosition[0], sourcePosition[1]);
 		Point b = new Point(targetPosition[0], targetPosition[1]);
 
 		Line edge = new Line(a, b);
 
-		Point leftLowerCorner = new Point(nodePosition[0] - NODE_SIZE.getWidth() / 2,
-				nodePosition[1] - NODE_SIZE.getHeight() / 2);
-		Point leftUpperCorner = new Point(nodePosition[0] - NODE_SIZE.getWidth() / 2,
-				nodePosition[1] + NODE_SIZE.getHeight() / 2);
-		Point rightLowerCorner = new Point(nodePosition[0] + NODE_SIZE.getWidth() / 2,
-				nodePosition[1] - NODE_SIZE.getHeight() / 2);
-		Point rightUpperCorner = new Point(nodePosition[0] + NODE_SIZE.getWidth() / 2,
-				nodePosition[1] + NODE_SIZE.getHeight() / 2);
+		Point leftLowerCorner = new Point(nodeX - NODE_SIZE.getWidth() / 2, nodeY - NODE_SIZE.getHeight() / 2);
+		Point leftUpperCorner = new Point(nodeX - NODE_SIZE.getWidth() / 2, nodeY + NODE_SIZE.getHeight() / 2);
+		Point rightLowerCorner = new Point(nodeX + NODE_SIZE.getWidth() / 2, nodeY - NODE_SIZE.getHeight() / 2);
+		Point rightUpperCorner = new Point(nodeX + NODE_SIZE.getWidth() / 2, nodeY + NODE_SIZE.getHeight() / 2);
 
 		Point intersectionPoint;
 
@@ -640,6 +791,16 @@ public class ReachabilityLayout {
 			this.b = b;
 		}
 
+	}
+
+	public static Double getSlope(LayoutEdge edge) {
+
+		double[] sourcePosition = Toolkit.nodePosition(edge.source.node);
+		double[] targetPosition = Toolkit.nodePosition(edge.target.node);
+
+		Point p1 = new Point(sourcePosition[0], sourcePosition[1]);
+		Point p2 = new Point(targetPosition[0], targetPosition[1]);
+		return getSlope(p1, p2);
 	}
 
 	public static Double getSlope(Point P1, Point P2) {

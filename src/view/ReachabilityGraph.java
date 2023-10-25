@@ -50,8 +50,8 @@ public class ReachabilityGraph extends MultiGraph {
 		layoutManager = new ReachabilityLayout(spriteMan);
 
 		PetrinetState initialState = controller.getReachabilityGraphModel().getInitialState();
-		this.setAttribute("layout.force", 0.01);
-		this.setAttribute("layout.repulsionFactor", 0.01);
+//		this.setAttribute("layout.force", 0.01);
+//		this.setAttribute("layout.repulsionFactor", 0.01);
 
 		if (initialState != null) {
 
