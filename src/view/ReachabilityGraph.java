@@ -106,7 +106,8 @@ public class ReachabilityGraph extends MultiGraph {
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 				Node node = addState(state, predecessor, t);
-				layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node);
+								
+				layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t);
 			}
 
 			@Override
@@ -137,7 +138,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 		Node node;
 		String id = state.getState();
-		String transitionLabel = t == null ? "" : PetrinetGraph.getElementLabel(t);
+		String transitionId = t == null ? "" : t.getId();
 
 		node = this.getNode(id);
 
@@ -160,18 +161,18 @@ public class ReachabilityGraph extends MultiGraph {
 
 		Node predNode = getNode(predecessor.getState());
 
-		Edge newEdge = this.getEdge(predecessor.getState() + id + transitionLabel);
+		Edge newEdge = this.getEdge(predecessor.getState() + id + transitionId);
 
 		if (newEdge == null) {
 
-			newEdge = this.addEdge(predecessor.getState() + id + transitionLabel, predNode, node, true);
+			newEdge = this.addEdge(predecessor.getState() + id + transitionId, predNode, node, true);
 
 			Sprite sprite = spriteMan.addSprite("s" + newEdge.getId());
 			sprite.setAttribute("ui.class", "edgeLabel");
-			sprite.setAttribute("ui.label", transitionLabel);
+			sprite.setAttribute("ui.label", PetrinetGraph.getElementLabel(t));
 
 			sprite.attachToEdge(newEdge.getId());
-			sprite.setPosition(0.5);
+			sprite.setPosition(0.5, 0.5, 0);
 		}
 		newEdge.setAttribute("ui.class", "highlight");
 
@@ -225,7 +226,7 @@ public class ReachabilityGraph extends MultiGraph {
 	}
 
 	private Edge removeStateEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
-		String edgeString = stateSource.getState() + stateTarget.getState() + PetrinetGraph.getElementLabel(t);
+		String edgeString = stateSource.getState() + stateTarget.getState() + t.getId();
 		Edge removedEdge = removeEdge(edgeString);
 		spriteMan.removeSprite("s" + edgeString);
 		return removedEdge;

@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 public class IterableMap<K,V> implements Map<K,V>, Iterable<V>{
 
-	private Map<K,V> internalMap;
+	protected Map<K,V> internalMap;
 	
 	public IterableMap() {
 		internalMap = new HashMap<K, V>();
