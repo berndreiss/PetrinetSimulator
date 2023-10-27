@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
+import ReachabilityGraphLayout.LayoutTypes;
 import control.MainController;
 import control.PetrinetController;
 import control.PetrinetException;
@@ -28,36 +29,39 @@ public class PetrinetPanel extends JPanel {
 	private ViewPanel reachabilityViewPanel;
 
 	private PetrinetController controller;
+	private MainController mainController;
 
-	public PetrinetPanel(MainController mainController) throws PetrinetException {
-		this(mainController, null, false);
+	public PetrinetPanel(MainController mainController, LayoutTypes layoutType) throws PetrinetException {
+		this(mainController, null, layoutType, false);
 	}
 
-	public PetrinetPanel(MainController mainController, File file) throws PetrinetException {
-		this(mainController, file, false);
+	public PetrinetPanel(MainController mainController, File file, LayoutTypes layoutType) throws PetrinetException {
+		this(mainController, file, layoutType, false);
 	}
 
-	public PetrinetPanel(MainController mainController, File file, boolean headless) throws PetrinetException {
+	public PetrinetPanel(MainController mainController, File file, LayoutTypes layoutType, boolean headless)
+			throws PetrinetException {
 
 		this.controller = new PetrinetController(file, headless);
-
-		controller.getEditor().setOnEditedListener(mainController);
+		this.mainController = mainController;
 		
+		controller.getEditor().setOnEditedListener(mainController);
+
 		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller,
-				mainController.getFrame());
+				mainController.getFrame(), null);
 
 		JPanel petrinetPanel = new JPanel();
 		petrinetPanel.setLayout(new BorderLayout());
 		petrinetPanel.add(petrinetViewPanel, BorderLayout.CENTER);
-		
+
 		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller,
-				mainController.getFrame());
+				mainController.getFrame(), layoutType);
 
 		JPanel reachabilityPanel = new JPanel();
 		reachabilityPanel.setLayout(new BorderLayout());
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
-		
-		reachabilityViewPanel.addComponentListener(new ComponentAdapter() {
+
+		reachabilityPanel.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent event) {
 				controller.getReachabilityGraph().onScreenSizeChanged(reachabilityViewPanel.getSize());
@@ -67,16 +71,30 @@ public class PetrinetPanel extends JPanel {
 		setLayout(new BorderLayout());
 
 		if (!headless) {
-			
+
+			controller.getReachabilityGraph().setLayoutType(layoutType);
 			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT,
 					petrinetPanel, reachabilityPanel);
 			add(graphSplitPane, BorderLayout.CENTER);
-			
-			
+
 		}
 
 	}
 
+	private void resetReachabilityPanel(LayoutTypes layoutType) {
+//		JPanel panel = (JPanel) graphSplitPane.getRightComponent();
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller, mainController.getFrame(), layoutType);
+		panel.add(reachabilityViewPanel, BorderLayout.CENTER);
+		graphSplitPane.remove(graphSplitPane.getRightComponent());
+
+		graphSplitPane.setRightComponent(panel);
+
+		controller.resetReachabilityGraph();
+
+
+	}
 	public ResizableSplitPane getGraphSplitPane() {
 		return graphSplitPane;
 	}
@@ -102,50 +120,15 @@ public class PetrinetPanel extends JPanel {
 
 		viewPanel.getCamera().setViewPercent(zoom + 0.1);
 	}
-//	public void repaintGraphs(int i) {
-//		if (i == 0) {
-//			graphSplitPane.getLeftComponent().repaint();
-//			return;
-//		}
-//		if (i == 1) {
-//			graphSplitPane.getRightComponent().repaint();
-//			return;
-//		}
-//		graphSplitPane.getLeftComponent().repaint();
-//		graphSplitPane.getRightComponent().repaint();
-//
-//	}
 
-//	public JSplitPane getGraphPane() {
-//		return graphSplitPane;
-//	}
-//	
+	public void setLayoutType(LayoutTypes layoutType) {
+		if (controller.getHeadless())
+			return;
 
-//	public void incrementPlace() {
-//		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
-//
-//		if (markedPlace == null)
-//			return;
-//
-//		controller.incrementPlace(markedPlace);
-//
-//	}
+		controller.getReachabilityGraph().setLayoutType(layoutType);
 
-//	public void decrementPlace() {
-//
-//		String markedPlace = controller.getPetrinetGraph().getMarkedNode();
-//
-//		if (markedPlace == null)
-//			return;
-//
-//		controller.decrementPlace(markedPlace);
-//
-//
-//	}
-
-//	public void resetPetrinet() {
-//		controller.resetPetrinet();
-//	}
+		resetReachabilityPanel(layoutType);
+	}
 
 	public PetrinetController getController() {
 		return controller;
@@ -162,18 +145,5 @@ public class PetrinetPanel extends JPanel {
 	public void zoomOutReachability() {
 		zoomOut(reachabilityViewPanel);
 	}
-
-//	public String[] analyse() {
-//		return controller.analyse();
-//		
-//	}
-
-//	public void reloadFile() {
-//		controller.reload();
-//	}
-
-//	public File getCurrentFile() {
-//		return controller.getCurrentFile();
-//	}
 
 }

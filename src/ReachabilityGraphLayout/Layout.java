@@ -1,29 +1,37 @@
-package view;
+package ReachabilityGraphLayout;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import datamodel.PetrinetState;
 import datamodel.Transition;
 import util.IterableMap;
 
-public class ReachabilityLayout {
+public class Layout {
 
 //	private final static Dimension NODE_SIZE = new Dimension(125, 30);
 
-	private final static Dimension NODE_SIZE = new Dimension(30, 30);
-	private final static Dimension SPRITE_SIZE = new Dimension(30, 30);
-	private Dimension screenSize = new Dimension(1000, 500);
+	protected final static Dimension NODE_SIZE = new Dimension(30, 30);
+	protected final static Dimension SPRITE_SIZE = new Dimension(30, 30);
+	protected final static Dimension MINIMAL_SIZE = new Dimension(10, 10);
+	protected final static int MINIMAL_EDGE_LENGTH = 200;
+
+	protected Dimension screenSize = new Dimension(1000, 500);
+
+	private LayoutTypes layoutType = LayoutTypes.TREE;
 
 	private static int maxRowCount = 0;
 
-	private List<List<LayoutNode>> listHierarchy = new ArrayList<List<LayoutNode>>();
+	List<List<LayoutNode>> listHierarchy = new ArrayList<List<LayoutNode>>();
 
 	private SpriteManager spriteMan;
 
@@ -37,7 +45,7 @@ public class ReachabilityLayout {
 		LEFT, RIGHT;
 	}
 
-	public ReachabilityLayout(SpriteManager spriteMan) {
+	public Layout(SpriteManager spriteMan) {
 		this.spriteMan = spriteMan;
 	}
 
@@ -46,14 +54,13 @@ public class ReachabilityLayout {
 	}
 
 	public void add(Node source, Node target, Transition transition) {
-
 		if (source == null && target == null)
 			return;
 
 		if (source == null || target == null) {
 			Node node = source == null ? target : source;
 
-			LayoutNode layoutNode = new LayoutNode(node, null, 0);
+			LayoutNode layoutNode = new LayoutNode(node, null, 0, this);
 
 			if (!nodeMap.containsKey(node.getId())) {
 				nodeMap.put(node.getId(), layoutNode);
@@ -67,8 +74,8 @@ public class ReachabilityLayout {
 		LayoutNode layoutTarget = nodeMap.get(target.getId());
 
 		if (layoutSource == null && layoutTarget == null) {
-			layoutSource = new LayoutNode(source, null, 0);
-			layoutTarget = new LayoutNode(target, layoutSource, 1);
+			layoutSource = new LayoutNode(source, null, 0, this);
+			layoutTarget = new LayoutNode(target, layoutSource, 1, this);
 
 			nodeMap.put(source.getId(), layoutSource);
 			nodeMap.put(target.getId(), layoutTarget);
@@ -80,7 +87,7 @@ public class ReachabilityLayout {
 		}
 
 		else if (layoutSource == null) {
-			layoutSource = new LayoutNode(source, null, 0);
+			layoutSource = new LayoutNode(source, null, 0, this);
 
 			nodeMap.put(source.getId(), layoutSource);
 			graphicalObjectList.add(layoutSource);
@@ -90,7 +97,7 @@ public class ReachabilityLayout {
 
 		else if (layoutTarget == null) {
 
-			layoutTarget = new LayoutNode(target, layoutSource, layoutSource.level + 1);
+			layoutTarget = new LayoutNode(target, layoutSource, layoutSource.getLevel() + 1, this);
 
 			nodeMap.put(target.getId(), layoutTarget);
 			graphicalObjectList.add(layoutTarget);
@@ -120,10 +127,11 @@ public class ReachabilityLayout {
 
 		if (edgeList.containsKey(transition.getId()))
 			return;
+		Sprite spriteToAdd = spriteMan.getSprite("s" + source.getId() + target.getId() + transition.getId());
 
-		LayoutEdge layoutEdge = new LayoutEdge(layoutSource, layoutTarget, transition);
-
-		if (!(Math.abs(layoutSource.level - layoutTarget.level) <= 1)) {
+		LayoutEdge layoutEdge = new LayoutEdge(layoutSource, layoutTarget, spriteToAdd);
+		graphicalObjectList.add(layoutEdge);
+		if (!(Math.abs(layoutSource.getLevel() - layoutTarget.getLevel()) <= 1)) {
 
 			potentialCulprits.add(layoutEdge);
 		}
@@ -146,19 +154,16 @@ public class ReachabilityLayout {
 			int index = 1;
 
 			for (LayoutEdge le : edgeList) {
-				Sprite sprite = le.sprite;
+				Sprite sprite = le.getSprite();
 				sprite.setPosition(sprite.getX() * modificatorUnit * index, sprite.getY() * modificatorUnit * index,
 						sprite.getZ() * modificatorUnit * index);
 				index++;
 
 			}
 		}
-		beautify();
-
-	}
-
-	private void checkNodeAgainstPotentialCulprits(LayoutNode node) {
-
+		repaintNodes();
+		if (layoutType == LayoutTypes.TREE)
+			beautify();
 	}
 
 	private boolean checkEdgeIntersection(LayoutEdge layoutEdge) {
@@ -166,11 +171,11 @@ public class ReachabilityLayout {
 		LayoutNode layoutSource = layoutEdge.source;
 		LayoutNode layoutTarget = layoutEdge.target;
 
-		int startIndex = Math.min(layoutSource.level, layoutTarget.level);
+		int startIndex = Math.min(layoutSource.getLevel(), layoutTarget.getLevel());
 
-		int finalIndex = Math.max(layoutSource.level, layoutTarget.level);
+		int finalIndex = Math.max(layoutSource.getLevel(), layoutTarget.getLevel());
 
-		List<LayoutNode> intersectingNodes = new ArrayList<ReachabilityLayout.LayoutNode>();
+		List<LayoutNode> intersectingNodes = new ArrayList<LayoutNode>();
 
 		boolean nonNullNodesIntersecting = false;
 
@@ -234,14 +239,14 @@ public class ReachabilityLayout {
 
 		for (LayoutNode ln : intersectingNodes) {
 
-			List<LayoutNode> nodeList = listHierarchy.get(ln.level);
+			List<LayoutNode> nodeList = listHierarchy.get(ln.getLevel());
 
 			if (direction == Direction.LEFT) {
-				nodeList.add(nodeList.indexOf(ln) + 1, new LayoutNode(null, null, ln.level));
+				nodeList.add(nodeList.indexOf(ln) + 1, new LayoutNode(null, null, ln.getLevel(), this));
 				if (nodeList.size() > maxRowCount)
 					maxRowCount = nodeList.size();
 			} else {
-				nodeList.add(nodeList.indexOf(ln), new LayoutNode(null, null, ln.level));
+				nodeList.add(nodeList.indexOf(ln), new LayoutNode(null, null, ln.getLevel(), this));
 				if (nodeList.size() > maxRowCount)
 					maxRowCount = nodeList.size();
 			}
@@ -251,7 +256,7 @@ public class ReachabilityLayout {
 
 	private Direction getDirection(LayoutNode layoutNode) {
 
-		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.level);
+		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.getLevel());
 
 		int index = nodeList.indexOf(layoutNode);
 
@@ -259,15 +264,15 @@ public class ReachabilityLayout {
 
 	}
 
-	private void addNodeToLevel(LayoutNode node, int level) {
+	protected void addNodeToLevel(LayoutNode node) {
 
-		if (listHierarchy.size() < level)
+		if (listHierarchy.size() < node.getLevel())
 			return;
 
-		if (listHierarchy.size() == level)
+		if (listHierarchy.size() == node.getLevel())
 			listHierarchy.add(new ArrayList<LayoutNode>());
 
-		List<LayoutNode> nodeList = listHierarchy.get(level);
+		List<LayoutNode> nodeList = listHierarchy.get(node.getLevel());
 
 		boolean added = false;
 
@@ -311,6 +316,11 @@ public class ReachabilityLayout {
 
 	private void repaintNodes() {
 
+		if (layoutType == LayoutTypes.CIRCLE) {
+			circlify();
+			return;
+		}
+
 		for (List<LayoutNode> nodeList : listHierarchy) {
 
 			if (nodeList.size() == 0)
@@ -323,21 +333,10 @@ public class ReachabilityLayout {
 				if (node.node == null)
 					continue;
 
-				node.node.setAttribute("xy", getWidth(nodeList.size(), i), getHeight(node.level));
+				node.node.setAttribute("xy", getWidth(nodeList.size(), i), getHeight(node.getLevel()));
 			}
 
 		}
-
-//		int level = 0;
-//
-//		for (List<LayoutNode> nodeList : listHierarchy) {
-//			System.out.println("LEVEL " + level);
-//			for (LayoutNode ln : nodeList) {
-//				System.out.println(ln.node == null ? "null" : ln.node.getId());
-//			}
-//			level++;
-//		}
-//
 
 	}
 
@@ -367,79 +366,153 @@ public class ReachabilityLayout {
 
 	private void spreadSprites() {
 
+		for (IterableMap<String, LayoutEdge> specificEdgeMap : edgeMap)
+			for (LayoutEdge le : specificEdgeMap)
+				le.sprite.setPosition(0.5, 0.5, 0);
+
+		Map<String, IterableMap<String, LayoutEdge>> handledMaps = new HashMap<String, IterableMap<String, LayoutEdge>>();
+
+		for (String s : edgeMap.keySet()) {
+
+			if (handledMaps.containsKey(s))
+				continue;
+
+			IterableMap<String, LayoutEdge> specificEdgeMap = edgeMap.get(s);
+
+			LayoutNode source = specificEdgeMap.iterator().next().source;
+			LayoutNode target = specificEdgeMap.iterator().next().target;
+
+			String oppositeEdgesString = target.node.getId() + source.node.getId();
+
+			if (handledMaps.containsKey(oppositeEdgesString))
+				continue;
+			IterableMap<String, LayoutEdge> oppositeEdgesMap = edgeMap.get(target.node.getId() + source.node.getId());
+
+			if (oppositeEdgesMap != null) {
+				for (LayoutEdge le : specificEdgeMap)
+					le.sprite.setPosition(0.33, 0.33, 0);
+				for (LayoutEdge le : oppositeEdgesMap)
+					le.sprite.setPosition(0.33, 0.33, 0);
+			}
+
+			if (specificEdgeMap.size() > 1) {
+
+				double modificatorUnit = 1.0 / specificEdgeMap.size();
+
+				int index = 1;
+
+				for (LayoutEdge le : specificEdgeMap) {
+					Sprite sprite = le.sprite;
+					sprite.setPosition(sprite.getX() * modificatorUnit * index, sprite.getY() * modificatorUnit * index,
+							sprite.getZ() * modificatorUnit * index);
+					index++;
+
+				}
+			}
+			handledMaps.put(s, edgeMap.get(s));
+			handledMaps.put(oppositeEdgesString, oppositeEdgesMap);
+		}
+
 		Collections.sort(graphicalObjectList);
-		
-		for (IterableMap<String, LayoutEdge> edgeMap: edgeMap)
-				for (LayoutEdge le: edgeMap)
-					checkSingleSprite(le, 0, graphicalObjectList.size()-1);
+
+		LayoutEdge lastEdge = null;
+
+		for (int i = 0; i < graphicalObjectList.size() - 1; i++) {
+			if (!(graphicalObjectList.get(i) instanceof LayoutEdge))
+				continue;
+
+			LayoutEdge edge = (LayoutEdge) graphicalObjectList.get(i);
+
+			if (edge.length() < MINIMAL_EDGE_LENGTH)
+				continue;
+
+			if (lastEdge == null) {
+				lastEdge = edge;
+				continue;
+			}
+
+			LayoutPoint middlePoint1 = new LayoutPoint(lastEdge.getX(), lastEdge.getY(), MINIMAL_SIZE);
+			LayoutPoint middlePoint2 = new LayoutPoint(edge.getX(), edge.getY(), MINIMAL_SIZE);
+
+			if (graphicalObjectsIntersect(middlePoint1, middlePoint2)) {
+				lastEdge.sprite.setPosition(0.25, 0.25, 0);
+				edge.sprite.setPosition(0.25, 0.25, 0);
+			}
+
+			lastEdge = edge;
+
+		}
+
+		for (IterableMap<String, LayoutEdge> edgeMap : edgeMap)
+			for (LayoutEdge le : edgeMap) {
+
+				if (le.length() < MINIMAL_EDGE_LENGTH)
+					continue;
+
+				Sprite sprite = le.sprite;
+
+				final int POWER_MAX = 1;
+				double power = 1;
+
+				int counter = 0;
+
+				while (checkSingleSprite(le, 0, graphicalObjectList.size() - 1) && power < POWER_MAX) {
+
+					Collections.sort(graphicalObjectList);
+
+					if (counter == (int) Math.pow(2.0, power)) {
+						power++;
+						counter = 0;
+					}
+
+					int sign = 1;
+
+					if (counter % 2 == 0)
+						sign = -1;
+
+					double factor = ((counter / 2) * 2 + 1) / Math.pow(2, power);
+
+					double newX = sprite.getX() + sprite.getX() * factor * sign;
+					double newY = sprite.getY() + sprite.getY() * factor * sign;
+					double newZ = sprite.getZ() + sprite.getZ() * factor * sign;
+					sprite.setPosition(newX, newY, newZ);
+
+					counter++;
+
+				}
+			}
+
 	}
 
 	private boolean checkSingleSprite(LayoutEdge layoutEdge, int begin, int end) {
 
+//		if (true)
+//			return false;
 		if (begin > end)
 			return false;
-		
-		int m = (begin + end)/2;
-		
+
+		int m = (begin + end) / 2;
+
 		GraphicalObject gom = graphicalObjectList.get(m);
-		
-		if (graphicalObjectsIntersect(gom, layoutEdge)) {
 
-			System.out.println("INTERSECTION");
-			
-			Sprite sprite = layoutEdge.sprite;
-			
-			final int POWER_MAX = 4;
-			double power = 1;
-			
-			int counter = 0;
-			
-			do {
-		
-				Collections.sort(graphicalObjectList);
+		if (gom != layoutEdge && graphicalObjectsIntersect(gom, layoutEdge)) {
+			String gomString = (gom instanceof LayoutEdge ? ((LayoutEdge) gom).sprite.getId()
+					: ((LayoutNode) gom).node.getId());
+			return true;
 
-				if (counter == (int) Math.pow(2.0, power)) {
-					power++;
-					counter = 0;
-				}
-				
-				int sign = 1;
-				
-				if (counter%2==0)
-					sign = -1;
-				
-				double factor = ((counter/2)*2+1)/Math.pow(2, power);
-				
-				double newX = sprite.getX() + sprite.getX() *factor*sign;
-				double newY = sprite.getY() + sprite.getY() *factor*sign;
-				double newZ = sprite.getZ() + sprite.getZ() *factor*sign;
-				sprite.setPosition(sprite.getX()*factor*sign);
-				
-				counter++;
-				
-			}while (checkSingleSprite(layoutEdge, 0, graphicalObjectList.size()-1) && power < POWER_MAX);
-			
-			if (power == POWER_MAX)
-				return true;
-			
-			checkSingleSprite(layoutEdge, begin, m-1);
-			checkSingleSprite(layoutEdge, m+1, end);
-		}else {
-			if (gom.compareTo(layoutEdge) >= 0)
-				return checkSingleSprite(layoutEdge, begin, m-1);
-			else
-				return checkSingleSprite(layoutEdge, m+1, end);
 		}
-			
-		
-		return false;
+
+		if (gom.compareTo(layoutEdge) >= 0)
+			return checkSingleSprite(layoutEdge, begin, m - 1);
+		else
+			return checkSingleSprite(layoutEdge, m + 1, end);
 
 	}
 
 	private void removeBlankNodes() {
 
 		for (List<LayoutNode> nodeList : listHierarchy) {
-			List<LayoutNode> nodesToRemove = new ArrayList<ReachabilityLayout.LayoutNode>();
+			List<LayoutNode> nodesToRemove = new ArrayList<LayoutNode>();
 
 			for (LayoutNode ln : nodeList)
 				if (ln.node == null)
@@ -448,7 +521,9 @@ public class ReachabilityLayout {
 			for (LayoutNode ln : nodesToRemove)
 				nodeList.remove(ln);
 		}
-		repaintNodes();
+		resetMaxRow();
+		if (layoutType == LayoutTypes.TREE)
+			repaintNodes();
 	}
 
 	private double getHeight(int index) {
@@ -464,10 +539,8 @@ public class ReachabilityLayout {
 	}
 
 	private void circlify() {
-
-		List<LayoutNode> nodesTotal = new ArrayList<ReachabilityLayout.LayoutNode>();
-		List<LayoutNode> left = new ArrayList<ReachabilityLayout.LayoutNode>();
-		List<LayoutNode> right = new ArrayList<ReachabilityLayout.LayoutNode>();
+		removeBlankNodes();
+		List<LayoutNode> nodesTotal = new ArrayList<LayoutNode>();
 
 		for (int i = 0; i < listHierarchy.size(); i++) {
 			List<LayoutNode> nodeList = listHierarchy.get(i);
@@ -496,32 +569,6 @@ public class ReachabilityLayout {
 			totalCounter++;
 		}
 
-//		for (int i = nodesTotal.size() / 2; i < nodesTotal.size() - 1; i++) {
-//			nodesJoined[(i - nodesTotal.size() / 2) * 2 + 1] = nodesTotal.get(i);
-//		}
-
-//		int j = 0;
-//		
-//		System.out.println(left.size());
-//		System.out.println(right.size());
-//		
-//		while (j<left.size() && j< right.size()) {
-//			
-//			nodesJoined.add(left.get(j));
-//			nodesJoined.add(right.get(j));
-//			j++;
-//			
-//		}
-
-//		if (j<left.size())
-//			nodesJoined.add(left.get(j));
-//		if (j<right.size())
-//			nodesJoined.add(right.get(j));
-//			
-//		System.out.println(nodesJoined.size());
-
-//		left.addAll(right);
-
 		double a = screenSize.getWidth();
 		double b = screenSize.getHeight();
 		for (int i = 0; i < nodesJoined.length; i++) {
@@ -549,166 +596,6 @@ public class ReachabilityLayout {
 
 	// TODO when removing node maxRowCount has to be recalculated
 
-	private abstract class GraphicalObject implements Comparable<GraphicalObject> {
-		abstract LayoutPoint leftLowerCorner();
-
-		abstract LayoutPoint leftUpperCorner();
-
-		abstract LayoutPoint rightLowerCorner();
-
-		abstract LayoutPoint rightUpperCorner();
-
-		abstract double getX();
-
-		abstract double getY();
-
-		public Line leftSide() {
-			return new Line(leftLowerCorner(), leftUpperCorner());
-		}
-
-		public Line rightSide() {
-			return new Line(rightLowerCorner(), rightUpperCorner());
-		}
-
-		public Line upperSide() {
-			return new Line(leftUpperCorner(), rightUpperCorner());
-		}
-
-		public Line lowerSide() {
-			return new Line(leftLowerCorner(), rightLowerCorner());
-		}
-
-		@Override
-		public int compareTo(GraphicalObject go) {
-			if (this.getX() < go.getX())
-				return -1;
-
-			if (this.getX() > go.getX())
-				return 1;
-
-			if (this.getY() > go.getY())
-				return -1;
-			if (this.getY() < go.getY())
-				return 1;
-
-			return 0;
-		}
-	}
-
-	private class LayoutNode extends GraphicalObject {
-
-		public List<LayoutNode> predecessors = new ArrayList<ReachabilityLayout.LayoutNode>();
-		public List<LayoutNode> successors = new ArrayList<ReachabilityLayout.LayoutNode>();
-		public List<LayoutNode> upwardsSuccessors = new ArrayList<ReachabilityLayout.LayoutNode>();
-		public Node node;
-		public LayoutNode parent;
-		public List<LayoutNode> children = new ArrayList<ReachabilityLayout.LayoutNode>();
-
-		public int level;
-
-		public LayoutNode(Node node, LayoutNode parent, int level) {
-			this.node = node;
-			this.parent = parent;
-			this.level = level;
-
-			if (parent != null)
-				parent.children.add(this);
-
-			if (node != null)
-				addNodeToLevel(this, level);
-		}
-
-		public String getTag() {
-			return parent == null ? "" : parent.getTag() + listHierarchy.get(level).indexOf(this);
-		}
-
-		@Override
-		public LayoutPoint leftLowerCorner() {
-			double[] coordinates = Toolkit.nodePosition(node);
-			return new LayoutPoint(coordinates[0] - NODE_SIZE.getWidth() / 2,
-					coordinates[1] - NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint leftUpperCorner() {
-			double[] coordinates = Toolkit.nodePosition(node);
-			return new LayoutPoint(coordinates[0] - NODE_SIZE.getWidth() / 2,
-					coordinates[1] + NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightLowerCorner() {
-			double[] coordinates = Toolkit.nodePosition(node);
-			return new LayoutPoint(coordinates[0] + NODE_SIZE.getWidth() / 2,
-					coordinates[1] - NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightUpperCorner() {
-			double[] coordinates = Toolkit.nodePosition(node);
-			return new LayoutPoint(coordinates[0] + NODE_SIZE.getWidth() / 2,
-					coordinates[1] + NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		double getX() {
-			return Toolkit.nodePosition(node)[0];
-		}
-
-		@Override
-		double getY() {
-			return Toolkit.nodePosition(node)[1];
-		}
-	}
-
-	private class LayoutEdge extends GraphicalObject {
-		LayoutNode source;
-		LayoutNode target;
-
-		Sprite sprite;
-
-		public LayoutEdge(LayoutNode source, LayoutNode target, Transition t) {
-			this.source = source;
-			this.target = target;
-			this.sprite = spriteMan.getSprite("s" + source.node.getId() + target.node.getId() + t.getId());
-		}
-
-		@Override
-		public LayoutPoint leftLowerCorner() {
-
-			return new LayoutPoint(sprite.getX() - SPRITE_SIZE.getWidth() / 2,
-					sprite.getY() - SPRITE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint leftUpperCorner() {
-			return new LayoutPoint(sprite.getX() - SPRITE_SIZE.getWidth() / 2,
-					sprite.getY() + SPRITE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightLowerCorner() {
-			return new LayoutPoint(sprite.getX() + SPRITE_SIZE.getWidth() / 2,
-					sprite.getY() - SPRITE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightUpperCorner() {
-			return new LayoutPoint(sprite.getX() + SPRITE_SIZE.getWidth() / 2,
-					sprite.getY() + SPRITE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		double getX() {
-			return (source.getX() + target.getX()) * sprite.getX();
-		}
-
-		@Override
-		double getY() {
-			return (source.getY() + target.getY()) * sprite.getY();
-		}
-	}
-
 	public void setScreenSize(Dimension screenSize) {
 		this.screenSize = screenSize;
 		repaintNodes();
@@ -716,19 +603,19 @@ public class ReachabilityLayout {
 
 	private boolean graphicalObjectsIntersect(GraphicalObject go1, GraphicalObject go2) {
 
-		if (!pointIsInsideGraphicalObject(go1, go2.leftLowerCorner()))
-			return false;
+		if (pointIsInsideGraphicalObject(go1, go2.leftLowerCorner()))
+			return true;
 
-		if (!pointIsInsideGraphicalObject(go1, go2.leftUpperCorner()))
-			return false;
+		if (pointIsInsideGraphicalObject(go1, go2.leftUpperCorner()))
+			return true;
 
-		if (!pointIsInsideGraphicalObject(go1, go2.rightLowerCorner()))
-			return false;
+		if (pointIsInsideGraphicalObject(go1, go2.rightLowerCorner()))
+			return true;
 
-		if (!pointIsInsideGraphicalObject(go1, go2.rightUpperCorner()))
-			return false;
+		if (pointIsInsideGraphicalObject(go1, go2.rightUpperCorner()))
+			return true;
 
-		return true;
+		return false;
 	}
 
 	private boolean pointIsInsideGraphicalObject(GraphicalObject go, LayoutPoint p) {
@@ -756,7 +643,7 @@ public class ReachabilityLayout {
 		LayoutPoint a = new LayoutPoint(sourcePosition[0], sourcePosition[1]);
 		LayoutPoint b = new LayoutPoint(targetPosition[0], targetPosition[1]);
 
-		Line edge = new Line(a, b);
+		LayoutLine edge = new LayoutLine(a, b);
 
 		LayoutPoint intersectionPoint;
 
@@ -791,57 +678,6 @@ public class ReachabilityLayout {
 
 	}
 
-	private class LayoutPoint extends GraphicalObject {
-		double x, y;
-
-		LayoutPoint(double x, double y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		@Override
-		public LayoutPoint leftLowerCorner() {
-			return new LayoutPoint(x - NODE_SIZE.getWidth() / 2, y - NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint leftUpperCorner() {
-			return new LayoutPoint(x - NODE_SIZE.getWidth() / 2, y + NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightLowerCorner() {
-			return new LayoutPoint(x + NODE_SIZE.getWidth() / 2, y - NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		public LayoutPoint rightUpperCorner() {
-			return new LayoutPoint(x + NODE_SIZE.getWidth() / 2, y + NODE_SIZE.getHeight() / 2);
-		}
-
-		@Override
-		double getX() {
-			return x;
-		}
-
-		@Override
-		double getY() {
-			return y;
-		}
-
-	}
-
-	private class Line {
-		LayoutPoint a;
-		LayoutPoint b;
-
-		Line(LayoutPoint a, LayoutPoint b) {
-			this.a = a;
-			this.b = b;
-		}
-
-	}
-
 	public Double getSlope(LayoutEdge edge) {
 
 		double[] sourcePosition = Toolkit.nodePosition(edge.source.node);
@@ -859,7 +695,7 @@ public class ReachabilityLayout {
 		return (P2.y - P1.y) / (P2.x - P1.x);
 	}
 
-	private LayoutPoint findIntersection(Line l1, Line l2) {
+	private LayoutPoint findIntersection(LayoutLine l1, LayoutLine l2) {
 
 		LayoutPoint p1 = l1.a;
 		LayoutPoint p2 = l1.b;
@@ -907,6 +743,63 @@ public class ReachabilityLayout {
 		double yIntersection = m1 * xIntersection + c1;
 
 		return new LayoutPoint(xIntersection, yIntersection);
+	}
+
+	public void removeEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
+		IterableMap<String, LayoutEdge> specificEdgeMap = edgeMap.get(stateSource.getState() + stateTarget.getState());
+		if (specificEdgeMap == null)
+			return;
+
+		LayoutEdge edge = specificEdgeMap.get(t.getId());
+
+		if (edge == null)
+			return;
+
+		specificEdgeMap.remove(t.getId());
+
+		if (specificEdgeMap.size() == 0)
+			edgeMap.remove(stateSource.getState() + stateTarget.getState());
+
+		graphicalObjectList.remove(edge);
+
+		if (potentialCulprits.contains(edge))
+			potentialCulprits.remove(edge);
+
+		repaintNodes();
+		if (layoutType == LayoutTypes.TREE)
+			beautify();
+
+	}
+
+	public void removeNode(Node node) {
+		LayoutNode layoutNode = nodeMap.get(node.getId());
+		if (layoutNode == null)
+			return;
+
+		nodeMap.remove(node.getId());
+		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.getLevel());
+		nodeList.remove(layoutNode);
+				
+		//TODO should also handle nodeList.size()==0, but it should not be a big problem, except for maybe having empty 
+		
+		graphicalObjectList.remove(layoutNode);
+		removeBlankNodes();
+		repaintNodes();
+		if (layoutType == LayoutTypes.TREE)
+			beautify();
+
+	}
+
+	private void resetMaxRow() {
+
+		maxRowCount = 0;
+		for (List<LayoutNode> nodeList : listHierarchy)
+			if (nodeList.size() > maxRowCount)
+				maxRowCount = nodeList.size();
+	}
+
+	public void setLayoutType(LayoutTypes layoutType) {
+		this.layoutType = layoutType;
 	}
 
 }

@@ -4,6 +4,7 @@ import static view.MainFrame.GRAPH_SPLIT_PANE_DEFAULT_RATIO;
 import static view.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import ReachabilityGraphLayout.LayoutTypes;
 import datamodel.DuplicateIdException;
 import datamodel.PetrinetState;
 import util.OnEditedListener;
@@ -37,6 +39,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	private PetrinetPanel currentPetrinetPanel;
 
 	private boolean tabAdded;
+	
+	private LayoutTypes layoutType = LayoutTypes.TREE;
 
 	public MainController(MainFrame parent) {
 		this.parent = parent;
@@ -121,7 +125,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		PetrinetPanel newPanel = null;
 		try {
-			newPanel = new PetrinetPanel(this, file);
+			newPanel = new PetrinetPanel(this, file, layoutType);
 		} catch (PetrinetException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
@@ -744,8 +748,40 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	@Override
 	public void onToggleAutoLayout() {
-		// TODO Auto-generated method stub
+		if (layoutType != LayoutTypes.AUTOMATIC) {
+			layoutType = LayoutTypes.AUTOMATIC;
+
+			if (parent.getTabbedPane().getTabCount() != 0) {
+				for (Component comp: parent.getTabbedPane().getComponents())
+					((PetrinetPanel) comp).setLayoutType(layoutType);
+			}
+		}
+			
 		
+	}
+
+	@Override
+	public void onToggleTreeLayout() {
+		if (layoutType != LayoutTypes.TREE) {
+			layoutType = LayoutTypes.TREE;
+
+			if (parent.getTabbedPane().getTabCount() != 0) {
+				for (Component comp: parent.getTabbedPane().getComponents())
+					((PetrinetPanel) comp).setLayoutType(layoutType);
+			}
+		}		
+	}
+
+	@Override
+	public void onToggleCircleLayout() {
+		if (layoutType != LayoutTypes.CIRCLE) {
+			layoutType = LayoutTypes.CIRCLE;
+
+			if (parent.getTabbedPane().getTabCount() != 0) {
+				for (Component comp: parent.getTabbedPane().getComponents())
+					((PetrinetPanel) comp).setLayoutType(layoutType);
+			}
+		}		
 	}
 
 }

@@ -59,5 +59,9 @@ public interface PetrinetToolbarInterface {
 
 	void onToggleAutoLayout();
 
+	void onToggleTreeLayout();
+
+	void onToggleCircleLayout();
+
 	
 }

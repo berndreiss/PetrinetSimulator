@@ -24,6 +24,7 @@ import org.graphstream.ui.view.ViewerListener;
 import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
 
+import ReachabilityGraphLayout.LayoutTypes;
 import control.PetrinetController;
 import datamodel.Petrinet;
 import datamodel.PetrinetElement;
@@ -32,7 +33,7 @@ public class GraphStreamView {
 	
 	private static JFrame mainFrame;
 	
-	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller, JFrame parent) {
+	public static ViewPanel initGraphStreamView(Graph graph, PetrinetController controller, JFrame parent, LayoutTypes layoutType) {
 		
 		mainFrame = parent;
 		
@@ -53,9 +54,10 @@ public class GraphStreamView {
 		// Achtung: Falls keine Koordinaten definiert wurden, liegen alle Knoten
 		// übereinander.)
 //		if (graph instanceof PetrinetGraph)
-		viewer.disableAutoLayout();
-//		else
-//			viewer.enableAutoLayout();
+		if (layoutType == LayoutTypes.AUTOMATIC)
+			viewer.enableAutoLayout();
+		else
+			viewer.disableAutoLayout();
 		// Auto-Layout aktivieren: GraphStream generiert ein möglichst
 		// übersichtliches Layout
 		// (und ignoriert hinzugefügte Koordinaten)
@@ -72,6 +74,7 @@ public class GraphStreamView {
 		// aber ein "ViewPanel" (und somit auch ein JPanel).
 		ViewPanel viewPanel = (ViewPanel) viewer.addDefaultView(false);
 
+		
 		// Neue ViewerPipe erzeugen, um über Ereignisse des Viewer informiert
 		// werden zu können
 		ViewerPipe viewerPipe = viewer.newViewerPipe();

@@ -14,6 +14,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import ReachabilityGraphLayout.Layout;
 import control.PetrinetController;
 import datamodel.PetrinetState;
 import datamodel.ReachabilityStateChangeListener;
@@ -36,7 +37,7 @@ public class ReachabilityGraphTest extends MultiGraph {
 
 	private Node nodeMMarked;
 
-	private ReachabilityLayout layoutManager;
+	private Layout layoutManager;
 
 	public ReachabilityGraphTest(PetrinetController controller) {
 		super("");

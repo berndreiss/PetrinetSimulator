@@ -51,8 +51,10 @@ public class PetrinetToolbar extends JToolBar {
 
 	private JButton zoomInReachabilityButton;
 	private JButton zoomOutReachabilityButton;
+	private JButton toggleTreeLayoutButton;// TODO find Icon
+	private JButton toggleCircleLayoutButton;// TODO find Icon
 	private JButton toggleAutoLayoutButton;// TODO find Icon
-
+	
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
 	private boolean startUp = true;
@@ -195,8 +197,14 @@ public class PetrinetToolbar extends JToolBar {
 		zoomOutReachabilityButton = makeToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOutReachability(),
 				"Zoom out", "zoom out");
 
-		toggleAutoLayoutButton = makeToolbarButton(null, e -> controller.onToggleAutoLayout(),
-				"Turn auto-layout on/off", "auto-layout");
+		toggleTreeLayoutButton = makeToolbarButton(ToolbarImage.TREE_LAYOUT, e -> controller.onToggleTreeLayout(),
+				"Turn tree base layout on -> will give the best experience", "tree-layout");
+		
+		toggleCircleLayoutButton = makeToolbarButton(ToolbarImage.CIRCLE_LAYOUT, e -> controller.onToggleCircleLayout(),
+				"Turn circe based layout on -> might not be as beautiful but may be more fun", "circle-layout");
+		
+		toggleAutoLayoutButton = makeToolbarButton(ToolbarImage.AUTO_LAYOUT, e -> controller.onToggleAutoLayout(),
+				"Turn auto layout on -> auto layout provided by GraphStream", "auto-layout");
 
 		this.add(openButton);
 		this.add(saveButton);
@@ -240,6 +248,8 @@ public class PetrinetToolbar extends JToolBar {
 
 		this.add(zoomInReachabilityButton);
 		this.add(zoomOutReachabilityButton);
+		this.add(toggleTreeLayoutButton);
+		this.add(toggleCircleLayoutButton);
 		this.add(toggleAutoLayoutButton);
 		setToolbarMode(ToolbarMode.VIEWER);
 
@@ -268,6 +278,8 @@ public class PetrinetToolbar extends JToolBar {
 
 			zoomInReachabilityButton.setVisible(true);
 			zoomOutReachabilityButton.setVisible(true);
+			toggleTreeLayoutButton.setVisible(true);
+			toggleCircleLayoutButton.setVisible(true);
 			toggleAutoLayoutButton.setVisible(true);
 
 		} else {
@@ -290,6 +302,8 @@ public class PetrinetToolbar extends JToolBar {
 
 			zoomInReachabilityButton.setVisible(false);
 			zoomOutReachabilityButton.setVisible(false);
+			toggleTreeLayoutButton.setVisible(false);
+			toggleCircleLayoutButton.setVisible(false);
 			toggleAutoLayoutButton.setVisible(false);
 
 		}
@@ -332,7 +346,7 @@ public class PetrinetToolbar extends JToolBar {
 
 		// additional images for Editor
 		ADD_PLACE("add-circle"), ADD_TRANSITION("add-square"), ADD_EDGE("arc"), DELETE_COMPONENT("erase"),
-		OPEN_VIEWER("eye"), REMOVE_EDGE("remove-edge"), ADD_LABEL("label");
+		OPEN_VIEWER("eye"), REMOVE_EDGE("remove-edge"), ADD_LABEL("label"), AUTO_LAYOUT("auto-layout"), TREE_LAYOUT("tree-layout"), CIRCLE_LAYOUT("circle-layout");
 
 		private String name;
 
