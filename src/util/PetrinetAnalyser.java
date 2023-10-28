@@ -20,7 +20,7 @@ public class PetrinetAnalyser {
 
 	private ReachabilityGraphModel reachabilityGraphModel;
 
-	private boolean finite = true;
+	private boolean bounded = true;
 
 	private int edges;
 	private int nodes;
@@ -34,7 +34,7 @@ public class PetrinetAnalyser {
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
 		analyse();
-		if (!finite) {
+		if (!bounded) {
 			updateReachabilityGraph();
 			m = reachabilityGraphModel.getInvalidState().getM().getState();
 			mMarked = reachabilityGraphModel.getInvalidState().getState();
@@ -67,7 +67,7 @@ public class PetrinetAnalyser {
 			
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
 			if (!stateValid) {
-				finite = false;
+				bounded = false;
 				return;
 
 			}
@@ -80,8 +80,8 @@ public class PetrinetAnalyser {
 
 	}
 
-	public boolean isFinite() {
-		return finite;
+	public boolean isBounded() {
+		return bounded;
 	}
 
 	public int getStateCount() {

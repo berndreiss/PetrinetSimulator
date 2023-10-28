@@ -40,7 +40,7 @@ public class PetrinetController {
 	private PetrinetGraph petrinetGraph;
 	private ReachabilityGraph reachabilityGraph;
 	private ReachabilityGraphModel reachabilityGraphModel;
-	
+
 	private Editor editor;
 
 	private File file;
@@ -51,7 +51,7 @@ public class PetrinetController {
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
 	private PetrinetQueue petrinetQueue;;
-	
+
 	private ToolbarToggleListener toolbarToggleListener;
 
 	public PetrinetController(File file, boolean headless) throws PetrinetException {
@@ -63,13 +63,13 @@ public class PetrinetController {
 
 	private void init() throws PetrinetException {
 		this.petrinet = new Petrinet();
-		
+
 		if (!headless)
 			this.petrinetGraph = new PetrinetGraph(petrinet);
 
 		if (file != null)
-				new PNMLParser(file, petrinet);
-		
+			new PNMLParser(file, petrinet);
+
 		if (!headless) {
 		}
 		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
@@ -84,10 +84,10 @@ public class PetrinetController {
 
 			@Override
 			public void onTransitionFire(Transition t) {
-				reachabilityGraphModel.getCurrentState().print();
 				Added added = reachabilityGraphModel.addNewState(petrinet, t);
-				petrinetQueue.push(reachabilityGraphModel.getCurrentState(), added, t);
-				reachabilityGraphModel.getCurrentState().print();				
+
+				if (!headless)
+					petrinetQueue.push(reachabilityGraphModel.getCurrentState(), added, t);
 			}
 
 			@Override
@@ -96,22 +96,26 @@ public class PetrinetController {
 				PetrinetState initialState = reachabilityGraphModel.getInitialState();
 				if (initialState != null)
 					reachabilityGraphModel.removeState(initialState);
-				reachabilityGraphModel.addNewState(petrinet, null);	
-				petrinetQueue.resetButtons();
-				petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), PetrinetController.this);
+				reachabilityGraphModel.addNewState(petrinet, null);
+				if (!headless) {
+					petrinetQueue.resetButtons();
+					petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(),
+							PetrinetController.this);
+				}
 			}
 
 		});
-		
 
 	}
 
 	public void setToolbarToggleListener(ToolbarToggleListener toolbarToggleListener) {
 		this.toolbarToggleListener = toolbarToggleListener;
 	}
+
 	public ToolbarToggleListener getToolbarToggleListener() {
 		return toolbarToggleListener;
 	}
+
 	public Editor getEditor() {
 		return editor;
 	}
@@ -119,7 +123,7 @@ public class PetrinetController {
 	public PetrinetQueue getPetrinetQueue() {
 		return petrinetQueue;
 	}
-	
+
 	public Petrinet getPetrinet() {
 		return petrinet;
 	}
@@ -136,7 +140,6 @@ public class PetrinetController {
 		return reachabilityGraphModel;
 	}
 
-
 	public void clickNodeInGraph(String id) {
 
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
@@ -146,7 +149,7 @@ public class PetrinetController {
 				petrinet.fireTransition(id);
 			if (pe instanceof Place)
 				petrinetGraph.toggleNodeMark(pe);
-		} 
+		}
 		if (toolbarMode == ToolbarMode.EDITOR)
 			editor.clickedNodeInGraph(pe);
 	}
@@ -154,7 +157,7 @@ public class PetrinetController {
 	public void resetPetrinet() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.setInitial();
-		
+
 	}
 
 	public Object closeCurrent() {
@@ -164,13 +167,12 @@ public class PetrinetController {
 
 	public boolean incrementMarkedPlace() {
 
-		
 		boolean changed = petrinet.incrementPlace(petrinetGraph.getMarkedNode());
 
 		if (changed && !fileChanged) {
 			setFileChanged(true);
 		}
-		
+
 		return changed;
 	}
 
@@ -180,7 +182,7 @@ public class PetrinetController {
 		if (changed && !fileChanged) {
 			setFileChanged(true);
 		}
-		
+
 		return changed;
 	}
 
@@ -194,7 +196,6 @@ public class PetrinetController {
 		petrinetQueue.resetButtons();
 		petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
 	}
-	
 
 	public void reachabilityNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
@@ -206,11 +207,14 @@ public class PetrinetController {
 	public String[] analyse() {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
-		
+
+		if (!headless) {
+			petrinetQueue.resetButtons();
+			petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
+			JOptionPane.showMessageDialog(null, "The petrinet is " + (analyser.isBounded()?"bounded":"unbounded") + ".", "", JOptionPane.INFORMATION_MESSAGE);
+
+		}
 		return getResults(analyser);
-
-
-		
 	}
 
 	private String[] getResults(PetrinetAnalyser analyser) {
@@ -225,12 +229,12 @@ public class PetrinetController {
 		strings[0] = sb.toString();
 
 		sb = new StringBuilder();
-		sb.append(analyser.isFinite() ? " yes" : " no");
+		sb.append(analyser.isBounded() ? " yes" : " no");
 		strings[1] = sb.toString();
 
 		sb = new StringBuilder();
 
-		if (!analyser.isFinite()) {
+		if (!analyser.isBounded()) {
 			sb.append(" " + analyser.getTransitionsToMMarked().size());
 			sb.append(": (");
 			for (String s : analyser.getTransitionsToMMarked())
@@ -240,7 +244,7 @@ public class PetrinetController {
 
 			sb.append(" ");
 			sb.append(analyser.getM());
-			sb.append(" ");
+			sb.append(", ");
 			sb.append(analyser.getMMarked());
 
 		} else {
@@ -259,12 +263,10 @@ public class PetrinetController {
 		return fileChanged;
 	}
 
-	
 	public ToolbarMode getToolbarMode() {
-		
+
 		return toolbarMode;
 	}
-	
 
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 		if (toolbarMode == ToolbarMode.EDITOR)
@@ -277,35 +279,32 @@ public class PetrinetController {
 		this.toolbarMode = toolbarMode;
 	}
 
-	
-
 	public void writeToFile() {
 		writeToFile(getCurrentFile());
 	}
-	
+
 	public void writeToFile(File file) {
 
 		PNMLWopedWriter writer = new PNMLWopedWriter(file);
 		writer.startXMLDocument();
 
-		for (Place p: petrinet.getPlaces())
-			writer.addPlace(p.getId(), p.getName(), String.valueOf(p.getX()), String.valueOf(-p.getY()), String.valueOf(p.getNumberOfTokens()));
-		for (Transition t: petrinet.getTransitions()) {
+		for (Place p : petrinet.getPlaces())
+			writer.addPlace(p.getId(), p.getName(), String.valueOf(p.getX()), String.valueOf(-p.getY()),
+					String.valueOf(p.getNumberOfTokens()));
+		for (Transition t : petrinet.getTransitions()) {
 			writer.addTransition(t.getId(), t.getName(), String.valueOf(t.getX()), String.valueOf(-t.getY()));
-			for (Place p: t.getInputs()) 
-				writer.addArc(petrinet.getOriginalArcId(p.getId()+t.getId()), p.getId(), t.getId());
-			for (Place p: t.getOutputs()) 
-				writer.addArc(petrinet.getOriginalArcId(t.getId()+p.getId()), t.getId(),p.getId());
+			for (Place p : t.getInputs())
+				writer.addArc(petrinet.getOriginalArcId(p.getId() + t.getId()), p.getId(), t.getId());
+			for (Place p : t.getOutputs())
+				writer.addArc(petrinet.getOriginalArcId(t.getId() + p.getId()), t.getId(), p.getId());
 		}
-		
+
 		writer.finishXMLDocument();
-		
+
 		this.file = file;
-			
+
 		fileChanged = false;
-		
-		
-		
+
 	}
 
 	public void mergeWith(File file) {
@@ -313,10 +312,11 @@ public class PetrinetController {
 			try {
 				new PNMLParser(file, this.petrinet);
 			} catch (PetrinetException e) {
-				JOptionPane.showMessageDialog(null, "File could not be parsed -> " + e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "File could not be parsed -> " + e.getMessage(), "",
+						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-		
+
 	}
 
 	public void setFileChanged(boolean changed) {
@@ -327,20 +327,18 @@ public class PetrinetController {
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode == null)
 			return;
-		
+
 		if (markedNode.getName().equals(label))
 			return;
-		
-		setFileChanged(true);//has to be set first so that petrinetQueue receives changes
-		
+
+		setFileChanged(true);// has to be set first so that petrinetQueue receives changes
+
 		petrinet.setPetrinetElementName(markedNode.getId(), label);
-	
 
 	}
 
 	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
 	}
-	
 
 }

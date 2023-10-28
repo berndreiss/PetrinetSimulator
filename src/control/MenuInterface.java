@@ -14,8 +14,6 @@ public interface MenuInterface {
 	
 	void onReload();
 	
-	void onMergeWith();
-	
 	void onAnalyseMany();
 	
 	void onClose();

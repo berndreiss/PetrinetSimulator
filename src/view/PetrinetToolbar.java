@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -15,8 +14,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.LookAndFeel;
@@ -40,8 +37,6 @@ public class PetrinetToolbar extends JToolBar {
 
 	private Color buttonHighlightColor = Color.LIGHT_GRAY;
 
-	private boolean docked = true;
-
 	private JButton analyseButton;
 	private JButton restartButton;
 	private JButton resetButton;
@@ -60,22 +55,32 @@ public class PetrinetToolbar extends JToolBar {
 
 	private JButton zoomInReachabilityButton;
 	private JButton zoomOutReachabilityButton;
-	private ToolbarButton toggleTreeLayoutButton;// TODO find Icon
-	private ToolbarButton toggleCircleLayoutButton;// TODO find Icon
-	private ToolbarButton toggleAutoLayoutButton;// TODO find Icon
-
-	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
+	private ToolbarButton toggleTreeLayoutButton;
+	private ToolbarButton toggleCircleLayoutButton;
+	private ToolbarButton toggleAutoLayoutButton;
+	private JButton changeDesignButton;
 
 	private boolean startUp = true;
 
 	public PetrinetToolbar(PetrinetToolbarInterface controller) {
 
-		LayoutManager layout = this.getLayout();
+//		setFloatable(false);
+
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		Component glue = Box.createHorizontalGlue();
+		Component horizontalGlue = Box.createHorizontalGlue();
+		Component verticalGlueUpper = Box.createVerticalGlue();
+		Component verticalGlueLower = Box.createVerticalGlue();
+		verticalGlueLower.setVisible(false);
+		verticalGlueUpper.setVisible(false);
+
 		JSeparator separator = new JSeparator();
 		separator.setVisible(false);
-		add(Box.createHorizontalStrut(10));
+		Component horizontalStrut = Box.createHorizontalStrut(10);
+		add(horizontalStrut);
+		Component verticalStrut = Box.createVerticalStrut(10);
+		add(verticalStrut);
+		verticalStrut.setVisible(false);
+
 		addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
@@ -91,7 +96,6 @@ public class PetrinetToolbar extends JToolBar {
 					}
 					String eventString = evt.getNewValue().toString();
 
-					
 					if (!eventString.contains("JPanel"))
 						return;
 
@@ -106,29 +110,56 @@ public class PetrinetToolbar extends JToolBar {
 						setOrientation(SwingConstants.HORIZONTAL);
 						controller.onSetDefault();
 						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
-						glue.setVisible(true);
+
+						horizontalStrut.setVisible(true);
+						horizontalGlue.setVisible(true);
+
+						verticalStrut.setVisible(false);
+						verticalGlueLower.setVisible(false);
+						verticalGlueUpper.setVisible(false);
+
 						separator.setOrientation(SwingConstants.VERTICAL);
 
-						if (!startUp) 
+						if (!startUp) {
 							separator.setVisible(true);
+							if (changeDesignButton != null)
+								changeDesignButton.setVisible(false);
 
-						
+						}
 						if (startUp)
 							startUp = false;
 						controller.onSetDefault();
 
 					} else if (getOrientation() == SwingConstants.VERTICAL) {
+						if (changeDesignButton != null)
+							changeDesignButton.setVisible(false);
 						controller.onSetDefault();
 						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.Y_AXIS));
-						glue.setVisible(false);
+
+						horizontalStrut.setVisible(false);
+						horizontalGlue.setVisible(false);
+
+						verticalStrut.setVisible(true);
+						verticalGlueLower.setVisible(true);
+						verticalGlueUpper.setVisible(true);
+
 						separator.setOrientation(SwingConstants.HORIZONTAL);
 						separator.setVisible(true);
 						startUp = true;
 						controller.onSetDefault();
 					} else {
+						if (changeDesignButton != null)
+							changeDesignButton.setVisible(true);
 						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
 						separator.setVisible(false);
-						glue.setVisible(true);
+
+						horizontalStrut.setVisible(true);
+						horizontalGlue.setVisible(true);
+
+						verticalStrut.setVisible(false);
+						verticalGlueLower.setVisible(false);
+						verticalGlueUpper.setVisible(false);
+
 						startUp = false;
 						controller.onSetDefault();
 					}
@@ -180,8 +211,8 @@ public class PetrinetToolbar extends JToolBar {
 		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOut(), "Zoom out",
 				"zoom out");
 
-		JButton changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
-				"Change between Metal and Nimbus feel and look", "change design");
+		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
+				"Change between Metal and Nimbus feel and look (Caution: can only be changed if toolbar is attached to the top -> button will disappear if toolbar is detached)", "change design");
 		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
 				"editor");
 
@@ -247,14 +278,14 @@ public class PetrinetToolbar extends JToolBar {
 
 		this.add(zoomInButton);
 		this.add(zoomOutButton);
-		this.add(setDefaultButton);
-		this.add(changeDesignButton);
 
 		this.add(openEditorButton);
 		this.add(closeEditorButton);
 
-		add(glue);
+		add(horizontalGlue);
+		add(verticalGlueUpper);
 		add(separator);
+		add(verticalGlueLower);
 
 		// ReachabilityGraph buttons
 
@@ -269,13 +300,16 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(toggleTreeLayoutButton);
 		this.add(toggleCircleLayoutButton);
 		this.add(toggleAutoLayoutButton);
+		this.add(setDefaultButton);
+
+		this.add(changeDesignButton);
+
 		setToolbarMode(ToolbarMode.VIEWER);
 		toggleTreeLayoutButton();
 
 	}
 
 	public void setToolbarMode(ToolbarMode toolbarMode) {
-		this.toolbarMode = toolbarMode;
 
 		if (toolbarMode == ToolbarMode.VIEWER) {
 			analyseButton.setVisible(true);
@@ -509,9 +543,9 @@ public class PetrinetToolbar extends JToolBar {
 	public void setToolbarTo(PetrinetPanel panel, LayoutTypes layoutType) {
 
 		JButton button = new JButton();
-		
+
 		buttonDefaultColor = button.getBackground();
-		
+
 		LookAndFeel laf = UIManager.getLookAndFeel();
 
 		if (laf.getName().equals("Nimbus"))

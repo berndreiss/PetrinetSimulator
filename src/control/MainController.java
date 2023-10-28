@@ -3,31 +3,19 @@ package control;
 import static view.MainFrame.GRAPH_SPLIT_PANE_DEFAULT_RATIO;
 import static view.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import ReachabilityGraphLayout.LayoutTypes;
 import datamodel.DuplicateIdException;
-import datamodel.PetrinetState;
 import util.ToolbarToggleListener;
 import view.MainFrame;
 import view.PetrinetPanel;
@@ -247,29 +235,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	@Override
-	public void onMergeWith() {
-
-		if (currentPetrinetPanel == null)
-			return;
-
-		PetrinetController controller = currentPetrinetPanel.getController();
-
-		JFileChooser fileChooser = new JFileChooser();
-
-		setFileChosserFilter(fileChooser);
-
-		fileChooser.setCurrentDirectory(lastDirectory);
-		int result = fileChooser.showOpenDialog(parent);
-
-		if (result == 0) {
-			File file = fileChooser.getSelectedFile();
-			currentPetrinetPanel.getController().mergeWith(file);
-			lastDirectory = file.getParentFile();
-		}
-		setStatusLabel();
-	}
-
-	@Override
 	public void onSave() {
 		if (currentPetrinetPanel == null)
 			return;
@@ -340,7 +305,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	private static String printResults(String[][] strings) {
-		String[] header = { "File", " Finite ", " Nodes/Edges -- Path length; m, m'" };
+		String[] header = { "File", " Bounded? ", " Nodes/Edges -- Path length; m, m'" };
 
 		int max1 = header[0].length(), max2 = header[1].length(), max3 = header[2].length();
 

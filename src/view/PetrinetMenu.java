@@ -27,7 +27,6 @@ public class PetrinetMenu extends JMenuBar {
 		JMenuItem openMenuItem = new JMenuItem("Open");
 		JMenuItem openInNewTabMenuItem = new JMenuItem("Open in new tab");
 		JMenuItem reloadMenuItem = new JMenuItem("Reload");
-		JMenuItem mergeMenuItem = new JMenuItem("Merge with");
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		JMenuItem saveAsMenuItem = new JMenuItem("Save as...");
 		JMenuItem analyseManyMenuItem = new JMenuItem("Analyse++");
@@ -41,7 +40,6 @@ public class PetrinetMenu extends JMenuBar {
 		files.add(openMenuItem);
 		files.add(openInNewTabMenuItem);
 		files.add(reloadMenuItem);
-		files.add(mergeMenuItem);
 		files.add(saveMenuItem);
 		files.add(saveAsMenuItem);
 		files.add(analyseManyMenuItem);
@@ -59,8 +57,6 @@ public class PetrinetMenu extends JMenuBar {
 
 		reloadMenuItem.addActionListener(e -> controller.onReload());
 		
-		mergeMenuItem.addActionListener(e -> controller.onMergeWith());
-
 		saveMenuItem.addActionListener(e -> controller.onSave());
 
 		saveAsMenuItem.addActionListener(e -> controller.onSaveAs());

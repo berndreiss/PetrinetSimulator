@@ -51,6 +51,7 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 		
+		
 		setLayout(new BorderLayout());
 		//TODO set min size
 		textArea = new JTextArea();
@@ -107,6 +108,8 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 
 		changeLookAndFeel();
+		System.out.println(this.getSize());
+
 
 	}
 

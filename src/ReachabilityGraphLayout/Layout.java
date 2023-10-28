@@ -527,7 +527,11 @@ public class Layout {
 	}
 
 	private double getHeight(int index) {
-		return -(screenSize.getHeight()) / (listHierarchy.size() > 1 ? listHierarchy.size() - 1 : 1) * index;
+		
+		if (listHierarchy.size() == 1)
+			return -screenSize.getHeight()/2;
+
+		return -screenSize.getHeight() * ((double) index / (listHierarchy.size() - 1));
 	}
 
 	private double getWidth(int listSize, int index) {
