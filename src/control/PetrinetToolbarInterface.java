@@ -63,5 +63,7 @@ public interface PetrinetToolbarInterface {
 
 	void onToggleCircleLayout();
 
+	void changeDesign();
+
 	
 }

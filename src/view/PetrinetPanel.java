@@ -1,8 +1,10 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Panel;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.util.HashSet;
 
@@ -45,7 +47,8 @@ public class PetrinetPanel extends JPanel {
 		this.controller = new PetrinetController(file, headless);
 		this.mainController = mainController;
 		
-		controller.getEditor().setOnEditedListener(mainController);
+		
+		controller.setToolbarToggleListener(mainController);
 
 		this.petrinetViewPanel = GraphStreamView.initGraphStreamView(controller.getPetrinetGraph(), controller,
 				mainController.getFrame(), null);
@@ -54,45 +57,40 @@ public class PetrinetPanel extends JPanel {
 		petrinetPanel.setLayout(new BorderLayout());
 		petrinetPanel.add(petrinetViewPanel, BorderLayout.CENTER);
 
-		this.reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller,
-				mainController.getFrame(), layoutType);
-
-		JPanel reachabilityPanel = new JPanel();
-		reachabilityPanel.setLayout(new BorderLayout());
-		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
-
-		reachabilityPanel.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent event) {
-				controller.getReachabilityGraph().onScreenSizeChanged(reachabilityViewPanel.getSize());
-			}
-		});
-
+		
 		setLayout(new BorderLayout());
 
 		if (!headless) {
 
 			controller.getReachabilityGraph().setLayoutType(layoutType);
 			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT,
-					petrinetPanel, reachabilityPanel);
+					petrinetPanel, new JPanel());
 			add(graphSplitPane, BorderLayout.CENTER);
+			setReachabilityPanel(layoutType);
+			mainController.getFrame().addComponentListener(new ComponentAdapter() {
+				
+				
+				@Override
+				public void componentResized(ComponentEvent e) {
+					GraphStreamView.adjustArrowHeads();
+				}				
+			});
 
 		}
 
 	}
 
-	private void resetReachabilityPanel(LayoutTypes layoutType) {
+	private void setReachabilityPanel(LayoutTypes layoutType) {
 //		JPanel panel = (JPanel) graphSplitPane.getRightComponent();
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller, mainController.getFrame(), layoutType);
+		reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller, panel, layoutType);
 		panel.add(reachabilityViewPanel, BorderLayout.CENTER);
 		graphSplitPane.remove(graphSplitPane.getRightComponent());
 
 		graphSplitPane.setRightComponent(panel);
 
 		controller.resetReachabilityGraph();
-
 
 	}
 	public ResizableSplitPane getGraphSplitPane() {
@@ -127,7 +125,7 @@ public class PetrinetPanel extends JPanel {
 
 		controller.getReachabilityGraph().setLayoutType(layoutType);
 
-		resetReachabilityPanel(layoutType);
+		setReachabilityPanel(layoutType);
 	}
 
 	public PetrinetController getController() {

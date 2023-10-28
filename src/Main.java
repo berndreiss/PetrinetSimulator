@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import view.MainFrame;
 
@@ -28,25 +29,18 @@ public class Main {
 //		  UIManager.put( "nimbusSelectedText", new Color( 255, 255, 255) );
 //		  UIManager.put( "nimbusSelectionBackground", new Color( 104, 93, 156) );
 //		  UIManager.put( "text", new Color( 230, 230, 230) );
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (javax.swing.UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+//			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//				if ("Nimbus".equals(info.getName())) {
+//					try {
+//						javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//							| UnsupportedLookAndFeelException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					break;
+//				}
+//			}
 		// Frame erzeugen
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

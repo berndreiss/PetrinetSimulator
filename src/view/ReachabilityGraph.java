@@ -87,6 +87,7 @@ public class ReachabilityGraph extends MultiGraph {
 					currentEdge = null;
 				if (layoutType != LayoutTypes.AUTOMATIC)
 					layoutManager.removeEdge(stateSource, stateTarget, t);
+				replayGraph();
 			}
 
 			@Override
@@ -109,7 +110,7 @@ public class ReachabilityGraph extends MultiGraph {
 				}
 				if (layoutType != LayoutTypes.AUTOMATIC)
 					layoutManager.removeNode(node);
-
+				replayGraph();
 			}
 
 			@Override
@@ -117,6 +118,7 @@ public class ReachabilityGraph extends MultiGraph {
 				Node node = addState(state, predecessor, t);
 				if (layoutType != LayoutTypes.AUTOMATIC)
 					layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t);
+				replayGraph();
 			}
 
 			@Override
@@ -153,8 +155,8 @@ public class ReachabilityGraph extends MultiGraph {
 
 		if (node == null) {
 			node = addNode(id);
+
 			node.setAttribute("ui.label", id);
-//			node.setAttribute("layout.frozen");
 		}
 
 		if (initialNode == null) {
@@ -320,7 +322,7 @@ public class ReachabilityGraph extends MultiGraph {
 	public void replayGraph() {
 		if (replayGraphListener == null)
 			return;
-//		replayGraphListener.onGraphReplay();
+		replayGraphListener.onGraphReplay();
 
 	}
 
@@ -334,5 +336,22 @@ public class ReachabilityGraph extends MultiGraph {
 		this.layoutType = layoutType;
 		if (layoutType != LayoutTypes.AUTOMATIC)
 			layoutManager.setLayoutType(layoutType);
+	}
+	
+	public LayoutTypes getLayoutType() {
+		return layoutType;
+	}
+	
+	public void print() {
+		System.out.println("NODES");
+		for (Node n: this)
+			System.out.println(n.getId());
+		System.out.println("EDGES");
+		edges().forEach(e->System.out.println(e.getId()));
+		System.out.println("SPRITES");
+		for (Sprite s: spriteMan.sprites())
+			System.out.println(s.getId());
+		
+		System.out.println();
 	}
 }

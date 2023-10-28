@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -26,12 +28,14 @@ import javax.swing.filechooser.FileFilter;
 import ReachabilityGraphLayout.LayoutTypes;
 import datamodel.DuplicateIdException;
 import datamodel.PetrinetState;
-import util.OnEditedListener;
+import util.ToolbarToggleListener;
 import view.MainFrame;
 import view.PetrinetPanel;
 import view.ResizableSplitPane;
 
-public class MainController implements MenuInterface, PetrinetToolbarInterface, OnEditedListener {
+public class MainController implements MenuInterface, PetrinetToolbarInterface, ToolbarToggleListener {
+
+	// TODO warn if unsaved changes
 
 	private File lastDirectory;
 	private MainFrame parent;
@@ -39,12 +43,12 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	private PetrinetPanel currentPetrinetPanel;
 
 	private boolean tabAdded;
-	
+
 	private LayoutTypes layoutType = LayoutTypes.TREE;
 
 	public MainController(MainFrame parent) {
 		this.parent = parent;
-				
+
 		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		setStatusLabel();
 
@@ -68,13 +72,11 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
-
+				
 				parent.setStatusLabel(getStatusLabel());
 				setToolbarMode(currentPetrinetPanel.getController().getToolbarMode());
 
-				if (currentPetrinetPanel.getController().getToolbarMode() == ToolbarMode.EDITOR) {
-					getFrame().getToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
-				}
+				getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 			}
 
 		});
@@ -140,7 +142,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		else
 			setToolbarMode(ToolbarMode.VIEWER);
 
-		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel.getController().getEditor());
+		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 
 		JTabbedPane tabbedPane = parent.getTabbedPane();
 
@@ -160,7 +162,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		}
 		setStatusLabel();
-
+		onSetDefault();
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
@@ -172,7 +174,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	@Override
 	public void onNew() {
 		setNewPanel(null, false);
-		
 
 	}
 
@@ -191,6 +192,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 			return;
 
 		setNewPanel(file, false);
+
 	}
 
 	@Override
@@ -564,6 +566,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (currentPetrinetPanel == null)
 			return;
 
+		currentPetrinetPanel.getController().getPetrinetQueue().goBack();
 		// TODO Auto-generated method stub
 
 	}
@@ -572,10 +575,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	public void onRedo() {
 		if (currentPetrinetPanel == null)
 			return;
-		currentPetrinetPanel.getController().getReachabilityGraph().addingLoop();
 
-		// TODO Auto-generated method stub
-
+		currentPetrinetPanel.getController().getPetrinetQueue().goForward();
 	}
 
 	@Override
@@ -612,8 +613,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		try {
 			controller.getEditor().addPlace(id);
 		} catch (DuplicateIdException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 
@@ -639,8 +639,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		try {
 			controller.getEditor().addTransition(id);
 		} catch (DuplicateIdException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 
 			return;
 		}
@@ -735,7 +734,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (currentPetrinetPanel == null)
 			return;
 
-		currentPetrinetPanel.zoomInReachability();		
+		currentPetrinetPanel.zoomInReachability();
 	}
 
 	@Override
@@ -743,7 +742,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (currentPetrinetPanel == null)
 			return;
 
-		currentPetrinetPanel.zoomOutReachability();				
+		currentPetrinetPanel.zoomOutReachability();
 	}
 
 	@Override
@@ -751,13 +750,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (layoutType != LayoutTypes.AUTOMATIC) {
 			layoutType = LayoutTypes.AUTOMATIC;
 
+			parent.getToolbar().toggleAutoLayoutButton();
 			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp: parent.getTabbedPane().getComponents())
+				for (Component comp : parent.getTabbedPane().getComponents())
 					((PetrinetPanel) comp).setLayoutType(layoutType);
 			}
 		}
-			
-		
+
 	}
 
 	@Override
@@ -765,23 +764,49 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		if (layoutType != LayoutTypes.TREE) {
 			layoutType = LayoutTypes.TREE;
 
+			parent.getToolbar().toggleTreeLayoutButton();
+
 			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp: parent.getTabbedPane().getComponents())
+				for (Component comp : parent.getTabbedPane().getComponents())
 					((PetrinetPanel) comp).setLayoutType(layoutType);
 			}
-		}		
+		}
 	}
 
 	@Override
 	public void onToggleCircleLayout() {
 		if (layoutType != LayoutTypes.CIRCLE) {
 			layoutType = LayoutTypes.CIRCLE;
+			parent.getToolbar().toggleCircleLayoutButton();
 
 			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp: parent.getTabbedPane().getComponents())
+				for (Component comp : parent.getTabbedPane().getComponents())
 					((PetrinetPanel) comp).setLayoutType(layoutType);
 			}
-		}		
+		}
 	}
 
+	@Override
+	public void onRedoChanged() {
+		parent.getToolbar().toggleRedoButton();
+	}
+
+	@Override
+	public void onUndoChanged() {
+
+		parent.getToolbar().toggleUndoButton();
+	}
+
+	@Override
+	public void changeDesign() {
+		parent.changeLookAndFeel();
+	}
+
+	public PetrinetPanel getCurrentPanel() {
+		return currentPetrinetPanel;
+	}
+
+	public LayoutTypes getLayoutType() {
+		return layoutType;
+	}
 }

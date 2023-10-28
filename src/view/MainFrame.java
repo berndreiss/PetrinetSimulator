@@ -17,10 +17,13 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import control.MainController;
 import control.ToolbarMode;
-import util.OnEditedListener;
 
 public class MainFrame extends JFrame {
 
@@ -47,6 +50,7 @@ public class MainFrame extends JFrame {
 	
 	public MainFrame(String title) {
 		super(title);
+		
 		setLayout(new BorderLayout());
 		//TODO set min size
 		textArea = new JTextArea();
@@ -102,6 +106,8 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 
+		changeLookAndFeel();
+
 	}
 
 	public ResizableSplitPane getSplitPane() {
@@ -133,6 +139,35 @@ public class MainFrame extends JFrame {
 //		splitPane.remove(splitPane.getLeftComponent());
 //		splitPane.setLeftComponent(tabbedPane);
 //	}
+
+	public void changeLookAndFeel() {
+
+		LookAndFeel laf = UIManager.getLookAndFeel();
+
+		String lafString = laf.getName().equals("Nimbus") ? "Metal" : "Nimbus";
+		
+		for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+			if (lafString.equals(info.getName())) {
+				try {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+		SwingUtilities.updateComponentTreeUI(this);
+		revalidate();
+		repaint();
+//		remove(toolbar);
+//
+//		toolbar = new PetrinetToolbar(controller);
+//		
+//		add(toolbar, BorderLayout.NORTH);
+		toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
+		controller.onSetDefault();
+}
 
 //	public void setEmtpy() {
 //		splitPane.remove(splitPane.getLeftComponent());

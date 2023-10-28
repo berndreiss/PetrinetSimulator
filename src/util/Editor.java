@@ -17,14 +17,8 @@ public class Editor {
 	private String edgeToAddId;
 	private PetrinetElement[] removeEdge;
 
-	private OnEditedListener onEditedListener;
-
 	public Editor(PetrinetController controller) {
 		this.controller = controller;
-	}
-
-	public void setOnEditedListener(OnEditedListener onEditedListener) {
-		this.onEditedListener = onEditedListener;
 	}
 
 	public boolean addPlace(String id) throws DuplicateIdException {
@@ -32,9 +26,8 @@ public class Editor {
 		Place p = controller.getPetrinet().addPlace(id);
 		if (p == null)
 			return false;
-		
-		controller.getPetrinet().setAddedElementPosition(p);
 		controller.setFileChanged(true);
+		controller.getPetrinet().setAddedElementPosition(p);
 
 		return true;
 	}
@@ -42,12 +35,12 @@ public class Editor {
 	public boolean addTransition(String id) throws DuplicateIdException {
 
 		Transition t = controller.getPetrinet().addTransition(id);
-		
+
 		if (t == null)
 			return false;
-		
-		controller.getPetrinet().setAddedElementPosition(t);
+
 		controller.setFileChanged(true);
+		controller.getPetrinet().setAddedElementPosition(t);
 
 		return true;
 	}
@@ -101,9 +94,8 @@ public class Editor {
 
 		if (markedElement == null)
 			return;
-
-		controller.getPetrinet().removePetrinetElement(markedElement.getId());
 		controller.setFileChanged(true);
+		controller.getPetrinet().removePetrinetElement(markedElement.getId());
 
 	}
 
@@ -133,9 +125,11 @@ public class Editor {
 			addEdge = null;
 			edgeToAddId = null;
 
-			controller.getPetrinetGraph().toggleNodeMark(null);
 			controller.setFileChanged(true);
-			onEditedListener.onEdgeAdded();
+			controller.getPetrinetGraph().toggleNodeMark(null);
+
+			if (controller.getToolbarToggleListener() != null)
+				controller.getToolbarToggleListener().onEdgeAdded();
 
 			return;
 		}
@@ -163,7 +157,8 @@ public class Editor {
 			removeEdge = null;
 			controller.getPetrinetGraph().toggleNodeMark(null);
 			controller.setFileChanged(true);
-			onEditedListener.onEdgeRemoved();
+			if (controller.getToolbarToggleListener() != null)
+				controller.getToolbarToggleListener().onEdgeRemoved();
 			return;
 
 		}

@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -13,8 +15,10 @@ import javax.swing.SwingUtilities;
 import org.graphstream.algorithm.util.FibonacciHeap.Node;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
+import datamodel.Added;
 import datamodel.Petrinet;
 import datamodel.PetrinetElement;
+import datamodel.PetrinetQueue;
 import datamodel.PetrinetState;
 import datamodel.PetrinetStateChangedListener;
 import datamodel.Place;
@@ -24,6 +28,7 @@ import propra.pnml.PNMLWopedWriter;
 import util.Editor;
 import util.PNMLParser;
 import util.PetrinetAnalyser;
+import util.ToolbarToggleListener;
 import view.PetrinetGraph;
 import view.ReachabilityGraph;
 import view.ReachabilityGraphTest;
@@ -45,6 +50,9 @@ public class PetrinetController {
 
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
+	private PetrinetQueue petrinetQueue;;
+	
+	private ToolbarToggleListener toolbarToggleListener;
 
 	public PetrinetController(File file, boolean headless) throws PetrinetException {
 		this.headless = headless;
@@ -69,14 +77,17 @@ public class PetrinetController {
 		if (!headless) {
 
 			this.reachabilityGraph = new ReachabilityGraph(this);
-
+			this.petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentPetrinetState(), this);
 		}
 
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
 
 			@Override
 			public void onTransitionFire(Transition t) {
-				reachabilityGraphModel.addNewState(petrinet, t);
+				reachabilityGraphModel.getCurrentState().print();
+				Added added = reachabilityGraphModel.addNewState(petrinet, t);
+				petrinetQueue.push(reachabilityGraphModel.getCurrentState(), added, t);
+				reachabilityGraphModel.getCurrentState().print();				
 			}
 
 			@Override
@@ -85,15 +96,28 @@ public class PetrinetController {
 				PetrinetState initialState = reachabilityGraphModel.getInitialState();
 				if (initialState != null)
 					reachabilityGraphModel.removeState(initialState);
-				reachabilityGraphModel.addNewState(petrinet, null);
+				reachabilityGraphModel.addNewState(petrinet, null);	
+				petrinetQueue.resetButtons();
+				petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), PetrinetController.this);
 			}
+
 		});
 		
 
 	}
 
+	public void setToolbarToggleListener(ToolbarToggleListener toolbarToggleListener) {
+		this.toolbarToggleListener = toolbarToggleListener;
+	}
+	public ToolbarToggleListener getToolbarToggleListener() {
+		return toolbarToggleListener;
+	}
 	public Editor getEditor() {
 		return editor;
+	}
+
+	public PetrinetQueue getPetrinetQueue() {
+		return petrinetQueue;
 	}
 	
 	public Petrinet getPetrinet() {
@@ -130,6 +154,7 @@ public class PetrinetController {
 	public void resetPetrinet() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.setInitial();
+		
 	}
 
 	public Object closeCurrent() {
@@ -143,7 +168,7 @@ public class PetrinetController {
 		boolean changed = petrinet.incrementPlace(petrinetGraph.getMarkedNode());
 
 		if (changed && !fileChanged) {
-			fileChanged = true;
+			setFileChanged(true);
 		}
 		
 		return changed;
@@ -153,7 +178,7 @@ public class PetrinetController {
 		boolean changed = petrinet.decrementPlace(petrinetGraph.getMarkedNode());
 
 		if (changed && !fileChanged) {
-			fileChanged = true;
+			setFileChanged(true);
 		}
 		
 		return changed;
@@ -166,20 +191,21 @@ public class PetrinetController {
 	public void resetReachabilityGraph() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.reset();
+		petrinetQueue.resetButtons();
+		petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
 	}
+	
 
 	public void reachabilityNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
 		reachabilityGraphModel.setCurrentState(state);
+		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);
 	}
 
 	public String[] analyse() {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
-
-		if (!headless)
-			reachabilityGraph.replayGraph();
 		
 		return getResults(analyser);
 
@@ -305,9 +331,15 @@ public class PetrinetController {
 		if (markedNode.getName().equals(label))
 			return;
 		
+		setFileChanged(true);//has to be set first so that petrinetQueue receives changes
+		
 		petrinet.setPetrinetElementName(markedNode.getId(), label);
 	
-		setFileChanged(true);
+
+	}
+
+	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
+		this.petrinetQueue = petrinetQueue;
 	}
 	
 

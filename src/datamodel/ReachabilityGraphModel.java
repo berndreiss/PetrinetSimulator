@@ -40,31 +40,31 @@ public class ReachabilityGraphModel {
 	}
 
 	public void setCurrentState(PetrinetState state) {
-		setNewCurrentState(petrinetStates.get(state.getState()), true);
-
+		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
 	}
 
-	public PetrinetState addNewState(Petrinet petrinet, Transition t) {
+	public Added addNewState(Petrinet petrinet, Transition t) {
 
-		if (petrinet == null || !petrinet.hasPlaces()) {
-			if (initialState != null) {
-				initialState = null;
-			}
-			return null;
-		}
+		Added added = Added.NOTHING;
+
 		PetrinetState petrinetState;
 		String petrinetStateString = petrinet.getStateString();
 
 		if (petrinetStates.containsKey(petrinetStateString)) {
 			petrinetState = petrinetStates.get(petrinetStateString);
 		} else {
-			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getLevel()+1);
+			added = Added.STATE;
+			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getLevel() + 1);
 			petrinetStates.put(petrinetStateString, petrinetState);
 		}
 
 		if (currentState != null) {
-			petrinetState.addPredecessor(currentState, t);
-			currentState.addSuccessor(petrinetState, t);
+
+			boolean addedEdgePred = petrinetState.addPredecessor(currentState, t);
+			boolean addedEdgeSucc = currentState.addSuccessor(petrinetState, t);
+
+			if (added == Added.NOTHING && (addedEdgePred || addedEdgeSucc))
+				added = Added.EDGE;
 		}
 
 		if (t == null) {
@@ -75,9 +75,10 @@ public class ReachabilityGraphModel {
 		if (stateChangeListener != null)
 			stateChangeListener.onAdd(petrinetState, currentState, t);
 
+
 		setNewCurrentState(petrinetState, false);
 		checkIfCurrentStateIsBackwardsValid();
-		return petrinetState;
+		return added;
 	}
 
 	private void setNewCurrentState(PetrinetState newState, boolean reset) {
@@ -206,5 +207,16 @@ public class ReachabilityGraphModel {
 //		for (PetrinetState ps: petrinetStates)
 //			ps.print();
 //	}
+
+	
+	public void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
+		lastState.removeSuccessorEdge(state, transition, stateChangeListener);
+		state.removePredecessorEdge(lastState, transition, stateChangeListener);
+	}
+
+	public void print() {
+		for (PetrinetState ps : petrinetStates)
+			ps.print();
+	}
 
 }

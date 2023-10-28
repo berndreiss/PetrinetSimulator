@@ -359,7 +359,7 @@ public class Layout {
 			}
 		} while (workToBeDone && loops < 20);
 
-		System.out.println("Loops performed in beautify: " + loops);
+//		System.out.println("Loops performed in beautify: " + loops);
 
 		spreadSprites();
 	}

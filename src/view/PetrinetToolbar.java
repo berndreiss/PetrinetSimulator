@@ -3,7 +3,10 @@ package view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.LayoutManager;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,13 +15,19 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
+import ReachabilityGraphLayout.LayoutTypes;
+import control.PetrinetController;
 import control.PetrinetToolbarInterface;
 import control.ToolbarMode;
+import datamodel.PetrinetQueue;
 import util.Editor;
 
 public class PetrinetToolbar extends JToolBar {
@@ -36,29 +45,29 @@ public class PetrinetToolbar extends JToolBar {
 	private JButton analyseButton;
 	private JButton restartButton;
 	private JButton resetButton;
-	private JButton undoButton;
-	private JButton redoButton;
+	private ToolbarButton undoButton;
+	private ToolbarButton redoButton;
 	private JButton clearTextButton;
 	private JButton openEditorButton;
 
 	private JButton addPlaceButton;
 	private JButton addTransitionButton;
 	private JButton deleteComponentButton;
-	private JButton addEdgeButton;
-	private JButton removeEdgeButton;
+	private ToolbarButton addEdgeButton;
+	private ToolbarButton removeEdgeButton;
 	private JButton addLabelButton;
 	private JButton closeEditorButton;
 
 	private JButton zoomInReachabilityButton;
 	private JButton zoomOutReachabilityButton;
-	private JButton toggleTreeLayoutButton;// TODO find Icon
-	private JButton toggleCircleLayoutButton;// TODO find Icon
-	private JButton toggleAutoLayoutButton;// TODO find Icon
-	
+	private ToolbarButton toggleTreeLayoutButton;// TODO find Icon
+	private ToolbarButton toggleCircleLayoutButton;// TODO find Icon
+	private ToolbarButton toggleAutoLayoutButton;// TODO find Icon
+
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
 	private boolean startUp = true;
-	
+
 	public PetrinetToolbar(PetrinetToolbarInterface controller) {
 
 		LayoutManager layout = this.getLayout();
@@ -98,12 +107,12 @@ public class PetrinetToolbar extends JToolBar {
 						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
 						glue.setVisible(true);
 						separator.setOrientation(SwingConstants.VERTICAL);
-						
+
 						if (!startUp) {
 							separator.setVisible(true);
-							
+
 						}
-							if (startUp)
+						if (startUp)
 							startUp = false;
 
 					} else if (getOrientation() == SwingConstants.VERTICAL) {
@@ -123,87 +132,89 @@ public class PetrinetToolbar extends JToolBar {
 			}
 		});
 
-		JButton openButton = makeToolbarButton(ToolbarImage.OPEN, e -> controller.onOpen(), "Open file", "open");
+		ToolbarButton openButton = new ToolbarButton(ToolbarImage.OPEN, e -> controller.onOpen(), "Open file", "open");
 
 		buttonDefaultColor = openButton.getBackground();
 
-		JButton saveButton = makeToolbarButton(ToolbarImage.SAVE, e -> controller.onSave(), "Save file", "save");
+		JButton saveButton = new ToolbarButton(ToolbarImage.SAVE, e -> controller.onSave(), "Save file", "save");
 
-		JButton previousButton = makeToolbarButton(ToolbarImage.LEFT, e -> controller.onPrevious(),
+		JButton previousButton = new ToolbarButton(ToolbarImage.LEFT, e -> controller.onPrevious(),
 				"Open the previous file", "previous");
 
-		JButton nextButton = makeToolbarButton(ToolbarImage.RIGHT, e -> controller.onNext(), "Open the next file",
+		JButton nextButton = new ToolbarButton(ToolbarImage.RIGHT, e -> controller.onNext(), "Open the next file",
 				"next");
 
-		restartButton = makeToolbarButton(ToolbarImage.RESTART, e -> controller.onRestart(), "Reset the petrinet graph",
+		restartButton = new ToolbarButton(ToolbarImage.RESTART, e -> controller.onRestart(), "Reset the petrinet graph",
 				"Reset p");
 
-		JButton plusButton = makeToolbarButton(ToolbarImage.PLUS, e -> controller.onPlus(),
+		JButton plusButton = new ToolbarButton(ToolbarImage.PLUS, e -> controller.onPlus(),
 				"Adds a token to a selected place", "plus");
 
-		JButton minusButton = makeToolbarButton(ToolbarImage.MINUS, e -> controller.onMinus(),
+		JButton minusButton = new ToolbarButton(ToolbarImage.MINUS, e -> controller.onMinus(),
 				"Removes a token from a selected place", "minus");
 
-		resetButton = makeToolbarButton(ToolbarImage.RESET, e -> controller.onReset(), "Reset the reachability graph",
+		resetButton = new ToolbarButton(ToolbarImage.RESET, e -> controller.onReset(), "Reset the reachability graph",
 				"reset r");
 
-		analyseButton = makeToolbarButton(ToolbarImage.ANALYSE, e -> controller.onAnalyse(),
+		analyseButton = new ToolbarButton(ToolbarImage.ANALYSE, e -> controller.onAnalyse(),
 				"Analyse petrinet and create reachability graph", "analyse");
 
-		clearTextButton = makeToolbarButton(ToolbarImage.CLEAR_TEXT, e -> controller.onClear(), "Clear text area",
+		clearTextButton = new ToolbarButton(ToolbarImage.CLEAR_TEXT, e -> controller.onClear(), "Clear text area",
 				"clear");
 
-		JButton setDefaultButton = makeToolbarButton(ToolbarImage.DEFAULT, e -> controller.onSetDefault(),
+		JButton setDefaultButton = new ToolbarButton(ToolbarImage.DEFAULT, e -> controller.onSetDefault(),
 				"Reset split panes", "reset pane");
 
-		undoButton = makeToolbarButton(ToolbarImage.UNDO, e -> controller.onUndo(), "Undo last step", "undo");
+		undoButton = new ToolbarButton(ToolbarImage.UNDO, e -> controller.onUndo(), "Undo last step", "undo");
 
-		redoButton = makeToolbarButton(ToolbarImage.REDO, e -> controller.onRedo(), "Redo last step", "redo");
+		redoButton = new ToolbarButton(ToolbarImage.REDO, e -> controller.onRedo(), "Redo last step", "redo");
 
-		JButton zoomInButton = makeToolbarButton(ToolbarImage.ZOOM_IN, e -> controller.onZoomIn(), "Zoom in",
+		JButton zoomInButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> controller.onZoomIn(), "Zoom in",
 				"zoom in");
 
-		JButton zoomOutButton = makeToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOut(), "Zoom out",
+		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOut(), "Zoom out",
 				"zoom out");
 
-		openEditorButton = makeToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
+		JButton changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
+				"Change between Metal and Nimbus feel and look", "change design");
+		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
 				"editor");
 
 		// Editor specific Buttons
 
-		addPlaceButton = makeToolbarButton(ToolbarImage.ADD_PLACE, e -> controller.onAddPlace(), "Add place",
+		addPlaceButton = new ToolbarButton(ToolbarImage.ADD_PLACE, e -> controller.onAddPlace(), "Add place",
 				"add place");
 
-		addTransitionButton = makeToolbarButton(ToolbarImage.ADD_TRANSITION, e -> controller.onAddTransition(),
+		addTransitionButton = new ToolbarButton(ToolbarImage.ADD_TRANSITION, e -> controller.onAddTransition(),
 				"Add transition", "add trans");
 
-		deleteComponentButton = makeToolbarButton(ToolbarImage.DELETE_COMPONENT, e -> controller.onRemoveComponent(),
+		deleteComponentButton = new ToolbarButton(ToolbarImage.DELETE_COMPONENT, e -> controller.onRemoveComponent(),
 				"Delete component", "delete");
 
-		addEdgeButton = makeToolbarButton(ToolbarImage.ADD_EDGE, e -> controller.onAddEdge(), "Add edge", "add edge");
+		addEdgeButton = new ToolbarButton(ToolbarImage.ADD_EDGE, e -> controller.onAddEdge(), "Add edge", "add edge");
 
-		removeEdgeButton = makeToolbarButton(ToolbarImage.REMOVE_EDGE, e -> controller.onRemoveEdge(),
+		removeEdgeButton = new ToolbarButton(ToolbarImage.REMOVE_EDGE, e -> controller.onRemoveEdge(),
 				"Remove an edge: choose source first and then target", "remove edge");
 
-		addLabelButton = makeToolbarButton(ToolbarImage.ADD_LABEL, e -> controller.onAddLabel(), "Add label to element",
+		addLabelButton = new ToolbarButton(ToolbarImage.ADD_LABEL, e -> controller.onAddLabel(), "Add label to element",
 				"add label");
 
-		closeEditorButton = makeToolbarButton(ToolbarImage.OPEN_VIEWER, e -> controller.onCloseEditor(),
+		closeEditorButton = new ToolbarButton(ToolbarImage.OPEN_VIEWER, e -> controller.onCloseEditor(),
 				"Switch to viewer", "close editor");
 
-		zoomInReachabilityButton = makeToolbarButton(ToolbarImage.ZOOM_IN, e -> controller.onZoomInReachability(),
+		zoomInReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> controller.onZoomInReachability(),
 				"Zoom in", "zoom in");
 
-		zoomOutReachabilityButton = makeToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOutReachability(),
+		zoomOutReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOutReachability(),
 				"Zoom out", "zoom out");
 
-		toggleTreeLayoutButton = makeToolbarButton(ToolbarImage.TREE_LAYOUT, e -> controller.onToggleTreeLayout(),
+		toggleTreeLayoutButton = new ToolbarButton(ToolbarImage.TREE_LAYOUT, e -> controller.onToggleTreeLayout(),
 				"Turn tree base layout on -> will give the best experience", "tree-layout");
-		
-		toggleCircleLayoutButton = makeToolbarButton(ToolbarImage.CIRCLE_LAYOUT, e -> controller.onToggleCircleLayout(),
+
+		toggleCircleLayoutButton = new ToolbarButton(ToolbarImage.CIRCLE_LAYOUT, e -> controller.onToggleCircleLayout(),
 				"Turn circe based layout on -> might not be as beautiful but may be more fun", "circle-layout");
-		
-		toggleAutoLayoutButton = makeToolbarButton(ToolbarImage.AUTO_LAYOUT, e -> controller.onToggleAutoLayout(),
+
+		toggleAutoLayoutButton = new ToolbarButton(ToolbarImage.AUTO_LAYOUT, e -> controller.onToggleAutoLayout(),
 				"Turn auto layout on -> auto layout provided by GraphStream", "auto-layout");
 
 		this.add(openButton);
@@ -237,6 +248,7 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(zoomInButton);
 		this.add(zoomOutButton);
 		this.add(setDefaultButton);
+		this.add(changeDesignButton);
 
 		this.add(openEditorButton);
 		this.add(closeEditorButton);
@@ -252,6 +264,7 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(toggleCircleLayoutButton);
 		this.add(toggleAutoLayoutButton);
 		setToolbarMode(ToolbarMode.VIEWER);
+		toggleTreeLayoutButton();
 
 	}
 
@@ -309,33 +322,76 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
-	private JButton makeToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText,
-			String altText) {
-		String imgLocation = IMAGE_ROOT_FOLDER + toolbarImage + ".png";
-		String imagePath = System.getProperty("user.dir");
+	private class ToolbarButton extends JButton {
 
-		JButton button = new JButton();
+		private static final long serialVersionUID = 1L;
 
-		button.addActionListener(actionListener);
-		button.setToolTipText(toolTipText);
+		private String altText;
 
-		int sizeInt = 30;
+		private Color color = null;
 
-		Dimension size = new Dimension(sizeInt, sizeInt);
+		public ToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText,
+				String altText) {
 
-		ImageIcon icon = new ImageIcon(imagePath + imgLocation, altText);
+			this.altText = altText;
 
-		if (imagePath != null) {
-			button.setIcon(icon);
-		} else {
-			button.setText(altText);
-			System.err.println("Resource not found: " + imgLocation);
+			setImage(toolbarImage);
+
+			addActionListener(actionListener);
+			setToolTipText(toolTipText);
+
+			int sizeInt = 30;
+
+			Dimension size = new Dimension(sizeInt, sizeInt);
+			setMaximumSize(size);
+			setSize(size);
+			setPreferredSize(size);
+
 		}
 
-		button.setMaximumSize(size);
-		button.setSize(size);
-		button.setPreferredSize(size);
-		return button;
+		@Override
+		protected void paintComponent(Graphics g) {
+			if (color != null) {
+				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				g.setColor(color);
+				g.fillRoundRect(0, 0, 30, 30, 20, 20);
+			}
+			super.paintComponent(g);
+		}
+
+		public void setImage(ToolbarImage toolbarImage) {
+
+			String imagePath = System.getProperty("user.dir");
+
+			String imgLocation = imagePath(toolbarImage);
+
+			ImageIcon icon = new ImageIcon(imagePath + imgLocation, altText);
+
+			if (imagePath != null) {
+				setIcon(icon);
+			} else {
+				setText(altText);
+				System.err.println("Resource not found: " + imgLocation);
+			}
+
+		}
+
+		public void setColor(Color color) {
+			LookAndFeel laf = UIManager.getLookAndFeel();
+			this.color = color;
+			if (laf.getName().equals("Nimbus"))
+				repaint();
+			else
+				setBackground(color);
+		}
+
+		public Color getColor() {
+			return color;
+		}
+	}
+
+	private String imagePath(ToolbarImage toolbarImage) {
+		return IMAGE_ROOT_FOLDER + toolbarImage + ".png";
 
 	}
 
@@ -345,8 +401,10 @@ public class PetrinetToolbar extends JToolBar {
 		DEFAULT("layout"), ZOOM_IN("zoom-in"), ZOOM_OUT("zoom-out"),
 
 		// additional images for Editor
-		ADD_PLACE("add-circle"), ADD_TRANSITION("add-square"), ADD_EDGE("arc"), DELETE_COMPONENT("erase"),
-		OPEN_VIEWER("eye"), REMOVE_EDGE("remove-edge"), ADD_LABEL("label"), AUTO_LAYOUT("auto-layout"), TREE_LAYOUT("tree-layout"), CIRCLE_LAYOUT("circle-layout");
+		ADD_PLACE("add-circle"), ADD_TRANSITION("add-square"), ADD_EDGE("arc"), ADD_EDGE_HIGHLIGHT("arc-highlight"),
+		DELETE_COMPONENT("erase"), OPEN_VIEWER("eye"), REMOVE_EDGE("remove-edge"),
+		REMOVE_EDGE_HIGHLIGHT("remove-edge-highlight"), ADD_LABEL("label"), AUTO_LAYOUT("auto-layout"),
+		TREE_LAYOUT("tree-layout"), CIRCLE_LAYOUT("circle-layout"), DESIGN("design");
 
 		private String name;
 
@@ -363,36 +421,141 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	public void toggleAddEdgeButton() {
-		if (addEdgeButton.getBackground() == buttonDefaultColor) {
-			addEdgeButton.setBackground(buttonHighlightColor);
-			if (removeEdgeButton.getBackground() == buttonHighlightColor)
-				removeEdgeButton.setBackground(buttonDefaultColor);
 
-		} else
-			addEdgeButton.setBackground(buttonDefaultColor);
+		if (addEdgeButton.getColor() == buttonDefaultColor || addEdgeButton.getColor() == null) {
+			addEdgeButton.setColor(buttonHighlightColor);
+			if (removeEdgeButton.getColor() == buttonHighlightColor) {
+				removeEdgeButton.setColor(buttonDefaultColor);
+
+			}
+		} else {
+			addEdgeButton.setColor(buttonDefaultColor);
+		}
 	}
 
 	public void toggleRemoveEdgeButton() {
-		if (removeEdgeButton.getBackground() == buttonDefaultColor) {
-			removeEdgeButton.setBackground(buttonHighlightColor);
-			if (addEdgeButton.getBackground() == buttonHighlightColor)
-				addEdgeButton.setBackground(buttonDefaultColor);
-		} else
-			removeEdgeButton.setBackground(buttonDefaultColor);
+		if (removeEdgeButton.getColor() == buttonDefaultColor || removeEdgeButton.getColor() == null) {
+			removeEdgeButton.setColor(buttonHighlightColor);
+			if (addEdgeButton.getColor() == buttonHighlightColor) {
+				addEdgeButton.setColor(buttonDefaultColor);
+			}
+		} else {
+			removeEdgeButton.setColor(buttonDefaultColor);
+		}
+	}
+
+	public void toggleAutoLayoutButton() {
+
+		if (toggleAutoLayoutButton.getColor() == buttonDefaultColor || toggleAutoLayoutButton.getColor() == null) {
+			toggleAutoLayoutButton.setColor(buttonHighlightColor);
+
+			if (toggleCircleLayoutButton.getColor() == buttonHighlightColor)
+				toggleCircleLayoutButton.setColor(buttonDefaultColor);
+			if (toggleTreeLayoutButton.getColor() == buttonHighlightColor)
+				toggleTreeLayoutButton.setColor(buttonDefaultColor);
+
+		} else {
+			toggleAutoLayoutButton.setColor(buttonDefaultColor);
+		}
+	}
+
+	public void toggleTreeLayoutButton() {
+
+		if (toggleTreeLayoutButton.getColor() == buttonDefaultColor || toggleTreeLayoutButton.getColor() == null) {
+			toggleTreeLayoutButton.setColor(buttonHighlightColor);
+			if (toggleCircleLayoutButton.getColor() == buttonHighlightColor)
+				toggleCircleLayoutButton.setColor(buttonDefaultColor);
+			if (toggleAutoLayoutButton.getColor() == buttonHighlightColor)
+				toggleAutoLayoutButton.setColor(buttonDefaultColor);
+
+		} else {
+			toggleTreeLayoutButton.setColor(buttonDefaultColor);
+		}
+	}
+
+	public void toggleCircleLayoutButton() {
+
+		if (toggleCircleLayoutButton.getColor() == buttonDefaultColor || toggleCircleLayoutButton.getColor() == null) {
+			toggleCircleLayoutButton.setColor(buttonHighlightColor);
+			if (toggleTreeLayoutButton.getColor() == buttonHighlightColor)
+				toggleTreeLayoutButton.setColor(buttonDefaultColor);
+			if (toggleAutoLayoutButton.getColor() == buttonHighlightColor)
+				toggleAutoLayoutButton.setColor(buttonDefaultColor);
+
+		} else {
+			toggleCircleLayoutButton.setColor(buttonDefaultColor);
+		}
 	}
 
 	public void resetButtons() {
-		addEdgeButton.setBackground(buttonDefaultColor);
-		removeEdgeButton.setBackground(buttonDefaultColor);
+
+		addEdgeButton.setColor(buttonDefaultColor);
+		removeEdgeButton.setColor(buttonDefaultColor);
+		undoButton.setColor(buttonDefaultColor);
+		redoButton.setColor(buttonDefaultColor);
+
+		toggleAutoLayoutButton.setColor(buttonDefaultColor);
+		toggleCircleLayoutButton.setColor(buttonDefaultColor);
+		toggleTreeLayoutButton.setColor(buttonDefaultColor);
+
 	}
 
-	public void setToolbarTo(Editor editor) {
+	public void setToolbarTo(PetrinetPanel panel, LayoutTypes layoutType) {
+
+		JButton button = new JButton();
+		
+		buttonDefaultColor = button.getBackground();
+		
+		LookAndFeel laf = UIManager.getLookAndFeel();
+
+		if (laf.getName().equals("Nimbus"))
+			buttonHighlightColor = new Color(190, 185, 180);
+		else
+			buttonHighlightColor = Color.LIGHT_GRAY;
+
 		resetButtons();
 
+		if (layoutType == LayoutTypes.AUTOMATIC)
+			toggleAutoLayoutButton();
+		if (layoutType == LayoutTypes.CIRCLE)
+			toggleCircleLayoutButton();
+		if (layoutType == LayoutTypes.TREE)
+			toggleTreeLayoutButton();
+
+		if (panel == null)
+			return;
+
+		PetrinetController controller = panel.getController();
+
+		Editor editor = controller.getEditor();
 		if (editor.addsEdge())
 			toggleAddEdgeButton();
 		if (editor.removesEdge())
 			toggleRemoveEdgeButton();
+
+		PetrinetQueue queue = controller.getPetrinetQueue();
+
+		if (!queue.isFirstState())
+			toggleUndoButton();
+		if (queue.hasNext())
+			toggleRedoButton();
+
+		setToolbarMode(controller.getToolbarMode());
+	}
+
+	public void toggleRedoButton() {
+
+		if (redoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
+			redoButton.setColor(buttonHighlightColor);
+		else
+			redoButton.setColor(buttonDefaultColor);
+	}
+
+	public void toggleUndoButton() {
+		if (undoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
+			undoButton.setColor(buttonHighlightColor);
+		else
+			undoButton.setColor(buttonDefaultColor);
 	}
 
 }
