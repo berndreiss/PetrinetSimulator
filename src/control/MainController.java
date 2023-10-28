@@ -72,7 +72,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
-				
+
 				parent.setStatusLabel(getStatusLabel());
 				setToolbarMode(currentPetrinetPanel.getController().getToolbarMode());
 
@@ -747,43 +747,45 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	@Override
 	public void onToggleAutoLayout() {
-		if (layoutType != LayoutTypes.AUTOMATIC) {
-			layoutType = LayoutTypes.AUTOMATIC;
+		if (layoutType == LayoutTypes.AUTOMATIC)
+			return;
+		layoutType = LayoutTypes.AUTOMATIC;
 
-			parent.getToolbar().toggleAutoLayoutButton();
-			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp : parent.getTabbedPane().getComponents())
-					((PetrinetPanel) comp).setLayoutType(layoutType);
-			}
+		parent.getToolbar().toggleAutoLayoutButton();
+		if (parent.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : parent.getTabbedPane().getComponents())
+				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-
+		onSetDefault();
 	}
 
 	@Override
 	public void onToggleTreeLayout() {
-		if (layoutType != LayoutTypes.TREE) {
-			layoutType = LayoutTypes.TREE;
+		if (layoutType == LayoutTypes.TREE)
+			return;
+		layoutType = LayoutTypes.TREE;
 
-			parent.getToolbar().toggleTreeLayoutButton();
+		parent.getToolbar().toggleTreeLayoutButton();
 
-			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp : parent.getTabbedPane().getComponents())
-					((PetrinetPanel) comp).setLayoutType(layoutType);
-			}
+		if (parent.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : parent.getTabbedPane().getComponents())
+				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
+		onSetDefault();
 	}
 
 	@Override
 	public void onToggleCircleLayout() {
-		if (layoutType != LayoutTypes.CIRCLE) {
-			layoutType = LayoutTypes.CIRCLE;
-			parent.getToolbar().toggleCircleLayoutButton();
+		if (layoutType == LayoutTypes.CIRCLE)
+			return;
+		layoutType = LayoutTypes.CIRCLE;
+		parent.getToolbar().toggleCircleLayoutButton();
 
-			if (parent.getTabbedPane().getTabCount() != 0) {
-				for (Component comp : parent.getTabbedPane().getComponents())
-					((PetrinetPanel) comp).setLayoutType(layoutType);
-			}
+		if (parent.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : parent.getTabbedPane().getComponents())
+				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
+		onSetDefault();
 	}
 
 	@Override

@@ -45,6 +45,9 @@ public class ReachabilityGraphModel {
 
 	public Added addNewState(Petrinet petrinet, Transition t) {
 
+		if (petrinet == null || !petrinet.hasPlaces())
+			return null;
+		
 		Added added = Added.NOTHING;
 
 		PetrinetState petrinetState;

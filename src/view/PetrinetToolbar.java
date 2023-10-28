@@ -91,6 +91,7 @@ public class PetrinetToolbar extends JToolBar {
 					}
 					String eventString = evt.getNewValue().toString();
 
+					
 					if (!eventString.contains("JPanel"))
 						return;
 
@@ -108,24 +109,28 @@ public class PetrinetToolbar extends JToolBar {
 						glue.setVisible(true);
 						separator.setOrientation(SwingConstants.VERTICAL);
 
-						if (!startUp) {
+						if (!startUp) 
 							separator.setVisible(true);
 
-						}
+						
 						if (startUp)
 							startUp = false;
+						controller.onSetDefault();
 
 					} else if (getOrientation() == SwingConstants.VERTICAL) {
 						controller.onSetDefault();
-						setLayout(layout);
+						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.Y_AXIS));
 						glue.setVisible(false);
 						separator.setOrientation(SwingConstants.HORIZONTAL);
 						separator.setVisible(true);
 						startUp = true;
+						controller.onSetDefault();
 					} else {
+						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
 						separator.setVisible(false);
 						glue.setVisible(true);
 						startUp = false;
+						controller.onSetDefault();
 					}
 
 				}
@@ -226,12 +231,7 @@ public class PetrinetToolbar extends JToolBar {
 
 		// Viewer alternative buttons
 
-		this.add(analyseButton);
 		this.add(restartButton);
-		this.add(resetButton);
-		this.add(undoButton);
-		this.add(redoButton);
-		this.add(clearTextButton);
 
 		//
 
@@ -257,6 +257,12 @@ public class PetrinetToolbar extends JToolBar {
 		add(separator);
 
 		// ReachabilityGraph buttons
+
+		this.add(analyseButton);
+		this.add(resetButton);
+		this.add(undoButton);
+		this.add(redoButton);
+		this.add(clearTextButton);
 
 		this.add(zoomInReachabilityButton);
 		this.add(zoomOutReachabilityButton);

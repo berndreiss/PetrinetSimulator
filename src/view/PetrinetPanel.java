@@ -86,11 +86,13 @@ public class PetrinetPanel extends JPanel {
 		panel.setLayout(new BorderLayout());
 		reachabilityViewPanel = GraphStreamView.initGraphStreamView(controller.getReachabilityGraph(), controller, panel, layoutType);
 		panel.add(reachabilityViewPanel, BorderLayout.CENTER);
+		graphSplitPane.setVisible(false);
 		graphSplitPane.remove(graphSplitPane.getRightComponent());
 
-		graphSplitPane.setRightComponent(panel);
-
 		controller.resetReachabilityGraph();
+		graphSplitPane.setRightComponent(panel);
+graphSplitPane.setVisible(true);
+
 
 	}
 	public ResizableSplitPane getGraphSplitPane() {

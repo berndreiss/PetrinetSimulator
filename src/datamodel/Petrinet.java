@@ -51,7 +51,7 @@ public class Petrinet {
 	// set element relative to others
 	public void setAddedElementPosition(PetrinetElement pe) {
 
-		if (pe == null || containsElementWithId(pe) || (places.size() + transitions.size()) == 1)
+		if (pe == null || (places.size() + transitions.size()) == 1)
 			return;
 
 		double x = Double.MAX_VALUE;
