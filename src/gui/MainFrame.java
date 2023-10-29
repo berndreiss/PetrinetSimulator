@@ -19,14 +19,21 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import control.MainController;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MainFrame.
+ */
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final double GRAPH_PERCENT = 0.5;
+	/** The Constant GRAPH_PERCENT. */
+	static final double GRAPH_PERCENT = 0.5;
 
+	/** The Constant SPLIT_PANE_DEFAULT_RATIO. */
 	public static final double SPLIT_PANE_DEFAULT_RATIO = 0.8;
 	
+	/** The Constant GRAPH_SPLIT_PANE_DEFAULT_RATIO. */
 	public static final double GRAPH_SPLIT_PANE_DEFAULT_RATIO = 0.5;
 
 	private ResizableSplitPane splitPane;
@@ -42,6 +49,11 @@ public class MainFrame extends JFrame {
 	private MainController controller;
 
 	
+	/**
+	 * Instantiates a new main frame.
+	 *
+	 * @param title the title
+	 */
 	public MainFrame(String title) {
 		super(title);
 		
@@ -93,32 +105,63 @@ public class MainFrame extends JFrame {
 
 	}
 
+	/**
+	 * Gets the split pane.
+	 *
+	 * @return the split pane
+	 */
 	public ResizableSplitPane getSplitPane() {
 		return splitPane;
 	}
 
+	/**
+	 * Prints the.
+	 *
+	 * @param s the s
+	 */
 	public void print(String s) {
 		textArea.append(s);
 	}
 
+	/**
+	 * Clear text area.
+	 */
 	public void clearTextArea() {
 		textArea.setText("");
 	}
 
+	/**
+	 * Sets the status label.
+	 *
+	 * @param status the new status label
+	 */
 	public void setStatusLabel(String status) {
 		statusLabel.setText(status);
 	}
 	
 	
+	/**
+	 * Gets the tabbed pane.
+	 *
+	 * @return the tabbed pane
+	 */
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
 
 
+	/**
+	 * Gets the toolbar.
+	 *
+	 * @return the toolbar
+	 */
 	public PetrinetToolbar getToolbar() {
 		return toolbar;
 	}
 
+	/**
+	 * Change look and feel.
+	 */
 	public void changeLookAndFeel() {
 
 		LookAndFeel laf = UIManager.getLookAndFeel();

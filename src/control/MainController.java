@@ -14,19 +14,23 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import core.PetrinetAnalyser;
+import exceptions.DuplicateIdException;
+import exceptions.PetrinetException;
 import gui.MainFrame;
-import gui.MenuInterface;
+import gui.PetrinetMenuInterface;
+import gui.PetrinetPanel;
 import gui.PetrinetToolbarInterface;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
-import gui.ToolbarToggleListener;
-import petrinet.DuplicateIdException;
-import petrinet.PetrinetAnalyser;
-import petrinet.PetrinetException;
-import petrinet.PetrinetPanel;
+import listeners.ToolbarToggleListener;
 import reachabilityGraphLayout.LayoutTypes;
 
-public class MainController implements MenuInterface, PetrinetToolbarInterface, ToolbarToggleListener {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MainController.
+ */
+public class MainController implements PetrinetMenuInterface, PetrinetToolbarInterface, ToolbarToggleListener {
 
 	// TODO warn if unsaved changes
 
@@ -39,6 +43,11 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	private LayoutTypes layoutType = LayoutTypes.TREE;
 
+	/**
+	 * Instantiates a new main controller.
+	 *
+	 * @param parent the parent
+	 */
 	public MainController(MainFrame parent) {
 		this.parent = parent;
 
@@ -79,14 +88,29 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	
 	//GETTER METHODS
 	
+	/**
+	 * Gets the frame.
+	 *
+	 * @return the frame
+	 */
 	public MainFrame getFrame() {
 		return parent;
 	}
 	
+	/**
+	 * Gets the current panel.
+	 *
+	 * @return the current panel
+	 */
 	public PetrinetPanel getCurrentPanel() {
 		return currentPetrinetPanel;
 	}
 
+	/**
+	 * Gets the layout type.
+	 *
+	 * @return the layout type
+	 */
 	public LayoutTypes getLayoutType() {
 		return layoutType;
 	}
@@ -409,7 +433,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	public void onCloseEditor() {
 		setToolbarMode(ToolbarMode.VIEWER);
 	}
-
+	 
 	@Override
 	public void onInfo() {
 
@@ -462,6 +486,9 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		File[] files = directory.listFiles();
 
+		if (files == null)
+			return null;
+		
 		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
 
 		for (File f : files)
@@ -520,6 +547,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	// EDITOR RELATED METHODS
 
+
 	@Override
 	public void onAddPlace() {
 		PetrinetController controller = currentPetrinetPanel.getController();
@@ -572,12 +600,14 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		setStatusLabel();
 	}
 
+
 	@Override
 	public void onRemoveComponent() {
 		PetrinetController controller = currentPetrinetPanel.getController();
 		controller.getEditor().removeComponent();
 		setStatusLabel();
 	}
+
 
 	@Override
 	public void onAddEdge() {
@@ -602,6 +632,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 			getFrame().getToolbar().toggleAddEdgeButton();
 	}
 
+
 	@Override
 	public void onEdgeAdded() {
 		getFrame().getToolbar().toggleAddEdgeButton();
@@ -609,11 +640,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	}
 
+
 	@Override
 	public void onRemoveEdge() {
 		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
 		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
+
 
 	@Override
 	public void onEdgeRemoved() {
@@ -621,6 +654,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		setStatusLabel();
 
 	}
+
 
 	@Override
 	public void onAddLabel() {
@@ -637,6 +671,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		setStatusLabel();
 	}
 
+
 	@Override
 	public void onZoomIn() {
 		if (currentPetrinetPanel == null)
@@ -644,6 +679,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		currentPetrinetPanel.zoomInPetrinet();
 	}
+
 
 	@Override
 	public void onZoomOut() {
@@ -655,6 +691,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	// REACHABILITY GRAPH RELATED METHODS
 
+
 	@Override
 	public void onAnalyse() {
 		if (currentPetrinetPanel == null)
@@ -665,18 +702,21 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		parent.print(printResults(result));
 	}
 
+
 	@Override
 	public void onReset() {
 		if (currentPetrinetPanel == null)
 			return;
-
+		currentPetrinetPanel.resetReachabilityZoom();
 		currentPetrinetPanel.getController().resetReachabilityGraph();
 	}
+
 
 	@Override
 	public void onClear() {
 		parent.clearTextArea();
 	}
+
 
 	@Override
 	public void onUndo() {
@@ -685,12 +725,14 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		currentPetrinetPanel.getController().getPetrinetQueue().goBack();
 	}
 
+
 	@Override
 	public void onRedo() {
 		if (currentPetrinetPanel == null)
 			return;
 		currentPetrinetPanel.getController().getPetrinetQueue().goForward();
 	}
+
 
 	@Override
 	public void onZoomInReachability() {
@@ -700,6 +742,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		currentPetrinetPanel.zoomInReachability();
 	}
 
+
 	@Override
 	public void onZoomOutReachability() {
 		if (currentPetrinetPanel == null)
@@ -707,6 +750,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		currentPetrinetPanel.zoomOutReachability();
 	}
+
 
 	@Override
 	public void onToggleTreeLayout() {
@@ -737,6 +781,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		onSetDefault();
 	}
 
+
 	@Override
 	public void onToggleAutoLayout() {
 		if (layoutType == LayoutTypes.AUTOMATIC)
@@ -751,6 +796,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		onSetDefault();
 	}
 
+
 	@Override
 	public void onUndoChanged() {
 
@@ -763,6 +809,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	// DESIGN/WINDOW RELATED METHODS
+
 
 	@Override
 	public void onSetDefault() {

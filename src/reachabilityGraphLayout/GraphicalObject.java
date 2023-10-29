@@ -1,35 +1,96 @@
 package reachabilityGraphLayout;
 
 
-public abstract class GraphicalObject implements Comparable<GraphicalObject> {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GraphicalObject.
+ */
+abstract class GraphicalObject implements Comparable<GraphicalObject> {
+	
+	/**
+	 * Left lower corner.
+	 *
+	 * @return the layout point
+	 */
 	abstract LayoutPoint leftLowerCorner();
 
+	/**
+	 * Left upper corner.
+	 *
+	 * @return the layout point
+	 */
 	abstract LayoutPoint leftUpperCorner();
 
+	/**
+	 * Right lower corner.
+	 *
+	 * @return the layout point
+	 */
 	abstract LayoutPoint rightLowerCorner();
 
+	/**
+	 * Right upper corner.
+	 *
+	 * @return the layout point
+	 */
 	abstract LayoutPoint rightUpperCorner();
 
+	/**
+	 * Gets the x.
+	 *
+	 * @return the x
+	 */
 	abstract double getX();
 
+	/**
+	 * Gets the y.
+	 *
+	 * @return the y
+	 */
 	abstract double getY();
 
-	public LayoutLine leftSide() {
+	/**
+	 * Left side.
+	 *
+	 * @return the layout line
+	 */
+	LayoutLine leftSide() {
 		return new LayoutLine(leftLowerCorner(), leftUpperCorner());
 	}
 
-	public LayoutLine rightSide() {
+	/**
+	 * Right side.
+	 *
+	 * @return the layout line
+	 */
+	LayoutLine rightSide() {
 		return new LayoutLine(rightLowerCorner(), rightUpperCorner());
 	}
 
-	public LayoutLine upperSide() {
+	/**
+	 * Upper side.
+	 *
+	 * @return the layout line
+	 */
+	LayoutLine upperSide() {
 		return new LayoutLine(leftUpperCorner(), rightUpperCorner());
 	}
 
+	/**
+	 * Lower side.
+	 *
+	 * @return the layout line
+	 */
 	public LayoutLine lowerSide() {
 		return new LayoutLine(leftLowerCorner(), rightLowerCorner());
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @param go the go
+	 * @return the int
+	 */
 	@Override
 	public int compareTo(GraphicalObject go) {
 		if (this.getX() < go.getX())

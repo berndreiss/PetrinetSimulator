@@ -1,10 +1,15 @@
-package petrinet;
+package core;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import listeners.ReachabilityStateChangeListener;
 import util.IterableMap;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ReachabilityGraphModel.
+ */
 public class ReachabilityGraphModel {
 
 	private PetrinetState currentState;
@@ -17,32 +22,70 @@ public class ReachabilityGraphModel {
 
 	private ReachabilityStateChangeListener stateChangeListener;
 
+	/**
+	 * Instantiates a new reachability graph model.
+	 *
+	 * @param petrinet the petrinet
+	 */
 	public ReachabilityGraphModel(Petrinet petrinet) {
 
 		petrinetStates = new IterableMap<String, PetrinetState>();
 		addNewState(petrinet, null);
 	}
 
+	/**
+	 * Gets the states.
+	 *
+	 * @return the states
+	 */
 	public Iterable<PetrinetState> getStates() {
 		return petrinetStates;
 	}
 
+	/**
+	 * Gets the state.
+	 *
+	 * @param state the state
+	 * @return the state
+	 */
 	public PetrinetState getState(String state) {
 		return petrinetStates.get(state);
 	}
 
+	/**
+	 * Gets the current petrinet state.
+	 *
+	 * @return the current petrinet state
+	 */
 	public PetrinetState getCurrentPetrinetState() {
 		return currentState;
 	}
 
+	/**
+	 * Gets the current state.
+	 *
+	 * @return the current state
+	 */
 	public PetrinetState getCurrentState() {
 		return currentState;
 	}
 
+	/**
+	 * Sets the current state.
+	 *
+	 * @param state the new current state
+	 */
 	public void setCurrentState(PetrinetState state) {
 		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
 	}
 
+	/**
+	 * Adds the new state.
+	 *
+	 * @param petrinet the petrinet
+	 * @param t the t
+	 * @return the added
+	 */
 	public Added addNewState(Petrinet petrinet, Transition t) {
 
 		if (petrinet == null || !petrinet.hasPlaces())
@@ -91,7 +134,12 @@ public class ReachabilityGraphModel {
 
 	}
 
-	public boolean checkIfCurrentStateIsBackwardsValid() {
+	/**
+	 * Check if current state is backwards valid.
+	 *
+	 * @return true, if successful
+	 */
+	boolean checkIfCurrentStateIsBackwardsValid() {
 
 		if (currentState.getPredecessorsSize() == 0)
 			return true;
@@ -131,22 +179,38 @@ public class ReachabilityGraphModel {
 
 	}
 
-	public boolean hasState(String id) {
-		return petrinetStates.containsKey(id);
-	}
+	
 
+	/**
+	 * Sets the state change listener.
+	 *
+	 * @param reachabilityStateChangeListener the new state change listener
+	 */
 	public void setStateChangeListener(ReachabilityStateChangeListener reachabilityStateChangeListener) {
 		this.stateChangeListener = reachabilityStateChangeListener;
 	}
 
+	/**
+	 * Gets the invalid state.
+	 *
+	 * @return the invalid state
+	 */
 	public PetrinetState getInvalidState() {
 		return invalidState;
 	}
 
+	/**
+	 * Gets the initial state.
+	 *
+	 * @return the initial state
+	 */
 	public PetrinetState getInitialState() {
 		return initialState;
 	}
 
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		reset(null);
 	}
@@ -187,6 +251,11 @@ public class ReachabilityGraphModel {
 			stateChangeListener.onRemove(ps);
 	}
 
+	/**
+	 * Removes the state.
+	 *
+	 * @param state the state
+	 */
 	public void removeState(PetrinetState state) {
 		if (currentState == state)
 			currentState = null;
@@ -201,6 +270,9 @@ public class ReachabilityGraphModel {
 			stateChangeListener.onRemove(state);
 	}
 
+	/**
+	 * Sets the initial.
+	 */
 	public void setInitial() {
 		setCurrentState(initialState);
 	}
@@ -212,11 +284,22 @@ public class ReachabilityGraphModel {
 //	}
 
 	
-	public void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
+	/**
+ * Removes the edge.
+ *
+ * @param lastState the last state
+ * @param state the state
+ * @param transition the transition
+ */
+void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
 		lastState.removeSuccessorEdge(state, transition, stateChangeListener);
 		state.removePredecessorEdge(lastState, transition, stateChangeListener);
 	}
 
+	//TODO REMOVE
+	/**
+	 * Prints the.
+	 */
 	public void print() {
 		for (PetrinetState ps : petrinetStates)
 			ps.print();

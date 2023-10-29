@@ -1,5 +1,4 @@
-package petrinet;
-
+package core;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -8,7 +7,9 @@ import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
 import control.PetrinetController;
+import listeners.PetrinetComponentChangedListener;
 
+// TODO: Auto-generated Javadoc
 /**
  * Die Klasse DemoGraph implementiert einen Graphen mittels GraphStream. Die
  * Klasse erbt von <i>MultiGraph</i> (nicht von Graph), um auch mehrere Kanten
@@ -55,15 +56,15 @@ public class PetrinetGraph extends MultiGraph {
 	/**
 	 * Sprite in X-Form, das zur Markierung das zuletzt angeklickten Knotens dient
 	 */
-	private Sprite spriteMark;
 
 	private PetrinetElement markedNode;
-
 
 	/**
 	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
 	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
 	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach C.
+	 *
+	 * @param petrinetController the petrinet controller
 	 */
 	public PetrinetGraph(PetrinetController petrinetController) {
 		super("Petrinet");
@@ -72,7 +73,6 @@ public class PetrinetGraph extends MultiGraph {
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
-
 
 		petrinetController.getPetrinet().setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
 
@@ -157,7 +157,6 @@ public class PetrinetGraph extends MultiGraph {
 
 	}
 
-
 	private Node addPetrinetElement(PetrinetElement e) {
 
 		Node node = this.addNode(e.getId());
@@ -216,39 +215,12 @@ public class PetrinetGraph extends MultiGraph {
 	}
 
 	/**
-	 * Das Hervorheben des Knotens wegnehmen oder setzen.
-	 * 
-	 * @param id Id des Knotens, bei dem das Hervorheben getauscht werden soll
+	 * Place token label.
+	 *
+	 * @param numberOfTokens the number of tokens
+	 * @return the string
 	 */
-	public void toggleNodeHighlight(String id) {
-
-		Node node = this.getNode(id);
-
-		if (node.hasAttribute("ui.class")) {
-			node.removeAttribute("ui.class");
-		} else {
-			node.setAttribute("ui.class", "highlight");
-		}
-	}
-
-	/**
-	 * Markiert den zuletzt angeklickten Knoten mit einem X-förmigen Sprite.
-	 * 
-	 * @param id Id des angeklickten Knotens
-	 */
-	public void markLastClickedNode(String id) {
-
-		if (spriteMark == null) {
-			// Sprite erzeugen, das zur Markierung des zuletzt angeklickten Knotens dient
-			spriteMark = spriteMan.addSprite("sMark");
-			spriteMark.setAttribute("ui.class", "mark");
-		}
-
-		// Sprite auf Knoten setzen
-		spriteMark.attachToNode(id);
-	}
-
-	public static String placeTokenLabel(int numberOfTokens) {
+	private static String placeTokenLabel(int numberOfTokens) {
 		if (numberOfTokens == 0)
 			return "";
 
@@ -257,6 +229,11 @@ public class PetrinetGraph extends MultiGraph {
 		return String.valueOf(numberOfTokens);
 	}
 
+	/**
+	 * Toggle node mark.
+	 *
+	 * @param pe the pe
+	 */
 	public void toggleNodeMark(PetrinetElement pe) {
 
 		if (pe == null) {
@@ -271,7 +248,7 @@ public class PetrinetGraph extends MultiGraph {
 
 			return;
 		}
-		System.out.println(pe==null);
+		System.out.println(pe == null);
 
 		if (pe == markedNode) {
 			if (pe instanceof Transition)
@@ -305,18 +282,23 @@ public class PetrinetGraph extends MultiGraph {
 		markedNode = pe;
 	}
 
+	/**
+	 * Gets the marked node.
+	 *
+	 * @return the marked node
+	 */
 	public PetrinetElement getMarkedNode() {
 
 		return markedNode;
 	}
 
-	public void reset() {
-
-		toggleNodeMark(null);
-
-	}
-
-	public static String getElementLabel(PetrinetElement e) {
+	/**
+	 * Gets the element label.
+	 *
+	 * @param e the e
+	 * @return the element label
+	 */
+	static String getElementLabel(PetrinetElement e) {
 
 		String base = "[" + e.getId() + "] " + e.getName();
 		if (e instanceof Place)
@@ -326,6 +308,11 @@ public class PetrinetGraph extends MultiGraph {
 
 	}
 
+	/**
+	 * Sets the transition normal.
+	 *
+	 * @param pe the new transition normal
+	 */
 	public void setTransitionNormal(PetrinetElement pe) {
 		if (pe == null || !(pe instanceof Transition))
 			return;

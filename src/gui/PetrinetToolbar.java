@@ -21,11 +21,14 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import control.PetrinetController;
-import petrinet.Editor;
-import petrinet.PetrinetPanel;
-import petrinet.PetrinetQueue;
+import core.Editor;
+import core.PetrinetQueue;
 import reachabilityGraphLayout.LayoutTypes;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PetrinetToolbar.
+ */
 public class PetrinetToolbar extends JToolBar {
 
 	private static final long serialVersionUID = 1L;
@@ -61,7 +64,12 @@ public class PetrinetToolbar extends JToolBar {
 
 	private boolean startUp = true;
 
-	public PetrinetToolbar(PetrinetToolbarInterface controller) {
+	/**
+	 * Instantiates a new petrinet toolbar.
+	 *
+	 * @param controller the controller
+	 */
+	PetrinetToolbar(PetrinetToolbarInterface controller) {
 
 //		setFloatable(false);
 
@@ -211,7 +219,8 @@ public class PetrinetToolbar extends JToolBar {
 				"zoom out");
 
 		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
-				"Change between Metal and Nimbus feel and look (Caution: can only be changed if toolbar is attached to the top -> button will disappear if toolbar is detached)", "change design");
+				"Change between Metal and Nimbus feel and look (Caution: can only be changed if toolbar is attached to the top -> button will disappear if toolbar is detached)",
+				"change design");
 		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
 				"editor");
 
@@ -308,6 +317,11 @@ public class PetrinetToolbar extends JToolBar {
 
 	}
 
+	/**
+	 * Sets the toolbar mode.
+	 *
+	 * @param toolbarMode the new toolbar mode
+	 */
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 
 		if (toolbarMode == ToolbarMode.VIEWER) {
@@ -434,24 +448,90 @@ public class PetrinetToolbar extends JToolBar {
 
 	}
 
-	public enum ToolbarImage {
-		OPEN("folder"), SAVE("save"), ANALYSE("stats"), RESTART("restart"), RESET("delete"), PLUS("plus"),
-		MINUS("minus"), LEFT("left"), RIGHT("right"), UNDO("undo"), REDO("redo"), CLEAR_TEXT("input"), EDITOR("edit"),
-		DEFAULT("layout"), ZOOM_IN("zoom-in"), ZOOM_OUT("zoom-out"),
+	/**
+	 * The Enum ToolbarImage.
+	 */
+	private enum ToolbarImage {
 
+		/** The open. */
+		OPEN("folder"),
+		/** The save. */
+		SAVE("save"),
+		/** The analyse. */
+		ANALYSE("stats"),
+		/** The restart. */
+		RESTART("restart"),
+		/** The reset. */
+		RESET("delete"),
+		/** The plus. */
+		PLUS("plus"),
+
+		/** The minus. */
+		MINUS("minus"),
+		/** The left. */
+		LEFT("left"),
+		/** The right. */
+		RIGHT("right"),
+		/** The undo. */
+		UNDO("undo"),
+		/** The redo. */
+		REDO("redo"),
+		/** The clear text. */
+		CLEAR_TEXT("input"),
+		/** The editor. */
+		EDITOR("edit"),
+
+		/** The default. */
+		DEFAULT("layout"),
+		/** The zoom in. */
+		ZOOM_IN("zoom-in"),
+		/** The zoom out. */
+		ZOOM_OUT("zoom-out"),
+
+		/** The add place. */
 		// additional images for Editor
-		ADD_PLACE("add-circle"), ADD_TRANSITION("add-square"), ADD_EDGE("arc"), ADD_EDGE_HIGHLIGHT("arc-highlight"),
-		DELETE_COMPONENT("erase"), OPEN_VIEWER("eye"), REMOVE_EDGE("remove-edge"),
-		REMOVE_EDGE_HIGHLIGHT("remove-edge-highlight"), ADD_LABEL("label"), AUTO_LAYOUT("auto-layout"),
-		TREE_LAYOUT("tree-layout"), CIRCLE_LAYOUT("circle-layout"), DESIGN("design");
+		ADD_PLACE("add-circle"),
+		/** The add transition. */
+		ADD_TRANSITION("add-square"),
+		/** The add edge. */
+		ADD_EDGE("arc"),
+
+		/** The delete component. */
+		DELETE_COMPONENT("erase"),
+		/** The open viewer. */
+		OPEN_VIEWER("eye"),
+		/** The remove edge. */
+		REMOVE_EDGE("remove-edge"),
+
+		/** The add label. */
+		ADD_LABEL("label"),
+		/** The auto layout. */
+		AUTO_LAYOUT("auto-layout"),
+
+		/** The tree layout. */
+		TREE_LAYOUT("tree-layout"),
+		/** The circle layout. */
+		CIRCLE_LAYOUT("circle-layout"),
+		/** The design. */
+		DESIGN("design");
 
 		private String name;
 
+		/**
+		 * Instantiates a new toolbar image.
+		 *
+		 * @param name the name
+		 */
 		ToolbarImage(String name) {
 			this.name = name;
 
 		}
 
+		/**
+		 * To string.
+		 *
+		 * @return the string
+		 */
 		@Override
 		public String toString() {
 			return name;
@@ -459,6 +539,9 @@ public class PetrinetToolbar extends JToolBar {
 
 	}
 
+	/**
+	 * Toggle add edge button.
+	 */
 	public void toggleAddEdgeButton() {
 
 		if (addEdgeButton.getColor() == buttonDefaultColor || addEdgeButton.getColor() == null) {
@@ -472,6 +555,9 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
+	/**
+	 * Toggle remove edge button.
+	 */
 	public void toggleRemoveEdgeButton() {
 		if (removeEdgeButton.getColor() == buttonDefaultColor || removeEdgeButton.getColor() == null) {
 			removeEdgeButton.setColor(buttonHighlightColor);
@@ -483,6 +569,9 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
+	/**
+	 * Toggle auto layout button.
+	 */
 	public void toggleAutoLayoutButton() {
 
 		if (toggleAutoLayoutButton.getColor() == buttonDefaultColor || toggleAutoLayoutButton.getColor() == null) {
@@ -498,6 +587,9 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
+	/**
+	 * Toggle tree layout button.
+	 */
 	public void toggleTreeLayoutButton() {
 
 		if (toggleTreeLayoutButton.getColor() == buttonDefaultColor || toggleTreeLayoutButton.getColor() == null) {
@@ -512,6 +604,9 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
+	/**
+	 * Toggle circle layout button.
+	 */
 	public void toggleCircleLayoutButton() {
 
 		if (toggleCircleLayoutButton.getColor() == buttonDefaultColor || toggleCircleLayoutButton.getColor() == null) {
@@ -526,7 +621,10 @@ public class PetrinetToolbar extends JToolBar {
 		}
 	}
 
-	public void resetButtons() {
+	/**
+	 * Reset buttons.
+	 */
+	private void resetButtons() {
 
 		addEdgeButton.setColor(buttonDefaultColor);
 		removeEdgeButton.setColor(buttonDefaultColor);
@@ -539,6 +637,12 @@ public class PetrinetToolbar extends JToolBar {
 
 	}
 
+	/**
+	 * Sets the toolbar to.
+	 *
+	 * @param panel      the panel
+	 * @param layoutType the layout type
+	 */
 	public void setToolbarTo(PetrinetPanel panel, LayoutTypes layoutType) {
 
 		JButton button = new JButton();
@@ -582,6 +686,9 @@ public class PetrinetToolbar extends JToolBar {
 		setToolbarMode(controller.getToolbarMode());
 	}
 
+	/**
+	 * Toggle redo button.
+	 */
 	public void toggleRedoButton() {
 
 		if (redoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
@@ -590,6 +697,9 @@ public class PetrinetToolbar extends JToolBar {
 			redoButton.setColor(buttonDefaultColor);
 	}
 
+	/**
+	 * Toggle undo button.
+	 */
 	public void toggleUndoButton() {
 		if (undoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
 			undoButton.setColor(buttonHighlightColor);

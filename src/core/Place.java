@@ -1,7 +1,9 @@
-package petrinet;
+package core;
 
+import listeners.NumberOfTokensListener;
 import util.IterableMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * Class that represents places in petri nets. Each place has a number of
  * tokens, an id and a name.
@@ -18,6 +20,11 @@ public class Place extends PetrinetElement {
 	private IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();// set of places
 	// that represent inputs from transitions
 
+	/**
+	 * Instantiates a new place.
+	 *
+	 * @param id the id
+	 */
 	protected Place(String id) {
 		super(id);
 	}
@@ -27,7 +34,7 @@ public class Place extends PetrinetElement {
 	 * 
 	 * @return number of tokens > 0.
 	 */
-	public boolean hasTokens() {
+	boolean hasTokens() {
 		return numberOfTokens > 0;
 	}
 
@@ -40,6 +47,11 @@ public class Place extends PetrinetElement {
 		return numberOfTokens;
 	}
 
+	/**
+	 * Sets the number of tokens.
+	 *
+	 * @param numberOfTokens the new number of tokens
+	 */
 	protected void setNumberOfTokens(int numberOfTokens) {
 
 		boolean hadNoTokens = hasTokens() ? false : true;
@@ -66,6 +78,11 @@ public class Place extends PetrinetElement {
 
 	}
 
+	/**
+	 * Sets the number of tokens listener.
+	 *
+	 * @param numberOfTokensListener the new number of tokens listener
+	 */
 	public void setNumberOfTokensListener(NumberOfTokensListener numberOfTokensListener) {
 		this.numberOfTokensListener = numberOfTokensListener;
 	}
@@ -79,8 +96,8 @@ public class Place extends PetrinetElement {
 
 	/**
 	 * Decrements the number of tokens by 1.
-	 * 
-	 * @throws OutOfTokensException Throws Exception when there are no tokens left.
+	 *
+	 * @return true, if successful
 	 */
 	protected boolean decrementTokens() {
 
@@ -95,33 +112,58 @@ public class Place extends PetrinetElement {
 
 	/**
 	 * Adds a place to the set of output places (postset).
-	 * 
-	 * @param p {@link Place} to be added as an Output.
+	 *
+	 * @param t the t
 	 */
 	protected void addOutput(Transition t) {
 		outputs.put(t.getId(), t);
 	}
 
+	/**
+	 * Adds the input.
+	 *
+	 * @param t the t
+	 */
 	protected void addInput(Transition t) {
 		inputs.put(t.getId(), t);
 	}
 
+	/**
+	 * Gets the outputs.
+	 *
+	 * @return the outputs
+	 */
 	protected Iterable<Transition> getOutputs() {
 		return outputs;
 	}
 
+	/**
+	 * Gets the inputs.
+	 *
+	 * @return the inputs
+	 */
 	protected Iterable<Transition> getInputs() {
 		return inputs;
 	}
 
-	public void removeOutput(Transition transition) {
+	/**
+	 * Removes the output.
+	 *
+	 * @param transition the transition
+	 */
+	void removeOutput(Transition transition) {
 		if (!outputs.containsKey(transition.getId()))
 			return;
 		outputs.remove(transition.getId());
 		transition.removeInput(this);
 	}
 
-	public void removeInput(Transition transition) {
+	/**
+	 * Removes the input.
+	 *
+	 * @param transition the transition
+	 */
+	void removeInput(Transition transition) {
 		if (!inputs.containsKey(transition.getId()))
 			return;
 		inputs.remove(transition.getId());

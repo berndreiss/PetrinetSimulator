@@ -6,12 +6,21 @@ import javax.swing.JMenuItem;
 
 
 
-public class PetrinetMenu extends JMenuBar {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PetrinetMenu.
+ */
+class PetrinetMenu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 
 
-	public PetrinetMenu(MenuInterface controller) {
+	/**
+	 * Instantiates a new petrinet menu.
+	 *
+	 * @param controller the controller
+	 */
+	PetrinetMenu(PetrinetMenuInterface controller) {
 
 		JMenu files = new JMenu("Files");
 		JMenu edit = new JMenu("Edit");

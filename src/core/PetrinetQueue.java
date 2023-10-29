@@ -1,8 +1,12 @@
-package petrinet;
+package core;
 
 
 import control.PetrinetController;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PetrinetQueue.
+ */
 public class PetrinetQueue {
 
 	private PetrinetState state;
@@ -14,6 +18,12 @@ public class PetrinetQueue {
 
 	private PetrinetController petrinetController;
 
+	/**
+	 * Instantiates a new petrinet queue.
+	 *
+	 * @param state the state
+	 * @param petrinetController the petrinet controller
+	 */
 	public PetrinetQueue(PetrinetState state, PetrinetController petrinetController) {
 		this.state = state;
 		this.petrinetController = petrinetController;
@@ -29,18 +39,40 @@ public class PetrinetQueue {
 		this.lastState = petrinetController.getPetrinetQueue();
 	}
 
+	/**
+	 * Gets the state.
+	 *
+	 * @return the state
+	 */
 	public PetrinetState getState() {
 		return state;
 	}
 
+	/**
+	 * Gets the transition.
+	 *
+	 * @return the transition
+	 */
 	public Transition getTransition() {
 		return transition;
 	}
 
-	public Added stateAdded() {
+	/**
+	 * State added.
+	 *
+	 * @return the added
+	 */
+	private Added stateAdded() {
 		return stateAdded;
 	}
 
+	/**
+	 * Push.
+	 *
+	 * @param state the state
+	 * @param stateAdded the state added
+	 * @param transition the transition
+	 */
 	public void push(PetrinetState state, Added stateAdded, Transition transition) {
 
 		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
@@ -54,6 +86,9 @@ public class PetrinetQueue {
 	}
 
 
+	/**
+	 * Go back.
+	 */
 	public void goBack() {
 		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
 		if (currentState.isFirstState())
@@ -79,6 +114,9 @@ public class PetrinetQueue {
 
 	}
 
+	/**
+	 * Go forward.
+	 */
 	public void goForward() {
 
 		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
@@ -112,15 +150,28 @@ public class PetrinetQueue {
 
 	}
 
+	/**
+	 * Checks if is first state.
+	 *
+	 * @return true, if is first state
+	 */
 	public boolean isFirstState() {
 		return lastState == null;
 
 	}
 
+	/**
+	 * Checks for next.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasNext() {
 		return nextState != null;
 	}
 
+	/**
+	 * Reset buttons.
+	 */
 	public void resetButtons() {
 		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
 
@@ -131,6 +182,9 @@ public class PetrinetQueue {
 
 	}
 
+	/**
+	 * Rewind.
+	 */
 	public void rewind() {
 
 		if (petrinetController.getPetrinetQueue().lastState == null)

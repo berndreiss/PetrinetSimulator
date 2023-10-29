@@ -4,25 +4,29 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import core.Added;
+import core.Editor;
+import core.PNMLParser;
+import core.Petrinet;
+import core.PetrinetAnalyser;
+import core.PetrinetElement;
+import core.PetrinetGraph;
+import core.PetrinetQueue;
+import core.PetrinetState;
+import core.Place;
+import core.ReachabilityGraph;
+import core.ReachabilityGraphModel;
+import core.Transition;
+import exceptions.PetrinetException;
 import gui.ToolbarMode;
-import gui.ToolbarToggleListener;
-import petrinet.Added;
-import petrinet.Editor;
-import petrinet.PNMLParser;
-import petrinet.Petrinet;
-import petrinet.PetrinetAnalyser;
-import petrinet.PetrinetElement;
-import petrinet.PetrinetException;
-import petrinet.PetrinetGraph;
-import petrinet.PetrinetQueue;
-import petrinet.PetrinetState;
-import petrinet.PetrinetStateChangedListener;
-import petrinet.Place;
-import petrinet.ReachabilityGraph;
-import petrinet.ReachabilityGraphModel;
-import petrinet.Transition;
+import listeners.PetrinetStateChangedListener;
+import listeners.ToolbarToggleListener;
 import propra.pnml.PNMLWopedWriter;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PetrinetController.
+ */
 public class PetrinetController {
 
 	private Petrinet petrinet = new Petrinet();
@@ -43,6 +47,13 @@ public class PetrinetController {
 
 	private ToolbarToggleListener toolbarToggleListener;
 
+	/**
+	 * Instantiates a new petrinet controller.
+	 *
+	 * @param file the file
+	 * @param headless the headless
+	 * @throws PetrinetException the petrinet exception
+	 */
 	public PetrinetController(File file, boolean headless) throws PetrinetException {
 		this.headless = headless;
 		this.file = file;
@@ -90,38 +101,83 @@ public class PetrinetController {
 
 	}
 
+	/**
+	 * Sets the toolbar toggle listener.
+	 *
+	 * @param toolbarToggleListener the new toolbar toggle listener
+	 */
 	public void setToolbarToggleListener(ToolbarToggleListener toolbarToggleListener) {
 		this.toolbarToggleListener = toolbarToggleListener;
 	}
 
+	/**
+	 * Gets the toolbar toggle listener.
+	 *
+	 * @return the toolbar toggle listener
+	 */
 	public ToolbarToggleListener getToolbarToggleListener() {
 		return toolbarToggleListener;
 	}
 
+	/**
+	 * Gets the editor.
+	 *
+	 * @return the editor
+	 */
 	public Editor getEditor() {
 		return editor;
 	}
 
+	/**
+	 * Gets the petrinet queue.
+	 *
+	 * @return the petrinet queue
+	 */
 	public PetrinetQueue getPetrinetQueue() {
 		return petrinetQueue;
 	}
 
+	/**
+	 * Gets the petrinet.
+	 *
+	 * @return the petrinet
+	 */
 	public Petrinet getPetrinet() {
 		return petrinet;
 	}
 
+	/**
+	 * Gets the petrinet graph.
+	 *
+	 * @return the petrinet graph
+	 */
 	public PetrinetGraph getPetrinetGraph() {
 		return petrinetGraph;
 	}
 
+	/**
+	 * Gets the reachability graph.
+	 *
+	 * @return the reachability graph
+	 */
 	public ReachabilityGraph getReachabilityGraph() {
 		return reachabilityGraph; 
 	}
 
+	/**
+	 * Gets the reachability graph model.
+	 *
+	 * @return the reachability graph model
+	 */
 	public ReachabilityGraphModel getReachabilityGraphModel() {
 		return reachabilityGraphModel;
 	}
 
+	/**
+	 * Click node in graph.
+	 *
+	 * @param id the id
+	 */
 	public void clickNodeInGraph(String id) {
 
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
@@ -136,6 +192,9 @@ public class PetrinetController {
 			editor.clickedNodeInGraph(pe);
 	}
 
+	/**
+	 * Reset petrinet.
+	 */
 	public void resetPetrinet() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.setInitial();
@@ -143,7 +202,12 @@ public class PetrinetController {
 
 	}
 
-	public boolean incrementMarkedPlace() {
+	/**
+	 * Increment marked place.
+	 *
+	 * @return true, if successful
+	 */
+	boolean incrementMarkedPlace() {
 
 		boolean changed = petrinet.incrementPlace(petrinetGraph.getMarkedNode());
 
@@ -154,7 +218,12 @@ public class PetrinetController {
 		return changed;
 	}
 
-	public boolean decrementMarkedPlace() {
+	/**
+	 * Decrement marked place.
+	 *
+	 * @return true, if successful
+	 */
+	boolean decrementMarkedPlace() {
 		boolean changed = petrinet.decrementPlace(petrinetGraph.getMarkedNode());
 
 		if (changed && !fileChanged) {
@@ -164,10 +233,18 @@ public class PetrinetController {
 		return changed;
 	}
 
+	/**
+	 * Gets the current file.
+	 *
+	 * @return the current file
+	 */
 	public File getCurrentFile() {
 		return file;
 	}
 
+	/**
+	 * Reset reachability graph.
+	 */
 	public void resetReachabilityGraph() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.reset();
@@ -175,6 +252,11 @@ public class PetrinetController {
 		petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
 	}
 
+	/**
+	 * Reachability node clicked.
+	 *
+	 * @param id the id
+	 */
 	public void reachabilityNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
@@ -182,7 +264,12 @@ public class PetrinetController {
 		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);
 	}
 
-	public String[] analyse() {
+	/**
+	 * Analyse.
+	 *
+	 * @return the string[]
+	 */
+	String[] analyse() {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
@@ -197,19 +284,39 @@ public class PetrinetController {
 		return analyser.getResults();
 	}
 
+	/**
+	 * Gets the headless.
+	 *
+	 * @return the headless
+	 */
 	public boolean getHeadless() {
 		return headless;
 	}
 
+	/**
+	 * Gets the file changed.
+	 *
+	 * @return the file changed
+	 */
 	public boolean getFileChanged() {
 		return fileChanged;
 	}
 
+	/**
+	 * Gets the toolbar mode.
+	 *
+	 * @return the toolbar mode
+	 */
 	public ToolbarMode getToolbarMode() {
 
 		return toolbarMode;
 	}
 
+	/**
+	 * Sets the toolbar mode.
+	 *
+	 * @param toolbarMode the new toolbar mode
+	 */
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 		if (toolbarMode == ToolbarMode.EDITOR)
 			resetReachabilityGraph();
@@ -221,11 +328,19 @@ public class PetrinetController {
 		this.toolbarMode = toolbarMode;
 	}
 
-	public void writeToFile() {
+	/**
+	 * Write to file.
+	 */
+	void writeToFile() {
 		writeToFile(getCurrentFile());
 	}
 
-	public void writeToFile(File file) {
+	/**
+	 * Write to file.
+	 *
+	 * @param file the file
+	 */
+	void writeToFile(File file) {
 
 		PNMLWopedWriter writer = new PNMLWopedWriter(file);
 		writer.startXMLDocument();
@@ -249,10 +364,20 @@ public class PetrinetController {
 
 	}
 
+	/**
+	 * Sets the file changed.
+	 *
+	 * @param changed the new file changed
+	 */
 	public void setFileChanged(boolean changed) {
 		fileChanged = changed;
 	}
 
+	/**
+	 * Sets the label.
+	 *
+	 * @param label the new label
+	 */
 	public void setLabel(String label) {
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode == null)
@@ -267,6 +392,11 @@ public class PetrinetController {
 
 	}
 
+	/**
+	 * Sets the petrinet queue.
+	 *
+	 * @param petrinetQueue the new petrinet queue
+	 */
 	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
 	}

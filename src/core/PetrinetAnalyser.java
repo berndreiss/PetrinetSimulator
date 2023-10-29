@@ -1,4 +1,4 @@
-package petrinet;
+package core;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import control.PetrinetController;
+import exceptions.PetrinetException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PetrinetAnalyser.
+ */
 public class PetrinetAnalyser {
 
 	private PetrinetController controller;
@@ -26,10 +31,21 @@ public class PetrinetAnalyser {
 	private String mMarked;
 
 	
+	/**
+	 * Instantiates a new petrinet analyser.
+	 *
+	 * @param file the file
+	 * @throws PetrinetException the petrinet exception
+	 */
 	public PetrinetAnalyser(File file) throws PetrinetException{
 		this.controller = new PetrinetController(file, true);
 	}
 	
+	/**
+	 * Instantiates a new petrinet analyser.
+	 *
+	 * @param controller the controller
+	 */
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
 		analyse();
@@ -79,26 +95,56 @@ public class PetrinetAnalyser {
 
 	}
 
+	/**
+	 * Checks if is bounded.
+	 *
+	 * @return true, if is bounded
+	 */
 	public boolean isBounded() {
 		return bounded;
 	}
 
+	/**
+	 * Gets the state count.
+	 *
+	 * @return the state count
+	 */
 	public int getStateCount() {
 		return nodes;
 	}
 
+	/**
+	 * Gets the edge count.
+	 *
+	 * @return the edge count
+	 */
 	public int getEdgeCount() {
 		return edges;
 	}
 
+	/**
+	 * Gets the m.
+	 *
+	 * @return the m
+	 */
 	public String getM() {
 		return m;
 	}
 
+	/**
+	 * Gets the m marked.
+	 *
+	 * @return the m marked
+	 */
 	public String getMMarked() {
 		return mMarked;
 	}
 
+	/**
+	 * Gets the transitions to M marked.
+	 *
+	 * @return the transitions to M marked
+	 */
 	public List<String> getTransitionsToMMarked() {
 		return transitionsToMMarked;
 	}
@@ -173,6 +219,11 @@ public class PetrinetAnalyser {
 		}
 	}
 
+	/**
+	 * Gets the results.
+	 *
+	 * @return the results
+	 */
 	public String[] getResults() {
 		String[] strings = { "", "", "" };
 

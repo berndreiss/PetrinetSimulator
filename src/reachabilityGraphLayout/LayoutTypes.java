@@ -1,6 +1,13 @@
 package reachabilityGraphLayout;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum LayoutTypes.
+ */
 public enum LayoutTypes {
 
-	AUTOMATIC, CIRCLE, TREE;
+	/** The automatic. */
+	AUTOMATIC, /** The circle. */
+ CIRCLE, /** The tree. */
+ TREE;
 }

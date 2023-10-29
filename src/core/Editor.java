@@ -1,9 +1,15 @@
-package petrinet;
+package core;
 
 import javax.swing.JOptionPane;
 
 import control.PetrinetController;
+import exceptions.DuplicateIdException;
+import exceptions.InvalidEdgeOperationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Editor.
+ */
 public class Editor {
 
 	private PetrinetController controller;
@@ -12,10 +18,22 @@ public class Editor {
 	private String edgeToAddId;
 	private PetrinetElement[] removeEdge;
 
+	/**
+	 * Instantiates a new editor.
+	 *
+	 * @param controller the controller
+	 */
 	public Editor(PetrinetController controller) {
 		this.controller = controller;
 	}
 
+	/**
+	 * Adds the place.
+	 *
+	 * @param id the id
+	 * @return true, if successful
+	 * @throws DuplicateIdException the duplicate id exception
+	 */
 	public boolean addPlace(String id) throws DuplicateIdException {
 
 		Place p = controller.getPetrinet().addPlace(id);
@@ -27,6 +45,13 @@ public class Editor {
 		return true;
 	}
 
+	/**
+	 * Adds the transition.
+	 *
+	 * @param id the id
+	 * @return true, if successful
+	 * @throws DuplicateIdException the duplicate id exception
+	 */
 	public boolean addTransition(String id) throws DuplicateIdException {
 
 		Transition t = controller.getPetrinet().addTransition(id);
@@ -40,6 +65,12 @@ public class Editor {
 		return true;
 	}
 
+	/**
+	 * Toggle add edge.
+	 *
+	 * @param id the id
+	 * @return true, if successful
+	 */
 	public boolean toggleAddEdge(String id) {
 		if (addsEdge()) {
 			addEdge = null;
@@ -59,6 +90,11 @@ public class Editor {
 		return true;
 	}
 
+	/**
+	 * Toggle remove edge.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean toggleRemoveEdge() {
 		if (removesEdge()) {
 			removeEdge = null;
@@ -75,14 +111,27 @@ public class Editor {
 		return true;
 	}
 
+	/**
+	 * Adds edge.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean addsEdge() {
 		return addEdge != null;
 	}
 
+	/**
+	 * Removes edge.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean removesEdge() {
 		return removeEdge != null;
 	}
 
+	/**
+	 * Removes the component.
+	 */
 	public void removeComponent() {
 
 		PetrinetElement markedElement = controller.getPetrinetGraph().getMarkedNode();
@@ -94,6 +143,11 @@ public class Editor {
 
 	}
 
+	/**
+	 * Clicked node in graph.
+	 *
+	 * @param pe the pe
+	 */
 	public void clickedNodeInGraph(PetrinetElement pe) {
 
 		if (addsEdge()) {

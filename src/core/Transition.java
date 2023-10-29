@@ -1,9 +1,9 @@
-package petrinet;
+package core;
 
-import java.util.Set;
-
+import listeners.TransitionActiveListener;
 import util.IterableMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * Class representing transitions in petri nets. Every transition has a set of
  * places (see {@link Place}) serve as input (preset) and a set of places (see
@@ -22,11 +22,8 @@ public class Transition extends PetrinetElement {
 	/**
 	 * A new instance of Transition is created. Initial sets of input places
 	 * (preset) and output places (postset) are passed along.
-	 * 
+	 *
 	 * @param id      Id of the transition.
-	 * @param name    Name of the transition.
-	 * @param preset  {@link Set} of initial input places.
-	 * @param postset {@link Set} of initial output places.
 	 */
 	protected Transition(String id) {
 		super(id);
@@ -38,10 +35,10 @@ public class Transition extends PetrinetElement {
 	 * does not have tokens, it does not activate. Otherwise it Decrements the
 	 * number of tokens for all places in the T and increments the number of tokens
 	 * for all places in the output.
-	 * 
-	 * @return
+	 *
+	 * @return true, if successful
 	 */
-	public boolean fire() {
+	boolean fire() {
 		// if transition is not active, return immediately
 		if (!checkActive())
 			return false;
@@ -61,14 +58,27 @@ public class Transition extends PetrinetElement {
 		return true;
 	}
 
+	/**
+	 * Checks if is active.
+	 *
+	 * @return true, if is active
+	 */
 	public boolean isActive() {
 		return active;
 	}
 
+	/**
+	 * Update activation status.
+	 */
 	protected void updateActivationStatus() {
 		setActive(checkActive());
 	}
 
+	/**
+	 * Sets the transition active listener.
+	 *
+	 * @param transitionActiveListener the new transition active listener
+	 */
 	public void setTransitionActiveListener(TransitionActiveListener transitionActiveListener) {
 		this.transitionActiveListener = transitionActiveListener;
 	}
@@ -124,15 +134,30 @@ public class Transition extends PetrinetElement {
 		p.addInput(this);
 	}
 
+	/**
+	 * Gets the inputs.
+	 *
+	 * @return the inputs
+	 */
 	public Iterable<Place> getInputs() {
 		return inputs;
 	}
 
+	/**
+	 * Gets the outputs.
+	 *
+	 * @return the outputs
+	 */
 	public Iterable<Place> getOutputs() {
 		return outputs;
 	}
 
-	public void removeInput(Place p) {
+	/**
+	 * Removes the input.
+	 *
+	 * @param p the p
+	 */
+	void removeInput(Place p) {
 		if (!inputs.containsKey(p.getId()))
 			return;
 		inputs.remove(p.getId());
@@ -141,7 +166,12 @@ public class Transition extends PetrinetElement {
 
 	}
 
-	public void removeOutput(Place p) {
+	/**
+	 * Removes the output.
+	 *
+	 * @param p the p
+	 */
+	void removeOutput(Place p) {
 		if (!outputs.containsKey(p.getId()))
 			return;
 		outputs.remove(p.getId());

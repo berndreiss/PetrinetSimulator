@@ -3,8 +3,20 @@ package reachabilityGraphLayout;
 import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Node;
 
-public class GraphicsOperations {
-	public static boolean graphicalObjectsIntersect(GraphicalObject go1, GraphicalObject go2) {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GraphicsOperations.
+ */
+class GraphicsOperations {
+	
+	/**
+	 * Graphical objects intersect.
+	 *
+	 * @param go1 the go 1
+	 * @param go2 the go 2
+	 * @return true, if successful
+	 */
+	static boolean graphicalObjectsIntersect(GraphicalObject go1, GraphicalObject go2) {
 
 		if (pointIsInsideGraphicalObject(go1, go2.leftLowerCorner()))
 			return true;
@@ -21,7 +33,14 @@ public class GraphicsOperations {
 		return false;
 	}
 
-	public static boolean pointIsInsideGraphicalObject(GraphicalObject go, LayoutPoint p) {
+	/**
+	 * Point is inside graphical object.
+	 *
+	 * @param go the go
+	 * @param p the p
+	 * @return true, if successful
+	 */
+	private static boolean pointIsInsideGraphicalObject(GraphicalObject go, LayoutPoint p) {
 		if (go == null || p == null)
 			return false;
 
@@ -32,7 +51,14 @@ public class GraphicsOperations {
 		return false;
 	}
 
-	public static boolean edgeIntersectsGraphicalObject(LayoutEdge layoutEdge, GraphicalObject go) {
+	/**
+	 * Edge intersects graphical object.
+	 *
+	 * @param layoutEdge the layout edge
+	 * @param go the go
+	 * @return true, if successful
+	 */
+	static boolean edgeIntersectsGraphicalObject(LayoutEdge layoutEdge, GraphicalObject go) {
 
 		if (go == null || layoutEdge == null)
 			return false;
@@ -81,24 +107,14 @@ public class GraphicsOperations {
 
 	}
 
-	public static Double getSlope(LayoutEdge edge) {
-
-		double[] sourcePosition = Toolkit.nodePosition(edge.source.node);
-		double[] targetPosition = Toolkit.nodePosition(edge.target.node);
-
-		LayoutPoint p1 = new LayoutPoint(sourcePosition[0], sourcePosition[1]);
-		LayoutPoint p2 = new LayoutPoint(targetPosition[0], targetPosition[1]);
-		return getSlope(p1, p2);
-	}
-
-	private static Double getSlope(LayoutPoint P1, LayoutPoint P2) {
-		if (P1.x == P2.x) {
-			return null; // undefined slope for vertical lines
-		}
-		return (P2.y - P1.y) / (P2.x - P1.x);
-	}
-
-	public static LayoutPoint findIntersection(LayoutLine l1, LayoutLine l2) {
+	/**
+	 * Find intersection.
+	 *
+	 * @param l1 the l 1
+	 * @param l2 the l 2
+	 * @return the layout point
+	 */
+	private static LayoutPoint findIntersection(LayoutLine l1, LayoutLine l2) {
 
 		LayoutPoint p1 = l1.a;
 		LayoutPoint p2 = l1.b;

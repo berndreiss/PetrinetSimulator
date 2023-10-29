@@ -11,32 +11,47 @@ import org.graphstream.graph.Node;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
-import petrinet.PetrinetState;
-import petrinet.Transition;
+import core.PetrinetState;
+import core.Transition;
 import util.IterableMap;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Layout.
+ */
 public class Layout {
 
 //	private final static Dimension NODE_SIZE = new Dimension(125, 30);
 
-	protected final static Dimension NODE_SIZE = new Dimension(30, 30);
+	/** The Constant NODE_SIZE. */
+protected final static Dimension NODE_SIZE = new Dimension(30, 30);
+	
+	/** The Constant SPRITE_SIZE. */
 	protected final static Dimension SPRITE_SIZE = new Dimension(30, 30);
-	protected final static Dimension MINIMAL_SIZE = new Dimension(10, 10);
-	protected final static int MINIMAL_EDGE_LENGTH = 200;
+	
+	/** The Constant MINIMAL_SIZE. */
+	private final static Dimension MINIMAL_SIZE = new Dimension(10, 10);
+	
+	/** The Constant MINIMAL_EDGE_LENGTH. */
+	private final static int MINIMAL_EDGE_LENGTH = 200;
 
-	protected Dimension screenSize = new Dimension(1000, 500);
+	/** The screen size. */
+	private Dimension screenSize = new Dimension(1000, 500);
 
 	private LayoutTypes layoutType = LayoutTypes.TREE;
 
 	private static int maxRowCount = 0;
 
+	/** The list hierarchy. */
 	List<List<LayoutNode>> listHierarchy = new ArrayList<List<LayoutNode>>();
 
 	private SpriteManager spriteMan;
 
 	private IterableMap<String, LayoutNode> nodeMap = new IterableMap<String, LayoutNode>();
 	private IterableMap<String, IterableMap<String, LayoutEdge>> edgeMap = new IterableMap<String, IterableMap<String, LayoutEdge>>();
-	List<GraphicalObject> graphicalObjectList = new ArrayList<GraphicalObject>();
+	
+	/** The graphical object list. */
+	private List<GraphicalObject> graphicalObjectList = new ArrayList<GraphicalObject>();
 
 	private List<LayoutEdge> potentialCulprits = new ArrayList<LayoutEdge>();
 
@@ -44,14 +59,31 @@ public class Layout {
 		LEFT, RIGHT;
 	}
 
+	/**
+	 * Instantiates a new layout.
+	 *
+	 * @param spriteMan the sprite man
+	 */
 	public Layout(SpriteManager spriteMan) {
 		this.spriteMan = spriteMan;
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param node the node
+	 */
 	public void add(Node node) {
 		this.add(node, null, null);
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param source the source
+	 * @param target the target
+	 * @param transition the transition
+	 */
 	public void add(Node source, Node target, Transition transition) {
 		if (source == null && target == null)
 			return;
@@ -120,29 +152,29 @@ public class Layout {
 
 		edgeList.put(transition.getId(), layoutEdge);
 
-		IterableMap<String, LayoutEdge> oppositeEdgesList = edgeMap.get(target.getId() + source.getId());
-
-		if (oppositeEdgesList != null) {
-			for (LayoutEdge le : edgeList)
-				le.sprite.setPosition(0.33, 0.33, 0);
-			for (LayoutEdge le : oppositeEdgesList)
-				le.sprite.setPosition(0.33, 0.33, 0);
-		}
-
-		if (edgeList.size() > 1) {
-
-			double modificatorUnit = 1.0 / edgeList.size();
-
-			int index = 1;
-
-			for (LayoutEdge le : edgeList) {
-				Sprite sprite = le.getSprite();
-				sprite.setPosition(sprite.getX() * modificatorUnit * index, sprite.getY() * modificatorUnit * index,
-						sprite.getZ() * modificatorUnit * index);
-				index++;
-
-			}
-		}
+//		IterableMap<String, LayoutEdge> oppositeEdgesList = edgeMap.get(target.getId() + source.getId());
+//
+//		if (oppositeEdgesList != null) {
+//			for (LayoutEdge le : edgeList)
+//				le.sprite.setPosition(0.33, 0.33, 0);
+//			for (LayoutEdge le : oppositeEdgesList)
+//				le.sprite.setPosition(0.33, 0.33, 0);
+//		}
+//
+//		if (edgeList.size() > 1) {
+//
+//			double modificatorUnit = 1.0 / edgeList.size();
+//
+//			int index = 1;
+//
+//			for (LayoutEdge le : edgeList) {
+//				Sprite sprite = le.getSprite();
+//				sprite.setPosition(sprite.getX() * modificatorUnit * index, sprite.getY() * modificatorUnit * index,
+//						sprite.getZ() * modificatorUnit * index);
+//				index++;
+//
+//			}
+//		}
 		repaintNodes();
 		if (layoutType == LayoutTypes.TREE)
 			beautify();
@@ -246,6 +278,11 @@ public class Layout {
 
 	}
 
+	/**
+	 * Adds the node to level.
+	 *
+	 * @param node the node
+	 */
 	protected void addNodeToLevel(LayoutNode node) {
 
 		if (listHierarchy.size() < node.getLevel())
@@ -578,13 +615,26 @@ public class Layout {
 
 	// TODO when removing node maxRowCount has to be recalculated
 
+	/**
+	 * Sets the screen size.
+	 *
+	 * @param screenSize the new screen size
+	 */
 	public void setScreenSize(Dimension screenSize) {
 		this.screenSize = screenSize;
+		System.out.println(screenSize);
 		repaintNodes();
 	}
 
 
 
+	/**
+	 * Removes the edge.
+	 *
+	 * @param stateSource the state source
+	 * @param stateTarget the state target
+	 * @param t the t
+	 */
 	public void removeEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
 		IterableMap<String, LayoutEdge> specificEdgeMap = edgeMap.get(stateSource.getState() + stateTarget.getState());
 		if (specificEdgeMap == null)
@@ -611,6 +661,11 @@ public class Layout {
 
 	}
 
+	/**
+	 * Removes the node.
+	 *
+	 * @param node the node
+	 */
 	public void removeNode(Node node) {
 		LayoutNode layoutNode = nodeMap.get(node.getId());
 		if (layoutNode == null)
@@ -638,6 +693,11 @@ public class Layout {
 				maxRowCount = nodeList.size();
 	}
 
+	/**
+	 * Sets the layout type.
+	 *
+	 * @param layoutType the new layout type
+	 */
 	public void setLayoutType(LayoutTypes layoutType) {
 		this.layoutType = layoutType;
 	}

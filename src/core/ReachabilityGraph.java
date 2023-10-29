@@ -1,8 +1,6 @@
-package petrinet;
+package core;
 
 import java.awt.Dimension;
-
-import javax.swing.JOptionPane;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -11,9 +9,15 @@ import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
 import control.PetrinetController;
+import listeners.ReachabilityStateChangeListener;
+import listeners.ReplayGraphListener;
 import reachabilityGraphLayout.Layout;
 import reachabilityGraphLayout.LayoutTypes;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ReachabilityGraph.
+ */
 public class ReachabilityGraph extends MultiGraph {
 
 	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
@@ -35,6 +39,11 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private LayoutTypes layoutType = LayoutTypes.TREE;
 
+	/**
+	 * Instantiates a new reachability graph.
+	 *
+	 * @param controller the controller
+	 */
 	public ReachabilityGraph(PetrinetController controller) {
 		super("");
 
@@ -80,7 +89,6 @@ public class ReachabilityGraph extends MultiGraph {
 					currentEdge = null;
 				if (layoutType != LayoutTypes.AUTOMATIC)
 					layoutManager.removeEdge(stateSource, stateTarget, t);
-				replayGraph();
 			}
 
 			@Override
@@ -123,20 +131,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 	}
 
-	public void addingLoop() {
-		while (true) {
-			String input = JOptionPane.showInputDialog(null, "Enter id for place:");
-
-			if (input.equals(""))
-				break;
-
-			Node node = addNode(input.split(",")[0]);
-
-			double x = Double.parseDouble(input.split(",")[1]);
-			double y = Double.parseDouble(input.split(",")[2]);
-			node.setAttribute("xy", x, y);
-		}
-	}
+	
 
 	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
 
@@ -307,34 +302,61 @@ public class ReachabilityGraph extends MultiGraph {
 
 	}
 
+	/**
+	 * Sets the replay graph listener.
+	 *
+	 * @param replayGraphListener the new replay graph listener
+	 */
 	public void setReplayGraphListener(ReplayGraphListener replayGraphListener) {
 		this.replayGraphListener = replayGraphListener;
 	}
 
+	/**
+	 * Replay graph.
+	 */
 	// adjust arrow heads
-	public void replayGraph() {
+	private void replayGraph() {
 		if (replayGraphListener == null)
 			return;
 		replayGraphListener.onGraphReplay();
 
 	}
 
-	public void onScreenSizeChanged(Dimension newSize) {
-		if (layoutType != LayoutTypes.AUTOMATIC)
+	
+	public void setScreenSize(Dimension newSize) {
+		if (layoutManager != null)
 			layoutManager.setScreenSize(newSize);
-
+		
 	}
-
+	
+	/**
+	 * Sets the layout type.
+	 *
+	 * @param layoutType the new layout type
+	 */
 	public void setLayoutType(LayoutTypes layoutType) {
 		this.layoutType = layoutType;
 		if (layoutType != LayoutTypes.AUTOMATIC)
 			layoutManager.setLayoutType(layoutType);
 	}
 	
+	/**
+	 * Gets the layout type.
+	 *
+	 * @return the layout type
+	 */
 	public LayoutTypes getLayoutType() {
 		return layoutType;
 	}
 	
+	public boolean hasLessThanTwoNodes() {
+		return nodeCount < 2;
+	}
+	
+	//TODO REMOVE
+	/**
+	 * Prints the.
+	 */
 	public void print() {
 		System.out.println("NODES");
 		for (Node n: this)

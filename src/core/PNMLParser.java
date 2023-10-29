@@ -1,4 +1,4 @@
-package petrinet;
+package core;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,8 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import exceptions.InvalidEdgeOperationException;
+import exceptions.PetrinetException;
 import propra.pnml.PNMLWopedParser;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PNMLParser.
+ */
 public class PNMLParser extends PNMLWopedParser {
 
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
@@ -18,10 +24,15 @@ public class PNMLParser extends PNMLWopedParser {
 	private boolean idCheck = true;
 	
 	
-	public PNMLParser(File pnml) throws PetrinetException {
-		this(pnml, null);
-	}
 	
+	
+	/**
+	 * Instantiates a new PNML parser.
+	 *
+	 * @param pnml the pnml
+	 * @param petrinet the petrinet
+	 * @throws PetrinetException the petrinet exception
+	 */
 	public PNMLParser(File pnml, Petrinet petrinet) throws PetrinetException {
 		super(pnml);
 		if (petrinet == null)
@@ -43,12 +54,22 @@ public class PNMLParser extends PNMLWopedParser {
 		handleTransitions();
 	}
 
+	/**
+	 * New transition.
+	 *
+	 * @param id the id
+	 */
 	@Override
 	public void newTransition(final String id) {
 		if (idCheck)
 			transitions.add(id);
 	}
 
+	/**
+	 * New place.
+	 *
+	 * @param id the id
+	 */
 	@Override
 	public void newPlace(final String id) {
 		
@@ -56,6 +77,13 @@ public class PNMLParser extends PNMLWopedParser {
 			places.add(id);
 	}
 
+	/**
+	 * New arc.
+	 *
+	 * @param id the id
+	 * @param source the source
+	 * @param target the target
+	 */
 	@Override
 	public void newArc(final String id, final String source, final String target) {
 		if (idCheck)
@@ -63,6 +91,13 @@ public class PNMLParser extends PNMLWopedParser {
 		arcs.put(id, new Arc(id, source, target));
 	}
 
+	/**
+	 * Sets the position.
+	 *
+	 * @param id the id
+	 * @param x the x
+	 * @param y the y
+	 */
 	public void setPosition(final String id, final String x, final String y) {
 		if (idCheck)
 			return;
@@ -73,6 +108,12 @@ public class PNMLParser extends PNMLWopedParser {
 
 	}
 
+	/**
+	 * Sets the name.
+	 *
+	 * @param id the id
+	 * @param name the name
+	 */
 	@Override
 	public void setName(final String id, final String name) {
 		if (idCheck)
@@ -82,6 +123,12 @@ public class PNMLParser extends PNMLWopedParser {
 
 	}
 
+	/**
+	 * Sets the tokens.
+	 *
+	 * @param id the id
+	 * @param tokens the tokens
+	 */
 	@Override
 	public void setTokens(final String id, final String tokens) {
 		if (idCheck)
@@ -126,6 +173,11 @@ public class PNMLParser extends PNMLWopedParser {
 		}
 	}
 	
+	/**
+	 * Gets the petrinet.
+	 *
+	 * @return the petrinet
+	 */
 	public Petrinet getPetrinet() {
 		return petrinet;
 	}
