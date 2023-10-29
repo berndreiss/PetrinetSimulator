@@ -1,7 +1,7 @@
 package control;
 
-import static view.MainFrame.GRAPH_SPLIT_PANE_DEFAULT_RATIO;
-import static view.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
+import static gui.MainFrame.GRAPH_SPLIT_PANE_DEFAULT_RATIO;
+import static gui.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
 
 import java.awt.Component;
 import java.io.File;
@@ -14,12 +14,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
-import ReachabilityGraphLayout.LayoutTypes;
-import datamodel.DuplicateIdException;
-import util.ToolbarToggleListener;
-import view.MainFrame;
-import view.PetrinetPanel;
-import view.ResizableSplitPane;
+import gui.MainFrame;
+import gui.MenuInterface;
+import gui.PetrinetToolbarInterface;
+import gui.ResizableSplitPane;
+import gui.ToolbarMode;
+import gui.ToolbarToggleListener;
+import petrinet.DuplicateIdException;
+import petrinet.PetrinetAnalyser;
+import petrinet.PetrinetException;
+import petrinet.PetrinetPanel;
+import reachabilityGraphLayout.LayoutTypes;
 
 public class MainController implements MenuInterface, PetrinetToolbarInterface, ToolbarToggleListener {
 
@@ -71,8 +76,19 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 	}
 
+	
+	//GETTER METHODS
+	
 	public MainFrame getFrame() {
 		return parent;
+	}
+	
+	public PetrinetPanel getCurrentPanel() {
+		return currentPetrinetPanel;
+	}
+
+	public LayoutTypes getLayoutType() {
+		return layoutType;
 	}
 
 	private void setStatusLabel() {
@@ -150,7 +166,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		}
 		setStatusLabel();
-		onSetDefault();
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
@@ -290,10 +305,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		int counter = 0;
 
 		for (File f : files) {
-			PetrinetController controller = null;
 			try {
-				controller = new PetrinetController(f, true);
-				results[counter] = controller.analyse();
+				results[counter] = (new PetrinetAnalyser(f)).getResults();
 				counter++;
 			} catch (PetrinetException e) {
 				JOptionPane.showMessageDialog(null, "Could not parse file " + f.getName() + " -> " + e.getMessage(), "",
@@ -468,6 +481,8 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		return nextFile;
 	}
 
+	// PETRINET RELATED METHODS
+
 	@Override
 	public void onRestart() {
 		if (currentPetrinetPanel == null)
@@ -503,62 +518,7 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		setStatusLabel();
 	}
 
-	@Override
-	public void onReset() {
-		if (currentPetrinetPanel == null)
-			return;
-
-		currentPetrinetPanel.getController().resetReachabilityGraph();
-	}
-
-	@Override
-	public void onAnalyse() {
-		if (currentPetrinetPanel == null)
-			return;
-		PetrinetController controller = currentPetrinetPanel.getController();
-
-		String[][] result = { controller.analyse() };
-		parent.print(printResults(result));
-	}
-
-	@Override
-	public void onClear() {
-		parent.clearTextArea();
-	}
-
-	@Override
-	public void onUndo() {
-		if (currentPetrinetPanel == null)
-			return;
-
-		currentPetrinetPanel.getController().getPetrinetQueue().goBack();
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRedo() {
-		if (currentPetrinetPanel == null)
-			return;
-
-		currentPetrinetPanel.getController().getPetrinetQueue().goForward();
-	}
-
-	@Override
-	public void onSetDefault() {
-
-		ResizableSplitPane mainSplitPane = parent.getSplitPane();
-
-		mainSplitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
-		mainSplitPane.resetDivider();
-
-		if (currentPetrinetPanel == null)
-			return;
-
-		ResizableSplitPane graphSplitPane = currentPetrinetPanel.getGraphSplitPane();
-		graphSplitPane.setDefaultRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
-		graphSplitPane.resetDivider();
-	}
+	// EDITOR RELATED METHODS
 
 	@Override
 	public void onAddPlace() {
@@ -613,6 +573,13 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	@Override
+	public void onRemoveComponent() {
+		PetrinetController controller = currentPetrinetPanel.getController();
+		controller.getEditor().removeComponent();
+		setStatusLabel();
+	}
+
+	@Override
 	public void onAddEdge() {
 		PetrinetController controller = currentPetrinetPanel.getController();
 		String id = null;
@@ -636,9 +603,28 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	@Override
+	public void onEdgeAdded() {
+		getFrame().getToolbar().toggleAddEdgeButton();
+		setStatusLabel();
+
+	}
+
+	@Override
+	public void onRemoveEdge() {
+		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
+		getFrame().getToolbar().toggleRemoveEdgeButton();
+	}
+
+	@Override
+	public void onEdgeRemoved() {
+		getFrame().getToolbar().toggleRemoveEdgeButton();
+		setStatusLabel();
+
+	}
+
+	@Override
 	public void onAddLabel() {
 
-		// TODO sometimes label is set to null!
 		if (!currentPetrinetPanel.nodeMarked())
 			return;
 
@@ -649,33 +635,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 
 		currentPetrinetPanel.getController().setLabel(label);
 		setStatusLabel();
-	}
-
-	@Override
-	public void onRemoveComponent() {
-		PetrinetController controller = currentPetrinetPanel.getController();
-		controller.getEditor().removeComponent();
-		setStatusLabel();
-	}
-
-	@Override
-	public void onRemoveEdge() {
-		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
-		getFrame().getToolbar().toggleRemoveEdgeButton();
-	}
-
-	@Override
-	public void onEdgeAdded() {
-		getFrame().getToolbar().toggleAddEdgeButton();
-		setStatusLabel();
-
-	}
-
-	@Override
-	public void onEdgeRemoved() {
-		getFrame().getToolbar().toggleRemoveEdgeButton();
-		setStatusLabel();
-
 	}
 
 	@Override
@@ -694,6 +653,45 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 		currentPetrinetPanel.zoomOutPetrinet();
 	}
 
+	// REACHABILITY GRAPH RELATED METHODS
+
+	@Override
+	public void onAnalyse() {
+		if (currentPetrinetPanel == null)
+			return;
+		PetrinetController controller = currentPetrinetPanel.getController();
+
+		String[][] result = { controller.analyse() };
+		parent.print(printResults(result));
+	}
+
+	@Override
+	public void onReset() {
+		if (currentPetrinetPanel == null)
+			return;
+
+		currentPetrinetPanel.getController().resetReachabilityGraph();
+	}
+
+	@Override
+	public void onClear() {
+		parent.clearTextArea();
+	}
+
+	@Override
+	public void onUndo() {
+		if (currentPetrinetPanel == null)
+			return;
+		currentPetrinetPanel.getController().getPetrinetQueue().goBack();
+	}
+
+	@Override
+	public void onRedo() {
+		if (currentPetrinetPanel == null)
+			return;
+		currentPetrinetPanel.getController().getPetrinetQueue().goForward();
+	}
+
 	@Override
 	public void onZoomInReachability() {
 		if (currentPetrinetPanel == null)
@@ -708,20 +706,6 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 			return;
 
 		currentPetrinetPanel.zoomOutReachability();
-	}
-
-	@Override
-	public void onToggleAutoLayout() {
-		if (layoutType == LayoutTypes.AUTOMATIC)
-			return;
-		layoutType = LayoutTypes.AUTOMATIC;
-
-		parent.getToolbar().toggleAutoLayoutButton();
-		if (parent.getTabbedPane().getTabCount() != 0) {
-			for (Component comp : parent.getTabbedPane().getComponents())
-				((PetrinetPanel) comp).setLayoutType(layoutType);
-		}
-		onSetDefault();
 	}
 
 	@Override
@@ -754,8 +738,17 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	@Override
-	public void onRedoChanged() {
-		parent.getToolbar().toggleRedoButton();
+	public void onToggleAutoLayout() {
+		if (layoutType == LayoutTypes.AUTOMATIC)
+			return;
+		layoutType = LayoutTypes.AUTOMATIC;
+
+		parent.getToolbar().toggleAutoLayoutButton();
+		if (parent.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : parent.getTabbedPane().getComponents())
+				((PetrinetPanel) comp).setLayoutType(layoutType);
+		}
+		onSetDefault();
 	}
 
 	@Override
@@ -765,15 +758,29 @@ public class MainController implements MenuInterface, PetrinetToolbarInterface, 
 	}
 
 	@Override
+	public void onRedoChanged() {
+		parent.getToolbar().toggleRedoButton();
+	}
+
+	// DESIGN/WINDOW RELATED METHODS
+
+	@Override
+	public void onSetDefault() {
+		ResizableSplitPane mainSplitPane = parent.getSplitPane();
+
+		mainSplitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
+		mainSplitPane.resetDivider();
+
+		if (currentPetrinetPanel == null)
+			return;
+
+		ResizableSplitPane graphSplitPane = currentPetrinetPanel.getGraphSplitPane();
+		graphSplitPane.setDefaultRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
+		graphSplitPane.resetDivider();
+	}
+
+	@Override
 	public void changeDesign() {
 		parent.changeLookAndFeel();
-	}
-
-	public PetrinetPanel getCurrentPanel() {
-		return currentPetrinetPanel;
-	}
-
-	public LayoutTypes getLayoutType() {
-		return layoutType;
 	}
 }

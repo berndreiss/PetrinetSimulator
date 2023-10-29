@@ -1,38 +1,27 @@
 package control;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
-import org.graphstream.algorithm.util.FibonacciHeap.Node;
-import org.graphstream.ui.swing_viewer.ViewPanel;
-
-import datamodel.Added;
-import datamodel.Petrinet;
-import datamodel.PetrinetElement;
-import datamodel.PetrinetQueue;
-import datamodel.PetrinetState;
-import datamodel.PetrinetStateChangedListener;
-import datamodel.Place;
-import datamodel.ReachabilityGraphModel;
-import datamodel.Transition;
+import gui.ToolbarMode;
+import gui.ToolbarToggleListener;
+import petrinet.Added;
+import petrinet.Editor;
+import petrinet.PNMLParser;
+import petrinet.Petrinet;
+import petrinet.PetrinetAnalyser;
+import petrinet.PetrinetElement;
+import petrinet.PetrinetException;
+import petrinet.PetrinetGraph;
+import petrinet.PetrinetQueue;
+import petrinet.PetrinetState;
+import petrinet.PetrinetStateChangedListener;
+import petrinet.Place;
+import petrinet.ReachabilityGraph;
+import petrinet.ReachabilityGraphModel;
+import petrinet.Transition;
 import propra.pnml.PNMLWopedWriter;
-import util.Editor;
-import util.PNMLParser;
-import util.PetrinetAnalyser;
-import util.ToolbarToggleListener;
-import view.PetrinetGraph;
-import view.ReachabilityGraph;
-import view.ReachabilityGraphTest;
-import view.GraphStreamView;
 
 public class PetrinetController {
 
@@ -58,24 +47,17 @@ public class PetrinetController {
 		this.headless = headless;
 		this.file = file;
 		this.editor = new Editor(this);
-		init();
-	}
-
-	private void init() throws PetrinetException {
 		this.petrinet = new Petrinet();
 
 		if (!headless)
-			this.petrinetGraph = new PetrinetGraph(petrinet);
+			this.petrinetGraph = new PetrinetGraph(this);
 
 		if (file != null)
 			new PNMLParser(file, petrinet);
 
-		if (!headless) {
-		}
 		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
 
 		if (!headless) {
-
 			this.reachabilityGraph = new ReachabilityGraph(this);
 			this.petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentPetrinetState(), this);
 		}
@@ -133,7 +115,7 @@ public class PetrinetController {
 	}
 
 	public ReachabilityGraph getReachabilityGraph() {
-		return reachabilityGraph; // TODOchange when ready!
+		return reachabilityGraph; 
 	}
 
 	public ReachabilityGraphModel getReachabilityGraphModel() {
@@ -157,12 +139,8 @@ public class PetrinetController {
 	public void resetPetrinet() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.setInitial();
+		petrinetQueue.rewind();
 
-	}
-
-	public Object closeCurrent() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public boolean incrementMarkedPlace() {
@@ -211,48 +189,12 @@ public class PetrinetController {
 		if (!headless) {
 			petrinetQueue.resetButtons();
 			petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
-			JOptionPane.showMessageDialog(null, "The petrinet is " + (analyser.isBounded()?"bounded":"unbounded") + ".", "", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+					"The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".", "",
+					JOptionPane.INFORMATION_MESSAGE);
 
 		}
-		return getResults(analyser);
-	}
-
-	private String[] getResults(PetrinetAnalyser analyser) {
-		String[] strings = { "", "", "" };
-
-		if (file == null)
-			return strings;
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(file.getName() + " ");
-		strings[0] = sb.toString();
-
-		sb = new StringBuilder();
-		sb.append(analyser.isBounded() ? " yes" : " no");
-		strings[1] = sb.toString();
-
-		sb = new StringBuilder();
-
-		if (!analyser.isBounded()) {
-			sb.append(" " + analyser.getTransitionsToMMarked().size());
-			sb.append(": (");
-			for (String s : analyser.getTransitionsToMMarked())
-				sb.append(s + ",");
-			sb.deleteCharAt(sb.length() - 1);
-			sb.append(");");
-
-			sb.append(" ");
-			sb.append(analyser.getM());
-			sb.append(", ");
-			sb.append(analyser.getMMarked());
-
-		} else {
-
-			sb.append(" " + analyser.getStateCount() + " / " + analyser.getEdgeCount());
-		}
-		strings[2] = sb.toString();
-		return strings;
+		return analyser.getResults();
 	}
 
 	public boolean getHeadless() {
@@ -304,18 +246,6 @@ public class PetrinetController {
 		this.file = file;
 
 		fileChanged = false;
-
-	}
-
-	public void mergeWith(File file) {
-		if (file != null)
-			try {
-				new PNMLParser(file, this.petrinet);
-			} catch (PetrinetException e) {
-				JOptionPane.showMessageDialog(null, "File could not be parsed -> " + e.getMessage(), "",
-						JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
 
 	}
 
