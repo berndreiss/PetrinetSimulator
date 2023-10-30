@@ -4,27 +4,36 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ResizableSplitPane.
+ * This is a subclass of JSplitPane but the divider stays in place even if the
+ * parent container is resized, hence the name resizable split pane. The split
+ * pane is listening to the parent container and on resize resets the divider.
+ * The split can be horizontal or vertical.
  */
 public class ResizableSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
-	private double defaultDividerRatio = 0.5;
+
+	// ratio of the divider -> is updated when divider is moved
+	private double dividerRatio = 0.5;
+	// the parent container
 	private MainFrame parent;
-	private Dimension preferredSize;
+	// offset that is considered when toolbar is docked to EAST or WEST of parent
 	private int toolbarOffSet;
-	private double sizeReference; // keeps count of current width/height so that the divider ratio is not updated,
-									// if parent has only been modified in height/width (since that does not affect
-									// the divider ratio)
-	private boolean frameResized = false;
+
+	// keeps count of current width/height so that the divider ratio is not updated,
+	// if parent has only been modified in height/width (since that does not affect
+	// the divider ratio)
 
 	/**
 	 * Instantiates a new resizable split pane.
@@ -32,7 +41,7 @@ public class ResizableSplitPane extends JSplitPane {
 	 * @param parent           the parent
 	 * @param splitOrientation the split orientation
 	 */
-	ResizableSplitPane(MainFrame parent, int splitOrientation) {
+	public ResizableSplitPane(MainFrame parent, int splitOrientation) {
 		this(parent, splitOrientation, new JPanel(), new JPanel());
 	}
 
@@ -48,7 +57,6 @@ public class ResizableSplitPane extends JSplitPane {
 		super(splitOrientation, left, right);
 
 		this.parent = parent;
-		this.defaultDividerRatio = 0.5;
 
 		initialize();
 
@@ -74,6 +82,7 @@ public class ResizableSplitPane extends JSplitPane {
 	@Override
 	public void setLeftComponent(Component comp) {
 		super.setLeftComponent(comp);
+
 		if (parent != null)
 			initialize();
 	}
@@ -84,16 +93,9 @@ public class ResizableSplitPane extends JSplitPane {
 		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL) {
 			toolbarOffSet += parent.getToolbar().getWidth();
 		}
-		preferredSize = new Dimension((int) (parent.getWidth() / 2 - 7 - toolbarOffSet / 2),
+		Dimension preferredSize = new Dimension((int) (parent.getWidth() / 2 - getDividerSize() - toolbarOffSet / 2),
 				(int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
 
-		if (getOrientation() == JSplitPane.VERTICAL_SPLIT)
-			sizeReference = preferredSize.getHeight();
-		else
-			sizeReference = preferredSize.getWidth();
-
-		if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-			System.out.println("INITIALIZE ->" + sizeReference);
 		Dimension zeroSize = new Dimension(0, 0);
 
 		Component left = getLeftComponent();
@@ -101,25 +103,44 @@ public class ResizableSplitPane extends JSplitPane {
 
 		left.setPreferredSize(preferredSize);
 		left.setMinimumSize(zeroSize);
-		left.addComponentListener(new PanelResizedAdapter());
 
 		right.setPreferredSize(preferredSize);
 		right.setMinimumSize(zeroSize);
 
 		parent.addComponentListener(new FrameResizeAdapter());
-		setDividerLocation(defaultDividerRatio);
-//		SwingUtilities.invokeLater(() -> setDividerLocation(defaultDividerRatio));//wait for all pending Swing events to be processed, so the size of left and right components is set correctly and it doesn't collide to the left
-//		setDividerLocation(defaultDividerRatio);
 
+		// wait for all pending Swing events
+		// to be processed, so the size of
+		// left and right components is set
+		// correctly and it doesn't collide
+		// to the left
+		SwingUtilities.invokeLater(() -> setDividerLocation(dividerRatio));
+
+		BasicSplitPaneUI ui = (BasicSplitPaneUI) getUI();
+		ui.getDivider().addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseReleased(MouseEvent me) {
+				// DOES NOT WORK ON CERTAIN LOOK AND FEELS (e.g. Nimbus)
+				if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
+					dividerRatio = (double) getDividerLocation() / (getWidth() - getDividerSize());
+				else
+					dividerRatio = (double) getDividerLocation() / (getHeight() - getDividerSize());
+			}
+		});
+
+		this.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, e -> {
+
+		});
 	}
 
 	/**
-	 * Sets the default ratio.
+	 * Sets the divider ratio to a default ratio.
 	 *
-	 * @param ratio the new default ratio
+	 * @param ratio the new divider ratio
 	 */
 	public void setDefaultRatio(double ratio) {
-		this.defaultDividerRatio = ratio;
+		this.dividerRatio = ratio;
 	}
 
 	/**
@@ -133,47 +154,8 @@ public class ResizableSplitPane extends JSplitPane {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			frameResized = true;
-			System.out.println(e);
-			setDividerLocation(defaultDividerRatio);
-			System.out.println(defaultDividerRatio);
 
-		}
-
-	}
-
-	private class PanelResizedAdapter extends ComponentAdapter {
-
-		@Override
-		public void componentResized(ComponentEvent e) {
-
-			System.out.println(frameResized);
-//			if (parent.getSize() != parentReference)
-//				return;
-			if (frameResized) {
-				frameResized = false;
-				return;
-			}
-			if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT) {
-
-				System.out.println(e.getSource());
-				System.out.println("COMPONENT RESIZED ->" + sizeReference);
-				System.out.println("COMPONENT RESIZED COMP HEIGHT ->" + e.getComponent().getHeight());
-				System.out.println("COMPONENT RESIZED COMP WIDTH ->" + e.getComponent().getWidth());
-			}
-			if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT && e.getComponent().getWidth() != sizeReference) {
-				defaultDividerRatio = (double) getLeftComponent().getWidth()
-						/ (getLeftComponent().getWidth() + getRightComponent().getWidth());
-				sizeReference = e.getComponent().getWidth();
-				System.out.println("TEST");
-			}
-			if (getOrientation() == JSplitPane.VERTICAL_SPLIT && getLeftComponent().getHeight() != sizeReference) {
-				defaultDividerRatio = (double) getLeftComponent().getHeight()
-						/ (getLeftComponent().getHeight() + getRightComponent().getHeight());
-				sizeReference = e.getComponent().getHeight();
-			}
-			if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-				System.out.println(defaultDividerRatio);
+			setDividerLocation(dividerRatio);
 
 		}
 

@@ -219,7 +219,7 @@ public class PetrinetToolbar extends JToolBar {
 				"zoom out");
 
 		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
-				"Change between Metal and Nimbus feel and look (Caution: can only be changed if toolbar is attached to the top -> button will disappear if toolbar is detached)",
+				"Change between Metal and Nimbus feel and look (Caution: will cause problems with the divider of vertical split panes)",
 				"change design");
 		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
 				"editor");
@@ -310,7 +310,10 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(toggleAutoLayoutButton);
 		this.add(setDefaultButton);
 
-		this.add(changeDesignButton);
+		// TODO reactivate button when mouse click listener problem in graph split panes
+		// is resolved (see TODO in MainFrame)
+
+//		this.add(changeDesignButton);
 
 		setToolbarMode(ToolbarMode.VIEWER);
 		toggleTreeLayoutButton();

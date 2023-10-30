@@ -48,8 +48,6 @@ public class PetrinetPanel extends JPanel {
 
 	private PetrinetController controller;
 
-	
-
 	/**
 	 * Instantiates a new petrinet panel.
 	 *
@@ -170,11 +168,11 @@ public class PetrinetPanel extends JPanel {
 			return;
 		zoomOut(reachabilityView);
 	}
-	
+
 	public void resetReachabilityZoom() {
 
 		double zoom = reachabilityView.getCamera().getViewPercent();
-		
+
 		if (zoom != 1.0)
 			reachabilityView.getCamera().resetView();
 	}
@@ -282,7 +280,7 @@ public class PetrinetPanel extends JPanel {
 
 					controller.getReachabilityGraph().setScreenSize(reachabilityViewPanel.getSize());
 					viewer.replayGraph(graph);
-					
+
 				}
 
 			});
@@ -312,7 +310,7 @@ public class PetrinetPanel extends JPanel {
 					String id = element.getId();
 
 					if (graph instanceof ReachabilityGraph) {
-						controller.reachabilityNodeClicked(id);
+						controller.onReachabilityGraphNodeClicked(id);
 					} else {
 
 						Petrinet petrinet = controller.getPetrinet();
@@ -321,11 +319,12 @@ public class PetrinetPanel extends JPanel {
 						double y = element.getY();
 						if (p != null)
 							if (p.getX() != x || p.getY() != y) {
-								petrinet.setCoordinates(id, element.getX(), element.getY());
+
+								controller.onPetrinetNodeDragged(id, x, y);
 							} else {
 
 								if (graph instanceof PetrinetGraph)
-									controller.clickNodeInGraph(id);
+									controller.onPetrinetNodeClicked(id);
 							}
 						element = null;
 					}

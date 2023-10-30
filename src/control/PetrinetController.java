@@ -19,6 +19,7 @@ import core.ReachabilityGraphModel;
 import core.Transition;
 import exceptions.PetrinetException;
 import gui.ToolbarMode;
+import listeners.ClickListener;
 import listeners.PetrinetStateChangedListener;
 import listeners.ToolbarToggleListener;
 import propra.pnml.PNMLWopedWriter;
@@ -27,7 +28,7 @@ import propra.pnml.PNMLWopedWriter;
 /**
  * The Class PetrinetController.
  */
-public class PetrinetController {
+public class PetrinetController implements  ClickListener{
 
 	private Petrinet petrinet = new Petrinet();
 	private PetrinetGraph petrinetGraph;
@@ -174,25 +175,6 @@ public class PetrinetController {
 	}
 
 	/**
-	 * Click node in graph.
-	 *
-	 * @param id the id
-	 */
-	public void clickNodeInGraph(String id) {
-
-		PetrinetElement pe = petrinet.getPetrinetElement(id);
-
-		if (toolbarMode == ToolbarMode.VIEWER) {
-			if (pe instanceof Transition)
-				petrinet.fireTransition(id);
-			if (pe instanceof Place)
-				petrinetGraph.toggleNodeMark(pe);
-		}
-		if (toolbarMode == ToolbarMode.EDITOR)
-			editor.clickedNodeInGraph(pe);
-	}
-
-	/**
 	 * Reset petrinet.
 	 */
 	public void resetPetrinet() {
@@ -250,18 +232,6 @@ public class PetrinetController {
 		reachabilityGraphModel.reset();
 		petrinetQueue.resetButtons();
 		petrinetQueue = new PetrinetQueue(reachabilityGraphModel.getCurrentState(), this);
-	}
-
-	/**
-	 * Reachability node clicked.
-	 *
-	 * @param id the id
-	 */
-	public void reachabilityNodeClicked(String id) {
-		PetrinetState state = reachabilityGraphModel.getState(id);
-		petrinet.setState(state);
-		reachabilityGraphModel.setCurrentState(state);
-		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);
 	}
 
 	/**
@@ -399,6 +369,33 @@ public class PetrinetController {
 	 */
 	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
+	}
+
+	@Override
+	public void onPetrinetNodeClicked(String id) {
+		PetrinetElement pe = petrinet.getPetrinetElement(id);
+
+		if (toolbarMode == ToolbarMode.VIEWER) {
+			if (pe instanceof Transition)
+				petrinet.fireTransition(id);
+			if (pe instanceof Place)
+				petrinetGraph.toggleNodeMark(pe);
+		}
+		if (toolbarMode == ToolbarMode.EDITOR)
+			editor.clickedNodeInGraph(pe);		
+	}
+
+	@Override
+	public void onPetrinetNodeDragged(String id, double x, double y) {
+		petrinet.setCoordinates(id, x, y);		
+	}
+
+	@Override
+	public void onReachabilityGraphNodeClicked(String id) {
+		PetrinetState state = reachabilityGraphModel.getState(id);
+		petrinet.setState(state);
+		reachabilityGraphModel.setCurrentState(state);
+		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);		
 	}
 
 }

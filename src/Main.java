@@ -1,27 +1,25 @@
 
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+
 import gui.MainFrame;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Main.
+ * This is the main class being the starting point for the program. No other
+ * class contains a main method.
  */
 public class Main {
 
 	/**
-	 * The main method.
+	 * The main method: starts an instance of {@link MainFrame}.
 	 *
-	 * @param args the arguments
+	 * @param args Not used.
 	 */
 	public static void main(String[] args) {
 
-//		System.setProperty("sun.java2d.uiScale", "1.0");
-//System.out.println(System.getProperty("user.dir") + "/petrinet");
-//		File[] directory = (new File(System.getProperty("user.dir") + "/src/petrinet")).listFiles();
-//		
-//		for (File f: directory)
-//			System.out.println(f.getName());
-//		System.exit(0);
-//		
+		System.setProperty("sun.java2d.uiScale", "1.0");
+
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new MainFrame("Bernd Reiß 3223442");
