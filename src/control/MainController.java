@@ -24,7 +24,7 @@ import gui.PetrinetToolbarInterface;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
 import listeners.ToolbarToggleListener;
-import reachabilityGraphLayout.LayoutTypes;
+import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -41,7 +41,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	private boolean tabAdded;
 
-	private LayoutTypes layoutType = LayoutTypes.TREE;
+	private LayoutType layoutType = LayoutType.TREE;
 
 	/**
 	 * Instantiates a new main controller.
@@ -111,7 +111,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	 *
 	 * @return the layout type
 	 */
-	public LayoutTypes getLayoutType() {
+	public LayoutType getLayoutType() {
 		return layoutType;
 	}
 
@@ -201,7 +201,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	@Override
 	public void onNew() {
 		setNewPanel(null, false);
-
+		onSetDefault();
 	}
 
 	@Override
@@ -754,9 +754,9 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	@Override
 	public void onToggleTreeLayout() {
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			return;
-		layoutType = LayoutTypes.TREE;
+		layoutType = LayoutType.TREE;
 
 		parent.getToolbar().toggleTreeLayoutButton();
 
@@ -764,36 +764,33 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			for (Component comp : parent.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-		onSetDefault();
 	}
 
 	@Override
 	public void onToggleCircleLayout() {
-		if (layoutType == LayoutTypes.CIRCLE)
+		if (layoutType == LayoutType.CIRCLE)
 			return;
-		layoutType = LayoutTypes.CIRCLE;
+		layoutType = LayoutType.CIRCLE;
 		parent.getToolbar().toggleCircleLayoutButton();
 
 		if (parent.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : parent.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-		onSetDefault();
 	}
 
 
 	@Override
 	public void onToggleAutoLayout() {
-		if (layoutType == LayoutTypes.AUTOMATIC)
+		if (layoutType == LayoutType.AUTOMATIC)
 			return;
-		layoutType = LayoutTypes.AUTOMATIC;
+		layoutType = LayoutType.AUTOMATIC;
 
 		parent.getToolbar().toggleAutoLayoutButton();
 		if (parent.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : parent.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-		onSetDefault();
 	}
 
 
@@ -827,7 +824,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	}
 
 	@Override
-	public void changeDesign() {
+	public void onChangeDesign() {
 		parent.changeLookAndFeel();
 	}
 }

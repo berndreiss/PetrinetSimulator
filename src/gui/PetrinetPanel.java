@@ -29,97 +29,95 @@ import core.PetrinetElement;
 import core.PetrinetGraph;
 import core.ReachabilityGraph;
 import exceptions.PetrinetException;
-import reachabilityGraphLayout.LayoutTypes;
+import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class PetrinetPanel.
+ * A {@link JPanel} representing a {@link Petrinet} loaded from a file holding a
+ * horizontal {@link ResizableSplitPane} containing a {@link PetrinetGraph} on
+ * the left and a {@link ReachabilityGraph} on the right. Creates and holds a
+ * {@link PetrinetController} managing all interactions with the data model. The
+ * graphs are implemented using the
+ * <a href="https://graphstream-project.org/">GraphStream</a> library.
  */
 public class PetrinetPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	// split pane holding petrinet and reachability graph
 	private ResizableSplitPane graphSplitPane;
 
-	private JPanel petrinetViewPanel;
-	private JPanel reachabilityViewPanel;
-	private ViewPanel petrinetView;
-	private ViewPanel reachabilityView;
+	// panels for the petrinet and reachability graph -> if the view panel for the
+	// GraphStream graph is not put inside another panel the layout is unstable
+	private JPanel petrinetPanel;
+	private JPanel reachabilityPanel;
 
+	// view panels holding the viewer for the GraphStream graph
+	private ViewPanel petrinetViewPanel;
+	private ViewPanel reachabilityViewPanel;
+
+	// controller managing the interaction with the data model
 	private PetrinetController controller;
 
 	/**
 	 * Instantiates a new petrinet panel.
 	 *
-	 * @param mainController the main controller
-	 * @param file           the file
-	 * @param layoutType     the layout type
-	 * @throws PetrinetException the petrinet exception
+	 * @param mainController The controller serving as an interface to the main GUI
+	 *                       components.
+	 * @param file           The pnml file from which contents should be loaded.
+	 * @param layoutType     The layout type used.
+	 * @throws PetrinetException If there is a problem reading a file an exception
+	 *                           is thrown.
 	 */
-	public PetrinetPanel(MainController mainController, File file, LayoutTypes layoutType) throws PetrinetException {
-		this(mainController, file, layoutType, false);
-	}
+	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType) throws PetrinetException {
 
-	/**
-	 * Instantiates a new petrinet panel.
-	 *
-	 * @param mainController the main controller
-	 * @param file           the file
-	 * @param layoutType     the layout type
-	 * @param headless       the headless
-	 * @throws PetrinetException the petrinet exception
-	 */
-	private PetrinetPanel(MainController mainController, File file, LayoutTypes layoutType, boolean headless)
-			throws PetrinetException {
+		this.controller = new PetrinetController(file, false);
 
-		this.controller = new PetrinetController(file, headless);
-
+		// linking the petrinet controller to the toolbar via the main controller ->
+		// needed for toggling the layout, un-/redo and editor buttons
 		controller.setToolbarToggleListener(mainController);
 
-		this.petrinetView = initGraphStreamView(controller.getPetrinetGraph());
+		//get view panel for petrinet and add it to the JPanel
+		this.petrinetViewPanel = initGraphStreamView(controller.getPetrinetGraph());
+		petrinetPanel = new JPanel();
+		petrinetPanel.setLayout(new BorderLayout());
+		petrinetPanel.add(petrinetViewPanel, BorderLayout.CENTER);
 
-		petrinetViewPanel = new JPanel();
-		petrinetViewPanel.setLayout(new BorderLayout());
-		petrinetViewPanel.add(petrinetView, BorderLayout.CENTER);
-
-		reachabilityViewPanel = new JPanel();
+		reachabilityPanel = new JPanel();
 		setLayout(new BorderLayout());
 
-		if (!headless) {
+		controller.getReachabilityGraph().setLayoutType(layoutType);
+		graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT,
+				petrinetPanel, reachabilityPanel);
 
-			controller.getReachabilityGraph().setLayoutType(layoutType);
-			graphSplitPane = new ResizableSplitPane(mainController.getFrame(), JSplitPane.HORIZONTAL_SPLIT,
-					petrinetViewPanel, reachabilityViewPanel);
+		add(graphSplitPane, BorderLayout.CENTER);
+		setReachabilityPanel(layoutType);
+		mainController.getFrame().addComponentListener(new ComponentAdapter() {
 
-			add(graphSplitPane, BorderLayout.CENTER);
-			setReachabilityPanel(layoutType);
-			mainController.getFrame().addComponentListener(new ComponentAdapter() {
-
-				@Override
-				public void componentResized(ComponentEvent e) {
-					adjustArrowHeads();
-				}
-			});
-
-		}
+			@Override
+			public void componentResized(ComponentEvent e) {
+				adjustArrowHeads();
+			}
+		});
 
 	}
 
-	private void setReachabilityPanel(LayoutTypes layoutType) {
+	private void setReachabilityPanel(LayoutType layoutType) {
 
 		JPanel panel = (JPanel) graphSplitPane.getRightComponent();
 
 		if (panel.getComponentCount() != 0) {
-			panel.remove(reachabilityView);
+			panel.remove(reachabilityViewPanel);
 		}
 
 		panel.setLayout(new BorderLayout());
 
-		reachabilityView = initGraphStreamView(controller.getReachabilityGraph());
-		panel.add(reachabilityView, BorderLayout.CENTER);
+		reachabilityViewPanel = initGraphStreamView(controller.getReachabilityGraph());
+		panel.add(reachabilityViewPanel, BorderLayout.CENTER);
 
 		controller.resetReachabilityGraph();
-
+		graphSplitPane.revalidate();
+		graphSplitPane.repaint();
 	}
 
 	/**
@@ -135,14 +133,14 @@ public class PetrinetPanel extends JPanel {
 	 * Zoom in petrinet.
 	 */
 	public void zoomInPetrinet() {
-		zoomIn(petrinetView);
+		zoomIn(petrinetViewPanel);
 	}
 
 	/**
 	 * Zoom out petrinet.
 	 */
 	public void zoomOutPetrinet() {
-		zoomOut(petrinetView);
+		zoomOut(petrinetViewPanel);
 	}
 
 	/**
@@ -154,7 +152,7 @@ public class PetrinetPanel extends JPanel {
 																	// and a zoom on one node does not make any
 																	// difference
 			return;
-		zoomIn(reachabilityView);
+		zoomIn(reachabilityViewPanel);
 	}
 
 	/**
@@ -166,15 +164,15 @@ public class PetrinetPanel extends JPanel {
 																	// and a zoom on one node does not make any
 																	// difference
 			return;
-		zoomOut(reachabilityView);
+		zoomOut(reachabilityViewPanel);
 	}
 
 	public void resetReachabilityZoom() {
 
-		double zoom = reachabilityView.getCamera().getViewPercent();
+		double zoom = reachabilityViewPanel.getCamera().getViewPercent();
 
 		if (zoom != 1.0)
-			reachabilityView.getCamera().resetView();
+			reachabilityViewPanel.getCamera().resetView();
 	}
 
 	private void zoomIn(ViewPanel viewPanel) {
@@ -205,7 +203,7 @@ public class PetrinetPanel extends JPanel {
 	 *
 	 * @param layoutType the new layout type
 	 */
-	public void setLayoutType(LayoutTypes layoutType) {
+	public void setLayoutType(LayoutType layoutType) {
 		if (controller.getHeadless())
 			return;
 
@@ -244,7 +242,7 @@ public class PetrinetPanel extends JPanel {
 		graph.setAttribute("ui.quality");
 		graph.setAttribute("ui.antialias");
 
-		if (graph instanceof ReachabilityGraph && ((ReachabilityGraph) graph).getLayoutType() == LayoutTypes.AUTOMATIC)
+		if (graph instanceof ReachabilityGraph && ((ReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
 			viewer.enableAutoLayout();
 		else
 			viewer.disableAutoLayout();
@@ -268,17 +266,17 @@ public class PetrinetPanel extends JPanel {
 		// werden zu können
 		ViewerPipe viewerPipe = viewer.newViewerPipe();
 
-		if (graph instanceof ReachabilityGraph && reachabilityViewPanel != null) {
-			reachabilityViewPanel.addComponentListener(new ComponentAdapter() {
+		if (graph instanceof ReachabilityGraph && reachabilityPanel != null) {
+			reachabilityPanel.addComponentListener(new ComponentAdapter() {
 
 				@Override
 				public void componentResized(ComponentEvent e) {
 
 					if (graph instanceof PetrinetGraph
-							|| ((ReachabilityGraph) graph).getLayoutType() == LayoutTypes.AUTOMATIC)
+							|| ((ReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
 						return;
 
-					controller.getReachabilityGraph().setScreenSize(reachabilityViewPanel.getSize());
+					controller.getReachabilityGraph().setScreenSize(reachabilityPanel.getSize());
 					viewer.replayGraph(graph);
 
 				}
@@ -356,8 +354,8 @@ public class PetrinetPanel extends JPanel {
 	// for some reason replayGraph() does only work by resizing the panel
 
 	private void adjustArrowHeads() {
-		Dimension currentSize = reachabilityViewPanel.getSize();
-		reachabilityViewPanel.setSize(currentSize.width + 1, currentSize.height);
-		reachabilityViewPanel.setSize(currentSize);
+		Dimension currentSize = reachabilityPanel.getSize();
+		reachabilityPanel.setSize(currentSize.width + 1, currentSize.height);
+		reachabilityPanel.setSize(currentSize);
 	}
 }

@@ -72,6 +72,9 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 
+		// change look and feel to Nimbus
+		changeLookAndFeel();
+
 		setLayout(new BorderLayout());
 
 		textArea = new JTextArea();
@@ -83,11 +86,7 @@ public class MainFrame extends JFrame {
 
 		tabbedPane = new JTabbedPane();
 
-		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT);
-		add(splitPane, BorderLayout.CENTER);
-		splitPane.setLeftComponent(tabbedPane);
-		splitPane.setRightComponent(scrollPane);
-		splitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
+		setSplitPane();
 
 		statusLabel = new JLabel();
 		add(statusLabel, BorderLayout.SOUTH);
@@ -118,8 +117,17 @@ public class MainFrame extends JFrame {
 		// TODO find workaround for certain look and feels causing JSplitPane dividers
 		// not registering MouseEvents (remove feature until resolved)
 
-		// change look and feel to Nimbus
-//		changeLookAndFeel();
+	}
+
+	//removes the split pane if it has been instantiated and adds 
+	private void setSplitPane() {
+
+		if (splitPane != null)
+			remove(splitPane);
+		
+		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT, tabbedPane, scrollPane);
+		add(splitPane, BorderLayout.CENTER);
+		splitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
 
 	}
 
@@ -201,13 +209,27 @@ public class MainFrame extends JFrame {
 			}
 		}
 
+		
 		// update UI components
 		SwingUtilities.updateComponentTreeUI(this);
 		revalidate();
 		repaint();
 
+		//check whethers toolbar has been instantiated
+		if (toolbar == null)
+			return;
+		
 		// reset the toolbar buttons
 		toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
+
+		//check whether splitPane has been instantiated
+		if (splitPane == null)
+			return;
+
+		
+		//reset the split pane -> otherwise the divider mouse events do not register for some reason
+		setSplitPane(); 
+
 	}
 
 }

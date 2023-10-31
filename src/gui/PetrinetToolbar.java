@@ -23,7 +23,7 @@ import javax.swing.UIManager;
 import control.PetrinetController;
 import core.Editor;
 import core.PetrinetQueue;
-import reachabilityGraphLayout.LayoutTypes;
+import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -218,7 +218,7 @@ public class PetrinetToolbar extends JToolBar {
 		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> controller.onZoomOut(), "Zoom out",
 				"zoom out");
 
-		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.changeDesign(),
+		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> controller.onChangeDesign(),
 				"Change between Metal and Nimbus feel and look (Caution: will cause problems with the divider of vertical split panes)",
 				"change design");
 		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> controller.onOpenEditor(), "Switch to editor",
@@ -253,13 +253,13 @@ public class PetrinetToolbar extends JToolBar {
 				"Zoom out", "zoom out");
 
 		toggleTreeLayoutButton = new ToolbarButton(ToolbarImage.TREE_LAYOUT, e -> controller.onToggleTreeLayout(),
-				"Turn tree base layout on -> will give the best experience", "tree-layout");
+				"Turn tree base layout on -> will give the best experience (resets graph)", "tree-layout");
 
 		toggleCircleLayoutButton = new ToolbarButton(ToolbarImage.CIRCLE_LAYOUT, e -> controller.onToggleCircleLayout(),
-				"Turn circe based layout on -> might not be as beautiful but may be more fun", "circle-layout");
+				"Turn circe based layout on -> might not be as beautiful but may be more fun (resets graph)", "circle-layout");
 
 		toggleAutoLayoutButton = new ToolbarButton(ToolbarImage.AUTO_LAYOUT, e -> controller.onToggleAutoLayout(),
-				"Turn auto layout on -> auto layout provided by GraphStream", "auto-layout");
+				"Turn auto layout on -> auto layout provided by GraphStream (resets graph)", "auto-layout");
 
 		this.add(openButton);
 		this.add(saveButton);
@@ -310,10 +310,7 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(toggleAutoLayoutButton);
 		this.add(setDefaultButton);
 
-		// TODO reactivate button when mouse click listener problem in graph split panes
-		// is resolved (see TODO in MainFrame)
-
-//		this.add(changeDesignButton);
+		this.add(changeDesignButton);
 
 		setToolbarMode(ToolbarMode.VIEWER);
 		toggleTreeLayoutButton();
@@ -646,7 +643,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * @param panel      the panel
 	 * @param layoutType the layout type
 	 */
-	public void setToolbarTo(PetrinetPanel panel, LayoutTypes layoutType) {
+	public void setToolbarTo(PetrinetPanel panel, LayoutType layoutType) {
 
 		JButton button = new JButton();
 
@@ -661,11 +658,11 @@ public class PetrinetToolbar extends JToolBar {
 
 		resetButtons();
 
-		if (layoutType == LayoutTypes.AUTOMATIC)
+		if (layoutType == LayoutType.AUTOMATIC)
 			toggleAutoLayoutButton();
-		if (layoutType == LayoutTypes.CIRCLE)
+		if (layoutType == LayoutType.CIRCLE)
 			toggleCircleLayoutButton();
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			toggleTreeLayoutButton();
 
 		if (panel == null)

@@ -38,7 +38,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	/** The screen size. */
 	private Dimension screenSize = new Dimension(1000, 500);
 
-	private LayoutTypes layoutType = LayoutTypes.TREE;
+	private LayoutType layoutType = LayoutType.TREE;
 
 	private static int maxRowCount = 0;
 
@@ -176,7 +176,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 //			}
 //		}
 		repaintNodes();
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			beautify();
 	}
 
@@ -335,7 +335,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	private void repaintNodes() {
 
-		if (layoutType == LayoutTypes.CIRCLE) {
+		if (layoutType == LayoutType.CIRCLE) {
 			circlify();
 			return;
 		}
@@ -377,8 +377,6 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 			}
 		} while (workToBeDone && loops < 20);
-
-//		System.out.println("Loops performed in beautify: " + loops);
 
 		spreadSprites();
 	}
@@ -537,7 +535,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 				nodeList.remove(ln);
 		}
 		resetMaxRow();
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			repaintNodes();
 	}
 
@@ -622,7 +620,6 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 */
 	public void setScreenSize(Dimension screenSize) {
 		this.screenSize = screenSize;
-		System.out.println(screenSize);
 		repaintNodes();
 	}
 
@@ -656,7 +653,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			potentialCulprits.remove(edge);
 
 		repaintNodes();
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			beautify();
 
 	}
@@ -680,7 +677,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		graphicalObjectList.remove(layoutNode);
 		removeBlankNodes();
 		repaintNodes();
-		if (layoutType == LayoutTypes.TREE)
+		if (layoutType == LayoutType.TREE)
 			beautify();
 
 	}
@@ -698,7 +695,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 *
 	 * @param layoutType the new layout type
 	 */
-	public void setLayoutType(LayoutTypes layoutType) {
+	public void setLayoutType(LayoutType layoutType) {
 		this.layoutType = layoutType;
 	}
 

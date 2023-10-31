@@ -1,74 +1,88 @@
 package gui;
 
-// TODO: Auto-generated Javadoc
+import javax.swing.LookAndFeel;
+
+import core.Editor;
+
 /**
- * The Interface MenuInterface.
+ * An interface defining methods for entries in {@link PetrinetMenu}.
  */
 public interface PetrinetMenuInterface {
-	
-	//METHODS FOR FILE
-	
+
+	// METHODS FOR FILE
+
 	/**
-	 * On new.
+	 * Opens a new empty petrinet in the {@link Editor}.
 	 */
 	void onNew();
-		
+
 	/**
-	 * On open.
+	 * Open a dialog to choose a pnml file from which to load a petrinet.
 	 */
 	void onOpen();
 
 	/**
-	 * On open in new tab.
+	 * Open a dialog to choose a pnml file from which to load a petrinet and open it
+	 * in a new tab.
 	 */
 	void onOpenInNewTab();
-	
+
 	/**
-	 * On save.
+	 * Save changes to the file the petrinet has been opened from.
 	 */
 	void onSave();
-	
+
 	/**
-	 * On save as.
+	 * Open a dialog to choose a directory and file name to save the current
+	 * petrinet to.
 	 */
 	void onSaveAs();
-	
+
 	/**
-	 * On reload.
+	 * Reload the contents of the currently opened file.
 	 */
 	void onReload();
-	
+
 	/**
-	 * On analyse many.
+	 * Open a dialog to choose (multiple) pnml file(s) to analyse. The results are
+	 * printed in the text area of {@link MainFrame}.
 	 */
 	void onAnalyseMany();
-	
+
 	/**
-	 * On close.
+	 * Close the currently opened file.
 	 */
 	void onClose();
-	
+
 	/**
-	 * On exit.
+	 * Exit the program.
 	 */
 	void onExit();
-	
-	//METHODS FOR EDIT
-	
+
+	// METHODS FOR EDIT
+
 	/**
-	 * On open editor.
+	 * Open the {@link Editor}.
 	 */
 	void onOpenEditor();
-	
+
 	/**
-	 * On close editor.
+	 * Close the {@link Editor}.
 	 */
 	void onCloseEditor();
 
-	//METHODS FOR HELP
-	
 	/**
-	 * On info.
+	 * Change between the {@link LookAndFeel} "Nimbus" (default) and "Metal" (java
+	 * default).
+	 */
+
+	void onChangeDesign();
+
+	// METHODS FOR HELP
+
+	/**
+	 * Open an info box showing java version and user directory used.
 	 */
 	void onInfo();
+
 }

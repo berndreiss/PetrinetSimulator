@@ -12,7 +12,7 @@ import control.PetrinetController;
 import listeners.ReachabilityStateChangeListener;
 import listeners.ReplayGraphListener;
 import reachabilityGraphLayout.Layout;
-import reachabilityGraphLayout.LayoutTypes;
+import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,7 +37,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private Layout layoutManager;
 
-	private LayoutTypes layoutType = LayoutTypes.TREE;
+	private LayoutType layoutType = LayoutType.TREE;
 
 	/**
 	 * Instantiates a new reachability graph.
@@ -63,7 +63,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 			initialNode = addState(controller.getReachabilityGraphModel().getInitialState(), null, null);
 			setHighlight(initialNode);
-			if (layoutType != LayoutTypes.AUTOMATIC)
+			if (layoutType != LayoutType.AUTOMATIC)
 				layoutManager.add(initialNode);
 
 		}
@@ -87,7 +87,7 @@ public class ReachabilityGraph extends MultiGraph {
 				Edge removedEdge = removeStateEdge(stateSource, stateTarget, t);
 				if (removedEdge == currentEdge)
 					currentEdge = null;
-				if (layoutType != LayoutTypes.AUTOMATIC)
+				if (layoutType != LayoutType.AUTOMATIC)
 					layoutManager.removeEdge(stateSource, stateTarget, t);
 			}
 
@@ -109,7 +109,7 @@ public class ReachabilityGraph extends MultiGraph {
 					else
 						setHighlight(mOld);
 				}
-				if (layoutType != LayoutTypes.AUTOMATIC)
+				if (layoutType != LayoutType.AUTOMATIC)
 					layoutManager.removeNode(node);
 				replayGraph();
 			}
@@ -117,7 +117,7 @@ public class ReachabilityGraph extends MultiGraph {
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 				Node node = addState(state, predecessor, t);
-				if (layoutType != LayoutTypes.AUTOMATIC)
+				if (layoutType != LayoutType.AUTOMATIC)
 					layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t);
 				replayGraph();
 			}
@@ -173,7 +173,7 @@ public class ReachabilityGraph extends MultiGraph {
 //			double scale = 1;
 //			sprite.setAttribute("size", scale* label.length() + ", " + 20 + " px");
 			sprite.attachToEdge(newEdge.getId());
-			if (layoutType == LayoutTypes.AUTOMATIC)
+			if (layoutType == LayoutType.AUTOMATIC)
 				sprite.setPosition(0.5);
 			else
 				sprite.setPosition(0.5, 0.5, 0);
@@ -334,9 +334,9 @@ public class ReachabilityGraph extends MultiGraph {
 	 *
 	 * @param layoutType the new layout type
 	 */
-	public void setLayoutType(LayoutTypes layoutType) {
+	public void setLayoutType(LayoutType layoutType) {
 		this.layoutType = layoutType;
-		if (layoutType != LayoutTypes.AUTOMATIC)
+		if (layoutType != LayoutType.AUTOMATIC)
 			layoutManager.setLayoutType(layoutType);
 	}
 	
@@ -345,7 +345,7 @@ public class ReachabilityGraph extends MultiGraph {
 	 *
 	 * @return the layout type
 	 */
-	public LayoutTypes getLayoutType() {
+	public LayoutType getLayoutType() {
 		return layoutType;
 	}
 	

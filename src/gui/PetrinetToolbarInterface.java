@@ -154,7 +154,7 @@ public interface PetrinetToolbarInterface {
 	/**
 	 * Change design.
 	 */
-	void changeDesign();
+	void onChangeDesign();
 
 	
 }

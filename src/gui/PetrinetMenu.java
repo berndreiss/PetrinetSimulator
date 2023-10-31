@@ -1,28 +1,47 @@
-package gui; 
+package gui;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-
-
-// TODO: Auto-generated Javadoc
 /**
- * The Class PetrinetMenu.
+ * A custom {@link JMenuBar} consisting of 
+ * File: 
+ * -New 
+ * -Open 
+ * -Open in new Tab
+ * -Reload 
+ * -Save 
+ * -Save as... 
+ * -Analyse++ 
+ * -Close 
+ * -Exit
+ * 
+ * Edit: 
+ * -Open Editor 
+ * -Close Editor
+ * -Change Design
+ * 
+ * Help: 
+ * -Info
+ * 
+ * For a description of the functionality of these entries see
+ * {@link PetrinetMenuInterface}.
+ * 
  */
 class PetrinetMenu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 
-
 	/**
-	 * Instantiates a new petrinet menu.
+	 * Instantiates a new menu.
 	 *
-	 * @param controller the controller
+	 * @param menuController A controller implementing {@link PetrinetMenuInterface}.
 	 */
-	PetrinetMenu(PetrinetMenuInterface controller) {
+	PetrinetMenu(PetrinetMenuInterface menuController) {
 
-		JMenu files = new JMenu("Files");
+		// create menus and add the to menu bar
+		JMenu files = new JMenu("File");
 		JMenu edit = new JMenu("Edit");
 		JMenu help = new JMenu("Help");
 
@@ -30,9 +49,10 @@ class PetrinetMenu extends JMenuBar {
 		this.add(edit);
 		this.add(help);
 
+		//create menu items, add them to according menu and link to controller
 		JMenuItem newMenuItem = new JMenuItem("New");
 		JMenuItem openMenuItem = new JMenuItem("Open");
-		JMenuItem openInNewTabMenuItem = new JMenuItem("Open in new tab");
+		JMenuItem openInNewTabMenuItem = new JMenuItem("Open in new Tab");
 		JMenuItem reloadMenuItem = new JMenuItem("Reload");
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		JMenuItem saveAsMenuItem = new JMenuItem("Save as...");
@@ -41,6 +61,7 @@ class PetrinetMenu extends JMenuBar {
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		JMenuItem openEditorMenuItem = new JMenuItem("Open Editor");
 		JMenuItem closeEditorMenuItem = new JMenuItem("Close Editor");
+		JMenuItem changeDesignMenuItem = new JMenuItem("Change Design");
 		JMenuItem showInfoMenuItem = new JMenuItem("Info");
 
 		files.add(newMenuItem);
@@ -54,30 +75,33 @@ class PetrinetMenu extends JMenuBar {
 		files.add(exitMenuItem);
 		edit.add(openEditorMenuItem);
 		edit.add(closeEditorMenuItem);
+		edit.add(changeDesignMenuItem);
 		help.add(showInfoMenuItem);
 
-		newMenuItem.addActionListener(e -> controller.onNew());
+		newMenuItem.addActionListener(e -> menuController.onNew());
+
+		openMenuItem.addActionListener(e -> menuController.onOpen());
+
+		openInNewTabMenuItem.addActionListener(e -> menuController.onOpenInNewTab());
+
+		reloadMenuItem.addActionListener(e -> menuController.onReload());
+
+		saveMenuItem.addActionListener(e -> menuController.onSave());
+
+		saveAsMenuItem.addActionListener(e -> menuController.onSaveAs());
+
+		analyseManyMenuItem.addActionListener(e -> menuController.onAnalyseMany());
+
+		closeMenuItem.addActionListener(e -> menuController.onClose());
+
+		exitMenuItem.addActionListener(e -> menuController.onExit());
+
+		openEditorMenuItem.addActionListener(e -> menuController.onOpenEditor());
+
+		closeEditorMenuItem.addActionListener(e -> menuController.onCloseEditor());
 		
-		openMenuItem.addActionListener(e -> controller.onOpen());
+		changeDesignMenuItem.addActionListener(e -> menuController.onChangeDesign());
 		
-		openInNewTabMenuItem.addActionListener(e -> controller.onOpenInNewTab());
-
-		reloadMenuItem.addActionListener(e -> controller.onReload());
-		
-		saveMenuItem.addActionListener(e -> controller.onSave());
-
-		saveAsMenuItem.addActionListener(e -> controller.onSaveAs());
-
-		analyseManyMenuItem.addActionListener(e -> controller.onAnalyseMany());
-
-		closeMenuItem.addActionListener(e -> controller.onClose());
-
-		exitMenuItem.addActionListener(e -> controller.onExit());
-
-		openEditorMenuItem.addActionListener(e -> controller.onOpenEditor());
-		
-		closeEditorMenuItem.addActionListener(e -> controller.onCloseEditor());
-		
-		showInfoMenuItem.addActionListener(e -> controller.onInfo());
+		showInfoMenuItem.addActionListener(e -> menuController.onInfo());
 	}
 }
