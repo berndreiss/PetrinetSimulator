@@ -14,6 +14,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.miv.pherd.IdAlreadyInUseException;
+
 import core.PetrinetAnalyser;
 import exceptions.DuplicateIdException;
 import exceptions.PetrinetException;
@@ -76,7 +78,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 				currentPetrinetPanel = panel;
 
 				parent.setStatusLabel(getStatusLabel());
-				setToolbarMode(currentPetrinetPanel.getController().getToolbarMode());
+				setToolbarMode(currentPetrinetPanel.getToolbarMode());
 
 				getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 			}
@@ -193,8 +195,9 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
-		PetrinetController controller = currentPetrinetPanel.getController();
-		controller.setToolbarMode(toolbarMode);
+		if (currentPetrinetPanel == null)
+			return;
+		currentPetrinetPanel.setToolbarMode(toolbarMode);
 		getFrame().getToolbar().setToolbarMode(toolbarMode);
 	}
 
@@ -524,7 +527,8 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			return;
 		PetrinetController controller = currentPetrinetPanel.getController();
 
-		boolean changed = controller.incrementMarkedPlace();
+		boolean changed = currentPetrinetPanel.incrementMarkedPlace();
+
 		if (changed)
 			setStatusLabel();
 
@@ -535,11 +539,9 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		if (currentPetrinetPanel == null)
 			return;
 
-		PetrinetController controller = currentPetrinetPanel.getController();
+		boolean changed = currentPetrinetPanel.decrementMarkedPlace();
 
-		controller.decrementMarkedPlace();
-
-		if (!controller.getFileChanged())
+		if (!changed)
 			return;
 
 		setStatusLabel();
@@ -564,7 +566,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			return;
 		}
 		try {
-			controller.getEditor().addPlace(id);
+			currentPetrinetPanel.getEditor().addPlace(id);
 		} catch (DuplicateIdException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 			return;
@@ -590,7 +592,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			return;
 		}
 		try {
-			controller.getEditor().addTransition(id);
+			currentPetrinetPanel.getEditor().addTransition(id);
 		} catch (DuplicateIdException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 
@@ -603,8 +605,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	@Override
 	public void onRemoveComponent() {
-		PetrinetController controller = currentPetrinetPanel.getController();
-		controller.getEditor().removeComponent();
+		currentPetrinetPanel.getEditor().removeComponent();
 		setStatusLabel();
 	}
 
@@ -623,7 +624,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		boolean addToggled = controller.getEditor().toggleAddEdge(id);
+		boolean addToggled = currentPetrinetPanel.getEditor().toggleAddEdge(id);
 
 		if (!addToggled)
 			JOptionPane.showMessageDialog(null, "Invalid id: the id already exists.", "",
@@ -643,7 +644,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	@Override
 	public void onRemoveEdge() {
-		currentPetrinetPanel.getController().getEditor().toggleRemoveEdge();
+		currentPetrinetPanel.getEditor().toggleRemoveEdge();
 		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
 
@@ -667,7 +668,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		if (label == null)
 			return;
 
-		currentPetrinetPanel.getController().setLabel(label);
+		currentPetrinetPanel.setLabel(label);
 		setStatusLabel();
 	}
 
@@ -698,7 +699,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			return;
 		PetrinetController controller = currentPetrinetPanel.getController();
 
-		String[][] result = { controller.analyse() };
+		String[][] result = { controller.analyse(false) };
 		parent.print(printResults(result));
 	}
 
@@ -764,6 +765,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			for (Component comp : parent.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
+		
 	}
 
 	@Override
@@ -812,19 +814,22 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	public void onSetDefault() {
 		ResizableSplitPane mainSplitPane = parent.getSplitPane();
 
-		mainSplitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
+		mainSplitPane.setDividerRatio(SPLIT_PANE_DEFAULT_RATIO);
 		mainSplitPane.resetDivider();
 
 		if (currentPetrinetPanel == null)
 			return;
 
 		ResizableSplitPane graphSplitPane = currentPetrinetPanel.getGraphSplitPane();
-		graphSplitPane.setDefaultRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
+		graphSplitPane.setDividerRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
 		graphSplitPane.resetDivider();
 	}
 
 	@Override
 	public void onChangeDesign() {
 		parent.changeLookAndFeel();
-	}
+		JTabbedPane tabbedPane = parent.getTabbedPane();
+		for (Component comp: tabbedPane.getComponents())
+			((PetrinetPanel) comp).setSplitPane();
+	}	
 }

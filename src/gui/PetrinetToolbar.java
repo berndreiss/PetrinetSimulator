@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import control.PetrinetController;
-import core.Editor;
 import core.PetrinetQueue;
 import reachabilityGraphLayout.LayoutType;
 
@@ -312,9 +311,8 @@ public class PetrinetToolbar extends JToolBar {
 
 		this.add(changeDesignButton);
 
-		setToolbarMode(ToolbarMode.VIEWER);
 		toggleTreeLayoutButton();
-
+		setToolbarMode(ToolbarMode.VIEWER);
 	}
 
 	/**
@@ -668,22 +666,25 @@ public class PetrinetToolbar extends JToolBar {
 		if (panel == null)
 			return;
 
-		PetrinetController controller = panel.getController();
 
-		Editor editor = controller.getEditor();
+		PetrinetGraphEditor editor = panel.getEditor();
 		if (editor.addsEdge())
 			toggleAddEdgeButton();
 		if (editor.removesEdge())
 			toggleRemoveEdgeButton();
 
+		PetrinetController controller = panel.getController();
+
 		PetrinetQueue queue = controller.getPetrinetQueue();
 
+		if (queue == null)
+			return;
+		
 		if (!queue.isFirstState())
 			toggleUndoButton();
 		if (queue.hasNext())
 			toggleRedoButton();
 
-		setToolbarMode(controller.getToolbarMode());
 	}
 
 	/**

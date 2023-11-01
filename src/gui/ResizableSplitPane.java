@@ -15,20 +15,20 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 // TODO: Auto-generated Javadoc
 /**
- * This is a subclass of {@link JSplitPane} but the divider stays in place even if the
- * parent container is resized, hence the name resizable split pane. The split
- * pane is listening to the parent container and on resize resets the divider.
- * The split can be horizontal or vertical.
+ * This is a subclass of {@link JSplitPane} but the divider stays in place even
+ * if the parent container is resized, hence the name resizable split pane. The
+ * split pane is listening to the parent container and on resize resets the
+ * divider. The split can be horizontal or vertical.
  */
 public class ResizableSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
 
-	// ratio of the divider -> is updated when divider is moved
+	/** ratio of the divider -> is updated when divider is moved*/
 	private double dividerRatio = 0.5;
-	// the parent container
+	/** the parent container*/
 	private MainFrame parent;
-	// offset that is considered when toolbar is docked to EAST or WEST of parent
+	/** offset that is considered when toolbar is docked to EAST or WEST of parent*/
 	private int toolbarOffSet;
 
 	/**
@@ -89,7 +89,7 @@ public class ResizableSplitPane extends JSplitPane {
 		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL) {
 			toolbarOffSet += parent.getToolbar().getWidth();
 		}
-		Dimension preferredSize = new Dimension((int) (parent.getWidth() / 2-7 - toolbarOffSet / 2),
+		Dimension preferredSize = new Dimension((int) (parent.getWidth() / 2 - 7 - toolbarOffSet / 2),
 				(int) (parent.getHeight() * MainFrame.GRAPH_PERCENT));
 
 		Dimension zeroSize = new Dimension(0, 0);
@@ -117,8 +117,9 @@ public class ResizableSplitPane extends JSplitPane {
 
 			@Override
 			public void mouseReleased(MouseEvent me) {
-				System.out.println("CLICK");
-				// DOES NOT WORK ON CERTAIN LOOK AND FEELS (e.g. Nimbus)
+				// CAUTION: mouse events on the divider are not registered after the look and
+				// feel has been changed -> components need to be reinstantiated for this to
+				// work!
 				if (getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
 					dividerRatio = (double) getDividerLocation() / (getWidth() - getDividerSize());
 				else
@@ -136,7 +137,7 @@ public class ResizableSplitPane extends JSplitPane {
 	 *
 	 * @param ratio the new divider ratio
 	 */
-	public void setDefaultRatio(double ratio) {
+	public void setDividerRatio(double ratio) {
 		this.dividerRatio = ratio;
 	}
 
@@ -156,6 +157,14 @@ public class ResizableSplitPane extends JSplitPane {
 
 		}
 
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Double getDividerRatio() {
+		return dividerRatio;
 	}
 
 }

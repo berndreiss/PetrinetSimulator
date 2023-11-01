@@ -38,7 +38,7 @@ public class PetrinetAnalyser {
 	 * @throws PetrinetException the petrinet exception
 	 */
 	public PetrinetAnalyser(File file) throws PetrinetException{
-		this.controller = new PetrinetController(file, true);
+		this.controller = new PetrinetController(file);
 	}
 	
 	/**

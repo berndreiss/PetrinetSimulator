@@ -1,8 +1,11 @@
-package core;
+package gui;
 
 import javax.swing.JOptionPane;
 
 import control.PetrinetController;
+import core.PetrinetElement;
+import core.Place;
+import core.Transition;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 
@@ -10,8 +13,9 @@ import exceptions.InvalidEdgeOperationException;
 /**
  * The Class Editor.
  */
-public class Editor {
+public class PetrinetGraphEditor {
 
+	private PetrinetPanel panel;
 	private PetrinetController controller;
 
 	private PetrinetElement[] addEdge;
@@ -23,8 +27,9 @@ public class Editor {
 	 *
 	 * @param controller the controller
 	 */
-	public Editor(PetrinetController controller) {
-		this.controller = controller;
+	public PetrinetGraphEditor(PetrinetPanel panel) {
+		this.panel = panel;
+		this.controller = panel.getController();
 	}
 
 	/**
@@ -81,7 +86,7 @@ public class Editor {
 			return false;
 		edgeToAddId = id;
 		addEdge = new PetrinetElement[2];
-		PetrinetElement markedNode = controller.getPetrinetGraph().getMarkedNode();
+		PetrinetElement markedNode = panel.getPetrinetGraph().getMarkedNode();
 		if (markedNode != null)
 			addEdge[0] = markedNode;
 
@@ -102,7 +107,7 @@ public class Editor {
 		}
 
 		removeEdge = new PetrinetElement[2];
-		PetrinetElement markedNode = controller.getPetrinetGraph().getMarkedNode();
+		PetrinetElement markedNode = panel.getPetrinetGraph().getMarkedNode();
 		if (markedNode != null)
 			removeEdge[0] = markedNode;
 
@@ -134,7 +139,7 @@ public class Editor {
 	 */
 	public void removeComponent() {
 
-		PetrinetElement markedElement = controller.getPetrinetGraph().getMarkedNode();
+		PetrinetElement markedElement = panel.getPetrinetGraph().getMarkedNode();
 
 		if (markedElement == null)
 			return;
@@ -153,13 +158,13 @@ public class Editor {
 		if (addsEdge()) {
 			if (addEdge[0] == null) {
 				addEdge[0] = pe;
-				controller.getPetrinetGraph().toggleNodeMark(pe);
+				panel.getPetrinetGraph().toggleNodeMark(pe);
 				return;
 			}
 
 			if (addEdge[0] == pe) {
 				addEdge[0] = null;
-				controller.getPetrinetGraph().toggleNodeMark(pe);
+				panel.getPetrinetGraph().toggleNodeMark(pe);
 				return;
 			}
 
@@ -176,7 +181,7 @@ public class Editor {
 			edgeToAddId = null;
 
 			controller.setFileChanged(true);
-			controller.getPetrinetGraph().toggleNodeMark(null);
+			panel.getPetrinetGraph().toggleNodeMark(null);
 
 			if (controller.getToolbarToggleListener() != null)
 				controller.getToolbarToggleListener().onEdgeAdded();
@@ -187,13 +192,13 @@ public class Editor {
 		if (removesEdge()) {
 			if (removeEdge[0] == null) {
 				removeEdge[0] = pe;
-				controller.getPetrinetGraph().toggleNodeMark(pe);
+				panel.getPetrinetGraph().toggleNodeMark(pe);
 				return;
 
 			}
 			if (removeEdge[0] == pe) {
 				removeEdge[0] = null;
-				controller.getPetrinetGraph().toggleNodeMark(pe);
+				panel.getPetrinetGraph().toggleNodeMark(pe);
 				return;
 			}
 
@@ -206,7 +211,7 @@ public class Editor {
 
 			}
 			removeEdge = null;
-			controller.getPetrinetGraph().toggleNodeMark(null);
+			panel.getPetrinetGraph().toggleNodeMark(null);
 			controller.setFileChanged(true);
 			if (controller.getToolbarToggleListener() != null)
 				controller.getToolbarToggleListener().onEdgeRemoved();
@@ -214,7 +219,7 @@ public class Editor {
 
 		}
 
-		controller.getPetrinetGraph().toggleNodeMark(pe);
+		panel.getPetrinetGraph().toggleNodeMark(pe);
 
 	}
 

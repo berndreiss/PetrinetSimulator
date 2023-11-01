@@ -99,8 +99,13 @@ edge {
 */
 sprite.edgeLabel {
 	shape: box;
-	fill-color: rgb(255, 255, 255);
-	size: 40,20;
+	fill-color: rgb(255,255, 255);
+	size: 0,0;
+
+	text-background-mode: rounded-box;
+	text-background-color: white;
+	text-padding: 2px;
+		
 	text-size: 12;
 	text-alignment: center;
 	text-offset: 0,-3;

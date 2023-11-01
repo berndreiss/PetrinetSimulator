@@ -21,11 +21,10 @@ public class PetrinetQueue {
 	/**
 	 * Instantiates a new petrinet queue.
 	 *
-	 * @param state the state
 	 * @param petrinetController the petrinet controller
 	 */
-	public PetrinetQueue(PetrinetState state, PetrinetController petrinetController) {
-		this.state = state;
+	public PetrinetQueue(PetrinetController petrinetController) {
+		this.state = petrinetController.getReachabilityGraphModel().getCurrentState();
 		this.petrinetController = petrinetController;
 
 	}

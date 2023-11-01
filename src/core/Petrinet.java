@@ -227,7 +227,7 @@ public class Petrinet {
 	 *
 	 * @param id the id
 	 */
-	void removePetrinetElement(String id) {
+	public void removePetrinetElement(String id) {
 		PetrinetElement element = getPetrinetElement(id);
 
 		if (element == null)
@@ -311,7 +311,7 @@ public class Petrinet {
 	 * @return the transition
 	 * @throws DuplicateIdException the duplicate id exception
 	 */
-	Transition addTransition(String id) throws DuplicateIdException {
+	public Transition addTransition(String id) throws DuplicateIdException {
 
 		if (id == null)
 			return null;
@@ -342,7 +342,7 @@ public class Petrinet {
 	 * @return the place
 	 * @throws DuplicateIdException the duplicate id exception
 	 */
-	Place addPlace(String id) throws DuplicateIdException {
+	public Place addPlace(String id) throws DuplicateIdException {
 
 		if (id == null)
 			return null;
@@ -393,7 +393,7 @@ public class Petrinet {
 	 * @param id the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
 	 */
-	void addEdge(String source, String target, String id) throws InvalidEdgeOperationException {
+	public void addEdge(String source, String target, String id) throws InvalidEdgeOperationException {
 
 		PetrinetElement sourceElement = getPetrinetElement(source);
 
@@ -416,7 +416,7 @@ public class Petrinet {
 	 * @param id the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
 	 */
-	void addEdge(PetrinetElement source, PetrinetElement target, String id)
+	public void addEdge(PetrinetElement source, PetrinetElement target, String id)
 			throws InvalidEdgeOperationException {
 
 		if (source == null || !containsElementWithId(source))
@@ -455,7 +455,7 @@ public class Petrinet {
 	 * @param target the target
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
 	 */
-	void removeEdge(PetrinetElement source, PetrinetElement target) throws InvalidEdgeOperationException {
+	public void removeEdge(PetrinetElement source, PetrinetElement target) throws InvalidEdgeOperationException {
 
 		if (originalArcIds.get(source.getId() + target.getId()) == null)
 			throw new InvalidEdgeOperationException("Invalid edge operation: Edge does not exist.");
@@ -656,7 +656,7 @@ public class Petrinet {
 	 * @param id the id
 	 * @return true, if successful
 	 */
-	boolean hasEdgeWithId(String id) {
+	public boolean hasEdgeWithId(String id) {
 		for (String s : originalArcIds.values())
 			if (s.equals(id))
 				return true;

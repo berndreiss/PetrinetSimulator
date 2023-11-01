@@ -17,14 +17,14 @@ import util.IterableMap;
 public class PetrinetState {
 
 	private String state;
-	private List<Integer> placeTokens;
+	private List<Integer> placeTokens  = new ArrayList<Integer>();
 
 	private PetrinetState m;
 
-	private IterableMap<String, PetrinetState> predecessors;
-	private IterableMap<String, PetrinetState> successors;
+	private IterableMap<String, PetrinetState> predecessors = new IterableMap<String, PetrinetState>();
+	private IterableMap<String, PetrinetState> successors = new IterableMap<String, PetrinetState>();
 
-	private HashMap<String, List<Transition>> transitionMap;
+	private HashMap<String, List<Transition>> transitionMap = new HashMap<String, List<Transition>>();
 
 	private int level;
 
@@ -35,11 +35,6 @@ public class PetrinetState {
 	 * @param level the level
 	 */
 	PetrinetState(Petrinet petrinet, int level) {
-
-		transitionMap = new HashMap<String, List<Transition>>();
-		predecessors = new IterableMap<String, PetrinetState>();
-		successors = new IterableMap<String, PetrinetState>();
-		placeTokens = new ArrayList<Integer>();
 
 		for (Place p : petrinet.getPlaces()) {
 			placeTokens.add(p.getNumberOfTokens());
@@ -136,7 +131,7 @@ public class PetrinetState {
 	 * @param successor the successor
 	 * @return the first successor transition
 	 */
-	Transition getFirstSuccessorTransition(PetrinetState successor) {
+	public Transition getFirstSuccessorTransition(PetrinetState successor) {
 		if (!successors.containsKey(successor.getState()))
 			return null;
 		for (Transition t : transitionMap.get(this.getState() + successor.getState()))
@@ -435,11 +430,20 @@ public class PetrinetState {
 
 	}
 
+	/**
+	 * 
+	 * @param successor
+	 * @return
+	 */
+	
+	public List<Transition> getTransitions(PetrinetState successor){
+		return transitionMap.get(this.getState() + successor.getState());
+	}
 	//TODO REMOVE
 	/**
 	 * Prints the.
 	 */
-	void print() {
+	public void print() {
 		System.out.println("STATE: " + getState());
 		System.out.println("PREDECESSORS: ");
 		for (PetrinetState ps : predecessors)

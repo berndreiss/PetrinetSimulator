@@ -1,4 +1,4 @@
-package core;
+package gui;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -7,66 +7,41 @@ import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
 import control.PetrinetController;
+import core.Petrinet;
+import core.PetrinetElement;
+import core.Place;
+import core.Transition;
 import listeners.PetrinetComponentChangedListener;
+import listeners.PetrinetStateChangedListener;
 
 // TODO: Auto-generated Javadoc
 /**
- * Die Klasse DemoGraph implementiert einen Graphen mittels GraphStream. Die
- * Klasse erbt von <i>MultiGraph</i> (nicht von Graph), um auch mehrere Kanten
- * zwischen zwei Knoten zu ermöglichen (dies benötigen Sie für den
- * Erreichbarkeitsgraphen).
- * 
+ *
  * <p>
- * <b>Achtung:</b><br>
- * Beachten Sie an dieser Stelle bitte die Hinweise aus der Aufgabenstellung
- * bezüglich der Trennung <i>eigener Datenstrukturen zur Repräsentation eines
- * Graphen</i> (Petrinetz oder Erreichbarkeitsgraphen) und der <i>graphischen
- * Darstellung eines Graphen</i> mittels der Graphenvisualisierungsbibliothek
- * GraphStream.
+ * A GraphStream graph that can represent an instance of {@link Petrinet}.
  * </p>
  * 
  * <p>
- * In diesem Beispielprogramm soll lediglich die Verwendung der
- * Graphenvisualisierungsbibliothek GraphStream vorgestellt werden. Eine
- * geeignete Datenstruktur zur Repräsentation eines Graphen - wie in der
- * Aufgabenstellung erwähnt - ist somit hier nicht Teil der Programmstruktur. In
- * Ihrer eigenen Lösung müssen Sie diese Anforderung selber realisieren.
+ * The graph listens to changes in the petrinet via a {@link PetrinetComponentChangedListener}. 
  * </p>
- * 
- * @author ProPra-Team FernUni Hagen
  */
 public class PetrinetGraph extends MultiGraph {
 
-	/**
-	 * URL-Angabe zur css-Datei, in der das Layout des Graphen angegeben ist.
-	 */
-	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/petrinet_graph.css") + ")"; // diese
-																											// Variante
-																											// der
-																											// Pfadangabe
-																											// funktioniert
-																											// auch aus
-																											// einem JAR
-																											// heraus
+	/** URL referencing CSS file */
+	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/petrinet_graph.css") + ")";
 
-	/**
-	 * der SpriteManager des Graphen
-	 */
+	/** The graphs sprite mangager */
 	private SpriteManager spriteMan;
-	/**
-	 * Sprite in X-Form, das zur Markierung das zuletzt angeklickten Knotens dient
-	 */
 
+	/** Keeps track of the last node that has been marked in the graph */
 	private PetrinetElement markedNode;
 
 	/**
-	 * Im Konstruktor der Klasse DemoGraph wird ein Graph mit fünf Knoten und
-	 * insgesamt sieben gerichteten Kanten erzeugt. Zwei Multi-Kanten gehen von A
-	 * nach C. Zwei entgegengesetzte Kanten gehen von C nach D bzw. von D nach C.
+	 * Instantiates a new petrinet Graph.
 	 *
-	 * @param petrinetController the petrinet controller
+	 * @param petrinet A controller holding the petrinet.
 	 */
-	public PetrinetGraph(PetrinetController petrinetController) {
+	public PetrinetGraph(Petrinet petrinet) {
 		super("Petrinet");
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
@@ -74,7 +49,20 @@ public class PetrinetGraph extends MultiGraph {
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
 
-		petrinetController.getPetrinet().setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
+		//handle elements in the petrinet if it is not empty
+		for (Place p: petrinet.getPlaces())
+			addPlace(p);
+		
+		for (Transition t: petrinet.getTransitions()) {
+			addTransition(t);
+			
+			for (Place p: t.getInputs())
+				addPetrinetEdge(getNode(p.getId()), getNode(t.getId()), petrinet.getOriginalArcId(p.getId()+t.getId()));
+			for (Place p: t.getOutputs())
+				addPetrinetEdge(getNode(t.getId()), getNode(p.getId()), petrinet.getOriginalArcId(t.getId()+p.getId()));
+		}
+		
+		petrinet.setPetrinetComponentChangedListener(new PetrinetComponentChangedListener() {
 
 			@Override
 			public void onTransitionStateChanged(Transition transition) {
@@ -166,7 +154,6 @@ public class PetrinetGraph extends MultiGraph {
 		sprite.setAttribute("ui.class", "nodeLabel");
 		sprite.setAttribute("ui.label", getElementLabel(e));
 		sprite.attachToNode(node.getId());
-//		sprite.setPosition(0.5);
 
 		return node;
 	}
@@ -204,7 +191,6 @@ public class PetrinetGraph extends MultiGraph {
 		String name = a.getId() + b.getId();
 		Edge edge = this.addEdge(name, a, b, true);
 
-//		Edge edge1 = this.addEdge(name+"1", a, b, true);
 		Sprite sprite = spriteMan.addSprite("s" + name);
 		sprite.setAttribute("ui.class", "edgeLabel");
 		sprite.setAttribute("ui.label", "[" + id + "]");
@@ -298,7 +284,7 @@ public class PetrinetGraph extends MultiGraph {
 	 * @param e the e
 	 * @return the element label
 	 */
-	static String getElementLabel(PetrinetElement e) {
+	public static String getElementLabel(PetrinetElement e) {
 
 		String base = "[" + e.getId() + "] " + e.getName();
 		if (e instanceof Place)

@@ -36,8 +36,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	private final static int MINIMAL_EDGE_LENGTH = 200;
 
 	/** The screen size. */
-	private Dimension screenSize = new Dimension(1000, 500);
-
+	private Dimension screenSize = new Dimension(1000, 1000);
+	
 	private LayoutType layoutType = LayoutType.TREE;
 
 	private static int maxRowCount = 0;
@@ -64,8 +64,9 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 *
 	 * @param spriteMan the sprite man
 	 */
-	public Layout(SpriteManager spriteMan) {
+	public Layout(SpriteManager spriteMan, LayoutType layoutType) {
 		this.spriteMan = spriteMan;
+		this.layoutType = layoutType;
 	}
 
 	/**
@@ -74,7 +75,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 * @param node the node
 	 */
 	public void add(Node node) {
-		this.add(node, null, null);
+		this.add(node, null, null, 0);
 	}
 
 	/**
@@ -84,7 +85,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 * @param target the target
 	 * @param transition the transition
 	 */
-	public void add(Node source, Node target, Transition transition) {
+	public void add(Node source, Node target, Transition transition, int levelToAddFrom) {
+	
 		if (source == null && target == null)
 			return;
 
@@ -105,8 +107,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		LayoutNode layoutTarget = nodeMap.get(target.getId());
 
 		if (layoutSource == null && layoutTarget == null) {
-			layoutSource = new LayoutNode(source, null, 0, this);
-			layoutTarget = new LayoutNode(target, layoutSource, 1, this);
+			layoutSource = new LayoutNode(source, null, levelToAddFrom, this);
+			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom+1, this);
 
 			nodeMap.put(source.getId(), layoutSource);
 			nodeMap.put(target.getId(), layoutTarget);
@@ -116,7 +118,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		}
 
 		else if (layoutSource == null) {
-			layoutSource = new LayoutNode(source, null, 0, this);
+			layoutSource = new LayoutNode(source, null, levelToAddFrom, this);
 
 			nodeMap.put(source.getId(), layoutSource);
 			graphicalObjectList.add(layoutSource);
@@ -124,7 +126,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 		else if (layoutTarget == null) {
 
-			layoutTarget = new LayoutNode(target, layoutSource, layoutSource.getLevel() + 1, this);
+			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom + 1, this);
 
 			nodeMap.put(target.getId(), layoutTarget);
 			graphicalObjectList.add(layoutTarget);
@@ -152,32 +154,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 		edgeList.put(transition.getId(), layoutEdge);
 
-//		IterableMap<String, LayoutEdge> oppositeEdgesList = edgeMap.get(target.getId() + source.getId());
-//
-//		if (oppositeEdgesList != null) {
-//			for (LayoutEdge le : edgeList)
-//				le.sprite.setPosition(0.33, 0.33, 0);
-//			for (LayoutEdge le : oppositeEdgesList)
-//				le.sprite.setPosition(0.33, 0.33, 0);
-//		}
-//
-//		if (edgeList.size() > 1) {
-//
-//			double modificatorUnit = 1.0 / edgeList.size();
-//
-//			int index = 1;
-//
-//			for (LayoutEdge le : edgeList) {
-//				Sprite sprite = le.getSprite();
-//				sprite.setPosition(sprite.getX() * modificatorUnit * index, sprite.getY() * modificatorUnit * index,
-//						sprite.getZ() * modificatorUnit * index);
-//				index++;
-//
-//			}
-//		}
-		repaintNodes();
-		if (layoutType == LayoutType.TREE)
-			beautify();
+		repaintNodes(true);
+
 	}
 
 	private boolean checkEdgeIntersection(LayoutEdge layoutEdge) {
@@ -285,11 +263,13 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 */
 	protected void addNodeToLevel(LayoutNode node) {
 
-		if (listHierarchy.size() < node.getLevel())
-			return;
-
-		if (listHierarchy.size() == node.getLevel())
+		int lastIndex = listHierarchy.size()-1;
+		while (lastIndex < node.getLevel()) {
+			lastIndex++;
 			listHierarchy.add(new ArrayList<LayoutNode>());
+		}
+
+
 
 		List<LayoutNode> nodeList = listHierarchy.get(node.getLevel());
 
@@ -333,7 +313,10 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	}
 
-	private void repaintNodes() {
+	/**
+	 * 
+	 */
+	public void repaintNodes(boolean beautify) {
 
 		if (layoutType == LayoutType.CIRCLE) {
 			circlify();
@@ -356,6 +339,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			}
 
 		}
+		if (beautify)
+			beautify();
 
 	}
 
@@ -371,7 +356,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			for (LayoutEdge edge : potentialCulprits) {
 				workToBeDone = checkEdgeIntersection(edge);
 				if (workToBeDone) {
-					repaintNodes();
+					repaintNodes(false);
 					break;
 				}
 
@@ -536,7 +521,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		}
 		resetMaxRow();
 		if (layoutType == LayoutType.TREE)
-			repaintNodes();
+			repaintNodes(false);
 	}
 
 	private double getHeight(int index) {
@@ -613,15 +598,6 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	// TODO when removing node maxRowCount has to be recalculated
 
-	/**
-	 * Sets the screen size.
-	 *
-	 * @param screenSize the new screen size
-	 */
-	public void setScreenSize(Dimension screenSize) {
-		this.screenSize = screenSize;
-		repaintNodes();
-	}
 
 
 
@@ -652,9 +628,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		if (potentialCulprits.contains(edge))
 			potentialCulprits.remove(edge);
 
-		repaintNodes();
-		if (layoutType == LayoutType.TREE)
-			beautify();
+		repaintNodes(true);
 
 	}
 
@@ -676,9 +650,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		
 		graphicalObjectList.remove(layoutNode);
 		removeBlankNodes();
-		repaintNodes();
-		if (layoutType == LayoutType.TREE)
-			beautify();
+		repaintNodes(true);
 
 	}
 
@@ -697,6 +669,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 */
 	public void setLayoutType(LayoutType layoutType) {
 		this.layoutType = layoutType;
+		repaintNodes(true);
+
 	}
 
 }

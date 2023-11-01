@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -19,15 +20,18 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import control.MainController;
 
-// TODO: Auto-generated Javadoc
 /**
- * This is the main frame of the program. In the {@link BorderLayout} there is a
- * vertical {@link ResizableSplitPane} in the CENTER containing a
- * {@link JTextArea} in the bottom and a {@link JTabbedPane} in the top half. In
- * the SOUTH it holds a {@link JLabel} representing the status of the program.
- * In the NORTH it holds a {@link PetrinetToolbar} that can be moved and
- * reattached to the EAST or WEST. Additionally the menu bar is occupied by an
- * instance of {@link PetrinetMenu}.
+ * <p>
+ * This is the main frame of the program.
+ * </p>
+ * <p>
+ * In the {@link BorderLayout} there is a vertical {@link ResizableSplitPane} in
+ * the CENTER containing a {@link JTextArea} in the bottom and a
+ * {@link JTabbedPane} in the top half. In the SOUTH it holds a {@link JLabel}
+ * representing the status of the program. In the NORTH it holds a
+ * {@link PetrinetToolbar} that can be moved and reattached to the EAST or WEST.
+ * Additionally the menu bar is occupied by an instance of {@link PetrinetMenu}.
+ * </p>
  */
 public class MainFrame extends JFrame {
 
@@ -45,23 +49,25 @@ public class MainFrame extends JFrame {
 	 */
 	public static final double GRAPH_SPLIT_PANE_DEFAULT_RATIO = 0.5;
 
-	// split pane containing tabbed pane and text area -> is placed in CENTER
+	/** split pane containing tabbed pane and text area -> is placed in CENTER */
 	private ResizableSplitPane splitPane;
 
-	// tabbed pane containing graphs
+	/** tabbed pane containing graphs */
 	private JTabbedPane tabbedPane;
 
-	// scroll pane containing the text area
+	/** scroll pane containing the text area */
 	private JScrollPane scrollPane;
+
+	/** text area where text can be printed to */
 	private JTextArea textArea;
 
-	// status label -> is placed in SOUTH
+	/** status label -> is placed in SOUTH */
 	private JLabel statusLabel;
 
-	// toolbar -> is placed in NORTH
+	/** toolbar -> is placed in NORTH */
 	private PetrinetToolbar toolbar;
 
-	// controller managing user interactions
+	/** controller managing user interactions */
 	private MainController controller;
 
 	/**
@@ -72,20 +78,17 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 
+		// TODO scroll pane needs to be reset on design change
+
 		// change look and feel to Nimbus
 		changeLookAndFeel();
 
 		setLayout(new BorderLayout());
 
-		textArea = new JTextArea();
-
-		// set font monospaced so that all characters have the same fixed length
-		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-
-		scrollPane = new JScrollPane(textArea);
-
 		tabbedPane = new JTabbedPane();
 
+		// instantiate split pane, add tabbed pane and scroll pane to it and add the
+		// split pane to the frames CENTER
 		setSplitPane();
 
 		statusLabel = new JLabel();
@@ -114,21 +117,44 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 
-		// TODO find workaround for certain look and feels causing JSplitPane dividers
-		// not registering MouseEvents (remove feature until resolved)
-
 	}
 
-	//removes the split pane if it has been instantiated and adds 
+	// removes the split pane if it has been instantiated and adds tabbed pane and
+	// text area (inside scroll pane to it -> needed when look and feel is changed
+	// because mouse events on the divider are not registered anymore otherwise
 	private void setSplitPane() {
 
-		if (splitPane != null)
+		// get text that is already in text area if it has been instantiated
+		String oldText = textArea == null ? null : textArea.getText();
+
+		// variable for getting old ratio of the divider of the split pane if it has
+		// been instantiated -> since we are reinstantiating it, it would be set to
+		// SPLIT_PANE_DEFAULT_RATIO otherwise
+		Double oldDividerRatio = null;
+
+		// if split pane has been instantiated remove it and get divider ratio
+		if (splitPane != null) {
 			remove(splitPane);
-		
+			oldDividerRatio = splitPane.getDividerRatio();
+		}
+		// create new text area and set font to monospaced so that all characters have
+		// the same fixed length
+		textArea = new JTextArea();
+		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
+		// create scroll pane and set it to auto scroll
+		scrollPane = new JScrollPane(textArea);
+		scrollPane.setAutoscrolls(true);
+
+		// instantiate split pane add it to the frame and set the divider ratio
 		splitPane = new ResizableSplitPane(this, JSplitPane.VERTICAL_SPLIT, tabbedPane, scrollPane);
 		add(splitPane, BorderLayout.CENTER);
-		splitPane.setDefaultRatio(SPLIT_PANE_DEFAULT_RATIO);
+		splitPane.setDividerRatio(oldDividerRatio == null ? SPLIT_PANE_DEFAULT_RATIO : oldDividerRatio);
 
+		// wait for all components to be shown and print old text so the scrollbar jumps
+		// to the bottom -> comes into play when look and feel is changed and the
+		// textarea was not empty
+		SwingUtilities.invokeLater(() -> print(oldText));
 	}
 
 	/**
@@ -209,26 +235,20 @@ public class MainFrame extends JFrame {
 			}
 		}
 
-		
-		// update UI components
+		// update UI components -> needs to be done before split pane is readded,
+		// otherwise divider does not register mouse events
 		SwingUtilities.updateComponentTreeUI(this);
 		revalidate();
 		repaint();
 
-		//check whethers toolbar has been instantiated
-		if (toolbar == null)
-			return;
-		
-		// reset the toolbar buttons
-		toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
+		// check whether toolbar has been instantiated and reset the buttons if not
+		if (toolbar != null)
+			toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
 
-		//check whether splitPane has been instantiated
-		if (splitPane == null)
-			return;
-
-		
-		//reset the split pane -> otherwise the divider mouse events do not register for some reason
-		setSplitPane(); 
+		// check whether splitPane has been instantiate and reset it if not -> otherwise
+		// the divider mouse events do not register for some reason
+		if (splitPane != null)
+			setSplitPane();
 
 	}
 
