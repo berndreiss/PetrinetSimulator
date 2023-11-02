@@ -15,7 +15,6 @@ import core.Place;
 import core.ReachabilityGraphModel;
 import core.Transition;
 import exceptions.PetrinetException;
-import listeners.ClickListener;
 import listeners.PetrinetStateChangedListener;
 import listeners.ToolbarToggleListener;
 import propra.pnml.PNMLWopedWriter;
@@ -24,7 +23,7 @@ import propra.pnml.PNMLWopedWriter;
 /**
  * The Class PetrinetController.
  */
-public class PetrinetController implements ClickListener {
+public class PetrinetController {
 
 	private Petrinet petrinet = new Petrinet();
 	private ReachabilityGraphModel reachabilityGraphModel;
@@ -42,9 +41,9 @@ public class PetrinetController implements ClickListener {
 	 *
 	 * @param file     the file
 	 * @param headless the headless
-	 * @throws PetrinetException 
+	 * @throws PetrinetException
 	 */
-	public PetrinetController(File file) throws PetrinetException {
+	public PetrinetController(File file, boolean headless) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 
@@ -52,6 +51,9 @@ public class PetrinetController implements ClickListener {
 			new PNMLParser(file, petrinet);
 
 		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
+
+		if (!headless)
+			initializePetrinetQueue();
 
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
 
@@ -79,7 +81,6 @@ public class PetrinetController implements ClickListener {
 		});
 
 	}
-
 
 	/**
 	 * Sets the toolbar toggle listener.
@@ -117,8 +118,6 @@ public class PetrinetController implements ClickListener {
 		return petrinet;
 	}
 
-
-
 	/**
 	 * Gets the reachability graph model.
 	 *
@@ -136,37 +135,6 @@ public class PetrinetController implements ClickListener {
 		reachabilityGraphModel.setInitial();
 		petrinetQueue.rewind();
 
-	}
-
-	/**
-	 * Increment marked place.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean incrementPlace(PetrinetElement pe) {
-
-		boolean changed = petrinet.incrementPlace(pe);
-
-		if (changed && !fileChanged) {
-			setFileChanged(true);
-		}
-
-		return changed;
-	}
-
-	/**
-	 * Decrement marked place.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean decrementPlace(PetrinetElement pe) {
-		boolean changed = petrinet.decrementPlace(pe);
-
-		if (changed && !fileChanged) {
-			setFileChanged(true);
-		}
-
-		return changed;
 	}
 
 	/**
@@ -198,15 +166,14 @@ public class PetrinetController implements ClickListener {
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
 		if (petrinetQueue != null) {
-		petrinetQueue.resetButtons();
-		initializePetrinetQueue();
+			petrinetQueue.resetButtons();
+			initializePetrinetQueue();
 		}
 
 		if (!headless)
 			JOptionPane.showMessageDialog(null,
 					"The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".", "",
 					JOptionPane.INFORMATION_MESSAGE);
-
 
 		return analyser.getResults();
 	}
@@ -266,24 +233,6 @@ public class PetrinetController implements ClickListener {
 	}
 
 	/**
-	 * Sets the label.
-	 *
-	 * @param label the new label
-	 */
-	public void setLabel(String label, PetrinetElement markedNode) {
-		if (markedNode == null)
-			return;
-
-		if (markedNode.getName().equals(label))
-			return;
-
-		setFileChanged(true);// has to be set first so that petrinetQueue receives changes
-
-		petrinet.setPetrinetElementName(markedNode.getId(), label);
-
-	}
-
-	/**
 	 * Sets the petrinet queue.
 	 *
 	 * @param petrinetQueue the new petrinet queue
@@ -291,7 +240,7 @@ public class PetrinetController implements ClickListener {
 	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -299,23 +248,47 @@ public class PetrinetController implements ClickListener {
 		this.petrinetQueue = new PetrinetQueue(this);
 	}
 
-	@Override
-	public void onTransitionClicked(String id) {
-		petrinet.fireTransition(id);
-
-	}
-
-	@Override
+	/**
+	 * 
+	 * @param id
+	 * @param x
+	 * @param y
+	 */
 	public void onPetrinetNodeDragged(String id, double x, double y) {
+
+		PetrinetElement petrinetElement = petrinet.getPetrinetElement(id);
+
+		if (petrinetElement == null)// safety check
+			return;
+
+		if (petrinetElement.getX() == x && petrinetElement.getY() == y)
+			return;
 		petrinet.setCoordinates(id, x, y);
 	}
 
-	@Override
+	/**
+	 * 
+	 * @param id
+	 */
 	public void onReachabilityGraphNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
 		reachabilityGraphModel.setCurrentState(state);
 		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PetrinetElement onPetrinetNodeClicked(String id) {
+		PetrinetElement pe = petrinet.getPetrinetElement(id);
+		if (pe instanceof Transition) {
+			petrinet.fireTransition(id);
+			return null;
+		}
+		return pe;
 	}
 
 }

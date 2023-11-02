@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import exceptions.PetrinetException;
 import propra.pnml.PNMLWopedParser;
@@ -137,7 +138,7 @@ public class PNMLParser extends PNMLWopedParser {
 		petrinet.setTokens(id, Integer.parseInt(tokens));
 	}
 
-	private void handleTransitions() throws InvalidEdgeOperationException {
+	private void handleTransitions() throws InvalidEdgeOperationException, DuplicateIdException {
 		if (idCheck)
 			return;
 		

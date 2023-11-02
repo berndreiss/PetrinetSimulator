@@ -1,20 +1,11 @@
 package gui;
 
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
-import control.PetrinetController;
 import core.PetrinetState;
 import core.ReachabilityGraphModel;
 import core.Transition;
@@ -29,7 +20,7 @@ import reachabilityGraphLayout.LayoutType;
  */
 public class ReachabilityGraph extends MultiGraph {
 
-	private static String CSS_FILE = "url(" + PetrinetGraph.class.getResource("/reachability_graph.css") + ")";
+	private static String CSS_FILE = "url(" + GraphStreamPetrinetGraph.class.getResource("/reachability_graph.css") + ")";
 
 	private ReplayGraphListener replayGraphListener;
 
@@ -57,7 +48,7 @@ public class ReachabilityGraph extends MultiGraph {
 		super("");
 
 		this.layoutType = layoutType;
-		
+
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
 
@@ -71,17 +62,20 @@ public class ReachabilityGraph extends MultiGraph {
 
 		if (initialState != null) {
 
-			initialNode = addState(reachabilityGraphModel.getInitialState(), null, null);
+			initialNode = addState(reachabilityGraphModel.getInitialState(), null, null, true);
 			setHighlight(initialNode);
-			
-			for (PetrinetState ps : reachabilityGraphModel.getStates()) 
-				for (PetrinetState successor: ps.getSuccessors()) 
-					for (Transition t: ps.getTransitions(successor)) 
-						addState(successor, ps, t);
-			
-			
+
+			for (PetrinetState ps : reachabilityGraphModel.getStates())
+				for (PetrinetState successor : ps.getSuccessors())
+					for (Transition t : ps.getTransitions(successor))
+						addState(successor, ps, t, false);
 
 		}
+
+		if (reachabilityGraphModel.getCurrentState() != null)
+			setCurrent(getNode(reachabilityGraphModel.getCurrentState().getState()));
+		if (reachabilityGraphModel.getCurrentEdge() != null)
+			getEdge(reachabilityGraphModel.getCurrentEdge()).setAttribute("ui.class", "highlight");
 
 		reachabilityGraphModel.setStateChangeListener(new ReachabilityStateChangeListener() {
 
@@ -129,7 +123,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
-				addState(state, predecessor, t);
+				addState(state, predecessor, t, true);
 
 				replayGraph();
 			}
@@ -143,7 +137,7 @@ public class ReachabilityGraph extends MultiGraph {
 
 	}
 
-	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t) {
+	private Node addState(PetrinetState state, PetrinetState predecessor, Transition t, boolean resetCurrent) {
 
 		Node node;
 		String id = state.getState();
@@ -160,7 +154,7 @@ public class ReachabilityGraph extends MultiGraph {
 		if (initialNode == null) {
 			initialNode = node;
 		}
-		if (currentNode == null) {
+		if (resetCurrent) {
 			setCurrent(node);
 		}
 
@@ -182,25 +176,25 @@ public class ReachabilityGraph extends MultiGraph {
 
 			Sprite sprite = spriteMan.addSprite("s" + newEdge.getId());
 			sprite.setAttribute("ui.class", "edgeLabel");
-			String label = PetrinetGraph.getElementLabel(t);
+			String label = GraphStreamPetrinetGraph.getElementLabel(t);
 			sprite.setAttribute("ui.label", label);
-//			double scale = 1;
-//			sprite.setAttribute("size", scale* label.length() + ", " + 20 + " px");
 			sprite.attachToEdge(newEdge.getId());
 			if (layoutType == LayoutType.AUTOMATIC)
 				sprite.setPosition(0.5);
 			else
 				sprite.setPosition(0.5, 0.5, 0);
 		}
-		newEdge.setAttribute("ui.class", "highlight");
 
-		if (currentEdge != null && currentEdge != newEdge)
-			currentEdge.setAttribute("ui.class", "edge");
+		if (resetCurrent) {
+			newEdge.setAttribute("ui.class", "highlight");
+			if (currentEdge != null && currentEdge != newEdge)
+				currentEdge.setAttribute("ui.class", "edge");
 
-		currentEdge = newEdge;
-
+			currentEdge = newEdge;
+		}
 		if (layoutType != LayoutType.AUTOMATIC)
-			layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t, predecessor == null ? 0 : predecessor.getLevel());
+			layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t,
+					predecessor == null ? 0 : predecessor.getLevel());
 
 		return node;
 	}
@@ -355,10 +349,10 @@ public class ReachabilityGraph extends MultiGraph {
 	public void setLayoutType(LayoutType layoutType) {
 		this.layoutType = layoutType;
 		if (layoutType != LayoutType.AUTOMATIC) {
-			
+
 			if (layoutManager == null)
 				layoutManager = new Layout(spriteMan, layoutType);
-			
+
 			layoutManager.setLayoutType(layoutType);
 			replayGraph();
 		}

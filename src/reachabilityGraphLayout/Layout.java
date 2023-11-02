@@ -72,15 +72,6 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	/**
 	 * Adds the.
 	 *
-	 * @param node the node
-	 */
-	public void add(Node node) {
-		this.add(node, null, null, 0);
-	}
-
-	/**
-	 * Adds the.
-	 *
 	 * @param source the source
 	 * @param target the target
 	 * @param transition the transition

@@ -4,15 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -78,8 +79,6 @@ public class MainFrame extends JFrame {
 	public MainFrame(String title) {
 		super(title);
 
-		// TODO scroll pane needs to be reset on design change
-
 		// change look and feel to Nimbus
 		changeLookAndFeel();
 
@@ -87,8 +86,8 @@ public class MainFrame extends JFrame {
 
 		tabbedPane = new JTabbedPane();
 
-		// instantiate split pane, add tabbed pane and scroll pane to it and add the
-		// split pane to the frames CENTER
+		// instantiate split pane, add tabbed pane, instantiate other components, add
+		// them and add the split pane to the frames CENTER
 		setSplitPane();
 
 		statusLabel = new JLabel();
@@ -103,7 +102,7 @@ public class MainFrame extends JFrame {
 		JMenuBar menuBar = new PetrinetMenu(controller);
 		setJMenuBar(menuBar);
 
-		toolbar = new PetrinetToolbar(controller);
+		toolbar = new PetrinetToolbar(controller, this);
 		add(toolbar, BorderLayout.NORTH);
 
 		// set up the frame and show it
@@ -114,6 +113,7 @@ public class MainFrame extends JFrame {
 		int h = (int) (screenSize.height * heightPerc);
 		int w = (int) (h * aspectRatio);
 		setBounds((screenSize.width - w) / 2, (screenSize.height - h) / 2, w, h);
+		this.setMinimumSize(new Dimension(1250, 800));// min size so that all buttons are shown correctly
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 
@@ -138,9 +138,12 @@ public class MainFrame extends JFrame {
 			oldDividerRatio = splitPane.getDividerRatio();
 		}
 		// create new text area and set font to monospaced so that all characters have
-		// the same fixed length
-		textArea = new JTextArea();
-		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		// the same fixed length, clear text if already instantiated
+		if (textArea == null) {
+			textArea = new JTextArea();
+			textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		} else
+			clearTextArea();
 
 		// create scroll pane and set it to auto scroll
 		scrollPane = new JScrollPane(textArea);
@@ -160,7 +163,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Returns the split pane in the center of the frame.
 	 *
-	 * @return the split pane.
+	 * @return the split pane
 	 */
 	public ResizableSplitPane getSplitPane() {
 		return splitPane;
@@ -194,7 +197,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Gets the tabbed pane in the upper half of the split pane.
 	 *
-	 * @return the tabbed pane.
+	 * @return the tabbed pane
 	 */
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
@@ -203,7 +206,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Gets the toolbar.
 	 *
-	 * @return the toolbar.
+	 * @return the toolbar
 	 */
 	public PetrinetToolbar getToolbar() {
 		return toolbar;
@@ -241,10 +244,21 @@ public class MainFrame extends JFrame {
 		revalidate();
 		repaint();
 
-		// check whether toolbar has been instantiated and reset the buttons if not
-		if (toolbar != null)
-			toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
+		// check whether toolbar has been instantiated and reset it to previous state
+		if (toolbar != null) {
+			// get last docking place being either NORTH, EAST or SOUTH
+			String lastDockingPlace = toolbar.getLastDockingPlace();
 
+			// remove it and readd it, set orientation if necessary
+			remove(toolbar);
+			toolbar = new PetrinetToolbar(controller, this);
+			if (!lastDockingPlace.equals(BorderLayout.NORTH))
+				toolbar.setOrientation(JToolBar.VERTICAL);
+			add(toolbar, lastDockingPlace);
+
+			// reset buttons to previous state
+			toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());
+		}
 		// check whether splitPane has been instantiate and reset it if not -> otherwise
 		// the divider mouse events do not register for some reason
 		if (splitPane != null)

@@ -30,7 +30,7 @@ public interface PetrinetComponentChangedListener {
 	 *
 	 * @param element the element
 	 */
-	void onPetrinetElementSetCoordinates(PetrinetElement element);
+	void onPetrinetElementCoordinatesChanged(PetrinetElement element);
 	
 	/**
 	 * On petrinet element removed.
@@ -67,7 +67,7 @@ public interface PetrinetComponentChangedListener {
 	 *
 	 * @param element the element
 	 */
-	void onSetPetrinetElementName(PetrinetElement element);
+	void onPetrinetElementLabelChanged(PetrinetElement element);
 	
 	/**
 	 * On transition state changed.

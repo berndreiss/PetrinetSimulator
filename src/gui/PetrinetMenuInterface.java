@@ -2,6 +2,8 @@ package gui;
 
 import javax.swing.LookAndFeel;
 
+import control.PetrinetGraphEditor;
+
 /**
  * An interface defining methods for entries in {@link PetrinetMenu}.
  */
@@ -10,7 +12,9 @@ public interface PetrinetMenuInterface {
 	// METHODS FOR FILE
 
 	/**
-	 * Opens a new empty petrinet in the {@link PetrinetGraphEditor}.
+	 * Opens a new {@link PetrinetPanel} containing an empty
+	 * {@link GraphStreamPetrinetGraph} and sets the panel to ToolbarMode EDITOR
+	 * (see {@link ToolbarMode}).
 	 */
 	void onNew();
 

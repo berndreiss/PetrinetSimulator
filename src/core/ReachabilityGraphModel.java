@@ -14,6 +14,8 @@ public class ReachabilityGraphModel {
 
 	private PetrinetState currentState;
 
+	private String currentEdge = null;
+
 	private PetrinetState invalidState;
 
 	private PetrinetState initialState;
@@ -83,14 +85,14 @@ public class ReachabilityGraphModel {
 	 * Adds the new state.
 	 *
 	 * @param petrinet the petrinet
-	 * @param t the t
+	 * @param t        the t
 	 * @return the added
 	 */
 	public Added addNewState(Petrinet petrinet, Transition t) {
 
 		if (petrinet == null || !petrinet.hasPlaces())
 			return null;
-		
+
 		Added added = Added.NOTHING;
 
 		PetrinetState petrinetState;
@@ -121,6 +123,8 @@ public class ReachabilityGraphModel {
 		if (stateChangeListener != null)
 			stateChangeListener.onAdd(petrinetState, currentState, t);
 
+		if (t != null && currentState != null)
+			currentEdge = currentState.getState() + petrinetState.getState() + t.getId();
 
 		setNewCurrentState(petrinetState, false);
 		checkIfCurrentStateIsBackwardsValid();
@@ -178,8 +182,6 @@ public class ReachabilityGraphModel {
 		return null;
 
 	}
-
-	
 
 	/**
 	 * Sets the state change listener.
@@ -283,26 +285,33 @@ public class ReachabilityGraphModel {
 //			ps.print();
 //	}
 
-	
 	/**
- * Removes the edge.
- *
- * @param lastState the last state
- * @param state the state
- * @param transition the transition
- */
-void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
+	 * Removes the edge.
+	 *
+	 * @param lastState  the last state
+	 * @param state      the state
+	 * @param transition the transition
+	 */
+	void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
 		lastState.removeSuccessorEdge(state, transition, stateChangeListener);
 		state.removePredecessorEdge(lastState, transition, stateChangeListener);
 	}
 
-	//TODO REMOVE
+	// TODO REMOVE
 	/**
 	 * Prints the.
 	 */
 	public void print() {
 		for (PetrinetState ps : petrinetStates)
 			ps.print();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getCurrentEdge() {
+		return currentEdge;
 	}
 
 }

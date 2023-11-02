@@ -162,8 +162,8 @@ public class Petrinet {
 	 * @param id the id
 	 * @return true, if successful
 	 */
-	private boolean containsElementWithId(String id) {
-		return places.get(id) != null ^ transitions.get(id) != null;
+	public boolean containsElementWithId(String id) {
+		return places.get(id) != null ^ transitions.get(id) != null  ^ originalArcIds.containsValue(id);
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class Petrinet {
 		element.setY(y);
 
 		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onPetrinetElementSetCoordinates(element);
+			petrinetComponentChangedListener.onPetrinetElementCoordinatesChanged(element);
 
 	}
 
@@ -392,9 +392,12 @@ public class Petrinet {
 	 * @param target the target
 	 * @param id the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
+	 * @throws DuplicateIdException 
 	 */
-	public void addEdge(String source, String target, String id) throws InvalidEdgeOperationException {
+	public void addEdge(String source, String target, String id) throws InvalidEdgeOperationException, DuplicateIdException {
 
+		
+		
 		PetrinetElement sourceElement = getPetrinetElement(source);
 
 		if (sourceElement == null)
@@ -415,10 +418,14 @@ public class Petrinet {
 	 * @param target the target
 	 * @param id the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
+	 * @throws DuplicateIdException 
 	 */
 	public void addEdge(PetrinetElement source, PetrinetElement target, String id)
-			throws InvalidEdgeOperationException {
+			throws InvalidEdgeOperationException, DuplicateIdException {
 
+		if (containsElementWithId(id))
+			throw new DuplicateIdException("Invalid edge operation: id \"" + id + "\" already exists.");
+		
 		if (source == null || !containsElementWithId(source))
 			throw new InvalidEdgeOperationException("Invalid edge operation: Source" + source == null ? ""
 					: " \"" + source.getId() + "\"" + " is missing.");
@@ -636,7 +643,7 @@ public class Petrinet {
 		PetrinetElement element = getPetrinetElement(id);
 		element.setName(name);
 		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onSetPetrinetElementName(element);
+			petrinetComponentChangedListener.onPetrinetElementLabelChanged(element);
 
 	}
 
@@ -650,17 +657,6 @@ public class Petrinet {
 		return places.size() > 0;
 	}
 
-	/**
-	 * Checks for edge with id.
-	 *
-	 * @param id the id
-	 * @return true, if successful
-	 */
-	public boolean hasEdgeWithId(String id) {
-		for (String s : originalArcIds.values())
-			if (s.equals(id))
-				return true;
-		return false;
-	}
+
 
 }

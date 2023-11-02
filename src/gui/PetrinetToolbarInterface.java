@@ -156,5 +156,8 @@ public interface PetrinetToolbarInterface {
 	 */
 	void onChangeDesign();
 
-	
+	/**
+	 * 
+	 */
+	void onReadjustDividers();
 }

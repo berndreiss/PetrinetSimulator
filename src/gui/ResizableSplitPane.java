@@ -36,16 +36,6 @@ public class ResizableSplitPane extends JSplitPane {
 	 *
 	 * @param parent           the parent
 	 * @param splitOrientation the split orientation
-	 */
-	public ResizableSplitPane(MainFrame parent, int splitOrientation) {
-		this(parent, splitOrientation, new JPanel(), new JPanel());
-	}
-
-	/**
-	 * Instantiates a new resizable split pane.
-	 *
-	 * @param parent           the parent
-	 * @param splitOrientation the split orientation
 	 * @param left             the left
 	 * @param right            the right
 	 */
