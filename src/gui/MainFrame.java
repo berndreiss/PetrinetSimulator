@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -247,14 +246,19 @@ public class MainFrame extends JFrame {
 		// check whether toolbar has been instantiated and reset it to previous state
 		if (toolbar != null) {
 			// get last docking place being either NORTH, EAST or SOUTH
-			String lastDockingPlace = toolbar.getLastDockingPlace();
+			String dockingPlace = toolbar.getDockingPlace();
 
 			// remove it and readd it, set orientation if necessary
 			remove(toolbar);
 			toolbar = new PetrinetToolbar(controller, this);
-			if (!lastDockingPlace.equals(BorderLayout.NORTH))
-				toolbar.setOrientation(JToolBar.VERTICAL);
-			add(toolbar, lastDockingPlace);
+
+			if (dockingPlace == null)
+				add(toolbar, BorderLayout.NORTH);
+			else {
+				if (!dockingPlace.equals(BorderLayout.NORTH))
+					toolbar.setOrientation(JToolBar.VERTICAL);
+				add(toolbar, dockingPlace);
+			}
 
 			// reset buttons to previous state
 			toolbar.setToolbarTo(controller.getCurrentPanel(), controller.getLayoutType());

@@ -48,20 +48,24 @@ public class PetrinetAnalyser {
 	 */
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
+		reachabilityGraphModel = controller.getReachabilityGraphModel();
+
 		analyse();
 		if (!bounded) {
 			updateReachabilityGraph();
 			m = reachabilityGraphModel.getInvalidState().getM().getState();
 			mMarked = reachabilityGraphModel.getInvalidState().getState();
-			controller.resetPetrinet();
+			
 		}
+		controller.resetPetrinet();
+
 	}
 
 	private void analyse() {
 
-		reachabilityGraphModel = controller.getReachabilityGraphModel();
 		reachabilityGraphModel.reset();
 		petrinet = controller.getPetrinet();
+
 
 		Set<PetrinetState> visited = new HashSet<PetrinetState>();
 		analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
@@ -151,8 +155,6 @@ public class PetrinetAnalyser {
 
 	private void updateReachabilityGraph() {
 
-		controller.resetPetrinet();
-
 		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
 
 		if (invalidState != null) {
@@ -217,6 +219,8 @@ public class PetrinetAnalyser {
 			}
 			return;
 		}
+		controller.resetPetrinet();
+
 	}
 
 	/**

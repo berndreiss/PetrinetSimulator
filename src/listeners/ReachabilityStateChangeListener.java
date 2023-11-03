@@ -57,4 +57,11 @@ public interface ReachabilityStateChangeListener {
 	 * @param t the t
 	 */
 	void onRemoveEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t);
+
+	/**
+	 * 
+	 * @param edge
+	 */
+	void onSetCurrentEdge(String edge);
+	
 }

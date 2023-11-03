@@ -62,7 +62,7 @@ public class PetrinetController {
 				Added added = reachabilityGraphModel.addNewState(petrinet, t);
 
 				if (petrinetQueue != null)
-					petrinetQueue.push(reachabilityGraphModel.getCurrentState(), added, t);
+					petrinetQueue.push(reachabilityGraphModel.getCurrentState(),reachabilityGraphModel.getCurrentEdge(), added, t);
 			}
 
 			@Override
@@ -161,7 +161,7 @@ public class PetrinetController {
 	 *
 	 * @return the string[]
 	 */
-	String[] analyse(boolean headless) {
+	public PetrinetAnalyser analyse() {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
@@ -170,12 +170,7 @@ public class PetrinetController {
 			initializePetrinetQueue();
 		}
 
-		if (!headless)
-			JOptionPane.showMessageDialog(null,
-					"The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".", "",
-					JOptionPane.INFORMATION_MESSAGE);
-
-		return analyser.getResults();
+		return analyser;
 	}
 
 	/**
@@ -274,7 +269,8 @@ public class PetrinetController {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
 		reachabilityGraphModel.setCurrentState(state);
-		petrinetQueue.push(reachabilityGraphModel.getCurrentState(), Added.NOTHING, null);
+		reachabilityGraphModel.setCurrentEdge(null);
+		petrinetQueue.push(reachabilityGraphModel.getCurrentState(),reachabilityGraphModel.getCurrentEdge(), Added.NOTHING, null);
 	}
 
 	/**

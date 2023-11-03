@@ -10,6 +10,7 @@ import control.PetrinetController;
 public class PetrinetQueue {
 
 	private PetrinetState state;
+	private String currentEdge;
 	private Transition transition = null;
 	private Added stateAdded = Added.NOTHING;
 
@@ -29,9 +30,10 @@ public class PetrinetQueue {
 
 	}
 
-	private PetrinetQueue(PetrinetState state, Added stateAdded, Transition transition,
+	private PetrinetQueue(PetrinetState state, String currentEdge, Added stateAdded, Transition transition,
 			PetrinetController petrinetController) {
 		this.state = state;
+		this.currentEdge = currentEdge;
 		this.stateAdded = stateAdded;
 		this.transition = transition;
 		this.petrinetController = petrinetController;
@@ -69,10 +71,11 @@ public class PetrinetQueue {
 	 * Push.
 	 *
 	 * @param state the state
+	 * @param currentEdge 
 	 * @param stateAdded the state added
 	 * @param transition the transition
 	 */
-	public void push(PetrinetState state, Added stateAdded, Transition transition) {
+	public void push(PetrinetState state, String currentEdge, Added stateAdded, Transition transition) {
 
 		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
 		if (currentState.isFirstState() && petrinetController.getToolbarToggleListener() != null)
@@ -80,7 +83,7 @@ public class PetrinetQueue {
 		if (currentState.hasNext() && petrinetController.getToolbarToggleListener() != null)
 			petrinetController.getToolbarToggleListener().onRedoChanged();
 
-		currentState.nextState = new PetrinetQueue(state, stateAdded, transition, petrinetController);
+		currentState.nextState = new PetrinetQueue(state, currentEdge, stateAdded, transition, petrinetController);
 		petrinetController.setPetrinetQueue(currentState.nextState);
 	}
 
@@ -107,10 +110,15 @@ public class PetrinetQueue {
 
 		petrinetController.getPetrinet().setState(currentState.lastState.getState());
 		petrinetController.getReachabilityGraphModel().setCurrentState(currentState.lastState.getState());
-
+		petrinetController.getReachabilityGraphModel().setCurrentEdge(currentState.lastState.getCurrentEdge());
+		
 		if (currentState.lastState.isFirstState() && petrinetController.getToolbarToggleListener() != null)
 			petrinetController.getToolbarToggleListener().onUndoChanged();
 
+	}
+
+	private String getCurrentEdge() {
+		return currentEdge;
 	}
 
 	/**
@@ -196,6 +204,8 @@ public class PetrinetQueue {
 		while (petrinetController.getPetrinetQueue().lastState != null)
 			petrinetController.setPetrinetQueue(petrinetController.getPetrinetQueue().lastState);
 
+		petrinetController.getReachabilityGraphModel().setCurrentEdge(null);
+		
 		if (petrinetController.getToolbarToggleListener() != null)
 			petrinetController.getToolbarToggleListener().onUndoChanged();
 	}

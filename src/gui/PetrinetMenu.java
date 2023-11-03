@@ -25,7 +25,7 @@ import javax.swing.JMenuItem;
  *     <ul>
  *         <li>Open Editor</li>
  *         <li>Close Editor</li>
- *         <li>Change Design</li>
+ *         <li>Change Look and Feel</li>
  *     </ul>
  * 
  *     <li>Help:</li>
@@ -74,7 +74,7 @@ public class PetrinetMenu extends JMenuBar {
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		JMenuItem openEditorMenuItem = new JMenuItem("Open Editor");
 		JMenuItem closeEditorMenuItem = new JMenuItem("Close Editor");
-		JMenuItem changeDesignMenuItem = new JMenuItem("Change Design");
+		JMenuItem changeLookAndFeelMenuItem = new JMenuItem("Change Look and Feel");
 		JMenuItem showInfoMenuItem = new JMenuItem("Info");
 
 		files.add(newMenuItem);
@@ -88,7 +88,7 @@ public class PetrinetMenu extends JMenuBar {
 		files.add(exitMenuItem);
 		edit.add(openEditorMenuItem);
 		edit.add(closeEditorMenuItem);
-		edit.add(changeDesignMenuItem);
+		edit.add(changeLookAndFeelMenuItem);
 		help.add(showInfoMenuItem);
 
 		newMenuItem.addActionListener(e -> menuController.onNew());
@@ -113,7 +113,7 @@ public class PetrinetMenu extends JMenuBar {
 
 		closeEditorMenuItem.addActionListener(e -> menuController.onCloseEditor());
 
-		changeDesignMenuItem.addActionListener(e -> menuController.onChangeDesign());
+		changeLookAndFeelMenuItem.addActionListener(e -> menuController.onChaneLookAndFeel());
 
 		showInfoMenuItem.addActionListener(e -> menuController.onInfo());
 	}

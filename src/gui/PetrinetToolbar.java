@@ -3,17 +3,11 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -22,20 +16,16 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.SwingPropertyChangeSupport;
-
-import org.apache.commons.math3.geometry.enclosing.SupportBallGenerator;
 
 import control.PetrinetController;
 import control.PetrinetGraphEditor;
 import core.PetrinetQueue;
 import reachabilityGraphLayout.LayoutType;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * A toolbar for interactions with petrinets via a
- * {@link PetrinetToolbarInterface} representing the current state of a
+ * {@link PetrinetToolbarController} representing the current state of a
  * {@link PetrinetPanel}.
  * </p>
  * 
@@ -52,44 +42,71 @@ public class PetrinetToolbar extends JToolBar {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * keep track of default button color of look and feel so it can be highlighted
+	 * and changed back
+	 */
 	private Color buttonDefaultColor;
-
+	/** default highlight color */
 	private Color buttonHighlightColor = Color.LIGHT_GRAY;
 
+	// BUTTONS SHOWN IN VIEWER MODE ONLY
+	/** button to start analysis of the current petrinet */
 	private JButton analyseButton;
+	/** set petrinet to initial markings */
 	private JButton restartButton;
-	private JButton resetButton;
-	private ToolbarButton undoButton;
-	private ToolbarButton redoButton;
-	private JButton clearTextButton;
+	/** open the editro */
 	private JButton openEditorButton;
+	/** reset the reachability graph (and therefore the petrinet) */
+	private JButton resetButton;
+	/** undo last step */
+	private ToolbarButton undoButton;
+	/** redo last step */
+	private ToolbarButton redoButton;
+	/** clear the text area in the main frame */
+	private JButton clearTextButton;
+	/** zoom into the reachability graph */
+	private JButton zoomInReachabilityButton;
+	/** zoom out of the reachability graph */
+	private JButton zoomOutReachabilityButton;
+	/** choose tree layout for reachability graph */
+	private ToolbarButton toggleTreeLayoutButton;
+	/** choose circle layout for reachability graph */
+	private ToolbarButton toggleCircleLayoutButton;
+	/** choose auto layout for reachability graph */
+	private ToolbarButton toggleAutoLayoutButton;
+	/** */
+	private JButton changeLookAndFeelButton;
 
+	// BUTTONS SHOWN IN EDITOR MODE ONLY
+
+	/** add a new place to the petrinet */
 	private JButton addPlaceButton;
+	/** add new transition to the petrinet */
 	private JButton addTransitionButton;
+	/** delete marked component */
 	private JButton deleteComponentButton;
+	/** add a new edge to the petrinet */
 	private ToolbarButton addEdgeButton;
+	/** remove an edge from the petrinet */
 	private ToolbarButton removeEdgeButton;
+	/** add a label to an element */
 	private JButton addLabelButton;
+	/** close the editor */
 	private JButton closeEditorButton;
 
-	private JButton zoomInReachabilityButton;
-	private JButton zoomOutReachabilityButton;
-	private ToolbarButton toggleTreeLayoutButton;
-	private ToolbarButton toggleCircleLayoutButton;
-	private ToolbarButton toggleAutoLayoutButton;
-	private JButton changeDesignButton;
-
-	private boolean startUp = true;
-
-	private String lastDockingPlace = BorderLayout.NORTH;
+	/**
+	 * keeps track of the place in the BorderLayout of the main frame where the
+	 * toolbar is docked to
+	 */
+	private String dockingPlace = BorderLayout.NORTH;
 
 	/**
 	 * Instantiates a new petrinet toolbar.
 	 *
-	 * @param mainController The controller linking all the actions to the petrinet
-	 *                       panel.
+	 * @param mainController The controller controlling the toolbar.
 	 */
-	PetrinetToolbar(PetrinetToolbarInterface mainController, JFrame parent) {
+	PetrinetToolbar(PetrinetToolbarController mainController, JFrame parent) {
 
 		// set to BoxLayout so that there can be glue added to push contents to the end
 		// of both sides
@@ -120,103 +137,135 @@ public class PetrinetToolbar extends JToolBar {
 		add(verticalStrut);
 		verticalStrut.setVisible(false);
 
-		// listen to the a- / detachement of the toolbar -> if not attached to the NORTH
-		// add separator 
+		// listen to the docking / undocking of the toolbar -> if not attached to the
+		// NORTH
+		// add separator
 		addPropertyChangeListener(new PropertyChangeListener() {
+
+			// on adding the toolbar to the frame for the first time the property change
+			// event does not signify that the toolbar has been attached (see below); this
+			// boolean signifies a first time attachment to the NORTH
+			boolean startUp = true;
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 
-				// force toolbar to be horizontal when not docked so that it is detectable, that
-				// it has docked to east or west (being vertical)
-				// important for setting the divisor correctly in ResizableSplitPane
+				// get attachment events, determine whether and where the toolbar has
+				// docked and handle events accordingly
 				if ("ancestor".equals(evt.getPropertyName())) {
 
+					// toolbar has detached -> return
 					if (evt.getNewValue() == null) {
 						return;
 					}
 
+					// get new value of ancestor event
 					String eventString = evt.getNewValue().toString();
 
+					// for safety measures
 					if (!eventString.contains("JPanel"))
 						return;
 
-					int firstNumber = Integer.parseInt(eventString.split("JPanel")[1].split(",")[1]); // TODO what do
-																										// these numbers
-																										// represent?
-					int secondNumber = Integer.parseInt(eventString.split("JPanel")[1].split(",")[2]); // TODO what do
-																										// these numbers
-																										// represent?
+					// get x and y values of the event (0,0) signifies the toolbar has been detached
+					// unless it is added to the frame for the first time in which case the startUp
+					// boolean above signifies it is attached
+					int eventX = Integer.parseInt(eventString.split("JPanel")[1].split(",")[1]);
+					int eventY = Integer.parseInt(eventString.split("JPanel")[1].split(",")[2]);
 
-					if (evt.getNewValue() != null && firstNumber == 0 && secondNumber == 0) {
-						setOrientation(SwingConstants.HORIZONTAL);
-						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
+					// toolbar has undocked (or added to the frame for the first time)
+					if (evt.getNewValue() != null && eventX == 0 && eventY == 0) {
 
-						horizontalStrut.setVisible(true);
-						horizontalGlue.setVisible(true);
-
-						verticalStrut.setVisible(false);
-						verticalGlueLower.setVisible(false);
-						verticalGlueUpper.setVisible(false);
-
-						separator.setOrientation(SwingConstants.VERTICAL);
-
-						if (!startUp) 
-							separator.setVisible(true);
-
-						if (startUp)
+						// if toolbar is added to frame for first time set start up boolean and docking
+						// place and return
+						if (startUp) {
 							startUp = false;
+							dockingPlace = BorderLayout.NORTH;
+							return;
+						}
+
+						// set components according to orientation
+						if (getOrientation() == SwingConstants.HORIZONTAL) {
+							setHorizontalComponents();
+
+						} else {
+							setVerticalComponents();
+						}
+
+						separator.setVisible(true);
+						dockingPlace = null;
 						mainController.onReadjustDividers();
 
-					} else if (getOrientation() == SwingConstants.VERTICAL) {
-						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.Y_AXIS));
+					}
+					// toolbar has docked to EAST or WEST
+					else if (getOrientation() == SwingConstants.VERTICAL) {
 
+						// wait for toolbar to finish docking and see if it is in the parents EAST or
+						// WEST
 						SwingUtilities.invokeLater(() -> {
 							Component eastComponent = parent.getContentPane().getComponentAt(parent.getWidth() - 1,
 									parent.getHeight() / 2);
 
 							if (eastComponent instanceof PetrinetToolbar)
-								lastDockingPlace = BorderLayout.EAST;
+								dockingPlace = BorderLayout.EAST;
 							Component westComponent = parent.getContentPane().getComponentAt(0, parent.getHeight() / 2);
 							if (westComponent instanceof PetrinetToolbar)
-								lastDockingPlace = BorderLayout.WEST;
+								dockingPlace = BorderLayout.WEST;
 
 						});
 
-						horizontalStrut.setVisible(false);
-						horizontalGlue.setVisible(false);
-
-						verticalStrut.setVisible(true);
-						verticalGlueLower.setVisible(true);
-						verticalGlueUpper.setVisible(true);
-
-						separator.setOrientation(SwingConstants.HORIZONTAL);
+						setVerticalComponents();
 						separator.setVisible(true);
-						startUp = true;
 						mainController.onReadjustDividers();
-					} else {
-						lastDockingPlace = BorderLayout.NORTH;
-						setLayout(new BoxLayout((JToolBar) evt.getSource(), BoxLayout.X_AXIS));
-						separator.setVisible(false);
-
-						horizontalStrut.setVisible(true);
-						horizontalGlue.setVisible(true);
-
-						verticalStrut.setVisible(false);
-						verticalGlueLower.setVisible(false);
-						verticalGlueUpper.setVisible(false);
-
 						startUp = false;
+
+					}
+					// toolbar has docked to the NORTH
+					else {
+						dockingPlace = BorderLayout.NORTH;
+						setHorizontalComponents();
+						separator.setVisible(false);
 						mainController.onReadjustDividers();
+						startUp = false;
+
 					}
 
 				}
 			}
+
+			// set layout to orient around the y-axis, set horizontal elements invisible,
+			// vertical visible and reorient the separator
+			private void setVerticalComponents() {
+				setLayout(new BoxLayout(PetrinetToolbar.this, BoxLayout.Y_AXIS));
+				horizontalStrut.setVisible(false);
+				horizontalGlue.setVisible(false);
+				verticalStrut.setVisible(true);
+				verticalGlueLower.setVisible(true);
+				verticalGlueUpper.setVisible(true);
+				separator.setOrientation(SwingConstants.HORIZONTAL);
+			}
+
+			// set layout to orient around the x-axis, set horizontal elements visible,
+			// vertical invisible and reorient the separator
+			private void setHorizontalComponents() {
+				setLayout(new BoxLayout(PetrinetToolbar.this, BoxLayout.X_AXIS));
+				horizontalStrut.setVisible(true);
+				horizontalGlue.setVisible(true);
+				verticalStrut.setVisible(false);
+				verticalGlueLower.setVisible(false);
+				verticalGlueUpper.setVisible(false);
+				separator.setOrientation(SwingConstants.VERTICAL);
+			}
 		});
+
+		// initialize buttons and add them-> for functionality see
+		// PetrinetToolbarController
+
+		// PETRINET BUTTONS
 
 		ToolbarButton openButton = new ToolbarButton(ToolbarImage.OPEN, e -> mainController.onOpen(), "Open file",
 				"open");
 
+		// get the default button color of the given look and feel
 		buttonDefaultColor = openButton.getBackground();
 
 		JButton saveButton = new ToolbarButton(ToolbarImage.SAVE, e -> mainController.onSave(), "Save file", "save");
@@ -227,44 +276,29 @@ public class PetrinetToolbar extends JToolBar {
 		JButton nextButton = new ToolbarButton(ToolbarImage.RIGHT, e -> mainController.onNext(), "Open the next file",
 				"next");
 
-		restartButton = new ToolbarButton(ToolbarImage.RESTART, e -> mainController.onRestart(),
-				"Reset the petrinet graph", "Reset p");
-
-		JButton plusButton = new ToolbarButton(ToolbarImage.PLUS, e -> mainController.onPlus(),
+		JButton plusButton = new ToolbarButton(ToolbarImage.PLUS, e -> mainController.onIncrement(),
 				"Adds a token to a selected place", "plus");
 
-		JButton minusButton = new ToolbarButton(ToolbarImage.MINUS, e -> mainController.onMinus(),
+		JButton minusButton = new ToolbarButton(ToolbarImage.MINUS, e -> mainController.onDecrement(),
 				"Removes a token from a selected place", "minus");
 
-		resetButton = new ToolbarButton(ToolbarImage.RESET, e -> mainController.onReset(),
-				"Reset the reachability graph", "reset r");
+		// START VIEWER SPECIFIC BUTTONS
 
-		analyseButton = new ToolbarButton(ToolbarImage.ANALYSE, e -> mainController.onAnalyse(),
-				"Analyse petrinet and create reachability graph", "analyse");
+		restartButton = new ToolbarButton(ToolbarImage.RESTART, e -> mainController.onResetPetrinet(),
+				"Reset the petrinet graph", "Reset p");
 
-		clearTextButton = new ToolbarButton(ToolbarImage.CLEAR_TEXT, e -> mainController.onClear(), "Clear text area",
-				"clear");
+		JButton zoomInButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomInPetrinet(),
+				"Zoom in into petrinet", "zoom in");
 
-		JButton setDefaultButton = new ToolbarButton(ToolbarImage.DEFAULT, e -> mainController.onSetDefault(),
-				"Reset split panes", "reset pane");
+		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> mainController.onZoomOutPetrinet(),
+				"Zoom out of petrinet", "zoom out");
 
-		undoButton = new ToolbarButton(ToolbarImage.UNDO, e -> mainController.onUndo(), "Undo last step", "undo");
-
-		redoButton = new ToolbarButton(ToolbarImage.REDO, e -> mainController.onRedo(), "Redo last step", "redo");
-
-		JButton zoomInButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomIn(), "Zoom in",
-				"zoom in");
-
-		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> mainController.onZoomOut(), "Zoom out",
-				"zoom out");
-
-		changeDesignButton = new ToolbarButton(ToolbarImage.DESIGN, e -> mainController.onChangeDesign(),
-				"Change between Metal and Nimbus feel and look",
-				"change design");
 		openEditorButton = new ToolbarButton(ToolbarImage.EDITOR, e -> mainController.onOpenEditor(),
 				"Switch to editor", "editor");
 
-		// Editor specific Buttons
+		// END VIEWER SPECIFIC BUTTONS
+
+		// START EDITOR SPECIFIC BUTTONS
 
 		addPlaceButton = new ToolbarButton(ToolbarImage.ADD_PLACE, e -> mainController.onAddPlace(), "Add place",
 				"add place");
@@ -273,36 +307,65 @@ public class PetrinetToolbar extends JToolBar {
 				"Add transition", "add trans");
 
 		deleteComponentButton = new ToolbarButton(ToolbarImage.DELETE_COMPONENT,
-				e -> mainController.onRemoveComponent(), "Delete component", "delete");
+				e -> mainController.onRemoveComponent(), "Delete selected component", "delete");
 
-		addEdgeButton = new ToolbarButton(ToolbarImage.ADD_EDGE, e -> mainController.onAddEdge(), "Add edge",
+		addEdgeButton = new ToolbarButton(ToolbarImage.ADD_EDGE, e -> mainController.onAddEdge(),
+				"Add edge -> select beginning node first and then ending node; have to be of different types",
 				"add edge");
 
 		removeEdgeButton = new ToolbarButton(ToolbarImage.REMOVE_EDGE, e -> mainController.onRemoveEdge(),
-				"Remove an edge: choose source first and then target", "remove edge");
+				"Remove an edge -> select beginning node first and then ending node; edge has to exist", "remove edge");
 
 		addLabelButton = new ToolbarButton(ToolbarImage.ADD_LABEL, e -> mainController.onAddLabel(),
-				"Add label to element", "add label");
+				"Add label to selected element", "add label");
 
 		closeEditorButton = new ToolbarButton(ToolbarImage.OPEN_VIEWER, e -> mainController.onCloseEditor(),
 				"Switch to viewer", "close editor");
 
+		// END EDITOR SPECIFIC BUTTONS
+
+		// REACHABILITY GRAPH BUTTONS
+
+		// START VIEWER SPECIFIC BUTTONS
+
+		analyseButton = new ToolbarButton(ToolbarImage.ANALYSE, e -> mainController.onAnalyse(),
+				"Analyse petrinet and create reachability graph", "analyse");
+
+		resetButton = new ToolbarButton(ToolbarImage.RESET, e -> mainController.onReset(),
+				"Reset the reachability graph", "reset r");
+
+		undoButton = new ToolbarButton(ToolbarImage.UNDO, e -> mainController.onUndo(), "Undo last step", "undo");
+
+		redoButton = new ToolbarButton(ToolbarImage.REDO, e -> mainController.onRedo(), "Redo last step", "redo");
+
+		clearTextButton = new ToolbarButton(ToolbarImage.CLEAR_TEXT, e -> mainController.onClearTextArea(), "Clear text area",
+				"clear");
+
 		zoomInReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomInReachability(),
-				"Zoom in", "zoom in");
+				"Zoom in into reachability graph", "zoom in");
 
 		zoomOutReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_OUT,
-				e -> mainController.onZoomOutReachability(), "Zoom out", "zoom out");
+				e -> mainController.onZoomOutReachability(), "Zoom out of reachability graph", "zoom out");
 
 		toggleTreeLayoutButton = new ToolbarButton(ToolbarImage.TREE_LAYOUT, e -> mainController.onToggleTreeLayout(),
-				"Turn tree base layout on -> will give the best experience (resets graph)", "tree-layout");
+				"Turn tree base layout on -> will give the best experience", "tree-layout");
 
 		toggleCircleLayoutButton = new ToolbarButton(ToolbarImage.CIRCLE_LAYOUT,
 				e -> mainController.onToggleCircleLayout(),
-				"Turn circe based layout on -> might not be as beautiful but may be more fun (resets graph)",
-				"circle-layout");
+				"Turn circe based layout on -> might not be as beautiful but may be more fun", "circle-layout");
 
 		toggleAutoLayoutButton = new ToolbarButton(ToolbarImage.AUTO_LAYOUT, e -> mainController.onToggleAutoLayout(),
-				"Turn auto layout on -> auto layout provided by GraphStream (resets graph)", "auto-layout");
+				"Turn auto layout on -> auto layout provided by GraphStream", "auto-layout");
+
+		// END VIEWER SPECIFIC BUTTONS
+
+		JButton setSplitPanesDefaultButton = new ToolbarButton(ToolbarImage.DEFAULT,
+				e -> mainController.onSetSplitPanesDefault(), "Reset split panes to default ratio", "reset pane");
+
+		changeLookAndFeelButton = new ToolbarButton(ToolbarImage.DESIGN, e -> mainController.onChaneLookAndFeel(),
+				"Change between Metal and Nimbus feel and look", "change design");
+
+		// PETRINET BUTTONS
 
 		this.add(openButton);
 		this.add(saveButton);
@@ -311,13 +374,16 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(plusButton);
 		this.add(minusButton);
 
-		// Viewer alternative buttons
+		// START VIEWER SPECIFIC BUTTONS
 
 		this.add(restartButton);
+		this.add(zoomInButton);
+		this.add(zoomOutButton);
+		this.add(openEditorButton);
 
-		//
+		// END VIEWER SPECIFIC BUTTONS
 
-		// Editor alternative buttons
+		// START EDITOR SPECIFIC BUTTONS
 
 		this.add(addPlaceButton);
 		this.add(addTransitionButton);
@@ -325,47 +391,48 @@ public class PetrinetToolbar extends JToolBar {
 		this.add(addEdgeButton);
 		this.add(removeEdgeButton);
 		this.add(addLabelButton);
-		//
-
-		this.add(zoomInButton);
-		this.add(zoomOutButton);
-
-		this.add(openEditorButton);
 		this.add(closeEditorButton);
+
+		// END EDITOR SPECIFIC BUTTONS
 
 		add(horizontalGlue);
 		add(verticalGlueUpper);
 		add(separator);
 		add(verticalGlueLower);
 
-		// ReachabilityGraph buttons
+		// REACHABILITY GRAPH BUTTONS
+
+		// START VIEWER SPECIFIC BUTTONS
 
 		this.add(analyseButton);
 		this.add(resetButton);
 		this.add(undoButton);
 		this.add(redoButton);
 		this.add(clearTextButton);
-
 		this.add(zoomInReachabilityButton);
 		this.add(zoomOutReachabilityButton);
 		this.add(toggleTreeLayoutButton);
 		this.add(toggleCircleLayoutButton);
 		this.add(toggleAutoLayoutButton);
-		this.add(setDefaultButton);
 
-		this.add(changeDesignButton);
+		// END VIEWER SPECIFIC BUTTONS
 
+		this.add(setSplitPanesDefaultButton);
+		this.add(changeLookAndFeelButton);
+
+		// set layout to TREE and mode to VIEWER by default
 		toggleTreeLayoutButton();
 		setToolbarMode(ToolbarMode.VIEWER);
 	}
 
 	/**
-	 * Sets the toolbar mode.
+	 * Sets the toolbar mode. Buttons are set visible / invisible according to mode.
 	 *
-	 * @param toolbarMode the new toolbar mode
+	 * @param toolbarMode The mode the toolbar is set to.
 	 */
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 
+		// setting viewer buttons
 		if (toolbarMode == ToolbarMode.VIEWER) {
 			analyseButton.setVisible(true);
 			restartButton.setVisible(true);
@@ -390,7 +457,9 @@ public class PetrinetToolbar extends JToolBar {
 			toggleCircleLayoutButton.setVisible(true);
 			toggleAutoLayoutButton.setVisible(true);
 
-		} else {
+		}
+		// setting editor buttons also reset add / remove edge buttons if highlighted
+		else {
 			analyseButton.setVisible(false);
 			restartButton.setVisible(false);
 			resetButton.setVisible(false);
@@ -414,94 +483,111 @@ public class PetrinetToolbar extends JToolBar {
 			toggleCircleLayoutButton.setVisible(false);
 			toggleAutoLayoutButton.setVisible(false);
 
+			if (addEdgeButton.getColor() == buttonHighlightColor)
+				toggleAddEdgeButton();
+			if (removeEdgeButton.getColor() == buttonHighlightColor)
+				toggleRemoveEdgeButton();
 		}
 	}
 
 	/**
-	 * Toggle add edge button.
+	 * Toggle add edge button. If it is highlighted unmark it. Is synchronized with
+	 * remove edge button -> only one can be hightlighted at a time.
 	 */
 	public void toggleAddEdgeButton() {
-
+		// button is not highlighted -> highlight it and handle remove edge button
 		if (addEdgeButton.getColor() == buttonDefaultColor || addEdgeButton.getColor() == null) {
+			// highlight button
 			addEdgeButton.setColor(buttonHighlightColor);
-			if (removeEdgeButton.getColor() == buttonHighlightColor) {
+			// if remove edge button is highlighted set to default
+			if (removeEdgeButton.getColor() == buttonHighlightColor)
 				removeEdgeButton.setColor(buttonDefaultColor);
-
-			}
-		} else {
+		}
+		// button is highlighted -> set to default
+		else {
 			addEdgeButton.setColor(buttonDefaultColor);
 		}
 	}
 
 	/**
-	 * Toggle remove edge button.
+	 * Toggle remove edge button. If it is highlighted unmark it. Is synchronized
+	 * with add edge button -> only one can be hightlighted at a time.
 	 */
 	public void toggleRemoveEdgeButton() {
+
+		// button is not highlighted -> highlight it and handle add edge button
 		if (removeEdgeButton.getColor() == buttonDefaultColor || removeEdgeButton.getColor() == null) {
+			// highlight button
 			removeEdgeButton.setColor(buttonHighlightColor);
-			if (addEdgeButton.getColor() == buttonHighlightColor) {
+			// if add edge button is highlighted set to default
+			if (addEdgeButton.getColor() == buttonHighlightColor)
 				addEdgeButton.setColor(buttonDefaultColor);
-			}
-		} else {
+		}
+		// button is highlighted -> set to default
+		else
 			removeEdgeButton.setColor(buttonDefaultColor);
-		}
+
 	}
 
 	/**
-	 * Toggle auto layout button.
-	 */
-	public void toggleAutoLayoutButton() {
-
-		if (toggleAutoLayoutButton.getColor() == buttonDefaultColor || toggleAutoLayoutButton.getColor() == null) {
-			toggleAutoLayoutButton.setColor(buttonHighlightColor);
-
-			if (toggleCircleLayoutButton.getColor() == buttonHighlightColor)
-				toggleCircleLayoutButton.setColor(buttonDefaultColor);
-			if (toggleTreeLayoutButton.getColor() == buttonHighlightColor)
-				toggleTreeLayoutButton.setColor(buttonDefaultColor);
-
-		} else {
-			toggleAutoLayoutButton.setColor(buttonDefaultColor);
-		}
-	}
-
-	/**
-	 * Toggle tree layout button.
+	 * Toggle tree layout button. Activate auto tree if not active and highlight
+	 * button. Synchronizes with toggle circle / auto layout buttons -> only one can
+	 * be highlighted at a time.
 	 */
 	public void toggleTreeLayoutButton() {
-
+		// button is not highlighted -> highlight it and handle the other buttons
 		if (toggleTreeLayoutButton.getColor() == buttonDefaultColor || toggleTreeLayoutButton.getColor() == null) {
+			// highlight button
 			toggleTreeLayoutButton.setColor(buttonHighlightColor);
+			// set others default if highlighted
 			if (toggleCircleLayoutButton.getColor() == buttonHighlightColor)
 				toggleCircleLayoutButton.setColor(buttonDefaultColor);
 			if (toggleAutoLayoutButton.getColor() == buttonHighlightColor)
 				toggleAutoLayoutButton.setColor(buttonDefaultColor);
-
-		} else {
+		} else // button is highlighted -> set default
 			toggleTreeLayoutButton.setColor(buttonDefaultColor);
-		}
 	}
 
 	/**
-	 * Toggle circle layout button.
+	 * Toggle circle layout button. Activate circle layout if not active and
+	 * highlight button. Synchronizes with toggle auto / tree layout buttons -> only
+	 * one can be highlighted at a time.
 	 */
 	public void toggleCircleLayoutButton() {
-
+		// button is not highlighted -> highlight it and handle the other buttons
 		if (toggleCircleLayoutButton.getColor() == buttonDefaultColor || toggleCircleLayoutButton.getColor() == null) {
+			// highlight button
 			toggleCircleLayoutButton.setColor(buttonHighlightColor);
+			// set others default if highlighted
 			if (toggleTreeLayoutButton.getColor() == buttonHighlightColor)
 				toggleTreeLayoutButton.setColor(buttonDefaultColor);
 			if (toggleAutoLayoutButton.getColor() == buttonHighlightColor)
 				toggleAutoLayoutButton.setColor(buttonDefaultColor);
-
-		} else {
+		} else // button is highlighted -> set default
 			toggleCircleLayoutButton.setColor(buttonDefaultColor);
-		}
 	}
 
 	/**
-	 * Reset buttons.
+	 * Toggle auto layout button. Activate auto layout if not active and highlight
+	 * button. Synchronizes with toggle circle / tree layout buttons -> only one can
+	 * be highlighted at a time.
 	 */
+	public void toggleAutoLayoutButton() {
+		// button is not highlighted -> highlight it and handle the other buttons
+		if (toggleAutoLayoutButton.getColor() == buttonDefaultColor || toggleAutoLayoutButton.getColor() == null) {
+			// highlight button
+			toggleAutoLayoutButton.setColor(buttonHighlightColor);
+			// set others default if highlighted
+			if (toggleCircleLayoutButton.getColor() == buttonHighlightColor)
+				toggleCircleLayoutButton.setColor(buttonDefaultColor);
+			if (toggleTreeLayoutButton.getColor() == buttonHighlightColor)
+				toggleTreeLayoutButton.setColor(buttonDefaultColor);
+		} else // button is highlighted -> set default
+			toggleAutoLayoutButton.setColor(buttonDefaultColor);
+
+	}
+
+	// reset all buttons that can be highlighted to default
 	private void resetButtons() {
 
 		addEdgeButton.setColor(buttonDefaultColor);
@@ -516,26 +602,29 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Sets the toolbar to.
+	 * Sets the toolbar to the given panels state. Un- / redo buttons, add / remove
+	 * edge buttons and layout buttons are highlighted accordingly.
 	 *
-	 * @param panel      the panel
-	 * @param layoutType the layout type
+	 * @param petrinetPanel The panel the toolbar represents.
+	 * @param layoutType    The layoutType used.
 	 */
-	public void setToolbarTo(PetrinetPanel panel, LayoutType layoutType) {
+	public void setToolbarTo(PetrinetPanel petrinetPanel, LayoutType layoutType) {
 
+		// get default color of current look and feel
 		JButton button = new JButton();
-
 		buttonDefaultColor = button.getBackground();
 
+		// set highlight colors for look and feel
 		LookAndFeel laf = UIManager.getLookAndFeel();
-
 		if (laf.getName().equals("Nimbus"))
 			buttonHighlightColor = new Color(190, 185, 180);
 		else
 			buttonHighlightColor = Color.LIGHT_GRAY;
 
+		// reset all buttons
 		resetButtons();
 
+		// highlight correct layout button
 		if (layoutType == LayoutType.AUTOMATIC)
 			toggleAutoLayoutButton();
 		if (layoutType == LayoutType.CIRCLE)
@@ -543,20 +632,21 @@ public class PetrinetToolbar extends JToolBar {
 		if (layoutType == LayoutType.TREE)
 			toggleTreeLayoutButton();
 
-		if (panel == null)
+		if (petrinetPanel == null) // safety check
 			return;
 
-		PetrinetGraphEditor editor = panel.getEditor();
+		// set add / remove edge buttons
+		PetrinetGraphEditor editor = petrinetPanel.getEditor();
 		if (editor.addsEdge())
 			toggleAddEdgeButton();
 		if (editor.removesEdge())
 			toggleRemoveEdgeButton();
 
-		PetrinetController controller = panel.getPetrinetController();
-
+		// set undo / redo buttons
+		PetrinetController controller = petrinetPanel.getPetrinetController();
 		PetrinetQueue queue = controller.getPetrinetQueue();
 
-		if (queue == null)
+		if (queue == null) // safety check
 			return;
 
 		if (!queue.isFirstState())
@@ -567,7 +657,8 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle redo button.
+	 * Toggle redo button. If it is not highlighted, highlight it. Set to default
+	 * color otherwise.
 	 */
 	public void toggleRedoButton() {
 
@@ -578,7 +669,8 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle undo button.
+	 * Toggle undo button. If it is not highlighted, highlight it. Set to default
+	 * color otherwise.
 	 */
 	public void toggleUndoButton() {
 		if (undoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
@@ -588,18 +680,12 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
+	 * Get the place the toolbar is currently docked in.
 	 * 
-	 * @return
+	 * @return any of {Borderlayout.NORTH, Borderlayout.EAST, Borderlayout.WEST}
 	 */
-	public String getLastDockingPlace() {
-		return lastDockingPlace;
-	}
-/**
- * 
- */
-	public void setVertical() {
-		// TODO Auto-generated method stub
-		
+	public String getDockingPlace() {
+		return dockingPlace;
 	}
 
 }

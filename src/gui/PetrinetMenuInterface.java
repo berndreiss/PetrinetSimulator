@@ -78,7 +78,7 @@ public interface PetrinetMenuInterface {
 	 * default).
 	 */
 
-	void onChangeDesign();
+	void onChaneLookAndFeel();
 
 	// METHODS FOR HELP
 

@@ -80,6 +80,15 @@ public class ReachabilityGraphModel {
 	public void setCurrentState(PetrinetState state) {
 		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
 	}
+	
+	/**
+	 * 
+	 * @param edge
+	 */
+	public void setCurrentEdge(String edge) {
+		this.currentEdge = edge;
+		stateChangeListener.onSetCurrentEdge(edge);
+	}
 
 	/**
 	 * Adds the new state.
@@ -242,7 +251,6 @@ public class ReachabilityGraphModel {
 		} else {
 			if (initialState != null) {
 				petrinetStates.put(initialState.getState(), initialState);
-//			stateChangeListener.onSetInitial(initialState);
 				setCurrentState(initialState);
 			}
 		}
@@ -277,6 +285,7 @@ public class ReachabilityGraphModel {
 	 */
 	public void setInitial() {
 		setCurrentState(initialState);
+		setCurrentEdge(null);
 	}
 //	
 //	public void print() {
@@ -295,9 +304,13 @@ public class ReachabilityGraphModel {
 	void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
 		lastState.removeSuccessorEdge(state, transition, stateChangeListener);
 		state.removePredecessorEdge(lastState, transition, stateChangeListener);
+
+		if ((lastState.getState() + state.getState() + transition.getId()).equals(currentEdge))
+			currentEdge = null;
 	}
 
 	// TODO REMOVE
+	
 	/**
 	 * Prints the.
 	 */

@@ -29,6 +29,7 @@ import control.MainController;
 import control.PetrinetController;
 import control.PetrinetGraphEditor;
 import core.Petrinet;
+import core.PetrinetAnalyser;
 import core.PetrinetElement;
 import core.Transition;
 import exceptions.PetrinetException;
@@ -45,7 +46,9 @@ import reachabilityGraphLayout.LayoutType;
  * interactions with the data model. The graphs are implemented using the
  * <a href="https://graphstream-project.org/">GraphStream</a> library.
  * Additionally creates an {@link PetrinetGraphEditor} through which the user
- * can edit the {@link Petrinet} using the {@link PetrinetToolbar}.
+ * can edit the {@link Petrinet} using the {@link PetrinetToolbar}. Additionally
+ * it deals with the problem of GraphStream graphs arrow heads not adjusting
+ * correctly when resizing components or adding / removing elements.
  */
 public class PetrinetPanel extends JPanel {
 
@@ -85,6 +88,19 @@ public class PetrinetPanel extends JPanel {
 	private MainController mainController;
 	/** controller managing changes to the petrinet */
 	private PetrinetGraphEditor editor;
+
+	/**
+	 * Keep track whether petrinetController is analysing -> do not adjust arrow
+	 * heads until finished
+	 */
+	private boolean analysing = false;
+
+	/**
+	 * keeping track whether it is the first time adjusting the arrow heads since
+	 * there are problems adjusting them the first time after creating the view
+	 * panel for some reason
+	 */
+	private boolean firstTimeArrowHeadAdjusting = true;
 
 	/**
 	 * Instantiates a new petrinet panel.
@@ -150,6 +166,8 @@ public class PetrinetPanel extends JPanel {
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
+		
+		firstTimeArrowHeadAdjusting = true;
 
 	}
 
@@ -196,6 +214,24 @@ public class PetrinetPanel extends JPanel {
 		// adjust the arrow heads since they become detached from the nodes but let
 		// GraphStream do its thing first
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
+	}
+
+	/**
+	 * 
+	 * Analyse whether the current petrinet is bounded or unbounded. In the process
+	 * also adjusts the arrow heads in the GraphStream graph.
+	 * 
+	 * @return a petrinet analyser
+	 * 
+	 */
+	public PetrinetAnalyser analyse() {
+
+		// do not adjust arrow heads while analysing but adjust them afterwards
+		this.analysing = true;
+		PetrinetAnalyser analyser = petrinetController.analyse();
+		this.analysing = false;
+		SwingUtilities.invokeLater(() -> adjustArrowHeads());
+		return analyser;
 	}
 
 	/**
@@ -327,9 +363,10 @@ public class PetrinetPanel extends JPanel {
 			return;
 
 		// if switching to EDITOR reset reachability graph
-		if (toolbarMode == ToolbarMode.EDITOR)
+		if (toolbarMode == ToolbarMode.EDITOR) {
 			petrinetController.resetReachabilityGraph();
-
+			editor = new PetrinetGraphEditor(petrinetController, petrinetGraph);
+		}
 		// if switching to VIEWER make sure no transitions are marked anymore
 		if (toolbarMode == ToolbarMode.VIEWER) {
 			PetrinetElement marekdElement = petrinetGraph.getMarkedNode();
@@ -388,10 +425,8 @@ public class PetrinetPanel extends JPanel {
 				// register element if mouse is pressed
 				element = viewPanel.findGraphicElementAt(enumSet, me.getX(), me.getY());
 				if (element != null) {
-
 					x = element.getX();
 					y = element.getY();
-					System.out.println(x + ", " + y);
 				}
 				viewerPipe.pump();
 
@@ -486,6 +521,10 @@ public class PetrinetPanel extends JPanel {
 	// resizing the frame and invoking the method via the ComponentListener
 	private void adjustArrowHeads() {
 
+		// if analysing do not adjust -> invokes unnecassary waiting time
+		if (analysing)
+			return;
+
 		// wait a moment for GraphStream to do its thing -> otherwise frame might resize
 		// too early and the arrow heads do not align
 		try {
@@ -500,6 +539,12 @@ public class PetrinetPanel extends JPanel {
 		Dimension currentSize = parent.getSize();
 		parent.setSize(currentSize.width + 1, currentSize.height);
 		parent.setSize(currentSize);
+
+		if (firstTimeArrowHeadAdjusting) {
+			firstTimeArrowHeadAdjusting = false;
+			SwingUtilities.invokeLater(() -> adjustArrowHeads());
+		
+		}
 
 	}
 

@@ -10,6 +10,8 @@ import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -23,7 +25,7 @@ import gui.MainFrame;
 import gui.PetrinetMenuInterface;
 import gui.PetrinetPanel;
 import gui.PetrinetToolbar;
-import gui.PetrinetToolbarInterface;
+import gui.PetrinetToolbarController;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
 import listeners.ToolbarToggleListener;
@@ -33,7 +35,7 @@ import reachabilityGraphLayout.LayoutType;
 /**
  * The Class MainController.
  */
-public class MainController implements PetrinetMenuInterface, PetrinetToolbarInterface, ToolbarToggleListener {
+public class MainController implements PetrinetMenuInterface, PetrinetToolbarController, ToolbarToggleListener {
 
 	// TODO warn if unsaved changes
 
@@ -88,9 +90,8 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	}
 
-	
-	//GETTER METHODS
-	
+	// GETTER METHODS
+
 	/**
 	 * Gets the frame.
 	 *
@@ -99,7 +100,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	public MainFrame getFrame() {
 		return parent;
 	}
-	
+
 	/**
 	 * Gets the current panel.
 	 *
@@ -193,6 +194,11 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 		}
 		setStatusLabel();
+
+		// for some reason the divider jumps all the way to the left when using look and
+		// feel Metal
+		if (UIManager.getLookAndFeel().getName().equals("Metal"))
+			currentPetrinetPanel.getGraphSplitPane().resetDivider();
 	}
 
 	private void setToolbarMode(ToolbarMode toolbarMode) {
@@ -205,7 +211,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	@Override
 	public void onNew() {
 		setNewPanel(null, false);
-		onSetDefault();
+		onSetSplitPanesDefault();
 	}
 
 	@Override
@@ -437,7 +443,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	public void onCloseEditor() {
 		setToolbarMode(ToolbarMode.VIEWER);
 	}
-	 
+
 	@Override
 	public void onInfo() {
 
@@ -492,7 +498,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 		if (files == null)
 			return null;
-		
+
 		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
 
 		for (File f : files)
@@ -515,21 +521,20 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	// PETRINET RELATED METHODS
 
 	@Override
-	public void onRestart() {
+	public void onResetPetrinet() {
 		if (currentPetrinetPanel == null)
 			return;
 		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
 		controller.resetPetrinet();
 	}
 
-
 	// EDITOR RELATED METHODS
 
 	@Override
-	public void onPlus() {
+	public void onIncrement() {
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		boolean changed = currentPetrinetPanel.getEditor().incrementMarkedPlace();
 
 		if (changed)
@@ -538,7 +543,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	}
 
 	@Override
-	public void onMinus() {
+	public void onDecrement() {
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -602,27 +607,25 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		setStatusLabel();
 	}
 
-
 	@Override
 	public void onRemoveComponent() {
 		currentPetrinetPanel.getEditor().removeComponent();
 		setStatusLabel();
 	}
 
-
 	@Override
 	public void onAddEdge() {
 
 		PetrinetGraphEditor editor = currentPetrinetPanel.getEditor();
-		
+
 		PetrinetToolbar toolbar = parent.getToolbar();
-		
+
 		if (editor.addsEdge()) {
 			editor.abortAddEdge();
 			toolbar.toggleAddEdgeButton();
 			return;
 		}
-		
+
 		String id = null;
 
 		id = JOptionPane.showInputDialog(null, "Enter id for edge:");
@@ -643,9 +646,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 
-
 	}
-
 
 	@Override
 	public void onEdgeAdded() {
@@ -654,13 +655,11 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	}
 
-
 	@Override
 	public void onRemoveEdge() {
 		currentPetrinetPanel.getEditor().toggleRemoveEdge();
 		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
-
 
 	@Override
 	public void onEdgeRemoved() {
@@ -669,30 +668,25 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	}
 
-
 	@Override
 	public void onAddLabel() {
 
-
-
 		boolean changed = currentPetrinetPanel.getEditor().setLabel();
-		
+
 		if (changed)
 			setStatusLabel();
 	}
 
-
 	@Override
-	public void onZoomIn() {
+	public void onZoomInPetrinet() {
 		if (currentPetrinetPanel == null)
 			return;
 
 		currentPetrinetPanel.zoomInPetrinet();
 	}
 
-
 	@Override
-	public void onZoomOut() {
+	public void onZoomOutPetrinet() {
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -701,17 +695,19 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	// REACHABILITY GRAPH RELATED METHODS
 
-
 	@Override
 	public void onAnalyse() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
 
-		String[][] result = { controller.analyse(false) };
+		PetrinetAnalyser analyser = currentPetrinetPanel.analyse();
+		String[][] result = { analyser.getResults() };
 		parent.print(printResults(result));
-	}
 
+		JOptionPane.showMessageDialog(null, "The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".",
+				"", JOptionPane.INFORMATION_MESSAGE);
+
+	}
 
 	@Override
 	public void onReset() {
@@ -721,12 +717,10 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		currentPetrinetPanel.getPetrinetController().resetReachabilityGraph();
 	}
 
-
 	@Override
-	public void onClear() {
+	public void onClearTextArea() {
 		parent.clearTextArea();
 	}
-
 
 	@Override
 	public void onUndo() {
@@ -735,14 +729,12 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		currentPetrinetPanel.getPetrinetController().getPetrinetQueue().goBack();
 	}
 
-
 	@Override
 	public void onRedo() {
 		if (currentPetrinetPanel == null)
 			return;
 		currentPetrinetPanel.getPetrinetController().getPetrinetQueue().goForward();
 	}
-
 
 	@Override
 	public void onZoomInReachability() {
@@ -752,7 +744,6 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		currentPetrinetPanel.zoomInReachability();
 	}
 
-
 	@Override
 	public void onZoomOutReachability() {
 		if (currentPetrinetPanel == null)
@@ -760,7 +751,6 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 		currentPetrinetPanel.zoomOutReachability();
 	}
-
 
 	@Override
 	public void onToggleTreeLayout() {
@@ -774,7 +764,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 			for (Component comp : parent.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-		
+
 	}
 
 	@Override
@@ -790,7 +780,6 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 		}
 	}
 
-
 	@Override
 	public void onToggleAutoLayout() {
 		if (layoutType == LayoutType.AUTOMATIC)
@@ -803,7 +792,6 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
 	}
-
 
 	@Override
 	public void onUndoChanged() {
@@ -818,9 +806,8 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 
 	// DESIGN/WINDOW RELATED METHODS
 
-
 	@Override
-	public void onSetDefault() {
+	public void onSetSplitPanesDefault() {
 		ResizableSplitPane mainSplitPane = parent.getSplitPane();
 
 		mainSplitPane.setDividerRatio(SPLIT_PANE_DEFAULT_RATIO);
@@ -835,18 +822,17 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarInt
 	}
 
 	@Override
-	public void onChangeDesign() {
+	public void onChaneLookAndFeel() {
 		parent.changeLookAndFeel();
 		JTabbedPane tabbedPane = parent.getTabbedPane();
-		for (Component comp: tabbedPane.getComponents())
+		for (Component comp : tabbedPane.getComponents())
 			((PetrinetPanel) comp).setSplitPane();
 	}
-
 
 	@Override
 	public void onReadjustDividers() {
 		if (currentPetrinetPanel != null)
 			currentPetrinetPanel.getGraphSplitPane().resetDivider();
 		parent.getSplitPane().resetDivider();
-	}	
+	}
 }

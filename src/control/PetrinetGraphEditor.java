@@ -30,6 +30,9 @@ public class PetrinetGraphEditor {
 	/** */
 	private PetrinetElement[] removeEdge;
 
+	/** */
+	private Transition transitionMarked;
+	
 	/**
 	 * Instantiates a new editor.
 	 * @param petrinetController 

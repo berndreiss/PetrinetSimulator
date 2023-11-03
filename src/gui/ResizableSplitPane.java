@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -24,11 +25,13 @@ public class ResizableSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
 
-	/** ratio of the divider -> is updated when divider is moved*/
+	/** ratio of the divider -> is updated when divider is moved */
 	private double dividerRatio = 0.5;
-	/** the parent container*/
+	/** the parent container */
 	private MainFrame parent;
-	/** offset that is considered when toolbar is docked to EAST or WEST of parent*/
+	/**
+	 * offset that is considered when toolbar is docked to EAST or WEST of parent
+	 */
 	private int toolbarOffSet;
 
 	/**
@@ -76,7 +79,9 @@ public class ResizableSplitPane extends JSplitPane {
 	private void initialize() {
 
 		toolbarOffSet = 0;
-		if (parent.getToolbar() != null && parent.getToolbar().getOrientation() == SwingConstants.VERTICAL) {
+		if (parent.getToolbar() != null && parent.getToolbar().getDockingPlace() != null
+				&& (parent.getToolbar().getDockingPlace().equals(BorderLayout.EAST)
+				|| parent.getToolbar().getDockingPlace().equals(BorderLayout.WEST))) {
 			toolbarOffSet += parent.getToolbar().getWidth();
 		}
 		Dimension preferredSize = new Dimension((int) (parent.getWidth() / 2 - 7 - toolbarOffSet / 2),
