@@ -30,17 +30,16 @@ public class PetrinetAnalyser {
 	private String m;
 	private String mMarked;
 
-	
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
 	 * @param file the file
 	 * @throws PetrinetException the petrinet exception
 	 */
-	public PetrinetAnalyser(File file) throws PetrinetException{
-		this.controller = new PetrinetController(file, true);
+	public PetrinetAnalyser(File file) throws PetrinetException {
+		this.controller = new PetrinetController(file, null, true);
 	}
-	
+
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
@@ -49,24 +48,24 @@ public class PetrinetAnalyser {
 	public PetrinetAnalyser(PetrinetController controller) {
 		this.controller = controller;
 		reachabilityGraphModel = controller.getReachabilityGraphModel();
-
+		reachabilityGraphModel.setSkippableMode(true);
 		analyse();
 		if (!bounded) {
 			updateReachabilityGraph();
 			m = reachabilityGraphModel.getInvalidState().getM().getState();
 			mMarked = reachabilityGraphModel.getInvalidState().getState();
-			
+
 		}
+
+		reachabilityGraphModel.setSkippableMode(false);
 		controller.resetPetrinet();
 
 	}
 
 	private void analyse() {
 
-		reachabilityGraphModel.reset();
 		petrinet = controller.getPetrinet();
-
-
+		reachabilityGraphModel.setInitial();
 		Set<PetrinetState> visited = new HashSet<PetrinetState>();
 		analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
 
@@ -82,8 +81,8 @@ public class PetrinetAnalyser {
 		petrinet.setState(state);
 
 		for (Transition t : petrinet.getActiveTransitions()) {
-			petrinet.fireTransition(t.getId());
-			
+			petrinet.fireTransition(t.getId(), true);
+
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
 			if (!stateValid) {
 				bounded = false;
@@ -92,7 +91,7 @@ public class PetrinetAnalyser {
 			}
 			edges++;
 			analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
-			reachabilityGraphModel.setCurrentState(state);
+			reachabilityGraphModel.setCurrentState(state, true);
 			petrinet.setState(state);
 
 		}
@@ -155,6 +154,8 @@ public class PetrinetAnalyser {
 
 	private void updateReachabilityGraph() {
 
+		controller.resetPetrinet();
+
 		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
 
 		if (invalidState != null) {
@@ -215,12 +216,10 @@ public class PetrinetAnalyser {
 
 			for (Transition t : transitionList) {
 				if (t != null)
-					petrinet.fireTransition(t.getId());
+					petrinet.fireTransition(t.getId(), true);
 			}
 			return;
 		}
-		controller.resetPetrinet();
-
 	}
 
 	/**
@@ -232,7 +231,7 @@ public class PetrinetAnalyser {
 		String[] strings = { "", "", "" };
 
 		File file = controller.getCurrentFile();
-		
+
 		if (file == null)
 			return strings;
 
@@ -267,6 +266,5 @@ public class PetrinetAnalyser {
 		strings[2] = sb.toString();
 		return strings;
 	}
-
 
 }

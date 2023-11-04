@@ -11,6 +11,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import core.PetrinetQueue;
 import core.PetrinetState;
 import core.ReachabilityGraphModel;
 import core.Transition;
@@ -45,13 +46,13 @@ public class ReachabilityGraph extends MultiGraph {
 
 	private LayoutType layoutType = LayoutType.TREE;
 
-
-	//TODO layout doing strange stuff when switching from auto layout to other layout
+	// TODO layout doing strange stuff when switching from auto layout to other
+	// layout
 	/**
 	 * Instantiates a new reachability graph.
 	 *
 	 * @param reachabilityGraphModel the controller
-	 * @param layoutType 
+	 * @param layoutType
 	 */
 	public ReachabilityGraph(ReachabilityGraphModel reachabilityGraphModel, LayoutType layoutType) {
 		super("");
@@ -60,6 +61,11 @@ public class ReachabilityGraph extends MultiGraph {
 
 		// Angabe einer css-Datei für das Layout des Graphen
 		this.setAttribute("ui.stylesheet", CSS_FILE);
+
+		PetrinetQueue queue = reachabilityGraphModel.getPetrinetQueue();
+
+		queue.rewindSilent();
+
 
 		// einen SpriteManger für diesen Graphen erzeugen
 		spriteMan = new SpriteManager(this);
@@ -73,29 +79,29 @@ public class ReachabilityGraph extends MultiGraph {
 
 			initialNode = addState(reachabilityGraphModel.getInitialState(), null, null, true);
 			setHighlight(initialNode);
-
-			List<PetrinetState> visited = new ArrayList<PetrinetState>();
-			
-			Queue<PetrinetState> toVisit = new ConcurrentLinkedQueue<PetrinetState>();
-			
-			PetrinetState currentState = initialState;
-			
-			while (toVisit.size() != 0) {
-				
-				//TODO continue here
-			}
-				
-			
-			for (PetrinetState ps : reachabilityGraphModel.getStates())
-				for (PetrinetState successor : ps.getSuccessors())
-					for (Transition t : ps.getTransitions(successor))
-						addState(successor, ps, t, false);
-
 		}
-
-		if (reachabilityGraphModel.getCurrentState() != null)
-			setCurrent(getNode(reachabilityGraphModel.getCurrentState().getState()));
-		setCurrentEdge(reachabilityGraphModel.getCurrentEdge());
+//
+//			List<PetrinetState> visited = new ArrayList<PetrinetState>();
+//
+//			Queue<PetrinetState> toVisit = new ConcurrentLinkedQueue<PetrinetState>();
+//
+//			PetrinetState currentState = initialState;
+//
+//			while (toVisit.size() != 0) {
+//
+//				// TODO continue here
+//			}
+//
+//			for (PetrinetState ps : reachabilityGraphModel.getStates())
+//				for (PetrinetState successor : ps.getSuccessors())
+//					for (Transition t : ps.getTransitions(successor))
+//						addState(successor, ps, t, false);
+//
+//		}
+//
+//		if (reachabilityGraphModel.getCurrentState() != null)
+//			setCurrent(getNode(reachabilityGraphModel.getCurrentState().getState()));
+//		setCurrentEdge(reachabilityGraphModel.getCurrentEdge());
 
 		reachabilityGraphModel.setStateChangeListener(new ReachabilityStateChangeListener() {
 
@@ -158,8 +164,9 @@ public class ReachabilityGraph extends MultiGraph {
 				setCurrentEdge(edge);
 			}
 
-
 		});
+
+		while (queue.goForward()) {} 
 
 	}
 
@@ -244,10 +251,10 @@ public class ReachabilityGraph extends MultiGraph {
 			return;
 		}
 		Edge edge = getEdge(edgeString);
-		
+
 		if (edge == null)
 			return;
-		
+
 		edge.setAttribute("ui.class", "highlight");
 		currentEdge = edge;
 	}

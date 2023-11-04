@@ -1,7 +1,6 @@
 package core;
 
-
-import control.PetrinetController;
+import listeners.ToolbarToggleListener;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -13,33 +12,49 @@ public class PetrinetQueue {
 	private String currentEdge;
 	private Transition transition = null;
 	private Added stateAdded = Added.NOTHING;
+	private boolean skippable;
 
 	private PetrinetQueue lastState = null;
 	private PetrinetQueue nextState = null;
 
-	private PetrinetController petrinetController;
+	private ReachabilityGraphModel reachabilityGraphModel;
+	private ToolbarToggleListener toolbarToggleListener;
+
+	// TODO implement skippable steps
 
 	/**
 	 * Instantiates a new petrinet queue.
 	 *
-	 * @param petrinetController the petrinet controller
+	 * @param reachabilityGraphModel the petrinet controller
 	 */
-	public PetrinetQueue(PetrinetController petrinetController) {
-		this.state = petrinetController.getReachabilityGraphModel().getCurrentState();
-		this.petrinetController = petrinetController;
+	public PetrinetQueue(ReachabilityGraphModel reachabilityGraphModel, ToolbarToggleListener toolbarToggleListener) {
+		this.reachabilityGraphModel = reachabilityGraphModel;
+		this.toolbarToggleListener = toolbarToggleListener;
 
 	}
 
 	private PetrinetQueue(PetrinetState state, String currentEdge, Added stateAdded, Transition transition,
-			PetrinetController petrinetController) {
+			ReachabilityGraphModel reachabilityGraphModel, ToolbarToggleListener toolbarToggleListener,
+			boolean skippable) {
+
 		this.state = state;
 		this.currentEdge = currentEdge;
 		this.stateAdded = stateAdded;
 		this.transition = transition;
-		this.petrinetController = petrinetController;
-		this.lastState = petrinetController.getPetrinetQueue();
+		this.skippable = skippable;
+		this.reachabilityGraphModel = reachabilityGraphModel;
+		this.toolbarToggleListener = toolbarToggleListener;
+		this.lastState = reachabilityGraphModel.getPetrinetQueue();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public Added getAdded() {
+		return stateAdded;
+	}
+	
 	/**
 	 * Gets the state.
 	 *
@@ -70,50 +85,68 @@ public class PetrinetQueue {
 	/**
 	 * Push.
 	 *
-	 * @param state the state
-	 * @param currentEdge 
-	 * @param stateAdded the state added
-	 * @param transition the transition
+	 * @param state       the state
+	 * @param currentEdge
+	 * @param stateAdded  the state added
+	 * @param transition  the transition
 	 */
-	public void push(PetrinetState state, String currentEdge, Added stateAdded, Transition transition) {
+	public void push(PetrinetState state, String currentEdge, Added stateAdded, Transition transition,
+			boolean skippable) {
 
-		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
-		if (currentState.isFirstState() && petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onUndoChanged();
-		if (currentState.hasNext() && petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onRedoChanged();
+//		System.out.println("PUSHING " + state.getState() + ", " + currentEdge + ", " + stateAdded + ", "
+//				+ (transition == null ? "null" : transition.getId()) + ", " + skippable);
+		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
-		currentState.nextState = new PetrinetQueue(state, currentEdge, stateAdded, transition, petrinetController);
-		petrinetController.setPetrinetQueue(currentState.nextState);
+		if (currentState.state == null) {
+
+			currentState.state = state;
+			currentState.currentEdge = currentEdge;
+			currentState.stateAdded = stateAdded;
+			currentState.transition = transition;
+			currentState.skippable = skippable;
+		} else {
+			if (currentState.isFirstState() && toolbarToggleListener != null)
+				toolbarToggleListener.onUndoChanged();
+			if (currentState.hasNext() && toolbarToggleListener != null)
+				toolbarToggleListener.onRedoChanged();
+
+			currentState.nextState = new PetrinetQueue(state, currentEdge, stateAdded, transition,
+					reachabilityGraphModel, toolbarToggleListener, skippable);
+			reachabilityGraphModel.setPetrinetQueue(currentState.nextState);
+		}
 	}
-
 
 	/**
 	 * Go back.
 	 */
 	public void goBack() {
-		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
+		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 		if (currentState.isFirstState())
 			return;
 
-		if (!currentState.hasNext())
-			petrinetController.getToolbarToggleListener().onRedoChanged();
+		if (!currentState.hasNext() && toolbarToggleListener != null)
+			toolbarToggleListener.onRedoChanged();
 
 		if (currentState.stateAdded == Added.STATE) {
-			petrinetController.getReachabilityGraphModel().removeState(currentState.getState());
+			reachabilityGraphModel.removeState(currentState.getState());
 		} else if (currentState.stateAdded == Added.EDGE) {
-			petrinetController.getReachabilityGraphModel().removeEdge(currentState.lastState.getState(),
-					currentState.getState(), currentState.getTransition());
+			reachabilityGraphModel.removeEdge(currentState.lastState.getState(), currentState.getState(),
+					currentState.getTransition());
 		}
 
-		petrinetController.setPetrinetQueue(currentState.lastState);
+		//change current state
+		currentState = currentState.lastState;
+		reachabilityGraphModel.setPetrinetQueue(currentState);
+		reachabilityGraphModel.getPetrinet().setState(currentState.getState());
+		reachabilityGraphModel.setCurrentState(currentState.getState(), false);
+		reachabilityGraphModel.setCurrentEdge(currentState.getCurrentEdge());
 
-		petrinetController.getPetrinet().setState(currentState.lastState.getState());
-		petrinetController.getReachabilityGraphModel().setCurrentState(currentState.lastState.getState());
-		petrinetController.getReachabilityGraphModel().setCurrentEdge(currentState.lastState.getCurrentEdge());
-		
-		if (currentState.lastState.isFirstState() && petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onUndoChanged();
+		if (currentState.isFirstState() && toolbarToggleListener != null)
+			toolbarToggleListener.onUndoChanged();
+
+		if (currentState.isSkippable())
+			goBack();
+		// printAll();
 
 	}
 
@@ -124,37 +157,41 @@ public class PetrinetQueue {
 	/**
 	 * Go forward.
 	 */
-	public void goForward() {
+	public boolean goForward() {
 
-		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
+		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
 		if (!currentState.hasNext())
-			return;
+			return false;
 
-		if (currentState.isFirstState())
-			petrinetController.getToolbarToggleListener().onUndoChanged();
+		if (currentState.isFirstState() && toolbarToggleListener != null)
+			toolbarToggleListener.onUndoChanged();
 
-		petrinetController.setPetrinetQueue(currentState.nextState);
+		reachabilityGraphModel.setPetrinetQueue(currentState.nextState);
 
 		currentState = currentState.nextState;
-		Petrinet petrinet = petrinetController.getPetrinet();
-		ReachabilityGraphModel reachabilityGraphModel = petrinetController.getReachabilityGraphModel();
+		Petrinet petrinet = reachabilityGraphModel.getPetrinet();
+
 		if (currentState.stateAdded() != Added.NOTHING) {
 
 			petrinet.setState(currentState.getState());
 
-			reachabilityGraphModel.addNewState(petrinet, currentState.getTransition());
+			reachabilityGraphModel.addNewState(petrinet, currentState.getTransition(), false);
 			currentState.state = reachabilityGraphModel.getState(petrinet.getStateString());// since a new instance has
 																							// been created, the state
 																							// has to be updated
 		} else {
 			petrinet.setState(currentState.getState());
-			reachabilityGraphModel.setCurrentState(currentState.getState());
+			reachabilityGraphModel.setCurrentState(currentState.getState(), false);
 		}
 
-		if (!currentState.hasNext())
-			petrinetController.getToolbarToggleListener().onRedoChanged();
+		if (!currentState.hasNext() && toolbarToggleListener != null)
+			toolbarToggleListener.onRedoChanged();
 
+		if (currentState.isSkippable())
+			goForward();
+
+		return true;
 	}
 
 	/**
@@ -163,6 +200,7 @@ public class PetrinetQueue {
 	 * @return true, if is first state
 	 */
 	public boolean isFirstState() {
+
 		return lastState == null;
 
 	}
@@ -180,12 +218,12 @@ public class PetrinetQueue {
 	 * Reset buttons.
 	 */
 	public void resetButtons() {
-		PetrinetQueue currentState = petrinetController.getPetrinetQueue();
+		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
-		if (!currentState.isFirstState() && petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onUndoChanged();
-		if (currentState.hasNext() && petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onRedoChanged();
+		if (!currentState.isFirstState() && toolbarToggleListener != null)
+			toolbarToggleListener.onUndoChanged();
+		if (currentState.hasNext() && toolbarToggleListener != null)
+			toolbarToggleListener.onRedoChanged();
 
 	}
 
@@ -194,19 +232,39 @@ public class PetrinetQueue {
 	 */
 	public void rewind() {
 
-		if (petrinetController.getPetrinetQueue().lastState == null)
-			return;
-
-		if (petrinetController.getPetrinetQueue().nextState == null)
-			if (petrinetController.getToolbarToggleListener() != null)
-				petrinetController.getToolbarToggleListener().onRedoChanged();
-			
-		while (petrinetController.getPetrinetQueue().lastState != null)
-			petrinetController.setPetrinetQueue(petrinetController.getPetrinetQueue().lastState);
-
-		petrinetController.getReachabilityGraphModel().setCurrentEdge(null);
-		
-		if (petrinetController.getToolbarToggleListener() != null)
-			petrinetController.getToolbarToggleListener().onUndoChanged();
+		while (!reachabilityGraphModel.getPetrinetQueue().isFirstState())
+			goBack();
 	}
+
+	/**
+	 * Rewind.
+	 */
+	public void rewindSilent() {
+
+		while (!reachabilityGraphModel.getPetrinetQueue().isFirstState())
+			reachabilityGraphModel.setPetrinetQueue(reachabilityGraphModel.getPetrinetQueue().lastState);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSkippable() {
+		return skippable;
+	}
+
+	private void print() {
+		System.out.println((state == null ? "null" : state.getState()) + ", " + currentEdge + ", " + stateAdded + ", "
+				+ (transition == null ? "null" : transition.getId()));
+	}
+
+	private void printAll() {
+		rewind();
+		System.out.println("START");
+		do {
+			reachabilityGraphModel.getPetrinetQueue().print();
+		} while (goForward());
+
+	}
+
 }

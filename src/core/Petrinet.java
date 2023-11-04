@@ -502,7 +502,7 @@ public class Petrinet {
 	 *
 	 * @param id the id
 	 */
-	public void fireTransition(String id) {
+	public void fireTransition(String id, boolean skippable) {
 		if (!isTransition(id))
 			return;
 

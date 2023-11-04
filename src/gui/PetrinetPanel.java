@@ -115,18 +115,19 @@ public class PetrinetPanel extends JPanel {
 	 */
 	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType) throws PetrinetException {
 
-		this.petrinetController = new PetrinetController(file, false);
+		this.petrinetController = new PetrinetController(file,mainController, false);
 		this.mainController = mainController;
 
 		this.petrinetGraph = new GraphStreamPetrinetGraph(petrinetController.getPetrinet());
 
-		this.editor = new PetrinetGraphEditor(petrinetController, petrinetGraph);
+		this.editor = new PetrinetGraphEditor(petrinetController, petrinetGraph, mainController);
 
 		this.setLayout(new BorderLayout());
 
+		//TODO REMOVE?
 		// linking the petrinet controller to the toolbar via the main controller ->
 		// needed for toggling the layout and un-/redo buttons
-		petrinetController.setToolbarToggleListener(mainController);
+//		petrinetController.setToolbarToggleListener(mainController);
 
 		petrinetPanel = new JPanel();
 		petrinetPanel.setLayout(new BorderLayout());
@@ -210,7 +211,10 @@ public class PetrinetPanel extends JPanel {
 
 		} else {
 			reachabilityGraph.setLayoutType(layoutType);
+			resetReachabilityZoom();
+
 		}
+		
 		// adjust the arrow heads since they become detached from the nodes but let
 		// GraphStream do its thing first
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
@@ -365,7 +369,7 @@ public class PetrinetPanel extends JPanel {
 		// if switching to EDITOR reset reachability graph
 		if (toolbarMode == ToolbarMode.EDITOR) {
 			petrinetController.resetReachabilityGraph();
-			editor = new PetrinetGraphEditor(petrinetController, petrinetGraph);
+			editor = new PetrinetGraphEditor(petrinetController, petrinetGraph, mainController);
 		}
 		// if switching to VIEWER make sure no transitions are marked anymore
 		if (toolbarMode == ToolbarMode.VIEWER) {

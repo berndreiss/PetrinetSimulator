@@ -21,6 +21,7 @@ public interface PetrinetStateChangedListener {
 	 * On transition fire.
 	 *
 	 * @param t the t
+	 * @param skippable 
 	 */
 	void onTransitionFire(Transition t);
 	
@@ -30,4 +31,7 @@ public interface PetrinetStateChangedListener {
 	 * @param petrinet the petrinet
 	 */
 	void onComponentChanged(Petrinet petrinet);
+
+
+
 }

@@ -9,6 +9,7 @@ import core.Transition;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import gui.PetrinetGraph;
+import listeners.ToolbarToggleListener;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,6 +25,8 @@ public class PetrinetGraphEditor {
 	/** */
 	private Petrinet petrinet; 
 	/** */
+	private ToolbarToggleListener toolbarToggleListener;
+	/** */
 	private PetrinetElement[] addEdge;
 	/** */
 	private String edgeToAddId;
@@ -38,10 +41,11 @@ public class PetrinetGraphEditor {
 	 * @param petrinetController 
 	 * @param petrinetGraph 
 	 */
-	public PetrinetGraphEditor(PetrinetController petrinetController, PetrinetGraph petrinetGraph) {
+	public PetrinetGraphEditor(PetrinetController petrinetController, PetrinetGraph petrinetGraph, ToolbarToggleListener toolbarToggleListener) {
 		this.petrinetController = petrinetController;
 		this.petrinetGraph = petrinetGraph;
 		this.petrinet = petrinetController.getPetrinet();
+		this.toolbarToggleListener = toolbarToggleListener;
 	}
 
 	
@@ -263,8 +267,8 @@ public class PetrinetGraphEditor {
 			petrinetController.setFileChanged(true);
 			petrinetGraph.toggleNodeMark(null);
 
-			if (petrinetController.getToolbarToggleListener() != null)
-				petrinetController.getToolbarToggleListener().onEdgeAdded();
+			if (toolbarToggleListener != null)
+				toolbarToggleListener.onEdgeAdded();
 
 			return;
 		}
@@ -293,8 +297,8 @@ public class PetrinetGraphEditor {
 			removeEdge = null;
 			petrinetGraph.toggleNodeMark(null);
 			petrinetController.setFileChanged(true);
-			if (petrinetController.getToolbarToggleListener() != null)
-				petrinetController.getToolbarToggleListener().onEdgeRemoved();
+			if (toolbarToggleListener != null)
+				toolbarToggleListener.onEdgeRemoved();
 			return;
 
 		}

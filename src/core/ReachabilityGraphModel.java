@@ -3,7 +3,10 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
+import control.PetrinetController;
+import listeners.PetrinetStateChangedListener;
 import listeners.ReachabilityStateChangeListener;
+import listeners.ToolbarToggleListener;
 import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
@@ -11,6 +14,12 @@ import util.IterableMap;
  * The Class ReachabilityGraphModel.
  */
 public class ReachabilityGraphModel {
+
+	private Petrinet petrinet;
+
+	private PetrinetQueue petrinetQueue;
+
+	private ToolbarToggleListener toolbarToggleListener;
 
 	private PetrinetState currentState;
 
@@ -23,16 +32,43 @@ public class ReachabilityGraphModel {
 	private IterableMap<String, PetrinetState> petrinetStates;
 
 	private ReachabilityStateChangeListener stateChangeListener;
+	
+	private boolean skippableMode = false;
 
 	/**
 	 * Instantiates a new reachability graph model.
 	 *
 	 * @param petrinet the petrinet
 	 */
-	public ReachabilityGraphModel(Petrinet petrinet) {
+	public ReachabilityGraphModel(Petrinet petrinet, ToolbarToggleListener toolbarToggleListener) {
 
+		this.petrinet = petrinet;
+		this.toolbarToggleListener = toolbarToggleListener;
+		petrinetQueue = new PetrinetQueue(this, toolbarToggleListener);
 		petrinetStates = new IterableMap<String, PetrinetState>();
-		addNewState(petrinet, null);
+		addNewState(petrinet, null, true);
+		
+		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
+
+			@Override
+			public void onTransitionFire(Transition t) {
+				addNewState(petrinet, t, true);
+
+			}
+
+			@Override
+			public void onComponentChanged(Petrinet petrinet) {
+				reset();
+				PetrinetState initialState = getInitialState();
+				if (initialState != null)
+					removeState(initialState);
+				addNewState(petrinet, null, true);
+				
+			}
+
+		});
+
+
 	}
 
 	/**
@@ -77,10 +113,13 @@ public class ReachabilityGraphModel {
 	 *
 	 * @param state the new current state
 	 */
-	public void setCurrentState(PetrinetState state) {
+	public void setCurrentState(PetrinetState state, boolean push) {
 		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
+		setCurrentEdge(null);
+		if (push)
+			petrinetQueue.push(currentState, currentEdge, Added.NOTHING, null, skippableMode);
 	}
-	
+
 	/**
 	 * 
 	 * @param edge
@@ -97,7 +136,7 @@ public class ReachabilityGraphModel {
 	 * @param t        the t
 	 * @return the added
 	 */
-	public Added addNewState(Petrinet petrinet, Transition t) {
+	public Added addNewState(Petrinet petrinet, Transition t, boolean push) {
 
 		if (petrinet == null || !petrinet.hasPlaces())
 			return null;
@@ -137,6 +176,9 @@ public class ReachabilityGraphModel {
 
 		setNewCurrentState(petrinetState, false);
 		checkIfCurrentStateIsBackwardsValid();
+		if (push)
+			petrinetQueue.push(currentState, currentEdge, added, t, skippableMode);
+
 		return added;
 	}
 
@@ -223,10 +265,11 @@ public class ReachabilityGraphModel {
 	 * Reset.
 	 */
 	public void reset() {
-		reset(null);
-	}
 
-	private void reset(Petrinet petrinet) {
+		if (petrinetQueue != null) {
+			petrinetQueue.resetButtons();
+			petrinetQueue = new PetrinetQueue(this, toolbarToggleListener);
+		}
 
 		if (petrinetStates.size() == 0)
 			return;
@@ -246,14 +289,11 @@ public class ReachabilityGraphModel {
 		}
 
 		petrinetStates.clear();
-		if (petrinet != null) {
-			addNewState(petrinet, null);
-		} else {
-			if (initialState != null) {
-				petrinetStates.put(initialState.getState(), initialState);
-				setCurrentState(initialState);
-			}
+		if (initialState != null) {
+			petrinetStates.put(initialState.getState(), initialState);
+			setCurrentState(initialState, true);
 		}
+
 	}
 
 	private void removeStateFromGraph(PetrinetState ps) {
@@ -284,8 +324,9 @@ public class ReachabilityGraphModel {
 	 * Sets the initial.
 	 */
 	public void setInitial() {
-		setCurrentState(initialState);
+		setCurrentState(initialState, true);
 		setCurrentEdge(null);
+//		petrinetQueue.rewind();
 	}
 //	
 //	public void print() {
@@ -310,7 +351,7 @@ public class ReachabilityGraphModel {
 	}
 
 	// TODO REMOVE
-	
+
 	/**
 	 * Prints the.
 	 */
@@ -325,6 +366,37 @@ public class ReachabilityGraphModel {
 	 */
 	public String getCurrentEdge() {
 		return currentEdge;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Petrinet getPetrinet() {
+		return petrinet;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public PetrinetQueue getPetrinetQueue() {
+		return petrinetQueue;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
+		this.petrinetQueue = petrinetQueue;
+	}
+	/**
+	 * 
+	 * @param skippableMode
+	 */
+	public void setSkippableMode(boolean skippableMode) {
+		this.skippableMode = skippableMode;
 	}
 
 }

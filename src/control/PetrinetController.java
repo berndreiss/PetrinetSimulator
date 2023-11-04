@@ -3,6 +3,7 @@ package control;
 import java.io.File;
 
 import javax.swing.JOptionPane;
+import javax.swing.plaf.basic.BasicBorders.ToggleButtonBorder;
 
 import core.Added;
 import core.PNMLParser;
@@ -32,72 +33,24 @@ public class PetrinetController {
 
 	private boolean fileChanged;
 
-	private PetrinetQueue petrinetQueue;;
-
-	private ToolbarToggleListener toolbarToggleListener;
 
 	/**
 	 * Instantiates a new petrinet controller.
 	 *
 	 * @param file     the file
+	 * @param toolbarToggleListener 
 	 * @param headless the headless
 	 * @throws PetrinetException
 	 */
-	public PetrinetController(File file, boolean headless) throws PetrinetException {
+	public PetrinetController(File file, ToolbarToggleListener toolbarToggleListener,  boolean headless) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 
 		if (file != null)
 			new PNMLParser(file, petrinet);
 
-		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet);
+		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet, toolbarToggleListener);
 
-		if (!headless)
-			initializePetrinetQueue();
-
-		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
-
-			@Override
-			public void onTransitionFire(Transition t) {
-				Added added = reachabilityGraphModel.addNewState(petrinet, t);
-
-				if (petrinetQueue != null)
-					petrinetQueue.push(reachabilityGraphModel.getCurrentState(),reachabilityGraphModel.getCurrentEdge(), added, t);
-			}
-
-			@Override
-			public void onComponentChanged(Petrinet petrinet) {
-				reachabilityGraphModel.reset();
-				PetrinetState initialState = reachabilityGraphModel.getInitialState();
-				if (initialState != null)
-					reachabilityGraphModel.removeState(initialState);
-				reachabilityGraphModel.addNewState(petrinet, null);
-				if (petrinetQueue != null) {
-					petrinetQueue.resetButtons();
-					petrinetQueue = new PetrinetQueue(PetrinetController.this);
-				}
-			}
-
-		});
-
-	}
-
-	/**
-	 * Sets the toolbar toggle listener.
-	 *
-	 * @param toolbarToggleListener the new toolbar toggle listener
-	 */
-	public void setToolbarToggleListener(ToolbarToggleListener toolbarToggleListener) {
-		this.toolbarToggleListener = toolbarToggleListener;
-	}
-
-	/**
-	 * Gets the toolbar toggle listener.
-	 *
-	 * @return the toolbar toggle listener
-	 */
-	public ToolbarToggleListener getToolbarToggleListener() {
-		return toolbarToggleListener;
 	}
 
 	/**
@@ -106,7 +59,7 @@ public class PetrinetController {
 	 * @return the petrinet queue
 	 */
 	public PetrinetQueue getPetrinetQueue() {
-		return petrinetQueue;
+		return reachabilityGraphModel.getPetrinetQueue();
 	}
 
 	/**
@@ -132,8 +85,7 @@ public class PetrinetController {
 	 */
 	public void resetPetrinet() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
-		reachabilityGraphModel.setInitial();
-		petrinetQueue.rewind();
+		reachabilityGraphModel.setInitial();		
 
 	}
 
@@ -152,8 +104,7 @@ public class PetrinetController {
 	public void resetReachabilityGraph() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
 		reachabilityGraphModel.reset();
-		petrinetQueue.resetButtons();
-		initializePetrinetQueue();
+
 	}
 
 	/**
@@ -165,10 +116,10 @@ public class PetrinetController {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
 
-		if (petrinetQueue != null) {
-			petrinetQueue.resetButtons();
-			initializePetrinetQueue();
-		}
+//		if (petrinetQueue != null) {
+//			petrinetQueue.resetButtons();
+//			initializePetrinetQueue();
+//		}
 
 		return analyser;
 	}
@@ -227,21 +178,6 @@ public class PetrinetController {
 		fileChanged = changed;
 	}
 
-	/**
-	 * Sets the petrinet queue.
-	 *
-	 * @param petrinetQueue the new petrinet queue
-	 */
-	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
-		this.petrinetQueue = petrinetQueue;
-	}
-
-	/**
-	 * 
-	 */
-	public void initializePetrinetQueue() {
-		this.petrinetQueue = new PetrinetQueue(this);
-	}
 
 	/**
 	 * 
@@ -268,9 +204,8 @@ public class PetrinetController {
 	public void onReachabilityGraphNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
-		reachabilityGraphModel.setCurrentState(state);
-		reachabilityGraphModel.setCurrentEdge(null);
-		petrinetQueue.push(reachabilityGraphModel.getCurrentState(),reachabilityGraphModel.getCurrentEdge(), Added.NOTHING, null);
+		reachabilityGraphModel.setCurrentState(state, true);
+
 	}
 
 	/**
@@ -281,7 +216,7 @@ public class PetrinetController {
 	public PetrinetElement onPetrinetNodeClicked(String id) {
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
 		if (pe instanceof Transition) {
-			petrinet.fireTransition(id);
+			petrinet.fireTransition(id, false);
 			return null;
 		}
 		return pe;

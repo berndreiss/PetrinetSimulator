@@ -562,8 +562,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			totalCounter++;
 		}
 
-		double a = screenSize.getWidth();
-		double b = screenSize.getHeight();
+		double a = 2;
+		double b = 1;
 		for (int i = 0; i < nodesJoined.length; i++) {
 
 			LayoutNode layoutNode = nodesJoined[i];
@@ -572,9 +572,11 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 				continue;
 			}
 			Node node = nodesJoined[i].node;
-
+			
+			//start at Pi/2 (90°) and go around the circle step by step
 			double angle = (Math.PI / 2) + (2 * Math.PI / nodesJoined.length) * i;
 
+			//calculate coordinates -> see https://www.mathopenref.com/coordparamellipse.html
 			double x = a * Math.cos(angle);
 			double y = b * Math.sin(angle);
 
@@ -586,10 +588,6 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			s.setPosition(0.4);
 
 	}
-
-	// TODO when removing node maxRowCount has to be recalculated
-
-
 
 
 	/**
