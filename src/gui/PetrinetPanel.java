@@ -26,8 +26,8 @@ import org.graphstream.ui.view.ViewerPipe;
 import org.graphstream.ui.view.util.InteractiveElement;
 
 import control.MainController;
-import control.PetrinetController;
-import control.PetrinetGraphEditor;
+import control.PetrinetViewerController;
+import control.PetrinetEditorController;
 import core.Petrinet;
 import core.PetrinetAnalyser;
 import core.PetrinetElement;
@@ -37,18 +37,23 @@ import reachabilityGraphLayout.LayoutType;
 
 /**
  * <p>
- * A {@link JPanel} representing a {@link Petrinet} loaded from a file.
+ * A {@link JPanel} presenting a {@link Petrinet} with its according
+ * reachability graph loaded from a file. It serves on the one hand as a
+ * intermediary between the main controller and the petrinet controller and on
+ * the other mediates clicks on the {@link PetrinetGraph} between the
+ * {@link PetrinetViewerController} and the {@link PetrinetEditorController}.
+ * According to the {@link ToolbarMode} it is currently set to.
  * </p>
  * 
  * It holds a horizontal {@link ResizableSplitPane} containing a
  * {@link GraphStreamPetrinetGraph} on the left and a {@link ReachabilityGraph}
- * on the right. Creates and holds a {@link PetrinetController} managing all
- * interactions with the data model. The graphs are implemented using the
+ * on the right. Creates and holds a {@link PetrinetViewerController} managing
+ * all interactions with the data model. The graphs are implemented using the
  * <a href="https://graphstream-project.org/">GraphStream</a> library.
- * Additionally creates an {@link PetrinetGraphEditor} through which the user
- * can edit the {@link Petrinet} using the {@link PetrinetToolbar}. Additionally
- * it deals with the problem of GraphStream graphs arrow heads not adjusting
- * correctly when resizing components or adding / removing elements.
+ * Additionally creates an {@link PetrinetEditorController} through which the
+ * user can edit the {@link Petrinet} using the {@link PetrinetToolbar}.
+ * Additionally it deals with the problem of GraphStream graphs arrow heads not
+ * adjusting correctly when resizing components or adding / removing elements.
  */
 public class PetrinetPanel extends JPanel {
 
@@ -83,11 +88,11 @@ public class PetrinetPanel extends JPanel {
 	private ViewPanel reachabilityViewPanel;
 
 	/** controller managing the interaction with the data model */
-	private PetrinetController petrinetController;
+	private PetrinetViewerController petrinetController;
 	/** controller managing the interaction with toolbar and menu */
 	private MainController mainController;
 	/** controller managing changes to the petrinet */
-	private PetrinetGraphEditor editor;
+	private PetrinetEditorController editor;
 
 	/**
 	 * Keep track whether petrinetController is analysing -> do not adjust arrow
@@ -115,16 +120,16 @@ public class PetrinetPanel extends JPanel {
 	 */
 	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType) throws PetrinetException {
 
-		this.petrinetController = new PetrinetController(file,mainController, false);
+		this.petrinetController = new PetrinetViewerController(file, mainController);
 		this.mainController = mainController;
 
 		this.petrinetGraph = new GraphStreamPetrinetGraph(petrinetController.getPetrinet());
 
-		this.editor = new PetrinetGraphEditor(petrinetController, petrinetGraph, mainController);
+		this.editor = new PetrinetEditorController(petrinetController, petrinetGraph, mainController);
 
 		this.setLayout(new BorderLayout());
 
-		//TODO REMOVE?
+		// TODO REMOVE?
 		// linking the petrinet controller to the toolbar via the main controller ->
 		// needed for toggling the layout and un-/redo buttons
 //		petrinetController.setToolbarToggleListener(mainController);
@@ -167,7 +172,7 @@ public class PetrinetPanel extends JPanel {
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
-		
+
 		firstTimeArrowHeadAdjusting = true;
 
 	}
@@ -214,7 +219,7 @@ public class PetrinetPanel extends JPanel {
 			resetReachabilityZoom();
 
 		}
-		
+
 		// adjust the arrow heads since they become detached from the nodes but let
 		// GraphStream do its thing first
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
@@ -331,7 +336,7 @@ public class PetrinetPanel extends JPanel {
 	 *
 	 * @return the petrinet controller
 	 */
-	public PetrinetController getPetrinetController() {
+	public PetrinetViewerController getPetrinetController() {
 		return petrinetController;
 	}
 
@@ -340,7 +345,7 @@ public class PetrinetPanel extends JPanel {
 	 *
 	 * @return the editor
 	 */
-	public PetrinetGraphEditor getEditor() {
+	public PetrinetEditorController getEditor() {
 		return editor;
 	}
 
@@ -369,7 +374,7 @@ public class PetrinetPanel extends JPanel {
 		// if switching to EDITOR reset reachability graph
 		if (toolbarMode == ToolbarMode.EDITOR) {
 			petrinetController.resetReachabilityGraph();
-			editor = new PetrinetGraphEditor(petrinetController, petrinetGraph, mainController);
+			editor = new PetrinetEditorController(petrinetController, petrinetGraph, mainController);
 		}
 		// if switching to VIEWER make sure no transitions are marked anymore
 		if (toolbarMode == ToolbarMode.VIEWER) {
@@ -547,7 +552,7 @@ public class PetrinetPanel extends JPanel {
 		if (firstTimeArrowHeadAdjusting) {
 			firstTimeArrowHeadAdjusting = false;
 			SwingUtilities.invokeLater(() -> adjustArrowHeads());
-		
+
 		}
 
 	}

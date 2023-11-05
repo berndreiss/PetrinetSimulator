@@ -17,11 +17,11 @@ import listeners.ToolbarToggleListener;
  * An editor for an instance of {@link Petrinet} being linked to an implementing instance of {@link PetrinetGraph}.
  * </p> 
  */
-public class PetrinetGraphEditor {
+public class PetrinetEditorController {
 	/** */
 	private PetrinetGraph petrinetGraph;
 	/** */
-	private PetrinetController petrinetController;
+	private PetrinetViewerController petrinetController;
 	/** */
 	private Petrinet petrinet; 
 	/** */
@@ -41,7 +41,7 @@ public class PetrinetGraphEditor {
 	 * @param petrinetController 
 	 * @param petrinetGraph 
 	 */
-	public PetrinetGraphEditor(PetrinetController petrinetController, PetrinetGraph petrinetGraph, ToolbarToggleListener toolbarToggleListener) {
+	public PetrinetEditorController(PetrinetViewerController petrinetController, PetrinetGraph petrinetGraph, ToolbarToggleListener toolbarToggleListener) {
 		this.petrinetController = petrinetController;
 		this.petrinetGraph = petrinetGraph;
 		this.petrinet = petrinetController.getPetrinet();

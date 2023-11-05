@@ -17,8 +17,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import control.PetrinetController;
-import control.PetrinetGraphEditor;
+import control.PetrinetViewerController;
+import control.PetrinetEditorController;
 import core.PetrinetQueue;
 import reachabilityGraphLayout.LayoutType;
 
@@ -636,14 +636,14 @@ public class PetrinetToolbar extends JToolBar {
 			return;
 
 		// set add / remove edge buttons
-		PetrinetGraphEditor editor = petrinetPanel.getEditor();
+		PetrinetEditorController editor = petrinetPanel.getEditor();
 		if (editor.addsEdge())
 			toggleAddEdgeButton();
 		if (editor.removesEdge())
 			toggleRemoveEdgeButton();
 
 		// set undo / redo buttons
-		PetrinetController controller = petrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = petrinetPanel.getPetrinetController();
 		PetrinetQueue queue = controller.getPetrinetQueue();
 
 		if (queue == null) // safety check

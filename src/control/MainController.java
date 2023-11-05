@@ -139,7 +139,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 					+ System.getProperty("user.dir");
 		}
 
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 		File file = controller.getCurrentFile();
 
 		if (file == null)
@@ -274,7 +274,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 		if (currentPetrinetPanel == null)
 			return;
 
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		if (controller.getCurrentFile() == null)
 			return;
@@ -287,7 +287,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	public void onSave() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		if (controller.getCurrentFile() == null)
 			onSaveAs();
@@ -299,7 +299,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	public void onSaveAs() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		JFileChooser fileChooser = new JFileChooser();
 		setFileChosserFilter(fileChooser);
@@ -482,7 +482,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	}
 
 	private File getFileFromCurrentFile(FileEnum fileEnum) {
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		File currentFile = controller.getCurrentFile();
 
@@ -524,7 +524,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	public void onResetPetrinet() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 		controller.resetPetrinet();
 	}
 
@@ -557,7 +557,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 
 	@Override
 	public void onAddPlace() {
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		String id = null;
 
@@ -583,7 +583,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	@Override
 	public void onAddTransition() {
 
-		PetrinetController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
 
 		String id = null;
 
@@ -616,7 +616,7 @@ public class MainController implements PetrinetMenuInterface, PetrinetToolbarCon
 	@Override
 	public void onAddEdge() {
 
-		PetrinetGraphEditor editor = currentPetrinetPanel.getEditor();
+		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
 		PetrinetToolbar toolbar = parent.getToolbar();
 

@@ -2,7 +2,7 @@ package gui;
 
 import javax.swing.LookAndFeel;
 
-import control.PetrinetGraphEditor;
+import control.PetrinetEditorController;
 
 /**
  * An interface defining methods for entries in {@link PetrinetMenu}.
@@ -64,12 +64,12 @@ public interface PetrinetMenuInterface {
 	// METHODS FOR EDIT
 
 	/**
-	 * Open the {@link PetrinetGraphEditor}.
+	 * Open the {@link PetrinetEditorController}.
 	 */
 	void onOpenEditor();
 
 	/**
-	 * Close the {@link PetrinetGraphEditor}.
+	 * Close the {@link PetrinetEditorController}.
 	 */
 	void onCloseEditor();
 

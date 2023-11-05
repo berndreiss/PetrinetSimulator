@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import control.PetrinetController;
+import control.PetrinetViewerController;
 import exceptions.PetrinetException;
 
 // TODO: Auto-generated Javadoc
@@ -15,7 +15,7 @@ import exceptions.PetrinetException;
  */
 public class PetrinetAnalyser {
 
-	private PetrinetController controller;
+	private PetrinetViewerController controller;
 
 	private Petrinet petrinet;
 
@@ -37,7 +37,7 @@ public class PetrinetAnalyser {
 	 * @throws PetrinetException the petrinet exception
 	 */
 	public PetrinetAnalyser(File file) throws PetrinetException {
-		this.controller = new PetrinetController(file, null, true);
+		this.controller = new PetrinetViewerController(file, null);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class PetrinetAnalyser {
 	 *
 	 * @param controller the controller
 	 */
-	public PetrinetAnalyser(PetrinetController controller) {
+	public PetrinetAnalyser(PetrinetViewerController controller) {
 		this.controller = controller;
 		reachabilityGraphModel = controller.getReachabilityGraphModel();
 		reachabilityGraphModel.setSkippableMode(true);

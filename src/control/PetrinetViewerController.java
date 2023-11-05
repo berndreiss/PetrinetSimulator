@@ -24,7 +24,7 @@ import propra.pnml.PNMLWopedWriter;
 /**
  * The Class PetrinetController.
  */
-public class PetrinetController {
+public class PetrinetViewerController {
 
 	private Petrinet petrinet = new Petrinet();
 	private ReachabilityGraphModel reachabilityGraphModel;
@@ -39,10 +39,9 @@ public class PetrinetController {
 	 *
 	 * @param file     the file
 	 * @param toolbarToggleListener 
-	 * @param headless the headless
 	 * @throws PetrinetException
 	 */
-	public PetrinetController(File file, ToolbarToggleListener toolbarToggleListener,  boolean headless) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarToggleListener toolbarToggleListener) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 
@@ -115,11 +114,6 @@ public class PetrinetController {
 	public PetrinetAnalyser analyse() {
 
 		PetrinetAnalyser analyser = new PetrinetAnalyser(this);
-
-//		if (petrinetQueue != null) {
-//			petrinetQueue.resetButtons();
-//			initializePetrinetQueue();
-//		}
 
 		return analyser;
 	}

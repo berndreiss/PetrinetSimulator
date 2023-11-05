@@ -3,7 +3,7 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
-import control.PetrinetController;
+import control.PetrinetViewerController;
 import listeners.PetrinetStateChangedListener;
 import listeners.ReachabilityStateChangeListener;
 import listeners.ToolbarToggleListener;
