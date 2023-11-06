@@ -3,65 +3,66 @@ package listeners;
 import core.PetrinetState;
 import core.Transition;
 
-// TODO: Auto-generated Javadoc
 /**
- * The listener interface for receiving reachabilityStateChange events.
- * The class that is interested in processing a reachabilityStateChange
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addReachabilityStateChangeListener<code> method. When
- * the reachabilityStateChange event occurs, that object's appropriate
- * method is invoked.
- *
- * @see ReachabilityStateChangeEvent
+ * <p>
+ * The listener interface for receiving events that signify that the state of
+ * the reachability graph has changed.
+ * </p>
+ * <p>
+ * It informs the View it needs to be updated.
+ * </p>
  */
 public interface ReachabilityStateChangeListener {
 
 	/**
-	 * On set current.
+	 * The View needs to set a new state to the current state.
 	 *
-	 * @param state the state
-	 * @param reset the reset
+	 * @param state The state which is the new current state.
+	 * @param reset Signifies whether the current edge needs to be reset.
 	 */
 	void onSetCurrent(PetrinetState state, boolean reset);
-	
+
 	/**
-	 * On mark invalid.
+	 * The View needs to mark the starting and ending nodes of the path signifying
+	 * that the graph is unbounded.
 	 *
-	 * @param m the m
-	 * @param mMarked the m marked
+	 * @param m       The starting node of the path.
+	 * @param mMarked The endong node of the path.
 	 */
-	void onMarkInvalid(PetrinetState m, PetrinetState mMarked);
-	
+	void onMarkUnboundedPath(PetrinetState m, PetrinetState mMarked);
+
 	/**
-	 * On add.
+	 * The View needs to add a new State to it including an edge from the
+	 * predecessor with a label signifying the transition that has been fired.
 	 *
-	 * @param state the state
-	 * @param predecessor the predecessor
-	 * @param t the t
+	 * @param state       The state to be added.
+	 * @param predecessor The predecessor of the state to be added.
+	 * @param transition           The transition that has been fired.
 	 */
-	void onAdd(PetrinetState state, PetrinetState predecessor, Transition t);
-	
+	void onAdd(PetrinetState state, PetrinetState predecessor, Transition transition);
+
 	/**
-	 * On remove.
+	 * A state needs to be removed from the View.
 	 *
-	 * @param state the state
+	 * @param state The state to be removed.
 	 */
 	void onRemove(PetrinetState state);
-	
+
 	/**
-	 * On remove edge.
+	 * An edge needs to be removed from the View.
 	 *
-	 * @param stateSource the state source
-	 * @param stateTarget the state target
-	 * @param t the t
+	 * @param stateSource The source state of the edge to be removed.
+	 * @param stateTarget The target state of the edge to be removed.
+	 * @param transition           The transition which has been fired when the edge was added.
 	 */
-	void onRemoveEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t);
+	void onRemoveEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition transition);
 
 	/**
 	 * 
-	 * @param edge
+	 * The View needs to mark the edge as the current edge.
+	 * 
+	 * @param edge The edge to be marked as the current edge.
 	 */
 	void onSetCurrentEdge(String edge);
-	
+
 }

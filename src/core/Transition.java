@@ -1,6 +1,6 @@
 package core;
 
-import listeners.TransitionActiveListener;
+import listeners.TransitionStateListener;
 import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
@@ -17,7 +17,7 @@ public class Transition extends PetrinetElement {
 	private IterableMap<String, Place> outputs = new IterableMap<String, Place>();// set of places that serve as output
 
 	private boolean active;// TODO change all occurrences to "activated"
-	private TransitionActiveListener transitionActiveListener;
+	private TransitionStateListener transitionActiveListener;
 
 	/**
 	 * A new instance of Transition is created. Initial sets of input places
@@ -79,7 +79,7 @@ public class Transition extends PetrinetElement {
 	 *
 	 * @param transitionActiveListener the new transition active listener
 	 */
-	public void setTransitionActiveListener(TransitionActiveListener transitionActiveListener) {
+	public void setTransitionActiveListener(TransitionStateListener transitionActiveListener) {
 		this.transitionActiveListener = transitionActiveListener;
 	}
 
@@ -119,7 +119,7 @@ public class Transition extends PetrinetElement {
 
 		this.active = active;
 		if (transitionActiveListener != null)
-			transitionActiveListener.onStateChanged(active);
+			transitionActiveListener.onStateChanged();
 	}
 
 	/**

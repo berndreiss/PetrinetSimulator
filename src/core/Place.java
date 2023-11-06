@@ -1,6 +1,6 @@
 package core;
 
-import listeners.NumberOfTokensListener;
+import listeners.NumberOfTokensChangedListener;
 import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
@@ -12,7 +12,7 @@ public class Place extends PetrinetElement {
 
 	private int numberOfTokens;
 
-	private NumberOfTokensListener numberOfTokensListener;
+	private NumberOfTokensChangedListener numberOfTokensListener;
 
 	private IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();// set of places
 																							// that serve as
@@ -74,7 +74,7 @@ public class Place extends PetrinetElement {
 		}
 
 		if (numberOfTokensListener != null)
-			numberOfTokensListener.numberChanged(numberOfTokens);
+			numberOfTokensListener.onNumberChanged(numberOfTokens);
 
 	}
 
@@ -83,7 +83,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param numberOfTokensListener the new number of tokens listener
 	 */
-	public void setNumberOfTokensListener(NumberOfTokensListener numberOfTokensListener) {
+	public void setNumberOfTokensListener(NumberOfTokensChangedListener numberOfTokensListener) {
 		this.numberOfTokensListener = numberOfTokensListener;
 	}
 

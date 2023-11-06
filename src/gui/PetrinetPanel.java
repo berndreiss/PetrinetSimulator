@@ -46,7 +46,7 @@ import reachabilityGraphLayout.LayoutType;
  * </p>
  * 
  * It holds a horizontal {@link ResizableSplitPane} containing a
- * {@link GraphStreamPetrinetGraph} on the left and a {@link ReachabilityGraph}
+ * {@link GraphStreamPetrinetGraph} on the left and a {@link GraphStreamReachabilityGraph}
  * on the right. Creates and holds a {@link PetrinetViewerController} managing
  * all interactions with the data model. The graphs are implemented using the
  * <a href="https://graphstream-project.org/">GraphStream</a> library.
@@ -68,7 +68,7 @@ public class PetrinetPanel extends JPanel {
 	/** */
 	private GraphStreamPetrinetGraph petrinetGraph;
 	/** */
-	private ReachabilityGraph reachabilityGraph;
+	private GraphStreamReachabilityGraph reachabilityGraph;
 
 	/**
 	 * panel for the petrinet -> if the view panel for the GraphStream graph is not
@@ -168,7 +168,7 @@ public class PetrinetPanel extends JPanel {
 		if (reachabilityPanel.getComponentCount() != 0)
 			reachabilityPanel.remove(reachabilityViewPanel);
 
-		reachabilityGraph = new ReachabilityGraph(petrinetController.getReachabilityGraphModel(), layoutType);
+		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetController.getReachabilityGraphModel(), layoutType);
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
@@ -408,7 +408,7 @@ public class PetrinetPanel extends JPanel {
 		graph.setAttribute("ui.antialias");
 
 		// set auto layout for reachability graphs if it has the layout type
-		if (graph instanceof ReachabilityGraph && ((ReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
+		if (graph instanceof GraphStreamReachabilityGraph && ((GraphStreamReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
 			viewer.enableAutoLayout();
 		else
 			viewer.disableAutoLayout();
@@ -448,7 +448,7 @@ public class PetrinetPanel extends JPanel {
 					String id = element.getId();
 
 					// refer mouse click to the right method in the right controller
-					if (graph instanceof ReachabilityGraph) {
+					if (graph instanceof GraphStreamReachabilityGraph) {
 						petrinetController.onReachabilityGraphNodeClicked(id);
 					} else {
 
@@ -519,8 +519,8 @@ public class PetrinetPanel extends JPanel {
 		// replay listener to be able to manually replay the graph on certain events
 		// (e.g. adding nodes). For some reason only works when called via the
 		// componenResized listener above, therefore using the adjustArrowHeads method
-		if (graph instanceof ReachabilityGraph)
-			((ReachabilityGraph) graph).setReplayGraphListener(() -> adjustArrowHeads());
+		if (graph instanceof GraphStreamReachabilityGraph)
+			((GraphStreamReachabilityGraph) graph).setAdjustArrowHeadsListener(() -> adjustArrowHeads());
 
 		return viewPanel;
 

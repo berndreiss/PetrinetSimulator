@@ -12,35 +12,41 @@ import javax.swing.JButton;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
-
 /**
- * 
+ * <p>
+ * A button used for the {@link PetrinetToolbar}.
+ * </p>
+ * <p>
+ * It holds a representative image, an action listener, a tool tip text and an
+ * alt text. Additionally it keeps track of its color and repaints itself since
+ * in certain look and feels the setBackground method does not work.
+ * </p>
  */
 public class ToolbarButton extends JButton {
 
 	private static final long serialVersionUID = 1L;
 
+	/** the text shown if the image does not work */
 	private String altText;
-
+	/** the color for the button */
 	private Color color = null;
 
 	/**
-	 * @param toolbarImage
-	 * @param actionListener
-	 * @param toolTipText
-	 * @param altText
+	 * Instantiate a new instance of the button.
+	 * 
+	 * @param toolbarImage   The image the button will show.
+	 * @param actionListener The action the button performs when clicked.
+	 * @param toolTipText    The tool tip to show for the button.
+	 * @param altText        The text shown if the image does not work.
 	 */
 	public ToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText, String altText) {
 
 		this.altText = altText;
-
 		setImage(toolbarImage);
-
 		addActionListener(actionListener);
 		setToolTipText(toolTipText);
 
 		int sizeInt = 30;
-
 		Dimension size = new Dimension(sizeInt, sizeInt);
 		setMaximumSize(size);
 		setSize(size);
@@ -50,6 +56,8 @@ public class ToolbarButton extends JButton {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+
+		// artificially set the background for certain look and feels
 		if (color != null) {
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(color);
@@ -58,16 +66,11 @@ public class ToolbarButton extends JButton {
 		super.paintComponent(g);
 	}
 
-	/**
-	 * 
-	 * @param toolbarImage
-	 */
-	public void setImage(ToolbarImage toolbarImage) {
+	// set the button to the image provided
+	private void setImage(ToolbarImage toolbarImage) {
 
 		String imagePath = System.getProperty("user.dir");
-
 		String imgLocation = toolbarImage.imagePath();
-
 		ImageIcon icon = new ImageIcon(imagePath + imgLocation, altText);
 
 		if (imagePath != null) {
@@ -81,11 +84,18 @@ public class ToolbarButton extends JButton {
 
 	/**
 	 * 
+	 * Set the background color of the button. Since setBackground does not work in
+	 * certain look and feels this method provides an alternative way to set the
+	 * background.
+	 * 
 	 * @param color
 	 */
 	public void setColor(Color color) {
 		LookAndFeel laf = UIManager.getLookAndFeel();
 		this.color = color;
+
+		// if look and feel is Nimbus artificially set the background in the paint
+		// method
 		if (laf.getName().equals("Nimbus"))
 			repaint();
 		else
@@ -93,13 +103,12 @@ public class ToolbarButton extends JButton {
 	}
 
 	/**
+	 * Get the color the button has been set to.
 	 * 
-	 * @return
+	 * @return the color set for the button
 	 */
 	public Color getColor() {
 		return color;
 	}
-
-
 
 }

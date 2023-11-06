@@ -37,7 +37,7 @@ import javax.swing.JMenuItem;
  * <p>
  * 
  * For a description of the functionality of these entries see
- * {@link PetrinetMenuInterface}.
+ * {@link PetrinetMenuController}.
  * 
  * </p>
  */
@@ -49,9 +49,9 @@ public class PetrinetMenu extends JMenuBar {
 	 * Instantiates a new menu.
 	 *
 	 * @param menuController A controller implementing
-	 *                       {@link PetrinetMenuInterface}.
+	 *                       {@link PetrinetMenuController}.
 	 */
-	PetrinetMenu(PetrinetMenuInterface menuController) {
+	PetrinetMenu(PetrinetMenuController menuController) {
 
 		// create menus and add the to menu bar
 		JMenu files = new JMenu("File");

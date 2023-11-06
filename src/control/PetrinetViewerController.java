@@ -10,7 +10,7 @@ import core.PNMLParser;
 import core.Petrinet;
 import core.PetrinetAnalyser;
 import core.PetrinetElement;
-import core.PetrinetQueue;
+import core.ReachabilityGraphStateQueue;
 import core.PetrinetState;
 import core.Place;
 import core.ReachabilityGraphModel;
@@ -57,7 +57,7 @@ public class PetrinetViewerController {
 	 *
 	 * @return the petrinet queue
 	 */
-	public PetrinetQueue getPetrinetQueue() {
+	public ReachabilityGraphStateQueue getPetrinetQueue() {
 		return reachabilityGraphModel.getPetrinetQueue();
 	}
 

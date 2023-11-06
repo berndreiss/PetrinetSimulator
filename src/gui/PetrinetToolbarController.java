@@ -5,7 +5,7 @@ package gui;
  * A controller defining methods used by a petrinet toolbar.
  * </p>
  */
-public interface PetrinetToolbarController extends PetrinetMenuInterface {
+public interface PetrinetToolbarController extends PetrinetMenuController {
 
 	// PETRINET RELATED METHODS
 

@@ -424,8 +424,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 				continue;
 			}
 
-			LayoutPoint middlePoint1 = new LayoutPoint(lastEdge.getX(), lastEdge.getY(), MINIMAL_SIZE);
-			LayoutPoint middlePoint2 = new LayoutPoint(edge.getX(), edge.getY(), MINIMAL_SIZE);
+			LayoutPoint middlePoint1 = new LayoutPoint(lastEdge.getCenterX(), lastEdge.getCenterY(), MINIMAL_SIZE);
+			LayoutPoint middlePoint2 = new LayoutPoint(edge.getCenterX(), edge.getCenterY(), MINIMAL_SIZE);
 
 			if (GraphicsOperations.graphicalObjectsIntersect(middlePoint1, middlePoint2)) {
 				lastEdge.sprite.setPosition(0.25, 0.25, 0);

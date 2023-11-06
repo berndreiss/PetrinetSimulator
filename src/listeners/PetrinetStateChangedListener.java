@@ -1,37 +1,35 @@
 package listeners;
 
 import core.Petrinet;
+import core.ReachabilityGraphModel;
 import core.Transition;
 
-// TODO: Auto-generated Javadoc
 /**
- * The listener interface for receiving petrinetStateChanged events.
- * The class that is interested in processing a petrinetStateChanged
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addPetrinetStateChangedListener<code> method. When
- * the petrinetStateChanged event occurs, that object's appropriate
- * method is invoked.
- *
- * @see PetrinetStateChangedEvent
+ * <p>
+ * 
+ * The listener interface for receiving events signifying the state of a
+ * petrinet has changed.
+ * </p>
+ * <p>
+ * It informs a {@link ReachabilityGraphModel} that the state of a petrinet has
+ * changed.
+ * </p>
  */
 public interface PetrinetStateChangedListener {
-	
+
 	/**
-	 * On transition fire.
+	 * When a transition has been fired the reachability graph model has to check
+	 * whether it needs add a node / edge and set its View to the current state.
 	 *
-	 * @param t the t
-	 * @param skippable 
+	 * @param transition The transition that has been fired.
 	 */
-	void onTransitionFire(Transition t);
-	
+	void onTransitionFire(Transition transition);
+
 	/**
-	 * On component changed.
+	 * When a component of the petrinet has changed the reachability graph model has to reset itself.
 	 *
-	 * @param petrinet the petrinet
+	 * @param petrinet The new petrinet with changed components.
 	 */
 	void onComponentChanged(Petrinet petrinet);
-
-
 
 }

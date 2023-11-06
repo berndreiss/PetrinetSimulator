@@ -17,7 +17,7 @@ public class ReachabilityGraphModel {
 
 	private Petrinet petrinet;
 
-	private PetrinetQueue petrinetQueue;
+	private ReachabilityGraphStateQueue petrinetQueue;
 
 	private ToolbarToggleListener toolbarToggleListener;
 
@@ -44,7 +44,7 @@ public class ReachabilityGraphModel {
 
 		this.petrinet = petrinet;
 		this.toolbarToggleListener = toolbarToggleListener;
-		petrinetQueue = new PetrinetQueue(this, toolbarToggleListener);
+		petrinetQueue = new ReachabilityGraphStateQueue(this, toolbarToggleListener);
 		petrinetStates = new IterableMap<String, PetrinetState>();
 		addNewState(petrinet, null, true);
 		
@@ -268,7 +268,7 @@ public class ReachabilityGraphModel {
 
 		if (petrinetQueue != null) {
 			petrinetQueue.resetButtons();
-			petrinetQueue = new PetrinetQueue(this, toolbarToggleListener);
+			petrinetQueue = new ReachabilityGraphStateQueue(this, toolbarToggleListener);
 		}
 
 		if (petrinetStates.size() == 0)
@@ -380,7 +380,7 @@ public class ReachabilityGraphModel {
 	 * 
 	 * @return
 	 */
-	public PetrinetQueue getPetrinetQueue() {
+	public ReachabilityGraphStateQueue getPetrinetQueue() {
 		return petrinetQueue;
 	}
 
@@ -388,7 +388,7 @@ public class ReachabilityGraphModel {
 	 * 
 	 * @return
 	 */
-	public void setPetrinetQueue(PetrinetQueue petrinetQueue) {
+	public void setPetrinetQueue(ReachabilityGraphStateQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
 	}
 	/**

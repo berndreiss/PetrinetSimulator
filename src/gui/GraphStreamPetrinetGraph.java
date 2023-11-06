@@ -138,13 +138,15 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 			}
 
 			@Override
-			public void onEdgeRemoved(String edge) {
+			public void onEdgeRemoved(PetrinetElement source, PetrinetElement target) {
 
+				String edgeString = source.getId() + target.getId();
+				
 				// remove edge and its sprite if they exist
-				Edge e = removeEdge(edge);
-				if (e == null)
+				Edge edge = removeEdge(edgeString);
+				if (edge == null)
 					return;
-				spriteMan.removeSprite("s" + edge);
+				spriteMan.removeSprite("s" + edgeString);
 			}
 
 			@Override

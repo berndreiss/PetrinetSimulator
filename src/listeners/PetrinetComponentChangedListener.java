@@ -4,75 +4,76 @@ import core.PetrinetElement;
 import core.Place;
 import core.Transition;
 
-// TODO: Auto-generated Javadoc
 /**
- * The listener interface for receiving petrinetComponentChanged events.
- * The class that is interested in processing a petrinetComponentChanged
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addPetrinetComponentChangedListener<code> method. When
- * the petrinetComponentChanged event occurs, that object's appropriate
- * method is invoked.
+ * <p>
+ * The listener interface for receiving events signifying components of a
+ * petrinet have changed.
+ * </p>
  *
- * @see PetrinetComponentChangedEvent
+ * <p>
+ * It provides methods for informing the View that the data model of the
+ * petrinet has changed and therefore has to be updated.
+ * </p>
  */
 public interface PetrinetComponentChangedListener {
 
 	/**
-	 * On petrinet element added.
+	 * When an element has been added it should be added to the View also.
 	 *
-	 * @param element the element
+	 * @param element The element to be added.
 	 */
 	void onPetrinetElementAdded(PetrinetElement element);
-	
+
 	/**
-	 * On petrinet element set coordinates.
+	 * When coordinates are set for an element they should be updated in the View
+	 * also.
 	 *
-	 * @param element the element
+	 * @param element The element for which coordinates need to be reset.
 	 */
 	void onPetrinetElementCoordinatesChanged(PetrinetElement element);
-	
+
 	/**
-	 * On petrinet element removed.
+	 * When an element is removed it should be removed from the View also.
 	 *
-	 * @param element the element
+	 * @param element The element to be removed.
 	 */
 	void onPetrinetElementRemoved(PetrinetElement element);
-	
+
 	/**
-	 * On edge added.
+	 * When an edge is added it should be added in the View also.
 	 *
-	 * @param source the source
-	 * @param target the target
-	 * @param id the id
+	 * @param source The source element of the edge.
+	 * @param target The target element of the edge
+	 * @param id     The id of the edge.
 	 */
 	void onEdgeAdded(PetrinetElement source, PetrinetElement target, String id);
-	
+
 	/**
-	 * On edge removed.
-	 *
-	 * @param edge the edge
+	 * When an edge is removed it should be removed from the View also.
+
+	 * @param source The source element for the edge to be removed.
+	 * @param target The targets element for the edge to be removed.
 	 */
-	void onEdgeRemoved(String edge);
-	
+	void onEdgeRemoved(PetrinetElement source, PetrinetElement target);
+
 	/**
-	 * On place token count changed.
+	 * When the count of tokens of a place has changed it needs to be changed in the View also.
 	 *
-	 * @param place the place
+	 * @param place The place for which the number of tokens needs to be updated.
 	 */
 	void onPlaceTokenCountChanged(Place place);
-	
+
 	/**
-	 * On set petrinet element name.
+	 * When a label for an element is changed it needs to be changed in the View also.
 	 *
-	 * @param element the element
+	 * @param element The element for which the label needs to be changed.
 	 */
 	void onPetrinetElementLabelChanged(PetrinetElement element);
-	
+
 	/**
-	 * On transition state changed.
+	 * When a transition is (de-)activated the View needs to be updated.
 	 *
-	 * @param transition the transition
+	 * @param transition The transition for which the state has changed.
 	 */
 	void onTransitionStateChanged(Transition transition);
 }

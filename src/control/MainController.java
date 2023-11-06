@@ -22,7 +22,7 @@ import core.PetrinetAnalyser;
 import exceptions.DuplicateIdException;
 import exceptions.PetrinetException;
 import gui.MainFrame;
-import gui.PetrinetMenuInterface;
+import gui.PetrinetMenuController;
 import gui.PetrinetPanel;
 import gui.PetrinetToolbar;
 import gui.PetrinetToolbarController;
@@ -35,7 +35,7 @@ import reachabilityGraphLayout.LayoutType;
 /**
  * The Class MainController.
  */
-public class MainController implements PetrinetMenuInterface, PetrinetToolbarController, ToolbarToggleListener {
+public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarToggleListener {
 
 	// TODO warn if unsaved changes
 

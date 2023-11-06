@@ -323,7 +323,7 @@ public class Petrinet {
 
 		transitions.put(id, t);
 		
-		t.setTransitionActiveListener(activated -> {
+		t.setTransitionActiveListener(() -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onTransitionStateChanged(t);
 
@@ -485,7 +485,7 @@ public class Petrinet {
 		originalArcIds.remove(key);
 
 		if (petrinetComponentChangedListener != null)
-			petrinetComponentChangedListener.onEdgeRemoved(key);
+			petrinetComponentChangedListener.onEdgeRemoved(source, target);
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onComponentChanged(this);
 

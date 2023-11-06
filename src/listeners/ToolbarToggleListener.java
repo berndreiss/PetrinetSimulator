@@ -1,36 +1,36 @@
 package listeners;
 
-// TODO: Auto-generated Javadoc
 /**
- * The listener interface for receiving toolbarToggle events.
- * The class that is interested in processing a toolbarToggle
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addToolbarToggleListener<code> method. When
- * the toolbarToggle event occurs, that object's appropriate
- * method is invoked.
+ * <p>
+ * The listener interface for receiving events that need to toggle certain
+ * buttons of the toolbar.
+ * </p>
  *
- * @see ToolbarToggleEvent
+ * <p>
+ * These buttons are adding/removing edges and the un-/redo buttons.
+ * </p>
  */
 public interface ToolbarToggleListener {
-	
+
 	/**
-	 * On edge added.
+	 * An edge has been added and the add edge button needs to be reset.
 	 */
 	void onEdgeAdded();
-	
+
 	/**
-	 * On edge removed.
+	 * An edge has been removed and the remove edge button needs to be reset.
 	 */
 	void onEdgeRemoved();
-	
+
 	/**
-	 * On redo changed.
+	 * The state of being able to redo steps has changed and the button needs to be
+	 * toggled.
 	 */
 	void onRedoChanged();
-	
+
 	/**
-	 * On undo changed.
+	 * The state of being able to undo steps has changed and the button needs to be
+	 * toggled.
 	 */
 	void onUndoChanged();
 }

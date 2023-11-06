@@ -178,7 +178,7 @@ public class PetrinetState {
 	void setM(PetrinetState m, ReachabilityStateChangeListener stateChangeListener) {
 		this.m = m;
 		if (stateChangeListener != null)
-			stateChangeListener.onMarkInvalid(m, this);
+			stateChangeListener.onMarkUnboundedPath(m, this);
 	}
 
 	/**

@@ -1,10 +1,3 @@
-
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-
-import javax.swing.UnsupportedLookAndFeelException;
-
 import gui.MainFrame;
 
 /**
@@ -20,6 +13,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		// avoid GraphStream not recognizing mouse clicks because of scale issues
 		System.setProperty("sun.java2d.uiScale", "1.0");
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {

@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
-import core.PetrinetQueue;
+import core.ReachabilityGraphStateQueue;
 import reachabilityGraphLayout.LayoutType;
 
 /**
@@ -59,9 +59,9 @@ public class PetrinetToolbar extends JToolBar {
 	private JButton openEditorButton;
 	/** reset the reachability graph (and therefore the petrinet) */
 	private JButton resetButton;
-	/** undo last step */
+	/** undo last step -> is highlighted when there are steps to undo */
 	private ToolbarButton undoButton;
-	/** redo last step */
+	/** redo last step -> is highlighted when there are steps to redo */
 	private ToolbarButton redoButton;
 	/** clear the text area in the main frame */
 	private JButton clearTextButton;
@@ -86,11 +86,17 @@ public class PetrinetToolbar extends JToolBar {
 	private JButton addTransitionButton;
 	/** delete marked component */
 	private JButton deleteComponentButton;
-	/** add a new edge to the petrinet */
+	/**
+	 * add a new edge to the petrinet -> is highlighted while adding and is reset
+	 * when the adding process is done
+	 */
 	private ToolbarButton addEdgeButton;
 	/** remove an edge from the petrinet */
 	private ToolbarButton removeEdgeButton;
-	/** add a label to an element */
+	/**
+	 * add a label to an element -> is highlighted while removing and is reset when
+	 * the adding process is done
+	 */
 	private JButton addLabelButton;
 	/** close the editor */
 	private JButton closeEditorButton;
@@ -338,8 +344,8 @@ public class PetrinetToolbar extends JToolBar {
 
 		redoButton = new ToolbarButton(ToolbarImage.REDO, e -> mainController.onRedo(), "Redo last step", "redo");
 
-		clearTextButton = new ToolbarButton(ToolbarImage.CLEAR_TEXT, e -> mainController.onClearTextArea(), "Clear text area",
-				"clear");
+		clearTextButton = new ToolbarButton(ToolbarImage.CLEAR_TEXT, e -> mainController.onClearTextArea(),
+				"Clear text area", "clear");
 
 		zoomInReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomInReachability(),
 				"Zoom in into reachability graph", "zoom in");
@@ -362,7 +368,7 @@ public class PetrinetToolbar extends JToolBar {
 		JButton setSplitPanesDefaultButton = new ToolbarButton(ToolbarImage.DEFAULT,
 				e -> mainController.onSetSplitPanesDefault(), "Reset split panes to default ratio", "reset pane");
 
-		changeLookAndFeelButton = new ToolbarButton(ToolbarImage.DESIGN, e -> mainController.onChaneLookAndFeel(),
+		changeLookAndFeelButton = new ToolbarButton(ToolbarImage.LAF, e -> mainController.onChaneLookAndFeel(),
 				"Change between Metal and Nimbus feel and look", "change design");
 
 		// PETRINET BUTTONS
@@ -644,7 +650,7 @@ public class PetrinetToolbar extends JToolBar {
 
 		// set undo / redo buttons
 		PetrinetViewerController controller = petrinetPanel.getPetrinetController();
-		PetrinetQueue queue = controller.getPetrinetQueue();
+		ReachabilityGraphStateQueue queue = controller.getPetrinetQueue();
 
 		if (queue == null) // safety check
 			return;

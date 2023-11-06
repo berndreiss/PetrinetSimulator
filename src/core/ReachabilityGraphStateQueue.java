@@ -6,7 +6,7 @@ import listeners.ToolbarToggleListener;
 /**
  * The Class PetrinetQueue.
  */
-public class PetrinetQueue {
+public class ReachabilityGraphStateQueue {
 
 	private PetrinetState state;
 	private String currentEdge;
@@ -14,8 +14,8 @@ public class PetrinetQueue {
 	private Added stateAdded = Added.NOTHING;
 	private boolean skippable;
 
-	private PetrinetQueue lastState = null;
-	private PetrinetQueue nextState = null;
+	private ReachabilityGraphStateQueue lastState = null;
+	private ReachabilityGraphStateQueue nextState = null;
 
 	private ReachabilityGraphModel reachabilityGraphModel;
 	private ToolbarToggleListener toolbarToggleListener;
@@ -27,13 +27,13 @@ public class PetrinetQueue {
 	 *
 	 * @param reachabilityGraphModel the petrinet controller
 	 */
-	public PetrinetQueue(ReachabilityGraphModel reachabilityGraphModel, ToolbarToggleListener toolbarToggleListener) {
+	public ReachabilityGraphStateQueue(ReachabilityGraphModel reachabilityGraphModel, ToolbarToggleListener toolbarToggleListener) {
 		this.reachabilityGraphModel = reachabilityGraphModel;
 		this.toolbarToggleListener = toolbarToggleListener;
 
 	}
 
-	private PetrinetQueue(PetrinetState state, String currentEdge, Added stateAdded, Transition transition,
+	private ReachabilityGraphStateQueue(PetrinetState state, String currentEdge, Added stateAdded, Transition transition,
 			ReachabilityGraphModel reachabilityGraphModel, ToolbarToggleListener toolbarToggleListener,
 			boolean skippable) {
 
@@ -95,7 +95,7 @@ public class PetrinetQueue {
 
 //		System.out.println("PUSHING " + state.getState() + ", " + currentEdge + ", " + stateAdded + ", "
 //				+ (transition == null ? "null" : transition.getId()) + ", " + skippable);
-		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
+		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
 		if (currentState.state == null) {
 
@@ -110,7 +110,7 @@ public class PetrinetQueue {
 			if (currentState.hasNext() && toolbarToggleListener != null)
 				toolbarToggleListener.onRedoChanged();
 
-			currentState.nextState = new PetrinetQueue(state, currentEdge, stateAdded, transition,
+			currentState.nextState = new ReachabilityGraphStateQueue(state, currentEdge, stateAdded, transition,
 					reachabilityGraphModel, toolbarToggleListener, skippable);
 			reachabilityGraphModel.setPetrinetQueue(currentState.nextState);
 		}
@@ -120,7 +120,7 @@ public class PetrinetQueue {
 	 * Go back.
 	 */
 	public void goBack() {
-		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
+		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 		if (currentState.isFirstState())
 			return;
 
@@ -159,7 +159,7 @@ public class PetrinetQueue {
 	 */
 	public boolean goForward() {
 
-		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
+		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
 		if (!currentState.hasNext())
 			return false;
@@ -218,7 +218,7 @@ public class PetrinetQueue {
 	 * Reset buttons.
 	 */
 	public void resetButtons() {
-		PetrinetQueue currentState = reachabilityGraphModel.getPetrinetQueue();
+		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 
 		if (!currentState.isFirstState() && toolbarToggleListener != null)
 			toolbarToggleListener.onUndoChanged();

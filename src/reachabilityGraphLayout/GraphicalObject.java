@@ -3,72 +3,78 @@ package reachabilityGraphLayout;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class GraphicalObject.
+ * <p>
+ * Class representing an abstract graphical object.
+ * </p>
+ * 
+ * <p>
+ * It can represent any quadrangle.
+ * </p>
  */
 abstract class GraphicalObject implements Comparable<GraphicalObject> {
 	
 	/**
-	 * Left lower corner.
+	 * Get the left lower corner of the object.
 	 *
-	 * @return the layout point
+	 * @return the left lower corner
 	 */
 	abstract LayoutPoint leftLowerCorner();
 
 	/**
-	 * Left upper corner.
+	 * Get the left upper corner of the object.
 	 *
-	 * @return the layout point
+	 * @return the left upper corner
 	 */
 	abstract LayoutPoint leftUpperCorner();
 
 	/**
-	 * Right lower corner.
+	 * Get the right lower corner of the object.
 	 *
-	 * @return the layout point
+	 * @return the right lower corner
 	 */
 	abstract LayoutPoint rightLowerCorner();
 
 	/**
-	 * Right upper corner.
+	 * Get the right upper corner of the object.
 	 *
-	 * @return the layout point
+	 * @return the right upper corner
 	 */
 	abstract LayoutPoint rightUpperCorner();
 
 	/**
-	 * Gets the x.
+	 * Get the x coordinate of the center point.
 	 *
-	 * @return the x
+	 * @return the x coordinate of the center point.
 	 */
-	abstract double getX();
+	abstract double getCenterX();
 
 	/**
-	 * Gets the y.
+	 * Get the y coordinate of the center point.
 	 *
-	 * @return the y
+	 * @return the y coordinate of the center point.
 	 */
-	abstract double getY();
+	abstract double getCenterY();
 
 	/**
-	 * Left side.
+	 * Get the left side of the object.
 	 *
-	 * @return the layout line
+	 * @return the left side
 	 */
 	LayoutLine leftSide() {
 		return new LayoutLine(leftLowerCorner(), leftUpperCorner());
 	}
 
 	/**
-	 * Right side.
+	 * Get the right side of the object.
 	 *
-	 * @return the layout line
+	 * @return the right side
 	 */
 	LayoutLine rightSide() {
 		return new LayoutLine(rightLowerCorner(), rightUpperCorner());
 	}
 
 	/**
-	 * Upper side.
+	 * Get the upper side of the object.
 	 *
 	 * @return the layout line
 	 */
@@ -77,7 +83,7 @@ abstract class GraphicalObject implements Comparable<GraphicalObject> {
 	}
 
 	/**
-	 * Lower side.
+	 * Get the lower side of the object.
 	 *
 	 * @return the layout line
 	 */
@@ -86,22 +92,22 @@ abstract class GraphicalObject implements Comparable<GraphicalObject> {
 	}
 
 	/**
-	 * Compare to.
+	 * Compare the centers of two object primarily by their x value and secondarily by the y value.
 	 *
-	 * @param go the go
-	 * @return the int
+	 * @param go the other graphical object
+	 * @return -1 if left/lower, 1 if right/upper, 0 if the same
 	 */
 	@Override
 	public int compareTo(GraphicalObject go) {
-		if (this.getX() < go.getX())
+		if (this.getCenterX() < go.getCenterX())
 			return -1;
 
-		if (this.getX() > go.getX())
+		if (this.getCenterX() > go.getCenterX())
 			return 1;
 
-		if (this.getY() > go.getY())
+		if (this.getCenterY() > go.getCenterY())
 			return -1;
-		if (this.getY() < go.getY())
+		if (this.getCenterY() < go.getCenterY())
 			return 1;
 
 		return 0;

@@ -47,7 +47,7 @@ class LayoutEdge extends GraphicalObject {
 	@Override
 	public LayoutPoint leftLowerCorner() {
 
-		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getCenterX() - Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -57,7 +57,7 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint leftUpperCorner() {
-		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getCenterX() - Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() + Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint rightLowerCorner() {
-		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getCenterX() + Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint rightUpperCorner() {
-		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getCenterX() + Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() + Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -86,8 +86,8 @@ class LayoutEdge extends GraphicalObject {
 	 * @return the x
 	 */
 	@Override
-	double getX() {
-		return source.getX() + (target.getX() - source.getX()) * sprite.getX();
+	double getCenterX() {
+		return source.getCenterX() + (target.getCenterX() - source.getCenterX()) * sprite.getX();
 	}
 
 	/**
@@ -96,8 +96,8 @@ class LayoutEdge extends GraphicalObject {
 	 * @return the y
 	 */
 	@Override
-	double getY() {
-		return source.getY() + (target.getY() - source.getY()) * sprite.getY();
+	double getCenterY() {
+		return source.getCenterY() + (target.getCenterY() - source.getCenterY()) * sprite.getY();
 	}
 
 	/**
@@ -106,7 +106,7 @@ class LayoutEdge extends GraphicalObject {
 	 * @return the double
 	 */
 	double length() {// returns the squareroot of (x_2-x_1)^2 + (y_2-y_1)^2
-		return Math.sqrt(Math.pow((target.getX() - source.getX()), 2) + Math.pow((target.getY() - source.getY()), 2));
+		return Math.sqrt(Math.pow((target.getCenterX() - source.getCenterX()), 2) + Math.pow((target.getCenterY() - source.getCenterY()), 2));
 	}
 
 }

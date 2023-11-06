@@ -7,7 +7,7 @@ import control.PetrinetEditorController;
 /**
  * An interface defining methods for entries in {@link PetrinetMenu}.
  */
-public interface PetrinetMenuInterface {
+public interface PetrinetMenuController {
 
 	// METHODS FOR FILE
 

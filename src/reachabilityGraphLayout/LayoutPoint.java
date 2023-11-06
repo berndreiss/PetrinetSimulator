@@ -82,7 +82,7 @@ class LayoutPoint extends GraphicalObject {
 	 * @return the x
 	 */
 	@Override
-	double getX() {
+	double getCenterX() {
 		return x;
 	}
 
@@ -92,7 +92,7 @@ class LayoutPoint extends GraphicalObject {
 	 * @return the y
 	 */
 	@Override
-	double getY() {
+	double getCenterY() {
 		return y;
 	}
 

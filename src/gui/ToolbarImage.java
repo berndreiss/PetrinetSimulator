@@ -1,101 +1,97 @@
 package gui;
 
 /**
- * The Enum ToolbarImage.
+ * An enum listing all available ToolbarImages and defining their name for the file in the IMAGE_ROOT_FOLDER.
  */
 public enum ToolbarImage {
 
-	/** The open. */
+	/** Image for the open button */
 	OPEN("folder"),
-	/** The save. */
+	/** Image for the save button */
 	SAVE("save"),
-	/** The analyse. */
+	/** Image for the analyse button  */
 	ANALYSE("stats"),
-	/** The restart. */
+	/** Image for the restart petrinet button  */
 	RESTART("restart"),
-	/** The reset. */
+	/** Image for the delete button  */
 	RESET("delete"),
-	/** The plus. */
+	/** Image for the plus button */
 	PLUS("plus"),
-
-	/** The minus. */
+	/** Image for the minus button  */
 	MINUS("minus"),
-	/** The left. */
+	/** Image for the previous file button  */
 	LEFT("left"),
-	/** The right. */
+	/** Image for the next file button  */
 	RIGHT("right"),
-	/** The undo. */
+	/** Image for the undo button  */
 	UNDO("undo"),
-	/** The redo. */
+	/** Image for the redo button  */
 	REDO("redo"),
-	/** The clear text. */
+	/** Image for the clear text area button */
 	CLEAR_TEXT("input"),
-	/** The editor. */
+	/** Image for the open editor button  */
 	EDITOR("edit"),
-
-	/** The default. */
+	/** Image for the reset split panes button  */
 	DEFAULT("layout"),
-	/** The zoom in. */
+	/** Image for the zoom in buttons  */
 	ZOOM_IN("zoom-in"),
-	/** The zoom out. */
+	/** Image for the zoom out buttons  */
 	ZOOM_OUT("zoom-out"),
+	/** Image for the auto layout button  */
+	AUTO_LAYOUT("auto-layout"),
+	/** Image for the tree layout button */
+	TREE_LAYOUT("tree-layout"),
+	/** Image for the circle layout button */
+	CIRCLE_LAYOUT("circle-layout"),
+	/** Image for the change look and feel button */
+	LAF("design"),
 
 	
 	// ADDITIONAL IMAGES FOR EDITOR
 	
-	/** The add place. */
+	/** Image for the add place button  */
 	ADD_PLACE("add-circle"),
-	/** The add transition. */
+	/** Image for the add transition button  */
 	ADD_TRANSITION("add-square"),
-	/** The add edge. */
+	/** Image for the add edge button */
 	ADD_EDGE("arc"),
-
-	/** The delete component. */
+	/** Image for the delete component button  */
 	DELETE_COMPONENT("erase"),
-	/** The open viewer. */
+	/** Image for the open viewer button  */
 	OPEN_VIEWER("eye"),
-	/** The remove edge. */
+	/** Image for the remove edge button  */
 	REMOVE_EDGE("remove-edge"),
+	/** Image for the add label button  */
+	ADD_LABEL("label");
 
-	/** The add label. */
-	ADD_LABEL("label"),
-	/** The auto layout. */
-	AUTO_LAYOUT("auto-layout"),
-
-	/** The tree layout. */
-	TREE_LAYOUT("tree-layout"),
-	/** The circle layout. */
-	CIRCLE_LAYOUT("circle-layout"),
-	/** The design. */
-	DESIGN("design");
-
+	/** path from user.dir to image root folder */
 	private static final String IMAGE_ROOT_FOLDER = "/resources/images/Toolbar/";
-	private String name;
+	/** file name of the image resource */
+	private String fileName;
 
 	/**
 	 * Instantiates a new toolbar image.
 	 *
-	 * @param name the name
+	 * @param fileName The name of the file.
 	 */
-	ToolbarImage(String name) {
-		this.name = name;
+	ToolbarImage(String fileName) {
+		this.fileName = fileName;
 
 	}
 
 	/**
-	 * To string.
+	 * Gets the name of the file associated with the image resource.
 	 *
-	 * @return the string
+	 * @return the file name of the image
 	 */
 	@Override
 	public String toString() {
-		return name;
+		return fileName;
 	}
 	
 	/**
-	 * 
-	 * @param toolbarImage
-	 * @return
+	 *	Get the path to the image root folder. 
+	 * @return path to image root folder
 	 */
 	public String imagePath() {
 		return IMAGE_ROOT_FOLDER + this + ".png";

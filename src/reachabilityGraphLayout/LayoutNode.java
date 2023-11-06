@@ -118,7 +118,7 @@ class LayoutNode extends GraphicalObject {
 	 * @return the x
 	 */
 	@Override
-	double getX() {
+	double getCenterX() {
 		return Toolkit.nodePosition(node)[0];
 	}
 
@@ -128,7 +128,7 @@ class LayoutNode extends GraphicalObject {
 	 * @return the y
 	 */
 	@Override
-	double getY() {
+	double getCenterY() {
 		return Toolkit.nodePosition(node)[1];
 	}
 }
