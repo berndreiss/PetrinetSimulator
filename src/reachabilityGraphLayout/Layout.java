@@ -24,20 +24,20 @@ public class Layout {
 //	private final static Dimension NODE_SIZE = new Dimension(125, 30);
 
 	/** The Constant NODE_SIZE. */
-protected final static Dimension NODE_SIZE = new Dimension(30, 30);
-	
+	protected final static Dimension NODE_SIZE = new Dimension(30, 30);
+
 	/** The Constant SPRITE_SIZE. */
 	protected final static Dimension SPRITE_SIZE = new Dimension(30, 30);
-	
+
 	/** The Constant MINIMAL_SIZE. */
 	private final static Dimension MINIMAL_SIZE = new Dimension(10, 10);
-	
+
 	/** The Constant MINIMAL_EDGE_LENGTH. */
 	private final static int MINIMAL_EDGE_LENGTH = 200;
 
 	/** The screen size. */
 	private Dimension screenSize = new Dimension(1000, 1000);
-	
+
 	private LayoutType layoutType = LayoutType.TREE;
 
 	private static int maxRowCount = 0;
@@ -49,7 +49,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	private IterableMap<String, LayoutNode> nodeMap = new IterableMap<String, LayoutNode>();
 	private IterableMap<String, IterableMap<String, LayoutEdge>> edgeMap = new IterableMap<String, IterableMap<String, LayoutEdge>>();
-	
+
 	/** The graphical object list. */
 	private List<GraphicalObject> graphicalObjectList = new ArrayList<GraphicalObject>();
 
@@ -72,12 +72,12 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	/**
 	 * Adds the.
 	 *
-	 * @param source the source
-	 * @param target the target
+	 * @param source     the source
+	 * @param target     the target
 	 * @param transition the transition
 	 */
 	public void add(Node source, Node target, Transition transition, int levelToAddFrom) {
-	
+
 		if (source == null && target == null)
 			return;
 
@@ -99,7 +99,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 		if (layoutSource == null && layoutTarget == null) {
 			layoutSource = new LayoutNode(source, null, levelToAddFrom, this);
-			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom+1, this);
+			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom + 1, this);
 
 			nodeMap.put(source.getId(), layoutSource);
 			nodeMap.put(target.getId(), layoutTarget);
@@ -175,7 +175,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 				LayoutPoint currentNodePosition = new LayoutPoint(getWidth(nodeList.size(), j), getHeight(i));
 
-				if (GraphicsOperations.edgeIntersectsGraphicalObject(layoutEdge, currentNodePosition) && layoutSource.node != ln.node
+				if (currentNodePosition.edgeIntersectsGraphicalObject(layoutEdge) && layoutSource.node != ln.node
 						&& layoutTarget.node != ln.node) {
 					intersectingNodes.add(ln);
 					if (ln.node != null)
@@ -204,7 +204,7 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 							(currentNodePosition.x + neighboringNodePosition.x) / 2,
 							(currentNodePosition.y + neighboringNodePosition.y) / 2);
 
-					if (GraphicsOperations.edgeIntersectsGraphicalObject(layoutEdge, middlePosition) && layoutSource.node != ln.node
+					if (middlePosition.edgeIntersectsGraphicalObject(layoutEdge) && layoutSource.node != ln.node
 							&& layoutTarget.node != ln.node) {
 						intersectingNodes.add(ln);
 						continue;
@@ -254,13 +254,11 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	 */
 	protected void addNodeToLevel(LayoutNode node) {
 
-		int lastIndex = listHierarchy.size()-1;
+		int lastIndex = listHierarchy.size() - 1;
 		while (lastIndex < node.getLevel()) {
 			lastIndex++;
 			listHierarchy.add(new ArrayList<LayoutNode>());
 		}
-
-
 
 		List<LayoutNode> nodeList = listHierarchy.get(node.getLevel());
 
@@ -381,6 +379,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 				continue;
 			IterableMap<String, LayoutEdge> oppositeEdgesMap = edgeMap.get(target.node.getId() + source.node.getId());
 
+			// handle multiple edges between two nodes going into different directions ->
+			// does not handle cases where more than two edges are involved
 			if (oppositeEdgesMap != null) {
 				for (LayoutEdge le : specificEdgeMap)
 					le.sprite.setPosition(0.33, 0.33, 0);
@@ -388,6 +388,9 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 					le.sprite.setPosition(0.33, 0.33, 0);
 			}
 
+			
+			// handle multiple edges between two nodes all goind into the same direction ->
+			// handles arbitrarily many
 			if (specificEdgeMap.size() > 1) {
 
 				double modificatorUnit = 1.0 / specificEdgeMap.size();
@@ -427,9 +430,9 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 			LayoutPoint middlePoint1 = new LayoutPoint(lastEdge.getCenterX(), lastEdge.getCenterY(), MINIMAL_SIZE);
 			LayoutPoint middlePoint2 = new LayoutPoint(edge.getCenterX(), edge.getCenterY(), MINIMAL_SIZE);
 
-			if (GraphicsOperations.graphicalObjectsIntersect(middlePoint1, middlePoint2)) {
-				lastEdge.sprite.setPosition(0.25, 0.25, 0);
-				edge.sprite.setPosition(0.25, 0.25, 0);
+			if (middlePoint1.graphicalObjectsIntersect(middlePoint2)) {
+				lastEdge.sprite.setPosition(0.33, 0.33, 0);
+				edge.sprite.setPosition(0.33, 0.33, 0);
 			}
 
 			lastEdge = edge;
@@ -486,10 +489,8 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 		GraphicalObject gom = graphicalObjectList.get(m);
 
-		if (gom != layoutEdge && GraphicsOperations.graphicalObjectsIntersect(gom, layoutEdge)) 
+		if (gom != layoutEdge && gom.graphicalObjectsIntersect(layoutEdge))
 			return true;
-
-		
 
 		if (gom.compareTo(layoutEdge) >= 0)
 			return checkSingleSprite(layoutEdge, begin, m - 1);
@@ -516,9 +517,9 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 	}
 
 	private double getHeight(int index) {
-		
+
 		if (listHierarchy.size() == 1)
-			return -screenSize.getHeight()/2;
+			return -screenSize.getHeight() / 2;
 
 		return -screenSize.getHeight() * ((double) index / (listHierarchy.size() - 1));
 	}
@@ -572,11 +573,12 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 				continue;
 			}
 			Node node = nodesJoined[i].node;
-			
-			//start at Pi/2 (90°) and go around the circle step by step
+
+			// start at Pi/2 (90°) and go around the circle step by step
 			double angle = (Math.PI / 2) + (2 * Math.PI / nodesJoined.length) * i;
 
-			//calculate coordinates -> see https://www.mathopenref.com/coordparamellipse.html
+			// calculate coordinates -> see
+			// https://www.mathopenref.com/coordparamellipse.html
 			double x = a * Math.cos(angle);
 			double y = b * Math.sin(angle);
 
@@ -589,13 +591,12 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	}
 
-
 	/**
 	 * Removes the edge.
 	 *
 	 * @param stateSource the state source
 	 * @param stateTarget the state target
-	 * @param t the t
+	 * @param t           the t
 	 */
 	public void removeEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition t) {
 		IterableMap<String, LayoutEdge> specificEdgeMap = edgeMap.get(stateSource.getState() + stateTarget.getState());
@@ -634,9 +635,10 @@ protected final static Dimension NODE_SIZE = new Dimension(30, 30);
 		nodeMap.remove(node.getId());
 		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.getLevel());
 		nodeList.remove(layoutNode);
-				
-		//TODO should also handle nodeList.size()==0, but it should not be a big problem, except for maybe having empty 
-		
+
+		// TODO should also handle nodeList.size()==0, but it should not be a big
+		// problem, except for maybe having empty
+
 		graphicalObjectList.remove(layoutNode);
 		removeBlankNodes();
 		repaintNodes(true);

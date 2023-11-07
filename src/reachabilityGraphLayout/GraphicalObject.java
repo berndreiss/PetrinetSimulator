@@ -1,7 +1,8 @@
 package reachabilityGraphLayout;
 
+import org.graphstream.algorithm.Toolkit;
+import org.graphstream.graph.Node;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * Class representing an abstract graphical object.
@@ -112,4 +113,103 @@ abstract class GraphicalObject implements Comparable<GraphicalObject> {
 
 		return 0;
 	}
+	
+	/**
+	 * Graphical objects intersect.
+	 *
+	 * @param go1 the go 1
+	 * @param other the go 2
+	 * @return true, if successful
+	 */
+	public boolean graphicalObjectsIntersect(GraphicalObject other) {
+
+		if (pointIsInsideGraphicalObject(other.leftLowerCorner()))
+			return true;
+
+		if (pointIsInsideGraphicalObject(other.leftUpperCorner()))
+			return true;
+
+		if (pointIsInsideGraphicalObject(other.rightLowerCorner()))
+			return true;
+
+		if (pointIsInsideGraphicalObject(other.rightUpperCorner()))
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * Point is inside graphical object.
+	 *
+	 * @param go the go
+	 * @param p the p
+	 * @return true, if successful
+	 */
+	public boolean pointIsInsideGraphicalObject(LayoutPoint p) {
+		if (p == null)
+			return false;
+
+		if (p.y <= leftUpperCorner().y && p.y >= leftLowerCorner().y && p.x <= rightLowerCorner().x
+				&& p.x >= leftLowerCorner().x)
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * Edge intersects graphical object.
+	 *
+	 * @param layoutEdge the layout edge
+	 * @param go the go
+	 * @return true, if successful
+	 */
+	public boolean edgeIntersectsGraphicalObject(LayoutEdge layoutEdge) {
+
+		if (layoutEdge == null)
+			return false;
+
+		Node source = layoutEdge.source.node;
+		Node target = layoutEdge.target.node;
+
+		double[] sourcePosition = Toolkit.nodePosition(source);
+		double[] targetPosition = Toolkit.nodePosition(target);
+
+		LayoutPoint a = new LayoutPoint(sourcePosition[0], sourcePosition[1]);
+		LayoutPoint b = new LayoutPoint(targetPosition[0], targetPosition[1]);
+
+		LayoutLine edge = new LayoutLine(a, b);
+
+		LayoutPoint intersectionPoint;
+
+		intersectionPoint = edge.findIntersection(leftSide());
+
+		if (intersectionPoint != null && intersectionPoint.x >= Math.min(edge.a.x, edge.b.x)
+				&& intersectionPoint.x <= Math.max(edge.a.x, edge.b.x)
+				&& pointIsInsideGraphicalObject(intersectionPoint))
+			return true;
+
+		intersectionPoint = edge.findIntersection(rightSide());
+
+		if (intersectionPoint != null && intersectionPoint.x >= Math.min(edge.a.x, edge.b.x)
+				&& intersectionPoint.x <= Math.max(edge.a.x, edge.b.x)
+				&& pointIsInsideGraphicalObject(intersectionPoint))
+			return true;
+
+		intersectionPoint = edge.findIntersection(lowerSide());
+
+		if (intersectionPoint != null && intersectionPoint.y >= Math.min(edge.a.y, edge.b.y)
+				&& intersectionPoint.y <= Math.max(edge.a.y, edge.b.y)
+				&& pointIsInsideGraphicalObject(intersectionPoint))
+			return true;
+
+		intersectionPoint = edge.findIntersection(upperSide());
+		if (intersectionPoint != null && intersectionPoint.y >= Math.min(edge.a.y, edge.b.y)
+				&& intersectionPoint.y <= Math.max(edge.a.y, edge.b.y)
+				&& pointIsInsideGraphicalObject(intersectionPoint))
+			return true;
+
+		return false;
+
+	}
+
 }
