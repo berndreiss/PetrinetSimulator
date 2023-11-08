@@ -51,7 +51,7 @@ public class Layout {
 	private IterableMap<String, IterableMap<String, LayoutEdge>> edgeMap = new IterableMap<String, IterableMap<String, LayoutEdge>>();
 
 	/** The graphical object list. */
-	private List<GraphicalObject> graphicalObjectList = new ArrayList<GraphicalObject>();
+	private List<AbstractLayoutRectangle> graphicalObjectList = new ArrayList<AbstractLayoutRectangle>();
 
 	private List<LayoutEdge> potentialCulprits = new ArrayList<LayoutEdge>();
 
@@ -173,9 +173,9 @@ public class Layout {
 
 				LayoutNode ln = nodeList.get(j);
 
-				LayoutPoint currentNodePosition = new LayoutPoint(getWidth(nodeList.size(), j), getHeight(i));
+				LayoutRectangle currentNodePosition = new LayoutRectangle(getWidth(nodeList.size(), j), getHeight(i));
 
-				if (currentNodePosition.edgeIntersectsGraphicalObject(layoutEdge) && layoutSource.node != ln.node
+				if (currentNodePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.node != ln.node
 						&& layoutTarget.node != ln.node) {
 					intersectingNodes.add(ln);
 					if (ln.node != null)
@@ -187,24 +187,24 @@ public class Layout {
 				// we might want to push the node left/right regardless, because there have been
 				// intersectios before and the nodes might need to be pushed further
 				if (ln.node == null) {
-					LayoutPoint neighboringNodePosition = null;
+					LayoutRectangle neighboringNodePosition = null;
 
 					if (j > 0) {
-						neighboringNodePosition = new LayoutPoint(getWidth(nodeList.size(), j - 1), getHeight(i));
+						neighboringNodePosition = new LayoutRectangle(getWidth(nodeList.size(), j - 1), getHeight(i));
 					}
 
 					if (j < nodeList.size() - 1) {
-						neighboringNodePosition = new LayoutPoint(getWidth(nodeList.size(), j + 1), getHeight(i));
+						neighboringNodePosition = new LayoutRectangle(getWidth(nodeList.size(), j + 1), getHeight(i));
 					}
 
 					if (neighboringNodePosition == null)
 						continue;
 
-					LayoutPoint middlePosition = new LayoutPoint(
-							(currentNodePosition.x + neighboringNodePosition.x) / 2,
-							(currentNodePosition.y + neighboringNodePosition.y) / 2);
+					LayoutRectangle middlePosition = new LayoutRectangle(
+							(currentNodePosition.getX() + neighboringNodePosition.getX()) / 2,
+							(currentNodePosition.getY() + neighboringNodePosition.getY()) / 2);
 
-					if (middlePosition.edgeIntersectsGraphicalObject(layoutEdge) && layoutSource.node != ln.node
+					if (middlePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.node != ln.node
 							&& layoutTarget.node != ln.node) {
 						intersectingNodes.add(ln);
 						continue;
@@ -427,10 +427,10 @@ public class Layout {
 				continue;
 			}
 
-			LayoutPoint middlePoint1 = new LayoutPoint(lastEdge.getCenterX(), lastEdge.getCenterY(), MINIMAL_SIZE);
-			LayoutPoint middlePoint2 = new LayoutPoint(edge.getCenterX(), edge.getCenterY(), MINIMAL_SIZE);
+			LayoutRectangle middlePoint1 = new LayoutRectangle(lastEdge.getX(), lastEdge.getY(), MINIMAL_SIZE);
+			LayoutRectangle middlePoint2 = new LayoutRectangle(edge.getX(), edge.getY(), MINIMAL_SIZE);
 
-			if (middlePoint1.graphicalObjectsIntersect(middlePoint2)) {
+			if (middlePoint1.rectanglesIntersect(middlePoint2)) {
 				lastEdge.sprite.setPosition(0.33, 0.33, 0);
 				edge.sprite.setPosition(0.33, 0.33, 0);
 			}
@@ -487,9 +487,9 @@ public class Layout {
 
 		int m = (begin + end) / 2;
 
-		GraphicalObject gom = graphicalObjectList.get(m);
+		AbstractLayoutRectangle gom = graphicalObjectList.get(m);
 
-		if (gom != layoutEdge && gom.graphicalObjectsIntersect(layoutEdge))
+		if (gom != layoutEdge && gom.rectanglesIntersect(layoutEdge))
 			return true;
 
 		if (gom.compareTo(layoutEdge) >= 0)

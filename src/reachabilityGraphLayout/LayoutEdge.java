@@ -1,16 +1,18 @@
 package reachabilityGraphLayout;
 
+import org.graphstream.algorithm.Toolkit;
+import org.graphstream.graph.Node;
 import org.graphstream.ui.spriteManager.Sprite;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class LayoutEdge.
  */
-class LayoutEdge extends GraphicalObject {
-	
+class LayoutEdge extends AbstractLayoutRectangle {
+
 	/** The source. */
 	LayoutNode source;
-	
+
 	/** The target. */
 	LayoutNode target;
 
@@ -38,7 +40,7 @@ class LayoutEdge extends GraphicalObject {
 	public Sprite getSprite() {
 		return sprite;
 	}
-	
+
 	/**
 	 * Left lower corner.
 	 *
@@ -47,7 +49,7 @@ class LayoutEdge extends GraphicalObject {
 	@Override
 	public LayoutPoint leftLowerCorner() {
 
-		return new LayoutPoint(getCenterX() - Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() - Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -57,7 +59,7 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint leftUpperCorner() {
-		return new LayoutPoint(getCenterX() - Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() + Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -67,7 +69,7 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint rightLowerCorner() {
-		return new LayoutPoint(getCenterX() + Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() - Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
 	/**
@@ -77,27 +79,17 @@ class LayoutEdge extends GraphicalObject {
 	 */
 	@Override
 	public LayoutPoint rightUpperCorner() {
-		return new LayoutPoint(getCenterX() + Layout.SPRITE_SIZE.getWidth() / 2, getCenterY() + Layout.SPRITE_SIZE.getHeight() / 2);
+		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Gets the x.
-	 *
-	 * @return the x
-	 */
 	@Override
-	double getCenterX() {
-		return source.getCenterX() + (target.getCenterX() - source.getCenterX()) * sprite.getX();
+	public double getX() {
+		return source.getX() + (target.getX() - source.getX()) * sprite.getX();
 	}
 
-	/**
-	 * Gets the y.
-	 *
-	 * @return the y
-	 */
 	@Override
-	double getCenterY() {
-		return source.getCenterY() + (target.getCenterY() - source.getCenterY()) * sprite.getY();
+	public double getY() {
+		return source.getY() + (target.getY() - source.getY()) * sprite.getY();
 	}
 
 	/**
@@ -105,8 +97,21 @@ class LayoutEdge extends GraphicalObject {
 	 *
 	 * @return the double
 	 */
-	double length() {// returns the squareroot of (x_2-x_1)^2 + (y_2-y_1)^2
-		return Math.sqrt(Math.pow((target.getCenterX() - source.getCenterX()), 2) + Math.pow((target.getCenterY() - source.getCenterY()), 2));
+	double length() {// returns the square root of (x_2-x_1)^2 + (y_2-y_1)^2 (Pythagorean Theorem)
+		return Math.sqrt(Math.pow((target.getX() - source.getX()), 2) + Math.pow((target.getY() - source.getY()), 2));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public LayoutLine getEdgeLine() {
+		Node source = this.source.node;
+		Node target = this.target.node;
+		double[] sourcePosition = Toolkit.nodePosition(source);
+		double[] targetPosition = Toolkit.nodePosition(target);
+		LayoutPoint a = new LayoutPoint(sourcePosition[0], sourcePosition[1]);
+		LayoutPoint b = new LayoutPoint(targetPosition[0], targetPosition[1]);
+		return new LayoutLine(a, b);
+	}
 }

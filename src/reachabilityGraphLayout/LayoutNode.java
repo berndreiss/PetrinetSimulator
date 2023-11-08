@@ -10,7 +10,7 @@ import org.graphstream.graph.Node;
 /**
  * The Class LayoutNode.
  */
-class LayoutNode extends GraphicalObject {
+class LayoutNode extends AbstractLayoutRectangle {
 
 	/** The node. */
 	Node node;
@@ -112,23 +112,14 @@ class LayoutNode extends GraphicalObject {
 				coordinates[1] + Layout.NODE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Gets the x.
-	 *
-	 * @return the x
-	 */
 	@Override
-	double getCenterX() {
+	public double getX() {
 		return Toolkit.nodePosition(node)[0];
 	}
 
-	/**
-	 * Gets the y.
-	 *
-	 * @return the y
-	 */
+
 	@Override
-	double getCenterY() {
+	public double getY() {
 		return Toolkit.nodePosition(node)[1];
 	}
 }
