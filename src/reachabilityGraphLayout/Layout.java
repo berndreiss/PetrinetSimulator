@@ -17,44 +17,73 @@ import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class Layout.
+ * <p>
+ * This class implements the custom layouts in {@link LayoutType} for the
+ * <a href="https://graphstream-project.org/">GraphStream</a> library.
+ * </p>
  */
 public class Layout {
 
-//	private final static Dimension NODE_SIZE = new Dimension(125, 30);
+	/**
+	 * The Constant NODE_SIZE -> experience has shown that smaller widths produce
+	 * the best results.
+	 */
+	public final static Dimension NODE_SIZE = new Dimension(30, 30);
 
-	/** The Constant NODE_SIZE. */
-	protected final static Dimension NODE_SIZE = new Dimension(30, 30);
+	/**
+	 * The Constant SPRITE_SIZE -> experience has shown that smaller widths produce
+	 * the best results.
+	 */
+	public final static Dimension SPRITE_SIZE = new Dimension(30, 30);
 
-	/** The Constant SPRITE_SIZE. */
-	protected final static Dimension SPRITE_SIZE = new Dimension(30, 30);
-
-	/** The Constant MINIMAL_SIZE. */
+	/**
+	 * The Constant MINIMAL_SIZE -> used for creating artificial nodes for spreading
+	 * existing nodes apart.
+	 */
 	private final static Dimension MINIMAL_SIZE = new Dimension(10, 10);
 
-	/** The Constant MINIMAL_EDGE_LENGTH. */
+	/**
+	 * The Constant MINIMAL_EDGE_LENGTH -> edges can not be shorter than this value.
+	 */
 	private final static int MINIMAL_EDGE_LENGTH = 200;
 
-	/** The screen size. */
-	private Dimension screenSize = new Dimension(1000, 1000);
+	/** The base values for calculating x and y values. */
+	private Dimension positioningBasis = new Dimension(1000, 1000);
 
+	/** The layout type used (TREE by default). */
 	private LayoutType layoutType = LayoutType.TREE;
 
+	/** The number of most nodes in a row. */
 	private static int maxRowCount = 0;
 
-	/** The list hierarchy. */
+	/** The hierarchy containing all rows of nodes. */
 	List<List<LayoutNode>> listHierarchy = new ArrayList<List<LayoutNode>>();
 
+	/** The sprite manager of the GraphStream graph. */
 	private SpriteManager spriteMan;
 
+	/** A map keeping track of all nodes. */
 	private IterableMap<String, LayoutNode> nodeMap = new IterableMap<String, LayoutNode>();
+	/** A map keeping track of all edges. */
 	private IterableMap<String, IterableMap<String, LayoutEdge>> edgeMap = new IterableMap<String, IterableMap<String, LayoutEdge>>();
 
-	/** The graphical object list. */
+	/** Defines how much the edges in the CIRCLE layout are spread apart. */
+	private int circleSpreadRatio = 3;
+	/**
+	 * A list of all graphical objects including nodes an sprites (represented by
+	 * edges).
+	 */
 	private List<AbstractLayoutRectangle> graphicalObjectList = new ArrayList<AbstractLayoutRectangle>();
 
+	/**
+	 * A list of all edges that go over the next level in the hierarchy meaning they
+	 * potentially intersect with other edges (if they only go to the next level it
+	 * is highly likely that they intersect because edges in each level are sorted
+	 * according to parent).
+	 */
 	private List<LayoutEdge> potentialCulprits = new ArrayList<LayoutEdge>();
 
+	/** Directions used for shifting nodes in the TREE layout. */
 	private enum Direction {
 		LEFT, RIGHT;
 	}
@@ -62,12 +91,108 @@ public class Layout {
 	/**
 	 * Instantiates a new layout.
 	 *
-	 * @param spriteMan the sprite man
+	 * @param spriteMan  The sprite manager of the GraphStream graph.
+	 * @param layoutType The custom layout type used.
 	 */
 	public Layout(SpriteManager spriteMan, LayoutType layoutType) {
 		this.spriteMan = spriteMan;
 		this.layoutType = layoutType;
 	}
+
+//	/**
+//	 * Adds a new node and / or edge to the layout -> if only a node is passed it is
+//	 * added without and edge; if two nodes are passed and either node does not
+//	 * exist in the layout it is created and an edge is added; if both exist only
+//	 * the edge is added.
+//	 *
+//	 * @param source         The source node for the new edge.
+//	 * @param target         The target node for the new edge.
+//	 * @param transition     The transition which created the edge.
+//	 * @param levelToAddFrom The level from which the transition was fired from.
+//	 */
+//	public void add(Node source, Node target, Transition transition, int levelToAddFrom) {
+//
+//		// if no nodes are passed abort
+//		if (source == null && target == null)
+//			return;
+//
+//		// if only one node is passed add a node and return
+//		if (source == null || target == null) {
+//			// get the non null node
+//			Node node = source == null ? target : source;
+//
+//			// if it does not already exist create the node and add it to the layout
+//			if (!nodeMap.containsKey(node.getId())) {
+//				LayoutNode layoutNode = new LayoutNode(node, null, 0, this);
+//				nodeMap.put(node.getId(), layoutNode);
+//				graphicalObjectList.add(layoutNode);
+//			}
+//			return;
+//
+//		}
+//
+//		// get the nodes from the node map
+//		LayoutNode layoutSource = nodeMap.get(source.getId());
+//		LayoutNode layoutTarget = nodeMap.get(target.getId());
+//
+//		// if both do not exist add them both to the layout
+//		if (layoutSource == null && layoutTarget == null) {
+//			// add source without a parent
+//			layoutSource = new LayoutNode(source, null, levelToAddFrom, this);
+//			// add target with source as parent
+//			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom + 1, this);
+//
+//			nodeMap.put(source.getId(), layoutSource);
+//			nodeMap.put(target.getId(), layoutTarget);
+//			graphicalObjectList.add(layoutSource);
+//			graphicalObjectList.add(layoutTarget);
+//		}
+//
+//		// if source == null add only source
+//		else if (layoutSource == null) {
+//			layoutSource = new LayoutNode(source, null, levelToAddFrom, this);
+//
+//			nodeMap.put(source.getId(), layoutSource);
+//			graphicalObjectList.add(layoutSource);
+//		}
+//		// otherwise add only target
+//		else {
+//			layoutTarget = new LayoutNode(target, layoutSource, levelToAddFrom + 1, this);
+//
+//			nodeMap.put(target.getId(), layoutTarget);
+//			graphicalObjectList.add(layoutTarget);
+//
+//		}
+//
+//		// get the edge string and according edge list from edge map
+//		String edgeString = source.getId() + target.getId();
+//		IterableMap<String, LayoutEdge> edgeList = edgeMap.get(edgeString);
+//
+//		// if edge list does not exist add a new entry to the map
+//		if (edgeList == null) {
+//			edgeMap.put(edgeString, new IterableMap<String, LayoutEdge>());
+//			edgeList = edgeMap.get(edgeString);
+//		}
+//
+//		// if edge created by transition does already exist abort
+//		if (edgeList.containsKey(transition.getId()))
+//			return;
+//
+//		// get the sprite from the sprite manager
+//		Sprite spriteToAdd = spriteMan.getSprite("s" + source.getId() + target.getId() + transition.getId());
+//
+//		// create a new layout edge and add it to the layout
+//		LayoutEdge layoutEdge = new LayoutEdge(layoutSource, layoutTarget, spriteToAdd);
+//		edgeList.put(transition.getId(), layoutEdge);
+//		graphicalObjectList.add(layoutEdge);
+//		
+//		// check if it goes beyong the previous / next level and add to potential culprits if so
+//		if (!(Math.abs(layoutSource.getLevel() - layoutTarget.getLevel()) <= 1)) 
+//			potentialCulprits.add(layoutEdge);
+//
+//		repaintNodes(true);
+//
+//	}
 
 	/**
 	 * Adds the.
@@ -148,7 +273,6 @@ public class Layout {
 		repaintNodes(true);
 
 	}
-
 	private boolean checkEdgeIntersection(LayoutEdge layoutEdge) {
 
 		LayoutNode layoutSource = layoutEdge.source;
@@ -175,10 +299,10 @@ public class Layout {
 
 				LayoutRectangle currentNodePosition = new LayoutRectangle(getWidth(nodeList.size(), j), getHeight(i));
 
-				if (currentNodePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.node != ln.node
-						&& layoutTarget.node != ln.node) {
+				if (currentNodePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.getNode() != ln.getNode()
+						&& layoutTarget.getNode() != ln.getNode()) {
 					intersectingNodes.add(ln);
-					if (ln.node != null)
+					if (ln.getNode() != null)
 						nonNullNodesIntersecting = true;
 					continue;
 				}
@@ -186,7 +310,7 @@ public class Layout {
 				// if the LayoutNode is a blank node also check the middle -> if it intersects
 				// we might want to push the node left/right regardless, because there have been
 				// intersectios before and the nodes might need to be pushed further
-				if (ln.node == null) {
+				if (ln.getNode() == null) {
 					LayoutRectangle neighboringNodePosition = null;
 
 					if (j > 0) {
@@ -204,8 +328,8 @@ public class Layout {
 							(currentNodePosition.getX() + neighboringNodePosition.getX()) / 2,
 							(currentNodePosition.getY() + neighboringNodePosition.getY()) / 2);
 
-					if (middlePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.node != ln.node
-							&& layoutTarget.node != ln.node) {
+					if (middlePosition.edgeIntersectsRectangle(layoutEdge) && layoutSource.getNode() != ln.getNode()
+							&& layoutTarget.getNode() != ln.getNode()) {
 						intersectingNodes.add(ln);
 						continue;
 					}
@@ -265,7 +389,7 @@ public class Layout {
 		boolean added = false;
 
 		for (LayoutNode ln : nodeList) {
-			if (ln.node == null)
+			if (ln.getNode() == null)
 				continue;
 
 			if (ln.getTag().compareTo(node.getTag()) < 0)
@@ -289,7 +413,7 @@ public class Layout {
 
 			for (int i = 0; i < nodeList.size(); i++) {
 				LayoutNode ln = nodeList.get(i);
-				if (ln.node == null) {
+				if (ln.getNode() == null) {
 					nodeList.remove(i);
 					hasEmpty = true;
 					break;
@@ -321,10 +445,10 @@ public class Layout {
 
 				LayoutNode node = nodeList.get(i);
 
-				if (node.node == null)
+				if (node.getNode() == null)
 					continue;
 
-				node.node.setAttribute("xy", getWidth(nodeList.size(), i), getHeight(node.getLevel()));
+				node.getNode().setAttribute("xy", getWidth(nodeList.size(), i), getHeight(node.getLevel()));
 			}
 
 		}
@@ -373,11 +497,12 @@ public class Layout {
 			LayoutNode source = specificEdgeMap.iterator().next().source;
 			LayoutNode target = specificEdgeMap.iterator().next().target;
 
-			String oppositeEdgesString = target.node.getId() + source.node.getId();
+			String oppositeEdgesString = target.getNode().getId() + source.getNode().getId();
 
 			if (handledMaps.containsKey(oppositeEdgesString))
 				continue;
-			IterableMap<String, LayoutEdge> oppositeEdgesMap = edgeMap.get(target.node.getId() + source.node.getId());
+			IterableMap<String, LayoutEdge> oppositeEdgesMap = edgeMap
+					.get(target.getNode().getId() + source.getNode().getId());
 
 			// handle multiple edges between two nodes going into different directions ->
 			// does not handle cases where more than two edges are involved
@@ -388,7 +513,6 @@ public class Layout {
 					le.sprite.setPosition(0.33, 0.33, 0);
 			}
 
-			
 			// handle multiple edges between two nodes all goind into the same direction ->
 			// handles arbitrarily many
 			if (specificEdgeMap.size() > 1) {
@@ -505,7 +629,7 @@ public class Layout {
 			List<LayoutNode> nodesToRemove = new ArrayList<LayoutNode>();
 
 			for (LayoutNode ln : nodeList)
-				if (ln.node == null)
+				if (ln.getNode() == null)
 					nodesToRemove.add(ln);
 
 			for (LayoutNode ln : nodesToRemove)
@@ -519,17 +643,17 @@ public class Layout {
 	private double getHeight(int index) {
 
 		if (listHierarchy.size() == 1)
-			return -screenSize.getHeight() / 2;
+			return -positioningBasis.getHeight() / 2;
 
-		return -screenSize.getHeight() * ((double) index / (listHierarchy.size() - 1));
+		return -positioningBasis.getHeight() * ((double) index / (listHierarchy.size() - 1));
 	}
 
 	private double getWidth(int listSize, int index) {
 
 		if (listSize == 1)
-			return screenSize.getWidth() / 2;
+			return positioningBasis.getWidth() / 2;
 
-		return screenSize.getWidth() * (maxRowCount - listSize + index * 2) / (2 * maxRowCount - 2);
+		return positioningBasis.getWidth() * (maxRowCount - listSize + index * 2) / (2 * maxRowCount - 2);
 	}
 
 	private void circlify() {
@@ -546,16 +670,15 @@ public class Layout {
 
 		LayoutNode[] nodesJoined = new LayoutNode[nodesTotal.size()];
 
-		int circleSpacing = 3;
 		int indexOffset = 0;
 
 		int j = 0;
 		int totalCounter = 0;
 
-		while (j * circleSpacing + indexOffset < nodesTotal.size()) {
-			nodesJoined[j * circleSpacing + indexOffset] = nodesTotal.get(totalCounter);
+		while (j * circleSpreadRatio + indexOffset < nodesTotal.size()) {
+			nodesJoined[j * circleSpreadRatio + indexOffset] = nodesTotal.get(totalCounter);
 
-			if (((j + 1) * circleSpacing + indexOffset) >= nodesTotal.size() && (indexOffset + 1) < circleSpacing) {
+			if (((j + 1) * circleSpreadRatio + indexOffset) >= nodesTotal.size() && (indexOffset + 1) < circleSpreadRatio) {
 				j = 0;
 				indexOffset++;
 			} else
@@ -569,10 +692,10 @@ public class Layout {
 
 			LayoutNode layoutNode = nodesJoined[i];
 
-			if (layoutNode.node == null) {
+			if (layoutNode.getNode() == null) {
 				continue;
 			}
-			Node node = nodesJoined[i].node;
+			Node node = nodesJoined[i].getNode();
 
 			// start at Pi/2 (90°) and go around the circle step by step
 			double angle = (Math.PI / 2) + (2 * Math.PI / nodesJoined.length) * i;
@@ -659,6 +782,10 @@ public class Layout {
 	 * @param layoutType the new layout type
 	 */
 	public void setLayoutType(LayoutType layoutType) {
+		
+		if (layoutType == LayoutType.CIRCLE && this.layoutType == LayoutType.CIRCLE)
+			circleSpreadRatio = (circleSpreadRatio + 1) % 3;
+		else
 		this.layoutType = layoutType;
 		repaintNodes(true);
 

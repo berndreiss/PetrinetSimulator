@@ -5,7 +5,7 @@ package reachabilityGraphLayout;
  * Class defining methods for a rectangle (and implementing some).
  * </p>
  */
-abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface{
+abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
 
 	/**
 	 * Get the left lower corner of the object.
@@ -126,15 +126,15 @@ abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRecta
 	 * @param p The point to be checked.
 	 * @return true, if it lies inside the rectangle, false if not
 	 */
-	public boolean pointIsInsideRectangle(LayoutPoint p) {
+	public boolean pointIsInsideRectangle(LayoutPointInterface p) {
 		if (p == null)// safety check
 			return false;
 
 		// check whether y coordinate of point lies within the coordinates of upper and
 		// lower corners (which one does not matter, as they are the same), do the same
 		// with the x coordinate
-		if (p.getY() <= leftUpperCorner().getY() && p.getY() >= leftLowerCorner().getY() && p.getX() <= rightLowerCorner().getX()
-				&& p.getX() >= leftLowerCorner().getX())
+		if (p.getY() <= leftUpperCorner().getY() && p.getY() >= leftLowerCorner().getY()
+				&& p.getX() <= rightLowerCorner().getX() && p.getX() >= leftLowerCorner().getX())
 			return true;
 
 		// if above check failed return false
@@ -160,30 +160,33 @@ abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRecta
 		// if non of the sides have intersection points that lie on the edge and within
 		// the rectangle return false
 		// keep track of current intersection point
-		LayoutPoint intersectionPoint;
+		LayoutPointInterface intersectionPoint;
 
 		// check left side
 		intersectionPoint = edge.findIntersectionPoint(leftSide());
-		if (intersectionPoint != null && intersectionPoint.getX() >= Math.min(edge.a.getX(), edge.b.getX())
-				&& intersectionPoint.getX() <= Math.max(edge.a.getX(), edge.b.getX()) && pointIsInsideRectangle(intersectionPoint))
+		if (intersectionPoint != null && intersectionPoint.getX() >= edge.getXMin()
+				&& intersectionPoint.getX() <= edge.getXMax() && pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// check right side
 		intersectionPoint = edge.findIntersectionPoint(rightSide());
-		if (intersectionPoint != null && intersectionPoint.getX() >= Math.min(edge.a.getX(), edge.b.getX())
-				&& intersectionPoint.getX() <= Math.max(edge.a.getX(), edge.b.getX()) && pointIsInsideRectangle(intersectionPoint))
+		if (intersectionPoint != null && intersectionPoint.getX() >= edge.getXMin()
+				&& intersectionPoint.getX() <= edge.getXMax()
+				&& pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// check lower side
 		intersectionPoint = edge.findIntersectionPoint(lowerSide());
-		if (intersectionPoint != null && intersectionPoint.getY() >= Math.min(edge.a.getY(), edge.b.getY())
-				&& intersectionPoint.getY() <= Math.max(edge.a.getY(), edge.b.getY()) && pointIsInsideRectangle(intersectionPoint))
+		if (intersectionPoint != null && intersectionPoint.getY() >= edge.getYMin()
+				&& intersectionPoint.getY() <= edge.getYMax()
+				&& pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// check upper side
 		intersectionPoint = edge.findIntersectionPoint(upperSide());
-		if (intersectionPoint != null && intersectionPoint.getY() >= Math.min(edge.a.getY(), edge.b.getY())
-				&& intersectionPoint.getY() <= Math.max(edge.a.getY(), edge.b.getY()) && pointIsInsideRectangle(intersectionPoint))
+		if (intersectionPoint != null && intersectionPoint.getY() >= edge.getYMin()
+				&& intersectionPoint.getY() <= edge.getYMax()
+				&& pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// all checks failed

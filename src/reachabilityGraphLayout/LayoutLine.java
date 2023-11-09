@@ -1,16 +1,17 @@
 package reachabilityGraphLayout;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LayoutLine.
+ * <p>
+ * Class representing a line.
+ * </p>
  */
-class LayoutLine {
+public class LayoutLine {
 
-	/** The a. */
-	protected LayoutPoint a;
+	/** The first point defining the line. */
+	private LayoutPointInterface a;
 
-	/** The b. */
-	protected LayoutPoint b;
+	/** The second point defining the line. */
+	private LayoutPointInterface b;
 
 	/**
 	 * Instantiates a new layout line.
@@ -18,26 +19,27 @@ class LayoutLine {
 	 * @param a the a
 	 * @param b the b
 	 */
-	LayoutLine(LayoutPoint a, LayoutPoint b) {
+	LayoutLine(LayoutPointInterface a, LayoutPointInterface b) {
 		this.a = a;
 		this.b = b;
 	}
 
 	/**
-	 * Find intersection.
+	 * Finds the intersection between two straight lines (code adapted from <a href=
+	 * "https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/">GeeksForGeeks</a>)
+	 * which does not have to be on either line. Will return null if lines are
+	 * parallel (including overlapping).
 	 *
-	 * @param l1    the l 1
-	 * @param other the l 2
-	 * @return the layout point
+	 * @param other The line for which to find intersection.
+	 * @return the point where the lines intersect, null if there is no unambiguous
+	 *         single point
 	 */
-	public LayoutPoint findIntersectionPoint(LayoutLine other) {
+	public LayoutPointInterface findIntersectionPoint(LayoutLine other) {
 
-		// https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/
-		
-		LayoutPoint p1 = this.a;
-		LayoutPoint p2 = this.b;
-		LayoutPoint p3 = other.a;
-		LayoutPoint p4 = other.b;
+		LayoutPointInterface p1 = this.a;
+		LayoutPointInterface p2 = this.b;
+		LayoutPointInterface p3 = other.a;
+		LayoutPointInterface p4 = other.b;
 
 		// Line p1p2 represented as a1x + b1y = c1
 		double a1 = p2.getX() - p1.getY();
@@ -57,46 +59,42 @@ class LayoutLine {
 		double x = (b2 * c1 - b1 * c2) / determinant;
 		double y = (a1 * c2 - a2 * c1) / determinant;
 		return new LayoutPoint(x, y);
-		
-//		Double s1, s2, c1 = 0.0, c2 = 0.0;
-//
-//		// Calculate the slopes, handling vertical lines
-//		if (p2.x - p1.x == 0) {
-//			s1 = null;
-//		} else {
-//			s1 = (p2.y - p1.y) / (p2.x - p1.x);
-//		}
-//
-//		if (p4.x - p3.x == 0) {
-//			s2 = null;
-//		} else {
-//			s2 = (p4.y - p3.y) / (p4.x - p3.x);
-//		}
-//
-//		// If both lines are vertical there are non or infinitely many intersection
-//		// points
-//		if (s1 == null && s2 == null)
-//			return null;
-//
-//		if (s1 != null)
-//			c1 = p1.y - s1 * p1.x;
-//		if (s2 != null)
-//			c2 = p3.y - s2 * p3.x;
-//
-//		// If only one line is vertical
-//		if (s1 == null)
-//			return new LayoutPoint(p1.x, s2 * p1.x + c2);
-//		if (s2 == null)
-//			return new LayoutPoint(p3.x, s1 * p3.x + c1);
-//
-//		// If both lines are horizontal there are non or infinitely many intersection
-//		// points
-//		if (s1.equals(s2))
-//			return null;
-//
-//		double xIntersection = (c2 - c1) / (s1 - s2);
-//		double yIntersection = s1 * xIntersection + c1;
-//
-//		return new LayoutPoint(xIntersection, yIntersection);
+
+	}
+
+	/**
+	 * Get the biggest x coordinate on the line.
+	 * 
+	 * @return biggest x coordinate
+	 */
+	public double getXMax() {
+		return Math.max(a.getX(), b.getX());
+	}
+
+	/**
+	 * Get the smallest x coordinate on the line.
+	 * 
+	 * @return smallest x coordinate
+	 */
+	public double getXMin() {
+		return Math.min(a.getX(), b.getX());
+	}
+
+	/**
+	 * Get the biggest y coordinate on the line.
+	 * 
+	 * @return biggest y coordinate
+	 */
+	public double getYMax() {
+		return Math.max(a.getY(), b.getY());
+	}
+
+	/**
+	 * Get the smallest y coordinate on the line.
+	 * 
+	 * @return smallest y coordinate
+	 */
+	public double getYMin() {
+		return Math.min(a.getY(), b.getY());
 	}
 }

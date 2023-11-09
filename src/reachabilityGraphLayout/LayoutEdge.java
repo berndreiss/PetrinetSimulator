@@ -1,30 +1,33 @@
 package reachabilityGraphLayout;
 
-import org.graphstream.algorithm.Toolkit;
-import org.graphstream.graph.Node;
 import org.graphstream.ui.spriteManager.Sprite;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LayoutEdge.
+ * <p>
+ * Class representing an edge in the layout.
+ * </p>
+ * 
+ * <p>
+ * Because it contains a GraphStream sprite it extends the abstract rectangle class.
+ * </p>
  */
 class LayoutEdge extends AbstractLayoutRectangle {
 
-	/** The source. */
+	/** The source node of the edge. */
 	LayoutNode source;
 
-	/** The target. */
+	/** The target node of the edge. */
 	LayoutNode target;
 
-	/** The sprite. */
+	/** The sprite from GraphStream */
 	Sprite sprite;
 
 	/**
 	 * Instantiates a new layout edge.
 	 *
-	 * @param source the source
-	 * @param target the target
-	 * @param sprite the sprite
+	 * @param source The source node.
+	 * @param target The target node.
+	 * @param sprite The sprite from GraphStream.
 	 */
 	LayoutEdge(LayoutNode source, LayoutNode target, Sprite sprite) {
 		this.source = source;
@@ -41,42 +44,22 @@ class LayoutEdge extends AbstractLayoutRectangle {
 		return sprite;
 	}
 
-	/**
-	 * Left lower corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint leftLowerCorner() {
 
 		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Left upper corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint leftUpperCorner() {
 		return new LayoutPoint(getX() - Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Right lower corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint rightLowerCorner() {
 		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() - Layout.SPRITE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Right upper corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint rightUpperCorner() {
 		return new LayoutPoint(getX() + Layout.SPRITE_SIZE.getWidth() / 2, getY() + Layout.SPRITE_SIZE.getHeight() / 2);
@@ -93,25 +76,20 @@ class LayoutEdge extends AbstractLayoutRectangle {
 	}
 
 	/**
-	 * Length.
+	 * Get the length calculated using Pythagorean Theorem: the square root of (x_2-x_1)^2 + (y_2-y_1)^2.
 	 *
-	 * @return the double
+	 * @return the length of the edge
 	 */
-	double length() {// returns the square root of (x_2-x_1)^2 + (y_2-y_1)^2 (Pythagorean Theorem)
+	double length() {
 		return Math.sqrt(Math.pow((target.getX() - source.getX()), 2) + Math.pow((target.getY() - source.getY()), 2));
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Get the edge as an instance of LayoutLine.
+	 * @return the edge as a layout line
 	 */
 	public LayoutLine getEdgeLine() {
-		Node source = this.source.node;
-		Node target = this.target.node;
-		double[] sourcePosition = Toolkit.nodePosition(source);
-		double[] targetPosition = Toolkit.nodePosition(target);
-		LayoutPoint a = new LayoutPoint(sourcePosition[0], sourcePosition[1]);
-		LayoutPoint b = new LayoutPoint(targetPosition[0], targetPosition[1]);
-		return new LayoutLine(a, b);
+		return new LayoutLine(source, target);
 	}
+
 }

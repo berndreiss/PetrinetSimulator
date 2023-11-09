@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"reachabilityGraphLayout","l":"LayoutType"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"reachabilityGraphLayout","l":"LayoutLine"}];updateSearchResults();

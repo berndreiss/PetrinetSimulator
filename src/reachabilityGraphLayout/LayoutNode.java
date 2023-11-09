@@ -1,37 +1,42 @@
 package reachabilityGraphLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Node;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LayoutNode.
+ * <p>
+ * Class representing a node in the {@link Layout}.
+ * </p>
+ * 
+ * <p>
+ * Because nodes are implemented as rectangles in the layout the LayoutNode
+ * extends the abstract rectangle class. It therefore also implements the
+ * {@link LayoutPointInterface} where the point is represented by the center of
+ * the rectangle (and therefore by the (x,y) coordinates of the nodes in the
+ * GraphStream graph).
+ * </p>
  */
 class LayoutNode extends AbstractLayoutRectangle {
 
-	/** The node. */
-	Node node;
-	
-	/** The parent. */
-	private LayoutNode parent;
-	
-	/** The children. */
-	private List<LayoutNode> children = new ArrayList<LayoutNode>();
+	/** The GraphStream node. */
+	private Node node;
 
+	/** The parent node. */
+	private LayoutNode parent;
+
+	/** The level in the layout hierarchy the node is in. */
 	private int level;
 
+	/** The layout instance the node is in. */
 	private Layout layout;
-	
+
 	/**
 	 * Instantiates a new layout node.
 	 *
-	 * @param node the node
-	 * @param parent the parent
-	 * @param level the level
-	 * @param layout the layout
+	 * @param node   The GraphStream node.
+	 * @param parent The parent layout node.
+	 * @param level  The level in the layout hierarchy.
+	 * @param layout The layout instance the node is in.
 	 */
 	LayoutNode(Node node, LayoutNode parent, int level, Layout layout) {
 		this.node = node;
@@ -39,36 +44,40 @@ class LayoutNode extends AbstractLayoutRectangle {
 		this.level = level;
 		this.layout = layout;
 
-		if (parent != null)
-			parent.children.add(this);
-
 		if (node != null)
 			layout.addNodeToLevel(this);
 	}
 
 	/**
-	 * Gets the tag.
+	 * Get the GraphStream node.
+	 * 
+	 * @return the GraphStream node
+	 */
+	public Node getNode() {
+		return node;
+	}
+
+	/**
+	 * Get a tag for the node. The tag consists of the parent tag (if the parent !=
+	 * null) plus the own index. Nodes in each level can then be sorted by their
+	 * parent and own index so that nodes are closer to their parent creating less
+	 * intersections between edges.
 	 *
-	 * @return the tag
+	 * @return the tag for the node
 	 */
 	public String getTag() {
 		return parent == null ? "" : parent.getTag() + layout.listHierarchy.get(level).indexOf(this);
 	}
-	
+
 	/**
 	 * Gets the level.
 	 *
-	 * @return the level
+	 * @return the level of the node in the layout hierarchy
 	 */
 	public int getLevel() {
 		return level;
 	}
 
-	/**
-	 * Left lower corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint leftLowerCorner() {
 		double[] coordinates = Toolkit.nodePosition(node);
@@ -76,11 +85,6 @@ class LayoutNode extends AbstractLayoutRectangle {
 				coordinates[1] - Layout.NODE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Left upper corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint leftUpperCorner() {
 		double[] coordinates = Toolkit.nodePosition(node);
@@ -88,11 +92,6 @@ class LayoutNode extends AbstractLayoutRectangle {
 				coordinates[1] + Layout.NODE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Right lower corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint rightLowerCorner() {
 		double[] coordinates = Toolkit.nodePosition(node);
@@ -100,11 +99,6 @@ class LayoutNode extends AbstractLayoutRectangle {
 				coordinates[1] - Layout.NODE_SIZE.getHeight() / 2);
 	}
 
-	/**
-	 * Right upper corner.
-	 *
-	 * @return the layout point
-	 */
 	@Override
 	public LayoutPoint rightUpperCorner() {
 		double[] coordinates = Toolkit.nodePosition(node);
@@ -116,7 +110,6 @@ class LayoutNode extends AbstractLayoutRectangle {
 	public double getX() {
 		return Toolkit.nodePosition(node)[0];
 	}
-
 
 	@Override
 	public double getY() {

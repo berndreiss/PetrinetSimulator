@@ -32,7 +32,7 @@ public class LayoutLineTest {
         LayoutPoint b2 = new LayoutPoint(10, 0);
         LayoutLine line2 = new LayoutLine(a2, b2);
 
-        LayoutPoint intersection = line1.findIntersectionPoint(line2);
+        LayoutPointInterface intersection = line1.findIntersectionPoint(line2);
 
         assertNotNull("Lines should intersect", intersection);
         assertEquals("Intersection X coordinate is incorrect", 5.0, intersection.getX(), 0.001);
@@ -53,7 +53,7 @@ public class LayoutLineTest {
         LayoutPoint b2 = new LayoutPoint(10, 11);
         LayoutLine line2 = new LayoutLine(a2, b2);
 
-        LayoutPoint intersection = line1.findIntersectionPoint(line2);
+        LayoutPointInterface intersection = line1.findIntersectionPoint(line2);
 
         assertNull("Lines should not intersect", intersection);
         System.out.println("LINE NO INTERSECTION TEST PASSED");
@@ -72,7 +72,7 @@ public class LayoutLineTest {
         LayoutPoint b2 = new LayoutPoint(10, 10);
         LayoutLine line2 = new LayoutLine(a2, b2);
 
-        LayoutPoint intersection = line1.findIntersectionPoint(line2);
+        LayoutPointInterface intersection = line1.findIntersectionPoint(line2);
 
         assertNull("Coincident lines have infinite intersections", intersection);
         System.out.println("COINCIDENT LINE TEST PASSED");
@@ -91,7 +91,7 @@ public class LayoutLineTest {
         LayoutPoint b2 = new LayoutPoint(10, 5);
         LayoutLine line2 = new LayoutLine(a2, b2);
 
-        LayoutPoint intersection = line1.findIntersectionPoint(line2);
+        LayoutPointInterface intersection = line1.findIntersectionPoint(line2);
 
         assertNotNull("Lines should intersect", intersection);
         assertEquals("Intersection X coordinate is incorrect", 5.0, intersection.getX(), 0.001);
