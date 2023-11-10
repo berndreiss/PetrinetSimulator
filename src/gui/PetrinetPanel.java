@@ -46,9 +46,10 @@ import reachabilityGraphLayout.LayoutType;
  * </p>
  * 
  * It holds a horizontal {@link ResizableSplitPane} containing a
- * {@link GraphStreamPetrinetGraph} on the left and a {@link GraphStreamReachabilityGraph}
- * on the right. Creates and holds a {@link PetrinetViewerController} managing
- * all interactions with the data model. The graphs are implemented using the
+ * {@link GraphStreamPetrinetGraph} on the left and a
+ * {@link GraphStreamReachabilityGraph} on the right. Creates and holds a
+ * {@link PetrinetViewerController} managing all interactions with the data
+ * model. The graphs are implemented using the
  * <a href="https://graphstream-project.org/">GraphStream</a> library.
  * Additionally creates an {@link PetrinetEditorController} through which the
  * user can edit the {@link Petrinet} using the {@link PetrinetToolbar}.
@@ -95,10 +96,11 @@ public class PetrinetPanel extends JPanel {
 	private PetrinetEditorController editor;
 
 	/**
-	 * Keep track whether petrinetController is analysing -> do not adjust arrow
-	 * heads until finished
+	 * Keep track whether arrow head should be adjusted -> takes time which
+	 * accumulates when doing multiple tasks in quick succession (e.g. when
+	 * analyzing a petrinet)
 	 */
-	private boolean analysing = false;
+	private boolean adjustArrowHeads = true;
 
 	/**
 	 * keeping track whether it is the first time adjusting the arrow heads since
@@ -168,7 +170,8 @@ public class PetrinetPanel extends JPanel {
 		if (reachabilityPanel.getComponentCount() != 0)
 			reachabilityPanel.remove(reachabilityViewPanel);
 
-		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetController.getReachabilityGraphModel(), layoutType);
+		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetController.getReachabilityGraphModel(),
+				layoutType);
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
@@ -236,9 +239,9 @@ public class PetrinetPanel extends JPanel {
 	public PetrinetAnalyser analyse() {
 
 		// do not adjust arrow heads while analysing but adjust them afterwards
-		this.analysing = true;
+		this.adjustArrowHeads = false;
 		PetrinetAnalyser analyser = petrinetController.analyse();
-		this.analysing = false;
+		this.adjustArrowHeads = true;
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
 		return analyser;
 	}
@@ -408,7 +411,8 @@ public class PetrinetPanel extends JPanel {
 		graph.setAttribute("ui.antialias");
 
 		// set auto layout for reachability graphs if it has the layout type
-		if (graph instanceof GraphStreamReachabilityGraph && ((GraphStreamReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
+		if (graph instanceof GraphStreamReachabilityGraph
+				&& ((GraphStreamReachabilityGraph) graph).getLayoutType() == LayoutType.AUTOMATIC)
 			viewer.enableAutoLayout();
 		else
 			viewer.disableAutoLayout();
@@ -531,7 +535,7 @@ public class PetrinetPanel extends JPanel {
 	private void adjustArrowHeads() {
 
 		// if analysing do not adjust -> invokes unnecassary waiting time
-		if (analysing)
+		if (!adjustArrowHeads)
 			return;
 
 		// wait a moment for GraphStream to do its thing -> otherwise frame might resize
@@ -555,6 +559,16 @@ public class PetrinetPanel extends JPanel {
 
 		}
 
+	}
+
+	/**
+	 * Reset the reachability graph.
+	 */
+	public void resetReachabilityGraph() {
+		resetReachabilityZoom();
+		adjustArrowHeads = false;
+		petrinetController.resetReachabilityGraph();
+		adjustArrowHeads = true;
 	}
 
 }

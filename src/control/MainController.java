@@ -713,8 +713,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void onReset() {
 		if (currentPetrinetPanel == null)
 			return;
-		currentPetrinetPanel.resetReachabilityZoom();
-		currentPetrinetPanel.getPetrinetController().resetReachabilityGraph();
+		currentPetrinetPanel.resetReachabilityGraph();
 	}
 
 	@Override
@@ -769,8 +768,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onToggleCircleLayout() {
-		if (layoutType == LayoutType.CIRCLE)
-			return;
+//		if (layoutType == LayoutType.CIRCLE)
+//			return;
 		layoutType = LayoutType.CIRCLE;
 		parent.getToolbar().toggleCircleLayoutButton();
 

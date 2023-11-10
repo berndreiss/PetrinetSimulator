@@ -15,6 +15,8 @@ import listeners.AdjustArrowHeadsListener;
 import reachabilityGraphLayout.Layout;
 import reachabilityGraphLayout.LayoutType;
 
+//TODO check example 115 -> if you click through all the options manually and than change between auto/non-auto layout one edge connects to the source for some reason
+//TODO arrow heads not adjusting when adding to auto layout
 /**
  *
  * <p>
@@ -456,6 +458,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 	/**
 	 * Check whether graph has less than two nodes.
+	 * 
 	 * @return true if 0 or 1 nodes, false otherwise
 	 */
 	public boolean hasLessThanTwoNodes() {

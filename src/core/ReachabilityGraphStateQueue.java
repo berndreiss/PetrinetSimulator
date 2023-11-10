@@ -167,24 +167,28 @@ public class ReachabilityGraphStateQueue {
 		if (currentState.isFirstState() && toolbarToggleListener != null)
 			toolbarToggleListener.onUndoChanged();
 
+		
 		reachabilityGraphModel.setPetrinetQueue(currentState.nextState);
 
 		currentState = currentState.nextState;
+
+		System.out.println("CURRENT STATE: " + currentState.getState().getState());
+
 		Petrinet petrinet = reachabilityGraphModel.getPetrinet();
 
+		petrinet.setState(currentState.getState());
+
+		System.out.println("PETRINET: " + petrinet.getStateString());
 		if (currentState.stateAdded() != Added.NOTHING) {
-
-			petrinet.setState(currentState.getState());
-
+			System.out.println("TRANSITION: " + currentState.getTransition().getId());
 			reachabilityGraphModel.addNewState(petrinet, currentState.getTransition(), false);
 			currentState.state = reachabilityGraphModel.getState(petrinet.getStateString());// since a new instance has
 																							// been created, the state
 																							// has to be updated
-		} else {
-			petrinet.setState(currentState.getState());
+		} else 
 			reachabilityGraphModel.setCurrentState(currentState.getState(), false);
-		}
 
+System.out.println();
 		if (!currentState.hasNext() && toolbarToggleListener != null)
 			toolbarToggleListener.onRedoChanged();
 

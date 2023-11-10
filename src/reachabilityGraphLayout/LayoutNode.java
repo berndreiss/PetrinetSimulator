@@ -44,6 +44,10 @@ class LayoutNode extends AbstractLayoutRectangle {
 		this.level = level;
 		this.layout = layout;
 
+		
+		//TODO how to handle node == null? -> problem with getX/getY
+		
+		
 		if (node != null)
 			layout.addNodeToLevel(this);
 	}

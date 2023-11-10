@@ -15,7 +15,9 @@ public enum LayoutType {
 	/**
 	 * A layout arranging nodes around a circle (or to be more specific around an
 	 * ellipse). It is not the clearest representation for every graph but it can be
-	 * useful sometimes. It also produces nice shapes.
+	 * useful sometimes. It also produces nice shapes. On choosing the layout type
+	 * multiple times the user can change the ratio for which edges are spread apart
+	 * in a given graph.
 	 */
 	CIRCLE,
 	/**
