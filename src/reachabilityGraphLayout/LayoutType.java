@@ -8,8 +8,9 @@ package reachabilityGraphLayout;
 public enum LayoutType {
 
 	/**
-	 * The auto layout provided by GraphStream (see this <a href=
-	 * "https://graphstream-project.org/doc/Tutorials/Graph-Visualisation/1.0/">link</a>).
+	 * The auto layout provided by <a href=
+	 * "https://graphstream-project.org/doc/Tutorials/Graph-Visualisation/1.0/">GraphStream
+	 * </a>.
 	 */
 	AUTOMATIC,
 	/**

@@ -117,7 +117,7 @@ public class ReachabilityGraphModel {
 		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
 		setCurrentEdge(null);
 		if (push)
-			petrinetQueue.push(currentState, currentEdge, Added.NOTHING, null, skippableMode);
+			petrinetQueue.push(currentState, currentEdge, AddedType.NOTHING, null, skippableMode);
 	}
 
 	/**
@@ -136,12 +136,12 @@ public class ReachabilityGraphModel {
 	 * @param t        the t
 	 * @return the added
 	 */
-	public Added addNewState(Petrinet petrinet, Transition t, boolean push) {
+	public AddedType addNewState(Petrinet petrinet, Transition t, boolean push) {
 
 		if (petrinet == null || !petrinet.hasPlaces())
 			return null;
 
-		Added added = Added.NOTHING;
+		AddedType added = AddedType.NOTHING;
 
 		PetrinetState petrinetState;
 		String petrinetStateString = petrinet.getStateString();
@@ -149,7 +149,7 @@ public class ReachabilityGraphModel {
 		if (petrinetStates.containsKey(petrinetStateString)) {
 			petrinetState = petrinetStates.get(petrinetStateString);
 		} else {
-			added = Added.STATE;
+			added = AddedType.STATE;
 			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getLevel() + 1);
 			petrinetStates.put(petrinetStateString, petrinetState);
 		}
@@ -159,8 +159,8 @@ public class ReachabilityGraphModel {
 			boolean addedEdgePred = petrinetState.addPredecessor(currentState, t);
 			boolean addedEdgeSucc = currentState.addSuccessor(petrinetState, t);
 
-			if (added == Added.NOTHING && (addedEdgePred || addedEdgeSucc))
-				added = Added.EDGE;
+			if (added == AddedType.NOTHING && (addedEdgePred || addedEdgeSucc))
+				added = AddedType.EDGE;
 		}
 
 		if (t == null) {

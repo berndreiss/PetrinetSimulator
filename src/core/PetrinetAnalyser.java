@@ -80,7 +80,7 @@ public class PetrinetAnalyser {
 		visited.add(state);
 		petrinet.setState(state);
 
-		for (Transition t : petrinet.getActiveTransitions()) {
+		for (Transition t : petrinet.getActivatedTransitions()) {
 			petrinet.fireTransition(t.getId(), true);
 
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();

@@ -5,42 +5,42 @@ package reachabilityGraphLayout;
  * Class defining methods for a rectangle (and implementing some).
  * </p>
  */
-abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
+public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
 
 	/**
 	 * Get the left lower corner of the object.
 	 *
 	 * @return the left lower corner
 	 */
-	abstract LayoutPoint leftLowerCorner();
+	public 	abstract LayoutPoint leftLowerCorner();
 
 	/**
 	 * Get the left upper corner of the object.
 	 *
 	 * @return the left upper corner
 	 */
-	abstract LayoutPoint leftUpperCorner();
+	public 	abstract LayoutPoint leftUpperCorner();
 
 	/**
 	 * Get the right lower corner of the object.
 	 *
 	 * @return the right lower corner
 	 */
-	abstract LayoutPoint rightLowerCorner();
+	public 	abstract LayoutPoint rightLowerCorner();
 
 	/**
 	 * Get the right upper corner of the object.
 	 *
 	 * @return the right upper corner
 	 */
-	abstract LayoutPoint rightUpperCorner();
+	public 	abstract LayoutPoint rightUpperCorner();
 
 	/**
 	 * Get the left side of the object.
 	 *
 	 * @return the left side
 	 */
-	LayoutLine leftSide() {
+	public 	LayoutLine leftSide() {
 		return new LayoutLine(leftLowerCorner(), leftUpperCorner());
 	}
 
@@ -49,7 +49,7 @@ abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRecta
 	 *
 	 * @return the right side
 	 */
-	LayoutLine rightSide() {
+	public LayoutLine rightSide() {
 		return new LayoutLine(rightLowerCorner(), rightUpperCorner());
 	}
 
@@ -58,7 +58,7 @@ abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRecta
 	 *
 	 * @return the layout line
 	 */
-	LayoutLine upperSide() {
+	public LayoutLine upperSide() {
 		return new LayoutLine(leftUpperCorner(), rightUpperCorner());
 	}
 

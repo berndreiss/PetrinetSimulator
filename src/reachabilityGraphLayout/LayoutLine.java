@@ -25,10 +25,10 @@ public class LayoutLine {
 	}
 
 	/**
-	 * Finds the intersection between two straight lines (code adapted from <a href=
-	 * "https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/">GeeksForGeeks</a>)
-	 * which does not have to be on either line. Will return null if lines are
-	 * parallel (including overlapping).
+	 * Finds the intersection between two straight lines which does not have to be
+	 * on either line. Will return null if lines are parallel (including
+	 * overlapping). Code adapted from <a href=
+	 * "https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/">GeeksForGeeks</a>.
 	 *
 	 * @param other The line for which to find intersection.
 	 * @return the point where the lines intersect, null if there is no unambiguous

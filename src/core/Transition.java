@@ -3,44 +3,54 @@ package core;
 import listeners.TransitionStateListener;
 import util.IterableMap;
 
-// TODO: Auto-generated Javadoc
 /**
- * Class representing transitions in petri nets. Every transition has a set of
- * places (see {@link Place}) serve as input (preset) and a set of places (see
- * {@link Place}) that serve as output (postset). Transitions may be activated,
- * if they are active, meaning every place that serves as an input has a token.
- * See also {@link Petrinet}.
+ * <p>
+ * Class representing transitions in petrinets.
+ * </p>
+ * 
+ * <p>
+ * Every transition has a set of places (see {@link Place}) that serve as input
+ * (preset) and a set of places that serve as output (postset). The places know
+ * their input and output transitions too and are synchronized when adding or
+ * removing transitions. Transitions may be activated, if they are activated,
+ * meaning every place that serves as an input has a token. See also
+ * {@link Petrinet}.
+ * </p>
  */
 public class Transition extends PetrinetElement {
+	/** Set of places that serve as input. */
+	private IterableMap<String, Place> inputs = new IterableMap<String, Place>();
 
-	private IterableMap<String, Place> inputs = new IterableMap<String, Place>();// set of places that serve as input
-	private IterableMap<String, Place> outputs = new IterableMap<String, Place>();// set of places that serve as output
+	/** Set of places that serve as output. */
+	private IterableMap<String, Place> outputs = new IterableMap<String, Place>();
 
-	private boolean active;// TODO change all occurrences to "activated"
-	private TransitionStateListener transitionActiveListener;
+	/** Activation status of the transition. */
+	private boolean activated;
+
+	/** Listens for changes in the activation status of the transition. */
+	private TransitionStateListener transitionStateListener;
 
 	/**
-	 * A new instance of Transition is created. Initial sets of input places
-	 * (preset) and output places (postset) are passed along.
-	 *
-	 * @param id      Id of the transition.
+	 * A new instance of Transition is created.
+	 * 
+	 * @param id ID of the transition.
 	 */
-	protected Transition(String id) {
+	public Transition(String id) {
 		super(id);
-		this.active = checkActive();
+		this.activated = checkActivated();
 	}
 
 	/**
-	 * Activates a transition if it is active. If any place in the set of inputs
-	 * does not have tokens, it does not activate. Otherwise it Decrements the
-	 * number of tokens for all places in the T and increments the number of tokens
-	 * for all places in the output.
+	 * Fires a transition if it is activated. If any place in the set of inputs does
+	 * not have tokens, it does not fire. Otherwise it decrements the number of
+	 * tokens for all places in inputs and increments the number of tokens for all
+	 * places outputs.
 	 *
-	 * @return true, if successful
+	 * @return true, if transition fired
 	 */
-	boolean fire() {
-		// if transition is not active, return immediately
-		if (!checkActive())
+	public boolean fire() {
+		// if transition is not activated, return immediately
+		if (!checkActivated())
 			return false;
 
 		// decrement tokens
@@ -59,123 +69,134 @@ public class Transition extends PetrinetElement {
 	}
 
 	/**
-	 * Checks if is active.
+	 * Check if transition is activated.
 	 *
-	 * @return true, if is active
+	 * @return true, if is activated
 	 */
-	public boolean isActive() {
-		return active;
+	public boolean isActivated() {
+		return activated;
 	}
 
 	/**
-	 * Update activation status.
+	 * Check the activation status and update it.
 	 */
-	protected void updateActivationStatus() {
-		setActive(checkActive());
+	public void updateActivationStatus() {
+		setActivated(checkActivated());
 	}
 
 	/**
-	 * Sets the transition active listener.
+	 * Set the transition state listener.
 	 *
-	 * @param transitionActiveListener the new transition active listener
+	 * @param transitionStateListener The new transition state listener.
 	 */
-	public void setTransitionActiveListener(TransitionStateListener transitionActiveListener) {
-		this.transitionActiveListener = transitionActiveListener;
+	public void setTransitionStateListener(TransitionStateListener transitionStateListener) {
+		this.transitionStateListener = transitionStateListener;
 	}
 
 	// returns false if one of the places in the input does not have tokens
 	// returns true otherwise
-	private boolean checkActive() {
+	private boolean checkActivated() {
 		if (inputs.isEmpty())
 			return true;
 
-		for (String s : inputs.keySet()) {
-			Place p = inputs.get(s);
+		for (Place p : inputs)
 			if (!p.hasTokens())
 				return false;
-		}
+
 		return true;
 	}
 
 	/**
 	 * Adds a place to the set of input places (preset).
 	 * 
-	 * @param p {@link Place} to be added as Input.
+	 * @param place Place to be added as input.
 	 */
-	protected void addInput(Place p) {
+	public void addInput(Place place) {
 
-		if (inputs.containsKey(p.getId()))
+		if (inputs.containsKey(place.getId()))
 			return;
-		inputs.put(p.getId(), p);
-		setActive(checkActive());
-		p.addOutput(this);
+		inputs.put(place.getId(), place);
+		setActivated(checkActivated());
+		place.addOutput(this);
 
 	}
 
-	private void setActive(boolean active) {
+	// set the activation status
+	private void setActivated(boolean activated) {
 
-		if (this.active == active)
+		// if the status is the same return
+		if (this.activated == activated)
 			return;
 
-		this.active = active;
-		if (transitionActiveListener != null)
-			transitionActiveListener.onStateChanged();
+		this.activated = activated;
+		
+		// inform the state change listener
+		if (transitionStateListener != null)
+			transitionStateListener.onStateChanged();
 	}
 
 	/**
 	 * Adds a place to the set of output places (postset).
 	 * 
-	 * @param p {@link Place} to be added as an Output.
+	 * @param place Place to be added as an output.
 	 */
-	protected void addOutput(Place p) {
-		if (outputs.containsKey(p.getId()))
+	public void addOutput(Place place) {
+		if (outputs.containsKey(place.getId()))
 			return;
-		outputs.put(p.getId(), p);
-		p.addInput(this);
+		outputs.put(place.getId(), place);
+		
+		// synchronize place
+		place.addInput(this);
 	}
 
 	/**
-	 * Gets the inputs.
+	 * Gets the input places.
 	 *
-	 * @return the inputs
+	 * @return the input places
 	 */
 	public Iterable<Place> getInputs() {
 		return inputs;
 	}
 
 	/**
-	 * Gets the outputs.
+	 * Gets the output places.
 	 *
-	 * @return the outputs
+	 * @return the output places
 	 */
 	public Iterable<Place> getOutputs() {
 		return outputs;
 	}
 
 	/**
-	 * Removes the input.
+	 * Removes a place from the inputs (preset).
 	 *
-	 * @param p the p
+	 * @param place The place to be removed.
 	 */
-	void removeInput(Place p) {
-		if (!inputs.containsKey(p.getId()))
+	void removeInput(Place place) {
+		if (!inputs.containsKey(place.getId()))
 			return;
-		inputs.remove(p.getId());
-		setActive(checkActive());
-		p.removeOutput(this);
+		inputs.remove(place.getId());
+		
+		// activation status might have changed
+		updateActivationStatus();
+		
+		// synchronize place
+		place.removeOutput(this);
 
 	}
 
 	/**
-	 * Removes the output.
+	 * Removes a place from the outputs (postset).
 	 *
-	 * @param p the p
+	 * @param place The place to be removed.
 	 */
-	void removeOutput(Place p) {
-		if (!outputs.containsKey(p.getId()))
+	void removeOutput(Place place) {
+		if (!outputs.containsKey(place.getId()))
 			return;
-		outputs.remove(p.getId());
-		p.removeInput(this);
+		outputs.remove(place.getId());
+		
+		// synchronize place
+		place.removeInput(this);
 	}
 
 }

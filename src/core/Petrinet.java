@@ -13,30 +13,50 @@ import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class Petrinet.
+ * <p>
+ * Class representing a petrinet.
+ * </p>
+ * 
+ * <p>
+ * It contains a set of places and transitions. It keeps track of all ids and
+ * ensures no duplicate ids are added. When adding edges it also ensures that
+ * they are only added between transitions and places. Since edges are not a
+ * data structure on their own it also keeps track of original edge ids (needed
+ * for saving).
+ * </p>
  */
 public class Petrinet {
 
-	// TODO edge ids are not removed when edge removed!!!!!!!!!!!!!!!!!!
-
-	/** The Constant TREE_COMPARATOR. */
+	/**
+	 * A Comparator for sorting the places (stored in a custom TreeMap structure).
+	 */
 	private static final Comparator<String> TREE_COMPARATOR = String.CASE_INSENSITIVE_ORDER;
 
-	private IterableMap<String, Transition> transitions;// set of transitions represented by a map since the Set
-														// interface does
-	// not provide a get function
-	private IterableMap<String, Place> places;// set of places represented by a map since the Set interface does not
-												// provide a
-	// get function
-	private IterableMap<String, String> originalArcIds;
+	/** Set of transitions. */
+	private IterableMap<String, Transition> transitions = new IterableMap<String, Transition>();
 
+	/** Set of places. */
+	private IterableMap<String, Place> places = new IterableMap<String, Place>(TREE_COMPARATOR);
+
+	/** The original ids of the edges between transitions and places. */
+	private IterableMap<String, String> originalArcIds = new IterableMap<String, String>();
+
+	/**
+	 * Listen for changes in the state of the petrinet (happens when transitions are
+	 * fired).
+	 */
 	private PetrinetStateChangedListener petrinetStateChangedListener;
+
+	/**
+	 * Listen for changes in components of the petrinet (e.g. when tokens in places
+	 * are in-/decremented).
+	 */
 	private PetrinetComponentChangedListener petrinetComponentChangedListener;
 
 	/**
 	 * Sets the petrinet change listener.
 	 *
-	 * @param petrinetChangedListener the new petrinet change listener
+	 * @param petrinetChangedListener The new petrinet change listener.
 	 */
 	public void setPetrinetChangeListener(PetrinetStateChangedListener petrinetChangedListener) {
 		this.petrinetStateChangedListener = petrinetChangedListener;
@@ -45,59 +65,56 @@ public class Petrinet {
 	/**
 	 * Sets the petrinet component changed listener.
 	 *
-	 * @param petrinetComponentChangedListener the new petrinet component changed listener
+	 * @param petrinetComponentChangedListener The new petrinet component changed
+	 *                                         listener.
 	 */
 	public void setPetrinetComponentChangedListener(PetrinetComponentChangedListener petrinetComponentChangedListener) {
 		this.petrinetComponentChangedListener = petrinetComponentChangedListener;
 	}
 
 	/**
-	 * Instantiates a new petrinet.
-	 */
-	public Petrinet() {
-		this.transitions = new IterableMap<String, Transition>();
-		this.places = new IterableMap<String, Place>(TREE_COMPARATOR);
-		this.originalArcIds = new IterableMap<String, String>();
-	}
-
-	/**
-	 * Gets the active transitions.
+	 * Gets the activated transitions.
 	 *
-	 * @return the active transitions
+	 * @return the activated transitions
 	 */
-	public Iterable<Transition> getActiveTransitions() {
-		ArrayList<Transition> activeTransitions = new ArrayList<Transition>();
+	public Iterable<Transition> getActivatedTransitions() {
+		ArrayList<Transition> activatedTransitions = new ArrayList<Transition>();
 
 		for (Transition t : getTransitions())
-			if (t.isActive())
-				activeTransitions.add(t);
+			if (t.isActivated())
+				activatedTransitions.add(t);
 
-		return activeTransitions;
+		return activatedTransitions;
 	}
 
 	/**
-	 * Sets the added element position.
+	 * Calculates (x,y) coordinates right above the left most element in the
+	 * petrinet and sets the element that is being added to that coordinates.
 	 *
-	 * @param pe the new added element position
+	 * @param petrinetElement The new element that is being added.
 	 */
-	// set element relative to others
-	public void setAddedElementPosition(PetrinetElement pe) {
+	public void setAddedElementPosition(PetrinetElement petrinetElement) {
 
-		if (pe == null || (places.size() + transitions.size()) == 1)
+		// if there is no element or the element is the only one in the petrinet return
+		if (petrinetElement == null || (places.size() + transitions.size()) == 1)
 			return;
 
+		// keep track of (x,y)
 		double x = Double.MAX_VALUE;
 		double y = -Double.MAX_VALUE;
 
+		// go through all places and add all left most
 		List<PetrinetElement> mostLeftElements = new ArrayList<PetrinetElement>();
 		for (Place p : places) {
-			if (p == pe)
+			// do not consider the added element itself
+			if (p == petrinetElement)
 				continue;
-//			x += p.getX();
-//			y += p.getY();
+
+			// add place if it has the same x value as the left most element
 			if (p.getX() == x)
 				mostLeftElements.add(p);
 
+			// if place if further left clear most left elements and add (we got a new max)
 			if (p.getX() < x) {
 				x = p.getX();
 				mostLeftElements.clear();
@@ -106,13 +123,11 @@ public class Petrinet {
 
 		}
 
+		// do the same as for places above
 		for (Transition t : transitions) {
 
-			if (t == pe)
+			if (t == petrinetElement)
 				continue;
-
-			// x += t.getX();
-//			y += t.getY();
 
 			if (t.getX() == x)
 				mostLeftElements.add(t);
@@ -125,45 +140,34 @@ public class Petrinet {
 
 		}
 
-//		int size = places.size() + transitions.size()-1;
-//		if (size > 0) {
-//		if (size == 1)
-//			x += 100;
-//		else
-//			x /= size;
-//		y /= size;
-//		}
+		// from all the left most elements get the upper most
 		PetrinetElement leftHightestElement = null;
-
 		for (PetrinetElement p : mostLeftElements) {
 			if (p.getY() > y) {
 				leftHightestElement = p;
 				y = p.getY();
 			}
 		}
-
-		setCoordinates(pe.getId(), leftHightestElement.getX(), leftHightestElement.getY() + 20);
+		
+		// set added element just above the left upper most element in the petrinet
+		setCoordinates(petrinetElement.getId(), leftHightestElement.getX(), leftHightestElement.getY() + 20);
 
 	}
 
-	/**
-	 * Contains element with id.
-	 *
-	 * @param pe the pe
-	 * @return true, if successful
-	 */
-	private boolean containsElementWithId(PetrinetElement pe) {
-		return containsElementWithId(pe.getId());
+	// turns petrinet element into string and calls containsElementWithId(String id)
+	private boolean containsElementWithId(PetrinetElement petrinetElement) {
+		return containsElementWithId(petrinetElement.getId());
 	}
 
 	/**
-	 * Contains element with id.
+	 * Check whether petrinet contains element with id.
 	 *
-	 * @param id the id
-	 * @return true, if successful
+	 * @param id The id which to check.
+	 * @return true, if id exists
 	 */
 	public boolean containsElementWithId(String id) {
-		return places.get(id) != null ^ transitions.get(id) != null  ^ originalArcIds.containsValue(id);
+		// ^ := lor -> returns true if any of the statements is true
+		return places.get(id) != null ^ transitions.get(id) != null ^ originalArcIds.containsValue(id);
 	}
 
 	/**
@@ -184,15 +188,11 @@ public class Petrinet {
 		return places;
 	}
 
-	
-
-	
-
 	/**
-	 * Gets the petrinet element.
+	 * Gets a petrinet element. Returns null if element does not exist.
 	 *
-	 * @param id the id
-	 * @return the petrinet element
+	 * @param id The id for which to get the petrinet element.
+	 * @return the petrinet element corresponding to the id
 	 */
 	public PetrinetElement getPetrinetElement(String id) {
 		PetrinetElement element = places.get(id);
@@ -202,11 +202,11 @@ public class Petrinet {
 	}
 
 	/**
-	 * Sets the coordinates.
+	 * Sets the coordinates of an element corresponding to the id.
 	 *
-	 * @param id the id
-	 * @param x the x
-	 * @param y the y
+	 * @param id The id of the petrinet element for which to set coordinates.
+	 * @param x  The x coordinate.
+	 * @param y  The y coordinate.
 	 */
 	public void setCoordinates(String id, double x, double y) {
 		PetrinetElement element = getPetrinetElement(id);
@@ -217,15 +217,18 @@ public class Petrinet {
 		element.setX(x);
 		element.setY(y);
 
+		// inform the component changed listener
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onPetrinetElementCoordinatesChanged(element);
 
 	}
 
+	
+	//TODO continue from here
 	/**
-	 * Removes the petrinet element.
+	 * Removes a petrinet element with the corresponding id. Also removes the id from the orignal arc ids.
 	 *
-	 * @param id the id
+	 * @param id The id of the element to be removed.
 	 */
 	public void removePetrinetElement(String id) {
 		PetrinetElement element = getPetrinetElement(id);
@@ -322,8 +325,8 @@ public class Petrinet {
 		Transition t = new Transition(id);
 
 		transitions.put(id, t);
-		
-		t.setTransitionActiveListener(() -> {
+
+		t.setTransitionStateListener(() -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onTransitionStateChanged(t);
 
@@ -350,7 +353,7 @@ public class Petrinet {
 		if (transitions.containsKey(id) || places.containsKey(id))
 			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
 		Place p = new Place(id);
-		places.put(id, p); 
+		places.put(id, p);
 		p.setNumberOfTokensListener(newNumber -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onPlaceTokenCountChanged(p);
@@ -367,7 +370,7 @@ public class Petrinet {
 	/**
 	 * Sets the tokens.
 	 *
-	 * @param id the id
+	 * @param id             the id
 	 * @param numberOfTokens the number of tokens
 	 */
 	void setTokens(String id, int numberOfTokens) {
@@ -390,14 +393,13 @@ public class Petrinet {
 	 *
 	 * @param source the source
 	 * @param target the target
-	 * @param id the id
+	 * @param id     the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
-	 * @throws DuplicateIdException 
+	 * @throws DuplicateIdException
 	 */
-	public void addEdge(String source, String target, String id) throws InvalidEdgeOperationException, DuplicateIdException {
+	public void addEdge(String source, String target, String id)
+			throws InvalidEdgeOperationException, DuplicateIdException {
 
-		
-		
 		PetrinetElement sourceElement = getPetrinetElement(source);
 
 		if (sourceElement == null)
@@ -416,16 +418,16 @@ public class Petrinet {
 	 *
 	 * @param source the source
 	 * @param target the target
-	 * @param id the id
+	 * @param id     the id
 	 * @throws InvalidEdgeOperationException the invalid edge operation exception
-	 * @throws DuplicateIdException 
+	 * @throws DuplicateIdException
 	 */
 	public void addEdge(PetrinetElement source, PetrinetElement target, String id)
 			throws InvalidEdgeOperationException, DuplicateIdException {
 
 		if (containsElementWithId(id))
 			throw new DuplicateIdException("Invalid edge operation: id \"" + id + "\" already exists.");
-		
+
 		if (source == null || !containsElementWithId(source))
 			throw new InvalidEdgeOperationException("Invalid edge operation: Source" + source == null ? ""
 					: " \"" + source.getId() + "\"" + " is missing.");
@@ -636,7 +638,7 @@ public class Petrinet {
 	/**
 	 * Sets the petrinet element name.
 	 *
-	 * @param id the id
+	 * @param id   the id
 	 * @param name the name
 	 */
 	public void setPetrinetElementName(String id, String name) {
@@ -656,7 +658,5 @@ public class Petrinet {
 
 		return places.size() > 0;
 	}
-
-
 
 }

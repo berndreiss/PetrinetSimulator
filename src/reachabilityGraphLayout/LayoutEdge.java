@@ -11,7 +11,7 @@ import org.graphstream.ui.spriteManager.Sprite;
  * Because it contains a GraphStream sprite it extends the abstract rectangle class.
  * </p>
  */
-class LayoutEdge extends AbstractLayoutRectangle {
+public class LayoutEdge extends AbstractLayoutRectangle {
 
 	/** The source node of the edge. */
 	LayoutNode source;

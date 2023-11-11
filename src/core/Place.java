@@ -3,29 +3,37 @@ package core;
 import listeners.NumberOfTokensChangedListener;
 import util.IterableMap;
 
-// TODO: Auto-generated Javadoc
 /**
- * Class that represents places in petri nets. Each place has a number of
- * tokens, an id and a name.
+ * <p>
+ * Class that represents places in petrinets.
+ * </p>
+ * 
+ * <p>
+ * Every place always knows the transitions (see {@link Transition}) it is connected to (inputs and
+ * outputs). They are synchronized when added and removed.
+ * </p>
+ * 
  */
 public class Place extends PetrinetElement {
 
+	/** The number of tokens a place currently holds. */
 	private int numberOfTokens;
 
+	/** A listener for number of tokens changes. */
 	private NumberOfTokensChangedListener numberOfTokensListener;
 
-	private IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();// set of places
-																							// that serve as
-																							// output
-	private IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();// set of places
-	// that represent inputs from transitions
+	/** A map of all transitions firing to this place. */
+	private IterableMap<String, Transition> inputs = new IterableMap<String, Transition>();
+
+	/** A map of all transitions this place is providing to. */
+	private IterableMap<String, Transition> outputs = new IterableMap<String, Transition>();
 
 	/**
 	 * Instantiates a new place.
 	 *
-	 * @param id the id
+	 * @param id The id of the place.
 	 */
-	protected Place(String id) {
+	public Place(String id) {
 		super(id);
 	}
 
@@ -34,7 +42,7 @@ public class Place extends PetrinetElement {
 	 * 
 	 * @return number of tokens > 0.
 	 */
-	boolean hasTokens() {
+	public boolean hasTokens() {
 		return numberOfTokens > 0;
 	}
 
@@ -50,29 +58,27 @@ public class Place extends PetrinetElement {
 	/**
 	 * Sets the number of tokens.
 	 *
-	 * @param numberOfTokens the new number of tokens
+	 * @param numberOfTokens The new number of tokens.
 	 */
-	protected void setNumberOfTokens(int numberOfTokens) {
+	public void setNumberOfTokens(int numberOfTokens) {
 
-		boolean hadNoTokens = hasTokens() ? false : true;
+		// if nothing has changed return
+		if (numberOfTokens == this.numberOfTokens)
+			return;
+
+		// keep track if it had no tokens before so that transitions in the output can
+		// be notified (may have to be activated)
+		boolean hadTokens = hasTokens();
 
 		this.numberOfTokens = numberOfTokens;
 
-		if (numberOfTokens == 0) {
-			for (String s : outputs.keySet()) {
-				Transition t = outputs.get(s);
-				t.updateActivationStatus();
-			}
-		}
-
-		if (hadNoTokens && numberOfTokens > 0) {
-			for (String s : outputs.keySet()) {
-				Transition t = outputs.get(s);
+		// if number of tokens is 0 or it was 0 before inform all transitions in the
+		// output
+		if (numberOfTokens == 0 || !hadTokens)
+			for (Transition t : outputs)
 				t.updateActivationStatus();
 
-			}
-		}
-
+		// inform the number of tokens listener that the number has changed
 		if (numberOfTokensListener != null)
 			numberOfTokensListener.onNumberChanged(numberOfTokens);
 
@@ -81,7 +87,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Sets the number of tokens listener.
 	 *
-	 * @param numberOfTokensListener the new number of tokens listener
+	 * @param numberOfTokensListener The new number of tokens listener.
 	 */
 	public void setNumberOfTokensListener(NumberOfTokensChangedListener numberOfTokensListener) {
 		this.numberOfTokensListener = numberOfTokensListener;
@@ -90,16 +96,16 @@ public class Place extends PetrinetElement {
 	/**
 	 * Increments the number of tokens by 1.
 	 */
-	protected void incrementTokens() {
+	public void incrementTokens() {
 		setNumberOfTokens(numberOfTokens + 1);
 	}
 
 	/**
 	 * Decrements the number of tokens by 1.
 	 *
-	 * @return true, if successful
+	 * @return true, if successful, false if the place has no tokens to begin with
 	 */
-	protected boolean decrementTokens() {
+	public boolean decrementTokens() {
 
 		if (numberOfTokens <= 0) {
 			System.out.println("There are no tokens in place with ID \"" + this.getId() + "\"");
@@ -111,62 +117,66 @@ public class Place extends PetrinetElement {
 	}
 
 	/**
-	 * Adds a place to the set of output places (postset).
+	 * Adds a transition to the set of transitions in the output.
 	 *
-	 * @param t the t
+	 * @param transition The transition to be added.
 	 */
-	protected void addOutput(Transition t) {
-		outputs.put(t.getId(), t);
+	public void addOutput(Transition transition) {
+		outputs.put(transition.getId(), transition);
 	}
 
 	/**
-	 * Adds the input.
+	 * Adds a transition to the set of transitions in the output.
 	 *
-	 * @param t the t
+	 * @param transition The transition to be added.
 	 */
-	protected void addInput(Transition t) {
-		inputs.put(t.getId(), t);
+	public void addInput(Transition transition) {
+		inputs.put(transition.getId(), transition);
 	}
 
 	/**
-	 * Gets the outputs.
+	 * Gets the transitions in the output.
 	 *
-	 * @return the outputs
+	 * @return The transitions in the output.
 	 */
-	protected Iterable<Transition> getOutputs() {
+	public Iterable<Transition> getOutputs() {
 		return outputs;
 	}
 
 	/**
-	 * Gets the inputs.
+	 * Gets the transitions in the input.
 	 *
-	 * @return the inputs
+	 * @return The transitions in the input.
 	 */
-	protected Iterable<Transition> getInputs() {
+	public Iterable<Transition> getInputs() {
 		return inputs;
 	}
 
 	/**
-	 * Removes the output.
+	 * Removes a transition from the outputs. Also removes the place from the transitions inputs.
 	 *
-	 * @param transition the transition
+	 * @param transition The transition to be removed.
 	 */
-	void removeOutput(Transition transition) {
+	public void removeOutput(Transition transition) {
 		if (!outputs.containsKey(transition.getId()))
 			return;
 		outputs.remove(transition.getId());
+		
+		// synchronize transition
 		transition.removeInput(this);
 	}
 
 	/**
-	 * Removes the input.
+	 * Removes a transition from the inputs. Also removes the place from the transitions outputs.
 	 *
-	 * @param transition the transition
+	 * @param transition The transition to be removed.
 	 */
-	void removeInput(Transition transition) {
+	public void removeInput(Transition transition) {
 		if (!inputs.containsKey(transition.getId()))
 			return;
 		inputs.remove(transition.getId());
+		
+		// synchronize transition
 		transition.removeOutput(this);
 	}
 

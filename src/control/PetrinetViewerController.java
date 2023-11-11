@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicBorders.ToggleButtonBorder;
 
-import core.Added;
+import core.AddedType;
 import core.PNMLParser;
 import core.Petrinet;
 import core.PetrinetAnalyser;

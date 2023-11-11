@@ -319,7 +319,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 		if (node == null)// safety check
 			return;
 
-		if (t.isActive())
+		if (t.isActivated())
 			node.setAttribute("ui.class", "transition_activated");
 		else
 			node.setAttribute("ui.class", "transition");
