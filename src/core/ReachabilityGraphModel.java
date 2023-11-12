@@ -32,7 +32,7 @@ public class ReachabilityGraphModel {
 	private IterableMap<String, PetrinetState> petrinetStates;
 
 	private ReachabilityStateChangeListener stateChangeListener;
-	
+
 	private boolean skippableMode = false;
 
 	/**
@@ -47,7 +47,7 @@ public class ReachabilityGraphModel {
 		petrinetQueue = new ReachabilityGraphStateQueue(this, toolbarToggleListener);
 		petrinetStates = new IterableMap<String, PetrinetState>();
 		addNewState(petrinet, null, true);
-		
+
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
 
 			@Override
@@ -63,11 +63,10 @@ public class ReachabilityGraphModel {
 				if (initialState != null)
 					removeState(initialState);
 				addNewState(petrinet, null, true);
-				
+
 			}
 
 		});
-
 
 	}
 
@@ -126,7 +125,8 @@ public class ReachabilityGraphModel {
 	 */
 	public void setCurrentEdge(String edge) {
 		this.currentEdge = edge;
-		stateChangeListener.onSetCurrentEdge(edge);
+		if (stateChangeListener != null)
+			stateChangeListener.onSetCurrentEdge(edge);
 	}
 
 	/**
@@ -391,6 +391,7 @@ public class ReachabilityGraphModel {
 	public void setPetrinetQueue(ReachabilityGraphStateQueue petrinetQueue) {
 		this.petrinetQueue = petrinetQueue;
 	}
+
 	/**
 	 * 
 	 * @param skippableMode

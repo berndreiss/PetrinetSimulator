@@ -120,6 +120,7 @@ public class ReachabilityGraphStateQueue {
 	 * Go back.
 	 */
 	public void goBack() {
+		System.out.println("GOING BACK...");
 		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
 		if (currentState.isFirstState())
 			return;
@@ -146,6 +147,8 @@ public class ReachabilityGraphStateQueue {
 
 		if (currentState.isSkippable())
 			goBack();
+		System.out.println(currentState.getState() + ", " + currentState.getCurrentEdge() + ", " + currentState.getAdded()+ ", "
+				+ (currentState.getTransition() == null ? "null" : currentState.getTransition().getId()) + ", " + skippable);
 		// printAll();
 
 	}
@@ -247,6 +250,13 @@ System.out.println();
 
 		while (!reachabilityGraphModel.getPetrinetQueue().isFirstState())
 			reachabilityGraphModel.setPetrinetQueue(reachabilityGraphModel.getPetrinetQueue().lastState);
+		
+		ReachabilityGraphStateQueue currentState = reachabilityGraphModel.getPetrinetQueue();
+				reachabilityGraphModel.setPetrinetQueue(currentState);
+				reachabilityGraphModel.getPetrinet().setState(currentState.getState());
+				reachabilityGraphModel.setCurrentState(currentState.getState(), false);
+				reachabilityGraphModel.setCurrentEdge(currentState.getCurrentEdge());
+
 	}
 
 	/**
