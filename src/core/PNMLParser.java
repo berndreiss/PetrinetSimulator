@@ -120,7 +120,7 @@ public class PNMLParser extends PNMLWopedParser {
 		if (idCheck)
 			return;
 		
-		petrinet.setPetrinetElementName(id, name);
+		petrinet.setPetrinetElementLabel(id, name);
 
 	}
 

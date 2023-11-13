@@ -57,7 +57,7 @@ public class ReachabilityGraphModel {
 			}
 
 			@Override
-			public void onComponentChanged(Petrinet petrinet) {
+			public void onStateChanged(Petrinet petrinet) {
 				reset();
 				PetrinetState initialState = getInitialState();
 				if (initialState != null)

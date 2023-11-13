@@ -72,7 +72,7 @@ public class PetrinetEditorController {
 
 		petrinetController.setFileChanged(true);// has to be set first so that petrinetQueue receives changes
 
-		petrinet.setPetrinetElementName(markedNode.getId(), label);
+		petrinet.setPetrinetElementLabel(markedNode.getId(), label);
 		
 		return true;
 

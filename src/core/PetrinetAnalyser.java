@@ -81,7 +81,7 @@ public class PetrinetAnalyser {
 		petrinet.setState(state);
 
 		for (Transition t : petrinet.getActivatedTransitions()) {
-			petrinet.fireTransition(t.getId(), true);
+			petrinet.fireTransition(t.getId());
 
 			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
 			if (!stateValid) {
@@ -216,7 +216,7 @@ public class PetrinetAnalyser {
 
 			for (Transition t : transitionList) {
 				if (t != null)
-					petrinet.fireTransition(t.getId(), true);
+					petrinet.fireTransition(t.getId());
 			}
 			return;
 		}

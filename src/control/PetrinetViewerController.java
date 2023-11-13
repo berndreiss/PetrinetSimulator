@@ -210,7 +210,7 @@ public class PetrinetViewerController {
 	public PetrinetElement onPetrinetNodeClicked(String id) {
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
 		if (pe instanceof Transition) {
-			petrinet.fireTransition(id, false);
+			petrinet.fireTransition(id);
 			return null;
 		}
 		return pe;

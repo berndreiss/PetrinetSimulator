@@ -30,6 +30,6 @@ public interface PetrinetStateChangedListener {
 	 *
 	 * @param petrinet The new petrinet with changed components.
 	 */
-	void onComponentChanged(Petrinet petrinet);
+	void onStateChanged(Petrinet petrinet);
 
 }
