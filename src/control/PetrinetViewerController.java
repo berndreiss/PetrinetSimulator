@@ -198,7 +198,7 @@ public class PetrinetViewerController {
 	public void onReachabilityGraphNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
 		petrinet.setState(state);
-		reachabilityGraphModel.setCurrentState(state, true);
+		reachabilityGraphModel.setCurrentState(state);
 
 	}
 

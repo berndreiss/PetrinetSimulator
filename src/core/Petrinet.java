@@ -370,8 +370,6 @@ public class Petrinet {
 		
 		// link the component and state changed listener to the place token count changed listener
 		p.setNumberOfTokensListener(newNumber -> {
-			if (petrinetStateChangedListener != null)
-				petrinetStateChangedListener.onStateChanged(this);
 			
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onPlaceTokenCountChanged(p);
@@ -407,6 +405,9 @@ public class Petrinet {
 			return;
 
 		p.setNumberOfTokens(numberOfTokens);
+
+		if (petrinetStateChangedListener != null)
+			petrinetStateChangedListener.onStateChanged(this);
 
 
 	}
@@ -600,6 +601,9 @@ public class Petrinet {
 		Place p = (Place) place;
 		p.incrementTokens();
 
+		if (petrinetStateChangedListener != null)
+			petrinetStateChangedListener.onStateChanged(this);
+
 		return true;
 	}
 
@@ -620,6 +624,9 @@ public class Petrinet {
 		boolean decremented = p.decrementTokens();
 		if (!decremented)
 			return false;
+
+		if (petrinetStateChangedListener != null)
+			petrinetStateChangedListener.onStateChanged(this);
 
 		return true;
 	}

@@ -9,47 +9,71 @@ import java.util.Set;
 import control.PetrinetViewerController;
 import exceptions.PetrinetException;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class PetrinetAnalyser.
+ * <p>
+ * Class holding methods for analyzing a petrinet and returning results..
+ * </p>
+ * 
+ * <p>
+ * The petrinet can either be passed as a pnml file or as an instance of
+ * {@link PetrinetViewerController}. The former also modifies the reachability
+ * graph in the provided instance.
+ * </p>
  */
 public class PetrinetAnalyser {
 
+	/** The controller used for simulating the petrinet. */
 	private PetrinetViewerController controller;
 
+	/** The petrinet itself. */
 	private Petrinet petrinet;
 
+	/** The reachability graph model. */
 	private ReachabilityGraphModel reachabilityGraphModel;
 
+	/** True if petrinet is bounded. */
 	private boolean bounded = true;
 
-	private int edges;
-	private int nodes;
+	/** Number of edges in the reachability graph. */
+	private int numberOfEdges;
+	/** Number of nodes in the reachability graph. */
+	private int numberOfNodes;
 
+	/** Detected path proving petrinet is unbounded. */
 	private List<String> transitionsToMMarked;
+	/** The first node in the path above. */
 	private String m;
+	/** The last node in the path above. */
 	private String mMarked;
 
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
-	 * @param file the file
-	 * @throws PetrinetException the petrinet exception
+	 * @param file The file to be analyzed.
+	 * @throws PetrinetException Thrown if file contains an invalid petrinet
+	 *                           structure.
 	 */
 	public PetrinetAnalyser(File file) throws PetrinetException {
-		this.controller = new PetrinetViewerController(file, null);
+		this(new PetrinetViewerController(file, null));
 	}
 
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
-	 * @param controller the controller
+	 * @param controller The controller containing the petrinet to be analyzed and
+	 *                   the reachability graph to show results.
 	 */
 	public PetrinetAnalyser(PetrinetViewerController controller) {
 		this.controller = controller;
 		reachabilityGraphModel = controller.getReachabilityGraphModel();
+
+		// make all steps in the analysis skippable (meaning that the analysis is
+		// handled as one action in the un-/redo queue)
 		reachabilityGraphModel.setSkippableMode(true);
-		analyse();
+		analyze();
+
+		// if petrinet is not bounded reset reachability graph build path proving
+		// unboundedness and set beginning and end point markers of the path
 		if (!bounded) {
 			updateReachabilityGraph();
 			m = reachabilityGraphModel.getInvalidState().getM().getState();
@@ -57,12 +81,16 @@ public class PetrinetAnalyser {
 
 		}
 
+		// reset reachability graph model to normal mode
 		reachabilityGraphModel.setSkippableMode(false);
+
+		// reset petrinet
 		controller.resetPetrinet();
 
 	}
 
-	private void analyse() {
+	// analyze the given petrinet
+	private void analyze() {
 
 		petrinet = controller.getPetrinet();
 		reachabilityGraphModel.setInitial();
@@ -71,27 +99,45 @@ public class PetrinetAnalyser {
 
 	}
 
+	// from the initial state build reachability graph step by step -> in each step
+	// the function is called recursively for every activated transition in the
+	// state the petrinet is in; if a state has already been visited return
 	private void analyseState(PetrinetState state, Set<PetrinetState> visited) {
 
+		// return if state has been visited
 		if (visited.contains(state))
 			return;
-		nodes++;
+
+		// increment number of nodes in the reachability state -> number of states in
+		// the petrinet == number of nodes in the reachability graph
+		numberOfNodes++;
 
 		visited.add(state);
 		petrinet.setState(state);
 
+		// fire every activated transition in the given state, check whether the state
+		// is bounded and if so call function recursively for new state
 		for (Transition t : petrinet.getActivatedTransitions()) {
+
+			// fire transition
 			petrinet.fireTransition(t.getId());
 
-			boolean stateValid = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsValid();
-			if (!stateValid) {
+			// check whether new state is bounded and abort analysis if not
+			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsBounded();
+			if (!stateBounded) {
 				bounded = false;
 				return;
 
 			}
-			edges++;
+
+			// increment number of edges
+			numberOfEdges++;
+
+			// analyze new state
 			analyseState(reachabilityGraphModel.getCurrentPetrinetState(), visited);
-			reachabilityGraphModel.setCurrentState(state, true);
+
+			// reset reachability graph model and petrinet
+			reachabilityGraphModel.setCurrentState(state);
 			petrinet.setState(state);
 
 		}
@@ -99,34 +145,34 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Checks if is bounded.
+	 * Get boundedness.
 	 *
-	 * @return true, if is bounded
+	 * @return true, if petrinet is bounded
 	 */
 	public boolean isBounded() {
 		return bounded;
 	}
 
 	/**
-	 * Gets the state count.
+	 * Get the count of states (nodes) in the reachability graph.
 	 *
-	 * @return the state count
+	 * @return the state count of the reachability graph
 	 */
 	public int getStateCount() {
-		return nodes;
+		return numberOfNodes;
 	}
 
 	/**
-	 * Gets the edge count.
+	 * Get the number of edges in the reachability graph.
 	 *
 	 * @return the edge count
 	 */
 	public int getEdgeCount() {
-		return edges;
+		return numberOfEdges;
 	}
 
 	/**
-	 * Gets the m.
+	 * Get the first node on the path proving unboudedness.
 	 *
 	 * @return the m
 	 */
@@ -135,23 +181,25 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Gets the m marked.
+	 * Get the last node on the path proving unboudedness
 	 *
-	 * @return the m marked
+	 * @return the m'
 	 */
 	public String getMMarked() {
 		return mMarked;
 	}
 
 	/**
-	 * Gets the transitions to M marked.
+	 * Get the transitions on the path proving unboudedness.
 	 *
-	 * @return the transitions to M marked
+	 * @return the transitions on path to m'
 	 */
 	public List<String> getTransitionsToMMarked() {
 		return transitionsToMMarked;
 	}
 
+	// reset the petrinet; if it is unbounded reset reachability graph and build
+	// path proving unboudedness
 	private void updateReachabilityGraph() {
 
 		controller.resetPetrinet();
@@ -164,56 +212,61 @@ public class PetrinetAnalyser {
 			mMarked = invalidState.getState();
 			transitionsToMMarked = new ArrayList<String>();
 
-			List<PetrinetState> pathToM = invalidState.getPathToOtherState(invalidState.getM());
+			// get path from initial state to m
+			List<PetrinetState> pathToM = invalidState.getM()
+					.getPathFromOtherState(reachabilityGraphModel.getInitialState());
 
-			List<PetrinetState> pathToInitial = invalidState.getM()
-					.getPathToOtherState(reachabilityGraphModel.getInitialState());
+			// get path from m to m'
+			List<PetrinetState> pathToMMarked = invalidState.getPathFromOtherState(invalidState.getM());
+
+			// keeping track of current and initial state
 			PetrinetState currentState = reachabilityGraphModel.getInitialState();
 			PetrinetState initialState = reachabilityGraphModel.getInitialState();
 
+			// keep track of transitions being used
 			ArrayList<Transition> transitionList = new ArrayList<Transition>();
 
+			// keep track of current transition being used
 			Transition transition;
 
-			if (pathToInitial != null) {
-				for (PetrinetState nextState : pathToInitial) {
-
-					transition = currentState.getFirstSuccessorTransition(nextState);
-
-					transitionList.add(transition);
-
-					currentState = nextState;
-				}
-
-			}
-
-			if (initialState != invalidState.getM()) {
-				transition = currentState.getFirstSuccessorTransition(invalidState.getM());
-
-				transitionList.add(transition);
-
-				currentState = invalidState.getM();
-			}
+			// get all transitions on the path to m
 			if (pathToM != null) {
 				for (PetrinetState nextState : pathToM) {
 
+					// since there can be multiple transitions leading from one state to the other
+					// simply choose the first one
+					transition = currentState.getFirstSuccessorTransition(nextState);
+					transitionList.add(transition);
+					currentState = nextState;
+				}
+
+			}
+
+			// get transition from current state to m (if m and initial state are not the
+			// same)
+			if (initialState != invalidState.getM()) {
+				transition = currentState.getFirstSuccessorTransition(invalidState.getM());
+				transitionList.add(transition);
+				currentState = invalidState.getM();
+			}
+
+			// get all transitions on the path to m'
+			if (pathToMMarked != null) {
+				for (PetrinetState nextState : pathToMMarked) {
 					transition = currentState.getFirstSuccessorTransition(nextState);
 					transitionsToMMarked.add(transition.getId());
-
 					transitionList.add(transition);
-
 					currentState = nextState;
 				}
 			}
+			// add the transition from the current state to m'
 			transition = currentState.getFirstSuccessorTransition(invalidState);
-
 			if (transition != null)
 				transitionsToMMarked.add(transition.getId());
-
 			transitionList.add(transition);
 
+			// reset the reachability graph and build path
 			reachabilityGraphModel.reset();
-
 			for (Transition t : transitionList) {
 				if (t != null)
 					petrinet.fireTransition(t.getId());
@@ -223,7 +276,8 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Gets the results.
+	 * Gets the results of the analysis as {[File], [Bounded?], [Nodes/Edges -- Path
+	 * length; m, m']}.
 	 *
 	 * @return the results
 	 */
@@ -235,17 +289,18 @@ public class PetrinetAnalyser {
 		if (file == null)
 			return strings;
 
+		// File
 		StringBuilder sb = new StringBuilder();
-
 		sb.append(file.getName() + " ");
 		strings[0] = sb.toString();
 
+		// Bounded?
 		sb = new StringBuilder();
 		sb.append(isBounded() ? " yes" : " no");
 		strings[1] = sb.toString();
 
+		// Nodes/Edges -- Path length; m, m'
 		sb = new StringBuilder();
-
 		if (!isBounded()) {
 			sb.append(" " + getTransitionsToMMarked().size());
 			sb.append(": (");
@@ -264,6 +319,7 @@ public class PetrinetAnalyser {
 			sb.append(" " + getStateCount() + " / " + getEdgeCount());
 		}
 		strings[2] = sb.toString();
+
 		return strings;
 	}
 

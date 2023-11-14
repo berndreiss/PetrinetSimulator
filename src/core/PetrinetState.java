@@ -233,21 +233,21 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the path to other state.
+	 * Gets the path from other state.
 	 *
 	 * @param other the other
 	 * @return the path to other state
 	 */
-	List<PetrinetState> getPathToOtherState(PetrinetState other) {
+	List<PetrinetState> getPathFromOtherState(PetrinetState other) {
 
-		List<PetrinetState> list = getPathToOther(this, other, new HashSet<PetrinetState>(),
+		List<PetrinetState> list = getPathFromOther(this, other, new HashSet<PetrinetState>(),
 				new ArrayList<PetrinetState>());
 		if (list.contains(this))
 			list.remove(this);
 		return list;
 	}
 
-	private List<PetrinetState> getPathToOther(PetrinetState state, PetrinetState other, Set<PetrinetState> visited,
+	private List<PetrinetState> getPathFromOther(PetrinetState state, PetrinetState other, Set<PetrinetState> visited,
 			ArrayList<PetrinetState> path) {
 		if (visited.contains(state))
 			return null;
@@ -258,7 +258,7 @@ public class PetrinetState {
 		if (state != this)
 			visited.add(state);
 		for (PetrinetState rs : state.getPredecessors()) {
-			List<PetrinetState> list = getPathToOther(rs, other, visited, path);
+			List<PetrinetState> list = getPathFromOther(rs, other, visited, path);
 			if (list != null) {
 
 				if (path.contains(state)) {// circle!

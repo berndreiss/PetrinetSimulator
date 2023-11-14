@@ -416,8 +416,12 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onClose() {
 
+		if (currentPetrinetPanel == null)
+			return;
+		
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
 
+		
 		int index = tabbedPane.getSelectedIndex();
 
 		tabbedPane.remove(index);

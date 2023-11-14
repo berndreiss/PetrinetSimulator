@@ -34,6 +34,8 @@ public class ReachabilityGraphModel {
 	private ReachabilityStateChangeListener stateChangeListener;
 
 	private boolean skippableMode = false;
+	
+	private boolean pushing = true;
 
 	/**
 	 * Instantiates a new reachability graph model.
@@ -46,13 +48,13 @@ public class ReachabilityGraphModel {
 		this.toolbarToggleListener = toolbarToggleListener;
 		petrinetQueue = new ReachabilityGraphStateQueue(this, toolbarToggleListener);
 		petrinetStates = new IterableMap<String, PetrinetState>();
-		addNewState(petrinet, null, true);
+		addNewState(petrinet, null);
 
 		petrinet.setPetrinetChangeListener(new PetrinetStateChangedListener() {
 
 			@Override
 			public void onTransitionFire(Transition t) {
-				addNewState(petrinet, t, true);
+				addNewState(petrinet, t);
 
 			}
 
@@ -62,7 +64,7 @@ public class ReachabilityGraphModel {
 				PetrinetState initialState = getInitialState();
 				if (initialState != null)
 					removeState(initialState);
-				addNewState(petrinet, null, true);
+				addNewState(petrinet, null);
 
 			}
 
@@ -112,10 +114,10 @@ public class ReachabilityGraphModel {
 	 *
 	 * @param state the new current state
 	 */
-	public void setCurrentState(PetrinetState state, boolean push) {
+	public void setCurrentState(PetrinetState state) {
 		setNewCurrentState(petrinetStates.get(state.getState()), true); // TODO Why did I get the state out of the
 		setCurrentEdge(null);
-		if (push)
+		if (pushing)
 			petrinetQueue.push(currentState, currentEdge, AddedType.NOTHING, null, skippableMode);
 	}
 
@@ -136,7 +138,7 @@ public class ReachabilityGraphModel {
 	 * @param t        the t
 	 * @return the added
 	 */
-	public AddedType addNewState(Petrinet petrinet, Transition t, boolean push) {
+	public AddedType addNewState(Petrinet petrinet, Transition t) {
 
 		if (petrinet == null || !petrinet.hasPlaces())
 			return null;
@@ -175,8 +177,8 @@ public class ReachabilityGraphModel {
 			currentEdge = currentState.getState() + petrinetState.getState() + t.getId();
 
 		setNewCurrentState(petrinetState, false);
-		checkIfCurrentStateIsBackwardsValid();
-		if (push)
+		checkIfCurrentStateIsBackwardsBounded();
+		if (pushing)
 			petrinetQueue.push(currentState, currentEdge, added, t, skippableMode);
 
 		return added;
@@ -194,7 +196,7 @@ public class ReachabilityGraphModel {
 	 *
 	 * @return true, if successful
 	 */
-	boolean checkIfCurrentStateIsBackwardsValid() {
+	boolean checkIfCurrentStateIsBackwardsBounded() {
 
 		if (currentState.getPredecessorsSize() == 0)
 			return true;
@@ -291,7 +293,7 @@ public class ReachabilityGraphModel {
 		petrinetStates.clear();
 		if (initialState != null) {
 			petrinetStates.put(initialState.getState(), initialState);
-			setCurrentState(initialState, true);
+			setCurrentState(initialState);
 		}
 
 	}
@@ -324,7 +326,7 @@ public class ReachabilityGraphModel {
 	 * Sets the initial.
 	 */
 	public void setInitial() {
-		setCurrentState(initialState, true);
+		setCurrentState(initialState);
 		setCurrentEdge(null);
 //		petrinetQueue.rewind();
 	}
@@ -398,6 +400,14 @@ public class ReachabilityGraphModel {
 	 */
 	public void setSkippableMode(boolean skippableMode) {
 		this.skippableMode = skippableMode;
+	}
+	/**
+	 * 
+	 * @param pushing
+	 */
+	public void setPushing(boolean pushing) {
+		this.pushing = pushing;
+		
 	}
 
 }
