@@ -555,6 +555,7 @@ public class Petrinet {
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onTransitionFire(t);
 
+
 	}
 
 	/**
@@ -579,7 +580,7 @@ public class Petrinet {
 
 		Iterator<Integer> integerIt = state.getPlaceTokens();
 
-		if (places.size() == state.placeTokensSize())
+		if (places.size() == state.numberOfPlaces())
 			for (Place p : places) 
 				p.setNumberOfTokens(integerIt.next());
 

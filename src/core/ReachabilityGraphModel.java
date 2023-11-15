@@ -152,7 +152,7 @@ public class ReachabilityGraphModel {
 			petrinetState = petrinetStates.get(petrinetStateString);
 		} else {
 			added = AddedType.STATE;
-			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getLevel() + 1);
+			petrinetState = new PetrinetState(petrinet, currentState == null ? 0 : currentState.getStepsFromInitialState() + 1);
 			petrinetStates.put(petrinetStateString, petrinetState);
 		}
 
@@ -206,7 +206,9 @@ public class ReachabilityGraphModel {
 
 			if (state != null) {
 				invalidState = currentState;
-				currentState.setM(state, stateChangeListener);
+				currentState.setM(state);
+				if (stateChangeListener != null)
+					stateChangeListener.onMarkUnboundedPath(state, currentState);
 				return false;
 			}
 		}
@@ -345,7 +347,7 @@ public class ReachabilityGraphModel {
 	 * @param transition the transition
 	 */
 	void removeEdge(PetrinetState lastState, PetrinetState state, Transition transition) {
-		lastState.removeSuccessorEdge(state, transition, stateChangeListener);
+		lastState.removeSuccessorEdge(state, transition);
 		state.removePredecessorEdge(lastState, transition, stateChangeListener);
 
 		if ((lastState.getState() + state.getState() + transition.getId()).equals(currentEdge))

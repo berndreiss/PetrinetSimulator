@@ -244,7 +244,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// add the node to custom layout if one is set
 		if (layoutType != LayoutType.AUTOMATIC)
 			layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t,
-					predecessor == null ? 0 : predecessor.getLevel());
+					predecessor == null ? 0 : predecessor.getStepsFromInitialState());
 
 		return node;
 	}

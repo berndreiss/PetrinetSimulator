@@ -12,40 +12,63 @@ import util.IterableMap;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class PetrinetState.
+ * <p>
+ * Class representing the state of a petrinet.
+ * </p>
+ * 
+ * <p>
+ * The state of a petrinet is represented by the marking of its places.
+ * Additionally this class contains the predecessor and successor states
+ * (including transition leading from / to those states) for the given instance
+ * and information about whether this state lies on the end of a path proving
+ * the petrinet aís unbounded (the beginning path being saved as 'm').
+ * </p>
  */
 public class PetrinetState {
 
+	/** The given state of the petrinet as a string. */
 	private String state;
-	private List<Integer> placeTokens  = new ArrayList<Integer>();
+	/** The places and their tokens represented by Integers. */
+	private List<Integer> placeTokens = new ArrayList<Integer>();
 
+	/**
+	 * First state on the path proving petrinet is unbounded. Null if non has been
+	 * found.
+	 */
 	private PetrinetState m;
 
+	/** All direct predecessors leading to this state. */
 	private IterableMap<String, PetrinetState> predecessors = new IterableMap<String, PetrinetState>();
+	/** All direct successors reachable from this state. */
 	private IterableMap<String, PetrinetState> successors = new IterableMap<String, PetrinetState>();
-
+	/**
+	 * All transitions leading to and from this state (key being
+	 * predecessor+successor).
+	 */
 	private HashMap<String, List<Transition>> transitionMap = new HashMap<String, List<Transition>>();
-
-	private int level;
+	/** Steps being taken from initial state. */
+	private int stepsFromInitialState;
 
 	/**
 	 * Instantiates a new petrinet state.
 	 *
-	 * @param petrinet the petrinet
-	 * @param level the level
+	 * @param petrinet              The petrinet for which to save the current
+	 *                              state.
+	 * @param stepsFromInitialState Number of steps being taken from initial state.
 	 */
-	PetrinetState(Petrinet petrinet, int level) {
+	PetrinetState(Petrinet petrinet, int stepsFromInitialState) {
 
-		for (Place p : petrinet.getPlaces()) {
+		// get the tokens on all places
+		for (Place p : petrinet.getPlaces())
 			placeTokens.add(p.getNumberOfTokens());
-		}
 
+		// get state as string
 		this.state = petrinet.getStateString();
-		this.level = level;
+		this.stepsFromInitialState = stepsFromInitialState;
 	}
 
 	/**
-	 * Gets the state.
+	 * Get the state as string.
 	 *
 	 * @return the state
 	 */
@@ -54,7 +77,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the place tokens.
+	 * Get the place tokens.
 	 *
 	 * @return the place tokens
 	 */
@@ -63,16 +86,16 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Place tokens size.
+	 * Get the number of places.
 	 *
-	 * @return the int
+	 * @return the number of places
 	 */
-	int placeTokensSize() {
+	int numberOfPlaces() {
 		return placeTokens.size();
 	}
 
 	/**
-	 * Gets the predecessors.
+	 * Get the predecessors.
 	 *
 	 * @return the predecessors
 	 */
@@ -81,7 +104,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the successors.
+	 * Get the successors.
 	 *
 	 * @return the successors
 	 */
@@ -90,99 +113,118 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the level.
+	 * Get the number of steps being taken from the initial state.
 	 *
-	 * @return the level
+	 * @return number of steps from the initial state
 	 */
-	public int getLevel() {
-		return level;
+	public int getStepsFromInitialState() {
+		return stepsFromInitialState;
 	}
 
 	/**
-	 * Adds the successor.
+	 * Add a new successor.
 	 *
-	 * @param newSuccessor the new successor
-	 * @param t the t
-	 * @return true, if successful
+	 * @param newSuccessor The new successor to be added.
+	 * @param transition   The transition being fired to get to the successor.
+	 * @return true, if successor has been added, false if transition already
+	 *         existed for successor
 	 */
-	boolean addSuccessor(PetrinetState newSuccessor, Transition t) {
+	public boolean addSuccessor(PetrinetState newSuccessor, Transition transition) {
+
+		if (newSuccessor == null)
+			return false;
 
 		boolean added = false;
 
+		// add successor to map
 		successors.put(newSuccessor.getState(), newSuccessor);
+
+		// get the string for the transition map
 		String mapString = this.getState() + newSuccessor.getState();
-		if (!transitionMap.containsKey(mapString)) {
-			transitionMap.put(mapString, new ArrayList<Transition>());
-			added = true;
-		}
+
+		// get the transition list for the successor
 		List<Transition> transitionList = transitionMap.get(mapString);
-		if (!transitionList.contains(t)) {
-			transitionList.add(t);
+
+		// if it does not exist, create it
+		if (transitionList == null) {
+			transitionList = new ArrayList<Transition>();
+			transitionMap.put(mapString, transitionList);
+
+		}
+
+		// if the list does not contain the transition, add it
+		if (!transitionList.contains(transition)) {
+			transitionList.add(transition);
 			added = true;
 		}
 		return added;
 	}
 
-	
-
 	/**
-	 * Gets the first successor transition.
+	 * Gets the first transition for a given successor.
 	 *
-	 * @param successor the successor
-	 * @return the first successor transition
+	 * @param successor The successor for which to return a transition.
+	 * @return the first transition for successor
 	 */
 	public Transition getFirstSuccessorTransition(PetrinetState successor) {
 		if (!successors.containsKey(successor.getState()))
 			return null;
+		// return the first transition
 		for (Transition t : transitionMap.get(this.getState() + successor.getState()))
 			return t;
 		return null;
 	}
 
 	/**
-	 * Adds the predecessor.
+	 * Add a new predecessor.
 	 *
-	 * @param newPredecessor the new predecessor
-	 * @param t the t
-	 * @return true, if successful
+	 * @param newPredecessor The new predecessor to be added.
+	 * @param transition     The transition being fired to get to the predecessor.
+	 * @return true, if predecessor has been added, false if transition already
+	 *         existed for predecessor
 	 */
-	boolean addPredecessor(PetrinetState newPredecessor, Transition t) {
+	boolean addPredecessor(PetrinetState newPredecessor, Transition transition) {
 
 		if (newPredecessor == null)
 			return false;
+
 		boolean added = false;
 
+		// add successor to map
 		predecessors.put(newPredecessor.getState(), newPredecessor);
-		String mapString = newPredecessor.getState() + this.getState();
-		if (!transitionMap.containsKey(mapString)) {
-			transitionMap.put(mapString, new ArrayList<Transition>());
-			added = true;
 
-		}
+		// get the string for the transition map
+		String mapString = newPredecessor.getState() + this.getState();
+
+		// get the transition list for the predecessor
 		List<Transition> transitionList = transitionMap.get(mapString);
-		if (!transitionList.contains(t)) {
-			transitionList.add(t);
+
+		// if it does not exist, create it
+		if (transitionList == null) {
+			transitionList = new ArrayList<Transition>();
+			transitionMap.put(mapString, transitionList);
+		}
+		// if the list does not contain the transition, add it
+		if (!transitionList.contains(transition)) {
+			transitionList.add(transition);
 			added = true;
 		}
 		return added;
 	}
 
-	
-
 	/**
-	 * Sets the M.
+	 * Set m -> state marking the start of a path proving that petrinet is unbound.
 	 *
-	 * @param m the m
+	 * @param m                   The start of the path.
 	 * @param stateChangeListener the state change listener
 	 */
-	void setM(PetrinetState m, ReachabilityStateChangeListener stateChangeListener) {
+	void setM(PetrinetState m) {
 		this.m = m;
-		if (stateChangeListener != null)
-			stateChangeListener.onMarkUnboundedPath(m, this);
 	}
 
 	/**
-	 * Gets the m.
+	 * Gets the m state marking the start of a path proving that petrinet is
+	 * unbound.
 	 *
 	 * @return the m
 	 */
@@ -191,32 +233,45 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Checks if is bigger than.
+	 * Checks state if is bigger than other -> if any token on a place in the given
+	 * state is bigger than in the other while all other tokens being at least the
+	 * same, return true.
 	 *
-	 * @param other the other
-	 * @return true, if is bigger than
+	 * @param other The other state to compare to
+	 * @return true, if all tokens are at least the same and at least one is bigger
 	 */
 	boolean isBiggerThan(PetrinetState other) {
-
-		return compareStates(other, (i, j) -> i < j);
+		// comparator looks at tokens of places of this state and compares it to tokens
+		// of the other state -> if tokens of this is smaller, return false
+		return compareStates(other, (thisToken, otherToken) -> thisToken < otherToken);
 	}
 
+	// see description in isBiggerThan() -> comparator being used to be able to also
+	// implement isSmallerThan()
 	private boolean compareStates(PetrinetState other, ReachabilityComparator comparator) {
-		if (placeTokensSize() != other.placeTokensSize())
+		// the two states do not represent the same petrinet -> abort
+		if (numberOfPlaces() != other.numberOfPlaces())
 			return false;
 
+		// flag marking if there have been differences
 		boolean differenceInItemFlag = false;
 
+		// iterator for places in both petrinets -> guaranteed to be the same size, see
+		// above, furthermore it is also guaranteed, that the places are always in the
+		// same order, since they are ordered by name (see class Petrinet)
 		Iterator<Integer> thisIt = this.getPlaceTokens();
 		Iterator<Integer> otherIt = other.getPlaceTokens();
 
+		// compare the two states place by place
 		while (thisIt.hasNext()) {
 			int thisPlaceTokens = thisIt.next();
 			int otherPlaceTokens = otherIt.next();
 
+			// compare the two places if comparison yields true (see ReachabilityComparator)
 			if (comparator.compare(thisPlaceTokens, otherPlaceTokens))
 				return false;
 
+			// mark flag for difference if the two tokens are not the same
 			if (!(thisPlaceTokens == otherPlaceTokens))
 				differenceInItemFlag = true;
 		}
@@ -233,38 +288,55 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the path from other state.
+	 * Gets the path from other state if it exists (excluding this and the other
+	 * state), null otherwise.
 	 *
-	 * @param other the other
-	 * @return the path to other state
+	 * @param other The other path from which to return path.
+	 * @return the path from other state
 	 */
 	List<PetrinetState> getPathFromOtherState(PetrinetState other) {
 
 		List<PetrinetState> list = getPathFromOther(this, other, new HashSet<PetrinetState>(),
 				new ArrayList<PetrinetState>());
+		// path does not include current state
 		if (list.contains(this))
 			list.remove(this);
 		return list;
 	}
 
+	// crawls backward recursively through list of all predecessors and returns the
+	// path from the other state if path exists -> the path is handed down by the
+	// function and states are added step by step
 	private List<PetrinetState> getPathFromOther(PetrinetState state, PetrinetState other, Set<PetrinetState> visited,
 			ArrayList<PetrinetState> path) {
+
+		// base case
 		if (visited.contains(state))
 			return null;
 
-		if (state == other) {
+		// other state has been found
+		if (state == other)
 			return path;
-		}
+
+		// add state to visited
 		if (state != this)
 			visited.add(state);
+
+		// crawl through all predecessors of the given state
 		for (PetrinetState rs : state.getPredecessors()) {
+			// get path to predecessor as list (states will be added to path)
 			List<PetrinetState> list = getPathFromOther(rs, other, visited, path);
+
+			// if list is not null see if we are on a circle (if path already contains given
+			// state)
 			if (list != null) {
 
+				// handle circles
 				if (path.contains(state)) {// circle!
 					path.clear();
 					return path;
 				}
+				// add given state to path and return it
 				path.add(state);
 				return path;
 			}
@@ -273,75 +345,87 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Checks for edges.
+	 * Check for edges.
 	 *
-	 * @return true, if successful
+	 * @return true, if state has edges
 	 */
 	boolean hasEdges() {
 		return transitionMap.size() > 0;
 	}
 
 	/**
-	 * Removes the predecessor.
+	 * Removes a predecessor.
 	 *
-	 * @param petrinetState the petrinet state
-	 * @param stateChangeListener the state change listener
+	 * @param predecessor         The predecessor state to be removed.
+	 * @param stateChangeListener the state change listener listening for the
+	 *                            removal of transitions
 	 */
-	private void removePredecessor(PetrinetState petrinetState, ReachabilityStateChangeListener stateChangeListener) {
-		if (!predecessors.containsKey(petrinetState.getState()))
+	private void removePredecessor(PetrinetState predecessor, ReachabilityStateChangeListener stateChangeListener) {
+		if (!predecessors.containsKey(predecessor.getState()))
 			return;
 
-		List<Transition> transitions = transitionMap.get(petrinetState.getState() + getState());
+		List<Transition> transitions = transitionMap.get(predecessor.getState() + getState());
 
 		if (transitions == null)// case when PetrinetState was its own successor/predecessor
 			return;
 
+		// remove all transitions
 		for (Transition t : transitions) {
 			if (stateChangeListener != null)
-				stateChangeListener.onRemoveEdge(petrinetState, this, t);
+				stateChangeListener.onRemoveEdge(predecessor, this, t);
 		}
-		transitionMap.remove(petrinetState.getState() + getState());
 
-		predecessors.remove(petrinetState.getState());
+		// remove the entry in the map
+		transitionMap.remove(predecessor.getState() + getState());
 
-		petrinetState.removeSuccessor(this, null);
+		// remove from predecessors
+		predecessors.remove(predecessor.getState());
+
+		// synchronize
+		predecessor.removeSuccessor(this, null);
 
 	}
 
 	/**
-	 * Removes the successor.
+	 * Removes a successor.
 	 *
-	 * @param petrinetState the petrinet state
-	 * @param stateChangeListener the state change listener
+	 * @param successor           The successor state to be removed.
+	 * @param stateChangeListener the state change listener listening for the
+	 *                            removal of transitions
 	 */
-	private void removeSuccessor(PetrinetState petrinetState, ReachabilityStateChangeListener stateChangeListener) {
+	private void removeSuccessor(PetrinetState successor, ReachabilityStateChangeListener stateChangeListener) {
 
-		if (!successors.containsKey(petrinetState.getState()))
+		if (!successors.containsKey(successor.getState()))
 			return;
 
-		List<Transition> transitions = transitionMap.get(getState() + petrinetState.getState());
+		List<Transition> transitions = transitionMap.get(getState() + successor.getState());
 
 		if (transitions == null)// case when PetrinetState was its own successor/predecessor
 			return;
 
+		// remove all transitions
 		for (Transition t : transitions) {
 			if (stateChangeListener != null)
-				stateChangeListener.onRemoveEdge(this, petrinetState, t);
+				stateChangeListener.onRemoveEdge(this, successor, t);
 		}
-		transitionMap.remove(getState() + petrinetState.getState());
 
-		successors.remove(petrinetState.getState());
+		// remove entry from map
+		transitionMap.remove(getState() + successor.getState());
 
-		petrinetState.removePredecessor(this, null);
+		// remove from successors
+		successors.remove(successor.getState());
+
+		// synchronize
+		successor.removePredecessor(this, null);
 
 	}
 
 	/**
-	 * Removes the predecessor edge.
+	 * Removes a predecessor edge.
 	 *
-	 * @param predecessor the predecessor
-	 * @param transition the transition
-	 * @param stateChangeListener the state change listener
+	 * @param predecessor         The predecessor of the edge.
+	 * @param transition          The transition of the edge.
+	 * @param stateChangeListener the state change listener listening for edge removals
 	 */
 	void removePredecessorEdge(PetrinetState predecessor, Transition transition,
 			ReachabilityStateChangeListener stateChangeListener) {
@@ -351,27 +435,29 @@ public class PetrinetState {
 
 		List<Transition> transitions = transitionMap.get(predecessor.getState() + getState());
 
-		if (transitions == null)//could be the case if there is an edge from a state to itself and edge has been removed
+		if (transitions == null)// could be the case if there is an edge from a state to itself and edge has
+								// been removed
 			return;
-			transitions.remove(transition);
+		transitions.remove(transition);
 
 		if (transitions.size() == 0)
 			transitionMap.remove(predecessor.getState() + getState());
 	}
 
+	//TODO continue commenting from here
 	/**
 	 * Removes the successor edge.
 	 *
-	 * @param successor the successor
-	 * @param transition the transition
+	 * @param successor           the successor
+	 * @param transition          the transition
 	 * @param stateChangeListener the state change listener
 	 */
-	void removeSuccessorEdge(PetrinetState successor, Transition transition,
-			ReachabilityStateChangeListener stateChangeListener) {
-
+	void removeSuccessorEdge(PetrinetState successor, Transition transition) {
+		//TODO integrate this function into removePredecessorEdge
 		List<Transition> transitions = transitionMap.get(getState() + successor.getState());
 
-		if (transitions == null)//could be the case if there is an edge from a state to itself and edge has been removed
+		if (transitions == null)// could be the case if there is an edge from a state to itself and edge has
+								// been removed
 			return;
 
 		transitions.remove(transition);
@@ -381,7 +467,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the predecessors size.
+	 * Get number of predecessors.
 	 *
 	 * @return the predecessors size
 	 */
@@ -390,7 +476,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Gets the successors size.
+	 * Get number of successors.
 	 *
 	 * @return the successors size
 	 */
@@ -399,7 +485,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Removes the all predecessors.
+	 * Remove all predecessors.
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
@@ -435,29 +521,10 @@ public class PetrinetState {
 	 * @param successor
 	 * @return
 	 */
-	
-	public List<Transition> getTransitions(PetrinetState successor){
+
+	public List<Transition> getTransitions(PetrinetState successor) {
 		return transitionMap.get(this.getState() + successor.getState());
 	}
-	//TODO REMOVE
-	/**
-	 * Prints the.
-	 */
-	public void print() {
-		System.out.println("STATE: " + getState());
-		System.out.println("PREDECESSORS: ");
-		for (PetrinetState ps : predecessors)
-			System.out.println(ps.getState());
 
-		System.out.println("SUCCESSORS:");
-		for (PetrinetState ps : successors)
-			System.out.println(ps.getState());
 
-		System.out.println("TRANSITION MAP:");
-
-		for (String s : transitionMap.keySet())
-			for (Transition t : transitionMap.get(s))
-				System.out.println(s + t.getId());
-
-	}
 }
