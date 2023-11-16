@@ -10,7 +10,6 @@ import java.util.Set;
 import listeners.ReachabilityStateChangeListener;
 import util.IterableMap;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * Class representing the state of a petrinet.
@@ -444,13 +443,11 @@ public class PetrinetState {
 			transitionMap.remove(predecessor.getState() + getState());
 	}
 
-	//TODO continue commenting from here
 	/**
 	 * Removes the successor edge.
 	 *
 	 * @param successor           the successor
 	 * @param transition          the transition
-	 * @param stateChangeListener the state change listener
 	 */
 	void removeSuccessorEdge(PetrinetState successor, Transition transition) {
 		//TODO integrate this function into removePredecessorEdge
@@ -490,6 +487,8 @@ public class PetrinetState {
 	 * @param stateChangeListener the state change listener
 	 */
 	void removeAllPredecessors(ReachabilityStateChangeListener stateChangeListener) {
+		
+		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> predecessorStrings = new ArrayList<String>();
 
 		for (String s : predecessors.keySet())
@@ -501,11 +500,13 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Removes the all successors.
+	 * Remove all successors.
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
 	void removeAllSuccessors(ReachabilityStateChangeListener stateChangeListener) {
+		
+		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> successorStrings = new ArrayList<String>();
 
 		for (String s : successors.keySet())
@@ -517,9 +518,10 @@ public class PetrinetState {
 	}
 
 	/**
+	 * Get transitions one can fire in this state to get to the successor state.
 	 * 
-	 * @param successor
-	 * @return
+	 * @param successor The target state for which transitions should be returned.
+	 * @return transitions leading to successor state
 	 */
 
 	public List<Transition> getTransitions(PetrinetState successor) {
