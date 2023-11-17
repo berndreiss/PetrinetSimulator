@@ -6,6 +6,7 @@ import gui.MainFrame;
  */
 public class Main {
 
+	//TODO petrinet auf Gültigkeit prüfen (beim Laden und im Editor)
 	/**
 	 * The main method: starts an instance of {@link MainFrame}.
 	 *

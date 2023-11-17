@@ -354,16 +354,6 @@ public class ReachabilityGraphModel {
 			currentEdge = null;
 	}
 
-	// TODO REMOVE
-
-	/**
-	 * Prints the.
-	 */
-	public void print() {
-		for (PetrinetState ps : petrinetStates)
-			ps.print();
-	}
-
 	/**
 	 * 
 	 * @return
