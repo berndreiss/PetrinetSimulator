@@ -571,4 +571,20 @@ public class PetrinetPanel extends JPanel {
 		adjustArrowHeads = true;
 	}
 
+	/**
+	 * Undo the last step in the reachability graph shown.
+	 */
+	public void undo() {
+		adjustArrowHeads = false;
+		petrinetController.getPetrinetQueue().goBack();
+		adjustArrowHeads = true;
+	}
+	/**
+	 * Undo the last step in the reachability graph shown.
+	 */
+	public void redo() {
+		adjustArrowHeads = false;
+		petrinetController.getPetrinetQueue().goForward();
+		adjustArrowHeads = true;
+	}
 }

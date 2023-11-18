@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
-import core.ReachabilityGraphStateQueue;
+import core.ReachabilityGraphUndoQueue;
 import reachabilityGraphLayout.LayoutType;
 
 /**
@@ -650,7 +650,7 @@ public class PetrinetToolbar extends JToolBar {
 
 		// set undo / redo buttons
 		PetrinetViewerController controller = petrinetPanel.getPetrinetController();
-		ReachabilityGraphStateQueue queue = controller.getPetrinetQueue();
+		ReachabilityGraphUndoQueue queue = controller.getPetrinetQueue();
 
 		if (queue == null) // safety check
 			return;

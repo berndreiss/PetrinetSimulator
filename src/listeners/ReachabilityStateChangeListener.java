@@ -18,9 +18,8 @@ public interface ReachabilityStateChangeListener {
 	 * The View needs to set a new state to the current state.
 	 *
 	 * @param state The state which is the new current state.
-	 * @param reset Signifies whether the current edge needs to be reset.
 	 */
-	void onSetCurrent(PetrinetState state, boolean reset);
+	void onSetCurrent(PetrinetState state);
 
 	/**
 	 * The View needs to mark the starting and ending nodes of the path signifying
@@ -37,7 +36,7 @@ public interface ReachabilityStateChangeListener {
 	 *
 	 * @param state       The state to be added.
 	 * @param predecessor The predecessor of the state to be added.
-	 * @param transition           The transition that has been fired.
+	 * @param transition  The transition that has been fired.
 	 */
 	void onAdd(PetrinetState state, PetrinetState predecessor, Transition transition);
 
@@ -53,7 +52,8 @@ public interface ReachabilityStateChangeListener {
 	 *
 	 * @param stateSource The source state of the edge to be removed.
 	 * @param stateTarget The target state of the edge to be removed.
-	 * @param transition           The transition which has been fired when the edge was added.
+	 * @param transition  The transition which has been fired when the edge was
+	 *                    added.
 	 */
 	void onRemoveEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition transition);
 
@@ -64,5 +64,10 @@ public interface ReachabilityStateChangeListener {
 	 * @param edge The edge to be marked as the current edge.
 	 */
 	void onSetCurrentEdge(String edge);
+
+	/**
+	 * The current edge is being reset.
+	 */
+	void onResetCurrentEdge();
 
 }

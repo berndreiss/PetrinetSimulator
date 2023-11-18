@@ -6,9 +6,9 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
-import core.ReachabilityGraphStateQueue;
+import core.ReachabilityGraphUndoQueue;
 import core.PetrinetState;
-import core.ReachabilityGraphModel;
+import core.ReachabilityGraph;
 import core.Transition;
 import listeners.ReachabilityStateChangeListener;
 import listeners.AdjustArrowHeadsListener;
@@ -20,7 +20,7 @@ import reachabilityGraphLayout.LayoutType;
  *
  * <p>
  * A <a href="https://graphstream-project.org/">GraphStream</a> implementation
- * of {@link ReachabilityGraphModel}.
+ * of {@link ReachabilityGraph}.
  * </p>
  * 
  * <p>
@@ -69,7 +69,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * @param reachabilityGraphModel The model the graph represents.
 	 * @param layoutType             The layout type the graph is set to.
 	 */
-	public GraphStreamReachabilityGraph(ReachabilityGraphModel reachabilityGraphModel, LayoutType layoutType) {
+	public GraphStreamReachabilityGraph(ReachabilityGraph reachabilityGraphModel, LayoutType layoutType) {
 		super("Reachability Graph");
 
 		this.layoutType = layoutType;
@@ -81,7 +81,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// reachability model in the order they have been added in the first place ->
 		// important when switching from custom layouts to auto layout and vice versa
 		// because the graph is reinstantiated
-		ReachabilityGraphStateQueue queue = reachabilityGraphModel.getPetrinetQueue();
+		ReachabilityGraphUndoQueue queue = reachabilityGraphModel.getUndoQueue();
 
 		// rewind the queue to the beginning (silent because old states might still
 		// think another graph exists and make changes to it when rewinding the queue)
@@ -106,19 +106,22 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		reachabilityGraphModel.setStateChangeListener(new ReachabilityStateChangeListener() {
 
 			@Override
-			public void onSetCurrent(PetrinetState state, boolean resetCurrentEdge) {
+			public void onSetCurrent(PetrinetState state) {
 
 				if (state != null)
 					setCurrent(getNode(state.getState()));
 
+				
+			}
+			
+			@Override
+			public void onResetCurrentEdge() {
 				// reset current edge if necessary
-				if (resetCurrentEdge) {
 					if (currentEdge == null)
 						return;
 					currentEdge.setAttribute("ui.class", "edge");
 					currentEdge = null;
 
-				}
 			}
 
 			@Override
@@ -244,7 +247,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// add the node to custom layout if one is set
 		if (layoutType != LayoutType.AUTOMATIC)
 			layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t,
-					predecessor == null ? 0 : predecessor.getStepsFromInitialState());
+					predecessor == null ? 0 : predecessor.getLevel());
 
 		return node;
 	}

@@ -729,14 +729,14 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void onUndo() {
 		if (currentPetrinetPanel == null)
 			return;
-		currentPetrinetPanel.getPetrinetController().getPetrinetQueue().goBack();
+		currentPetrinetPanel.undo();
 	}
 
 	@Override
 	public void onRedo() {
 		if (currentPetrinetPanel == null)
 			return;
-		currentPetrinetPanel.getPetrinetController().getPetrinetQueue().goForward();
+		currentPetrinetPanel.redo();
 	}
 
 	@Override

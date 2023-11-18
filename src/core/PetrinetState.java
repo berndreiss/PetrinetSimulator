@@ -45,8 +45,11 @@ public class PetrinetState {
 	 * predecessor+successor).
 	 */
 	private HashMap<String, List<Transition>> transitionMap = new HashMap<String, List<Transition>>();
-	/** Steps being taken from initial state. */
-	private int stepsFromInitialState;
+	/**
+	 * Steps being taken from an initial state -> initial state being defined as a
+	 * state without predecessors.
+	 */
+	private int level;
 
 	/**
 	 * Instantiates a new petrinet state.
@@ -63,7 +66,7 @@ public class PetrinetState {
 
 		// get state as string
 		this.state = petrinet.getStateString();
-		this.stepsFromInitialState = stepsFromInitialState;
+		this.level = stepsFromInitialState;
 	}
 
 	/**
@@ -116,8 +119,8 @@ public class PetrinetState {
 	 *
 	 * @return number of steps from the initial state
 	 */
-	public int getStepsFromInitialState() {
-		return stepsFromInitialState;
+	public int getLevel() {
+		return level;
 	}
 
 	/**
@@ -156,6 +159,10 @@ public class PetrinetState {
 			transitionList.add(transition);
 			added = true;
 		}
+		
+		//synchronize successor
+		newSuccessor.addPredecessor(this, transition);
+
 		return added;
 	}
 
@@ -182,7 +189,7 @@ public class PetrinetState {
 	 * @return true, if predecessor has been added, false if transition already
 	 *         existed for predecessor
 	 */
-	boolean addPredecessor(PetrinetState newPredecessor, Transition transition) {
+	private boolean addPredecessor(PetrinetState newPredecessor, Transition transition) {
 
 		if (newPredecessor == null)
 			return false;
@@ -208,6 +215,7 @@ public class PetrinetState {
 			transitionList.add(transition);
 			added = true;
 		}
+		
 		return added;
 	}
 
@@ -424,7 +432,8 @@ public class PetrinetState {
 	 *
 	 * @param predecessor         The predecessor of the edge.
 	 * @param transition          The transition of the edge.
-	 * @param stateChangeListener the state change listener listening for edge removals
+	 * @param stateChangeListener the state change listener listening for edge
+	 *                            removals
 	 */
 	void removePredecessorEdge(PetrinetState predecessor, Transition transition,
 			ReachabilityStateChangeListener stateChangeListener) {
@@ -441,16 +450,17 @@ public class PetrinetState {
 
 		if (transitions.size() == 0)
 			transitionMap.remove(predecessor.getState() + getState());
+		predecessor.removeSuccessorEdge(this, transition);
 	}
 
 	/**
 	 * Removes the successor edge.
 	 *
-	 * @param successor           the successor
-	 * @param transition          the transition
+	 * @param successor  the successor
+	 * @param transition the transition
 	 */
-	void removeSuccessorEdge(PetrinetState successor, Transition transition) {
-		//TODO integrate this function into removePredecessorEdge
+	private void removeSuccessorEdge(PetrinetState successor, Transition transition) {
+		// TODO integrate this function into removePredecessorEdge
 		List<Transition> transitions = transitionMap.get(getState() + successor.getState());
 
 		if (transitions == null)// could be the case if there is an edge from a state to itself and edge has
@@ -486,8 +496,8 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	void removeAllPredecessors(ReachabilityStateChangeListener stateChangeListener) {
-		
+	public void removeAllPredecessors(ReachabilityStateChangeListener stateChangeListener) {
+
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> predecessorStrings = new ArrayList<String>();
 
@@ -504,8 +514,8 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	void removeAllSuccessors(ReachabilityStateChangeListener stateChangeListener) {
-		
+	public void removeAllSuccessors(ReachabilityStateChangeListener stateChangeListener) {
+
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> successorStrings = new ArrayList<String>();
 
@@ -527,6 +537,5 @@ public class PetrinetState {
 	public List<Transition> getTransitions(PetrinetState successor) {
 		return transitionMap.get(this.getState() + successor.getState());
 	}
-
 
 }

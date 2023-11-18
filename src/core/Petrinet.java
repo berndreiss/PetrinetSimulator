@@ -311,7 +311,7 @@ public class Petrinet {
 
 		// inform listeners
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(places.size() > 0 ? this : null);
+			petrinetStateChangedListener.onPetrinetChanged(places.size() > 0 ? this : null);
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onPetrinetElementRemoved(element);
 
@@ -378,7 +378,7 @@ public class Petrinet {
 
 		// inform the listener that the state of the petrinet has changed
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 		
 		// inform the listener that an element has changed
 		if (petrinetComponentChangedListener != null)
@@ -407,7 +407,7 @@ public class Petrinet {
 		p.setNumberOfTokens(numberOfTokens);
 
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 
 
 	}
@@ -479,7 +479,7 @@ public class Petrinet {
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onEdgeAdded(source, target, id);
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 	}
 
 	/**
@@ -517,7 +517,7 @@ public class Petrinet {
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onEdgeRemoved(source, target);
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 
 	}
 
@@ -603,7 +603,7 @@ public class Petrinet {
 		p.incrementTokens();
 
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 
 		return true;
 	}
@@ -627,7 +627,7 @@ public class Petrinet {
 			return false;
 
 		if (petrinetStateChangedListener != null)
-			petrinetStateChangedListener.onStateChanged(this);
+			petrinetStateChangedListener.onPetrinetChanged(this);
 
 		return true;
 	}

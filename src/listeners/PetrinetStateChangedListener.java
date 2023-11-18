@@ -1,7 +1,7 @@
 package listeners;
 
 import core.Petrinet;
-import core.ReachabilityGraphModel;
+import core.ReachabilityGraph;
 import core.Transition;
 
 /**
@@ -11,7 +11,7 @@ import core.Transition;
  * petrinet has changed.
  * </p>
  * <p>
- * It informs a {@link ReachabilityGraphModel} that the state of a petrinet has
+ * It informs a {@link ReachabilityGraph} that the state of a petrinet has
  * changed.
  * </p>
  */
@@ -30,6 +30,6 @@ public interface PetrinetStateChangedListener {
 	 *
 	 * @param petrinet The new petrinet with changed components.
 	 */
-	void onStateChanged(Petrinet petrinet);
+	void onPetrinetChanged(Petrinet petrinet);
 
 }

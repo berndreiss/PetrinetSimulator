@@ -10,10 +10,10 @@ import core.PNMLParser;
 import core.Petrinet;
 import core.PetrinetAnalyser;
 import core.PetrinetElement;
-import core.ReachabilityGraphStateQueue;
+import core.ReachabilityGraphUndoQueue;
 import core.PetrinetState;
 import core.Place;
-import core.ReachabilityGraphModel;
+import core.ReachabilityGraph;
 import core.Transition;
 import exceptions.PetrinetException;
 import listeners.PetrinetStateChangedListener;
@@ -27,7 +27,7 @@ import propra.pnml.PNMLWopedWriter;
 public class PetrinetViewerController {
 
 	private Petrinet petrinet = new Petrinet();
-	private ReachabilityGraphModel reachabilityGraphModel;
+	private ReachabilityGraph reachabilityGraphModel;
 
 	private File file;
 
@@ -48,7 +48,7 @@ public class PetrinetViewerController {
 		if (file != null)
 			new PNMLParser(file, petrinet);
 
-		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet, toolbarToggleListener);
+		this.reachabilityGraphModel = new ReachabilityGraph(petrinet, toolbarToggleListener);
 
 	}
 
@@ -57,8 +57,8 @@ public class PetrinetViewerController {
 	 *
 	 * @return the petrinet queue
 	 */
-	public ReachabilityGraphStateQueue getPetrinetQueue() {
-		return reachabilityGraphModel.getPetrinetQueue();
+	public ReachabilityGraphUndoQueue getPetrinetQueue() {
+		return reachabilityGraphModel.getUndoQueue();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class PetrinetViewerController {
 	 *
 	 * @return the reachability graph model
 	 */
-	public ReachabilityGraphModel getReachabilityGraphModel() {
+	public ReachabilityGraph getReachabilityGraphModel() {
 		return reachabilityGraphModel;
 	}
 

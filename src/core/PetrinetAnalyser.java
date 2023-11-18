@@ -29,7 +29,7 @@ public class PetrinetAnalyser {
 	private Petrinet petrinet;
 
 	/** The reachability graph model. */
-	private ReachabilityGraphModel reachabilityGraphModel;
+	private ReachabilityGraph reachabilityGraphModel;
 
 	/** True if petrinet is bounded. */
 	private boolean bounded = true;
@@ -123,7 +123,7 @@ public class PetrinetAnalyser {
 			petrinet.fireTransition(t.getId());
 
 			// check whether new state is bounded and abort analysis if not
-			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBackwardsBounded();
+			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded();
 			if (!stateBounded) {
 				bounded = false;
 				return;
