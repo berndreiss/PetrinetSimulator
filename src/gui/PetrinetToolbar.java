@@ -20,6 +20,7 @@ import javax.swing.UIManager;
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
 import core.ReachabilityGraphUndoQueue;
+import core.ReachabilityGraphUndoQueueState;
 import reachabilityGraphLayout.LayoutType;
 
 /**
@@ -655,9 +656,15 @@ public class PetrinetToolbar extends JToolBar {
 		if (queue == null) // safety check
 			return;
 
-		if (!queue.isFirstState())
+		// get current state of the queue
+		ReachabilityGraphUndoQueueState currentState = queue.getCurrentState();
+		
+		if (currentState == null) // safety check
+			return;
+		
+		if (!currentState.isFirst())
 			toggleUndoButton();
-		if (queue.hasNext())
+		if (currentState.hasNext())
 			toggleRedoButton();
 
 	}
