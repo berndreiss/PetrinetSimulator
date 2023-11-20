@@ -324,10 +324,8 @@ public class ReachabilityGraph {
 	public void reset() {
 
 		// reset undo queue and buttons in the toolbar
-		if (undoQueue != null) {
-			undoQueue.resetButtons();
-			undoQueue = new ReachabilityGraphUndoQueue(this, toolbarToggleListener);
-		}
+		if (undoQueue != null) 
+			undoQueue.reset();
 
 		// if there are not states return
 		if (petrinetStates.size() == 0)

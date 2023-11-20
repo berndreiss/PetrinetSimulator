@@ -1,28 +1,21 @@
 package core;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import listeners.ToolbarToggleListener;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
- * Class representing a queue
+ * Class representing an undo queue for a reachabilty graph. 
  * </p>
- * The Class PetrinetQueue.
  */
 public class ReachabilityGraphUndoQueue {
-
 
 	/** The reachability graph. */
 	private ReachabilityGraph reachabilityGraph;
 	/** The listener for the toolbar buttons. */
 	private ToolbarToggleListener toolbarToggleListener;
-	/** */
+	/** The current state of the queue.*/
 	private ReachabilityGraphUndoQueueState currentState = null;
-	
+
 	/**
 	 * Instantiates a new undo queue.
 	 *
@@ -37,134 +30,136 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-
+	// TODO on un-/redo edges not properly removed
 	/**
+	 * Push a new petrinet state onto the queue.
 	 * 
-	 * @param state
-	 * @param edge
-	 * @param stateAdded
-	 * @param transition
-	 * @param skippable
+	 * @param state       The state to be added.
+	 * @param currentEdge The edge being currently active.
+	 * @param stateAdded  Information about whether components have been added.
+	 * @param transition  The transition that has been fired.
+	 * @param skippable   True if step can be skipped on un-/redo.
 	 */
-	public void push(PetrinetState state, String edge, AddedType stateAdded, Transition transition,
+	public void push(PetrinetState state, String currentEdge, AddedType stateAdded, Transition transition,
 			boolean skippable) {
 
-//		System.out.println("PUSHING " + state.getState() + ", " + currentEdge + ", " + stateAdded + ", "
-//				+ (transition == null ? "null" : transition.getId()) + ", " + skippable);
-		
-			ReachabilityGraphUndoQueueState newState = new ReachabilityGraphUndoQueueState(currentState, state, edge, stateAdded, transition, skippable);
-		
-			if (currentState == null && toolbarToggleListener != null)
-				toolbarToggleListener.onUndoChanged();
+		// create new state for queue with the current state as predecessor
+		ReachabilityGraphUndoQueueState newState = new ReachabilityGraphUndoQueueState(currentState, state, currentEdge,
+				stateAdded, transition, skippable);
 
-			
+		// toggle undo change button if it is the beginning of the queue
+		if ((currentState == null || currentState.isFirst()) && toolbarToggleListener != null)
+			toolbarToggleListener.onUndoChanged();
 
-			if (currentState != null) {
-				currentState.setNextState(newState);
-				if (currentState.hasNext() && toolbarToggleListener != null)
-					toolbarToggleListener.onRedoChanged();
-			}
-			currentState = newState;
+		// if the current state exists add new state as successor
+		if (currentState != null) {
+			// if the current state had a next one we need to toggle the redo button
+			if (currentState.hasNext() && toolbarToggleListener != null)
+				toolbarToggleListener.onRedoChanged();
+			currentState.setNextState(newState);
+		}
+
+		// update current state
+		currentState = newState;
 
 	}
 
 	/**
-	 * Go back.
+	 * Go a step back in the queue.
 	 */
 	public void goBack() {
-		System.out.println("GOING BACK...");
-		reachabilityGraph.setPushing(false);
 
-		// TODO example 177 Analyse graph -> undo -> redo -> undo REMOVESTATE EDGE ->
-		// elementNotFoundException
-		// ALSO example 118 -> "(1|1)(2|0)t2" not found
+		// if we are at the beginning of the queue we can not go further
 		if (currentState.isFirst())
 			return;
 
+		// do not push changes made to the reachability graph -> all steps already exist
+		reachabilityGraph.setPushing(false);
+
+		// if we are at the end of the queue we have to toggle the redo button
 		if (!currentState.hasNext() && toolbarToggleListener != null)
 			toolbarToggleListener.onRedoChanged();
 
-		if (currentState.getAdded() == AddedType.STATE) {
+		// UNDO CURRENT STEP
+		// if state has been added, remove it
+		if (currentState.getAdded() == AddedType.STATE)
 			reachabilityGraph.removeState(currentState.getState());
-		} else if (currentState.getAdded() == AddedType.EDGE) {
+		// if only edge has been added, remove it
+		if (currentState.getAdded() == AddedType.EDGE)
 			reachabilityGraph.removeEdge(currentState.getLast().getState(), currentState.getState(),
 					currentState.getTransition());
-		}
 
-		// change current state
+		// change current state and set currently active components in reachability
+		// graph
 		currentState = currentState.getLast();
 		reachabilityGraph.getPetrinet().setState(currentState.getState());
 		reachabilityGraph.setCurrentState(currentState.getState());
 		reachabilityGraph.setCurrentEdge(currentState.getEdge());
 
+		// if we reached the beginning of the queue toggle undo button
 		if (currentState.isFirst() && toolbarToggleListener != null)
 			toolbarToggleListener.onUndoChanged();
 
+		// if the current step is skippable we need to continue
 		if (currentState.isSkippable())
 			goBack();
-		System.out
-				.println(currentState.getState() + ", " + currentState.getEdge() + ", " + currentState.getAdded()
-						+ ", " + (currentState.getTransition() == null ? "null" : currentState.getTransition().getId())
-						+ ", " + currentState.isSkippable());
-		// printAll();
+
+		// reset reachability graph to push changes to the queue
 		reachabilityGraph.setPushing(true);
 
 	}
 
-
 	/**
-	 * Go forward.
+	 * Go a step forward in the queue.
 	 */
 	public boolean goForward() {
 
+		// if there is no next step we can not go further.
 		if (!currentState.hasNext())
 			return false;
+
+		// do not push changes made to the reachability graph -> all steps already exist
 		reachabilityGraph.setPushing(false);
 
+		// if we are at the beginning of the queue we have to toggle the undo button
 		if (currentState.isFirst() && toolbarToggleListener != null)
 			toolbarToggleListener.onUndoChanged();
 
+		// update current state
 		currentState = currentState.getNext();
 
-		System.out.println("CURRENT STATE: " + currentState.getState().getState());
-
+		// first reset the petrinet (in order to redo change in step)
 		Petrinet petrinet = reachabilityGraph.getPetrinet();
-
 		petrinet.setState(currentState.getState());
 
-		System.out.println("PETRINET: " + petrinet.getStateString());
-		if (currentState.stateAdded() != AddedType.NOTHING) {
-			System.out.println("TRANSITION: " + currentState.getTransition().getId());
+		// if something has been added, just fire the transition, otherwise only set
+		// reachability graph to given state
+		if (currentState.stateAdded() != AddedType.NOTHING)
 			reachabilityGraph.addNewState(petrinet, currentState.getTransition());
-		} else
+		else
 			reachabilityGraph.setCurrentState(currentState.getState());
 
-		System.out.println();
+		// if we are at the end of the queue we need to toggle the redo button
 		if (!currentState.hasNext() && toolbarToggleListener != null)
 			toolbarToggleListener.onRedoChanged();
 
+		// if the current step is skippable we need to continue
 		if (currentState.isSkippable())
 			goForward();
+
+		// reset reachability graph to push changes to the queue
 		reachabilityGraph.setPushing(true);
 
 		return true;
 	}
 
-
-	/**
-	 * Reset buttons.
-	 */
-	public void resetButtons() {
-
-		if (!currentState.isFirst() && toolbarToggleListener != null)
-			toolbarToggleListener.onUndoChanged();
-		if (currentState.hasNext() && toolbarToggleListener != null)
-			toolbarToggleListener.onRedoChanged();
-
+	public void reset() {
+		currentState = null;
 	}
 
+
 	/**
-	 * Rewind.
+	 * Rewind -> go to beginning of queue and undo everything.
 	 */
 	public void rewind() {
 
@@ -173,7 +168,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Rewind.
+	 * Rewind -> go to beginning of queue but without undoing all steps.
 	 */
 	public void rewindSilent() {
 
@@ -190,23 +185,10 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-	
-
-	private void print() {
-//		System.out.println((state == null ? "null" : state.getState()) + ", " + currentEdge + ", " + stateAdded + ", "
-//				+ (transition == null ? "null" : transition.getId()));
-	}
-
-	private void printAll() {
-		rewind();
-		System.out.println("START");
-		do {
-			reachabilityGraph.getUndoQueue().print();
-		} while (goForward());
-
-	}
-
-
+	/**
+	 * Get the current state of the queue
+	 * @return the current state
+	 */
 	public ReachabilityGraphUndoQueueState getCurrentState() {
 		return currentState;
 	}
