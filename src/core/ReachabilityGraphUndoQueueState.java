@@ -132,4 +132,8 @@ public class ReachabilityGraphUndoQueueState {
 	public ReachabilityGraphUndoQueueState getNext() {
 		return nextState;
 	}
+
+	public void setPetrinetState(PetrinetState newPetrinetState) {
+		this.state = newPetrinetState;
+	}
 }

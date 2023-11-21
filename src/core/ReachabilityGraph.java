@@ -164,11 +164,14 @@ public class ReachabilityGraph {
 	 * @param petrinet   The petrinet for which to add the current state from.
 	 * @param transition The transition that has been fired.
 	 */
-	public void addNewState(Petrinet petrinet, Transition transition) {
+	public PetrinetState addNewState(Petrinet petrinet, Transition transition) {
+
+		if (petrinet != null && transition != null)
+			System.out.println("ADDING: " + petrinet.getStateString() + "; " + transition.getId());
 
 		// if there is no petrinet or the petrinet does not have places return
 		if (petrinet == null || !petrinet.hasPlaces())
-			return;
+			return null;
 
 		// by default assume nothing has been added
 		AddedType added = AddedType.NOTHING;
@@ -222,6 +225,8 @@ public class ReachabilityGraph {
 		// push onto undo queue
 		if (pushing)
 			undoQueue.push(currentState, currentEdge, added, transition, skippableMode);
+		
+		return petrinetState;
 
 	}
 
@@ -324,7 +329,7 @@ public class ReachabilityGraph {
 	public void reset() {
 
 		// reset undo queue and buttons in the toolbar
-		if (undoQueue != null) 
+		if (undoQueue != null)
 			undoQueue.reset();
 
 		// if there are not states return
@@ -371,6 +376,10 @@ public class ReachabilityGraph {
 	 */
 	public void removeState(PetrinetState state) {
 
+		System.out.println(petrinetStates.containsKey(state.getState()));
+		for (PetrinetState pred : state.getPredecessors())
+			for (Transition t : pred.getTransitions(state))
+				System.out.println(t.getId());
 		// safety measure
 		if (state == null)
 			return;
@@ -389,6 +398,7 @@ public class ReachabilityGraph {
 		petrinetStates.remove(state.getState());
 		if (stateChangeListener != null)
 			stateChangeListener.onRemove(state);
+		System.out.println(petrinetStates.containsKey(state.getState()));
 	}
 
 	/**
@@ -455,7 +465,7 @@ public class ReachabilityGraph {
 	 * If set true all changes made to the reachability graph are flagged as
 	 * skippable an will be skipped when re-/undoing changes. False by default.
 	 * 
-	 * @param skippableMode 
+	 * @param skippableMode
 	 */
 	public void setSkippableMode(boolean skippableMode) {
 		this.skippableMode = skippableMode;
@@ -463,6 +473,7 @@ public class ReachabilityGraph {
 
 	/**
 	 * When set to true all changes are pushed onto the undo queue. True by default.
+	 * 
 	 * @param pushing
 	 */
 	public void setPushing(boolean pushing) {

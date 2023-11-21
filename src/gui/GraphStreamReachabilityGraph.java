@@ -466,4 +466,5 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	public boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
 	}
+	
 }

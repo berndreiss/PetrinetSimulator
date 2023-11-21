@@ -377,10 +377,11 @@ public class PetrinetState {
 			return;
 
 		// remove all transitions
-		for (Transition t : transitions) {
-			if (stateChangeListener != null)
+		for (Transition t : transitions) 
+			if (stateChangeListener != null) {
 				stateChangeListener.onRemoveEdge(predecessor, this, t);
-		}
+				System.out.println("REMOVING " + t.getId());
+			}
 
 		// remove the entry in the map
 		transitionMap.remove(predecessor.getState() + getState());
@@ -400,7 +401,7 @@ public class PetrinetState {
 	 * @param stateChangeListener the state change listener listening for the
 	 *                            removal of transitions
 	 */
-	private void removeSuccessor(PetrinetState successor, ReachabilityStateChangeListener stateChangeListener) {
+	public void removeSuccessor(PetrinetState successor, ReachabilityStateChangeListener stateChangeListener) {
 
 		if (!successors.containsKey(successor.getState()))
 			return;
@@ -411,10 +412,10 @@ public class PetrinetState {
 			return;
 
 		// remove all transitions
-		for (Transition t : transitions) {
+		for (Transition t : transitions) 
 			if (stateChangeListener != null)
 				stateChangeListener.onRemoveEdge(this, successor, t);
-		}
+		
 
 		// remove entry from map
 		transitionMap.remove(getState() + successor.getState());

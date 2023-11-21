@@ -4,7 +4,7 @@ import listeners.ToolbarToggleListener;
 
 /**
  * <p>
- * Class representing an undo queue for a reachabilty graph. 
+ * Class representing an undo queue for a reachabilty graph.
  * </p>
  */
 public class ReachabilityGraphUndoQueue {
@@ -13,7 +13,7 @@ public class ReachabilityGraphUndoQueue {
 	private ReachabilityGraph reachabilityGraph;
 	/** The listener for the toolbar buttons. */
 	private ToolbarToggleListener toolbarToggleListener;
-	/** The current state of the queue.*/
+	/** The current state of the queue. */
 	private ReachabilityGraphUndoQueueState currentState = null;
 
 	/**
@@ -30,7 +30,6 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-	// TODO on un-/redo edges not properly removed
 	/**
 	 * Push a new petrinet state onto the queue.
 	 * 
@@ -63,6 +62,8 @@ public class ReachabilityGraphUndoQueue {
 		currentState = newState;
 
 	}
+
+	// TODO on un-/redo edges not properly removed
 
 	/**
 	 * Go a step back in the queue.
@@ -132,11 +133,14 @@ public class ReachabilityGraphUndoQueue {
 		Petrinet petrinet = reachabilityGraph.getPetrinet();
 		petrinet.setState(currentState.getState());
 
-		// if something has been added, just fire the transition, otherwise only set
+		// if something has been added, readd state with transition, otherwise only set
 		// reachability graph to given state
-		if (currentState.stateAdded() != AddedType.NOTHING)
-			reachabilityGraph.addNewState(petrinet, currentState.getTransition());
-		else
+		if (currentState.stateAdded() != AddedType.NOTHING) {
+			// since a new petrinet state is created it needs to be updated in the queue
+			// state
+			PetrinetState newPetrinetState = reachabilityGraph.addNewState(petrinet, currentState.getTransition());
+			currentState.setPetrinetState(newPetrinetState);
+		} else
 			reachabilityGraph.setCurrentState(currentState.getState());
 
 		// if we are at the end of the queue we need to toggle the redo button
@@ -156,7 +160,6 @@ public class ReachabilityGraphUndoQueue {
 	public void reset() {
 		currentState = null;
 	}
-
 
 	/**
 	 * Rewind -> go to beginning of queue and undo everything.
@@ -187,6 +190,7 @@ public class ReachabilityGraphUndoQueue {
 
 	/**
 	 * Get the current state of the queue
+	 * 
 	 * @return the current state
 	 */
 	public ReachabilityGraphUndoQueueState getCurrentState() {
