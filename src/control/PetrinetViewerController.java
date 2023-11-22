@@ -17,7 +17,7 @@ import core.ReachabilityGraph;
 import core.Transition;
 import exceptions.PetrinetException;
 import listeners.PetrinetStateChangedListener;
-import listeners.ToolbarToggleListener;
+import listeners.ToolbarButtonListener;
 import propra.pnml.PNMLWopedWriter;
 
 // TODO: Auto-generated Javadoc
@@ -41,7 +41,7 @@ public class PetrinetViewerController {
 	 * @param toolbarToggleListener 
 	 * @throws PetrinetException
 	 */
-	public PetrinetViewerController(File file, ToolbarToggleListener toolbarToggleListener) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarButtonListener toolbarToggleListener) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 

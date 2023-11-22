@@ -28,14 +28,14 @@ import gui.PetrinetToolbar;
 import gui.PetrinetToolbarController;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
-import listeners.ToolbarToggleListener;
+import listeners.ToolbarButtonListener;
 import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MainController.
  */
-public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarToggleListener {
+public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarButtonListener {
 
 	// TODO warn if unsaved changes
 
@@ -797,14 +797,14 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	@Override
-	public void onUndoChanged() {
+	public void onSetUndoButton(boolean highlight) {
 
-		parent.getToolbar().toggleUndoButton();
+		parent.getToolbar().setUndoButton(highlight);
 	}
 
 	@Override
-	public void onRedoChanged() {
-		parent.getToolbar().toggleRedoButton();
+	public void onSetRedoButton(boolean highlight) {
+		parent.getToolbar().setRedoButton(highlight);
 	}
 
 	// DESIGN/WINDOW RELATED METHODS
@@ -837,5 +837,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		if (currentPetrinetPanel != null)
 			currentPetrinetPanel.getGraphSplitPane().resetDivider();
 		parent.getSplitPane().resetDivider();
+	}
+
+	@Override
+	public void resetUndoRedoButtons() {
+		parent.getToolbar().resetUndoRedoButtons();
 	}
 }

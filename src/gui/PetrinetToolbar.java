@@ -658,14 +658,12 @@ public class PetrinetToolbar extends JToolBar {
 
 		// get current state of the queue
 		ReachabilityGraphUndoQueueState currentState = queue.getCurrentState();
-		
+
 		if (currentState == null) // safety check
 			return;
-		
-		if (!currentState.isFirst())
-			toggleUndoButton();
-		if (currentState.hasNext())
-			toggleRedoButton();
+
+		setUndoButton(!currentState.isFirst());
+		setRedoButton(currentState.hasNext());
 
 	}
 
@@ -673,9 +671,9 @@ public class PetrinetToolbar extends JToolBar {
 	 * Toggle redo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
 	 */
-	public void toggleRedoButton() {
+	public void setRedoButton(boolean highlight) {
 
-		if (redoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
+		if (highlight)
 			redoButton.setColor(buttonHighlightColor);
 		else
 			redoButton.setColor(buttonDefaultColor);
@@ -684,9 +682,11 @@ public class PetrinetToolbar extends JToolBar {
 	/**
 	 * Toggle undo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
+	 * 
+	 * @param highlight
 	 */
-	public void toggleUndoButton() {
-		if (undoButton.getColor() == buttonDefaultColor || undoButton.getColor() == null)
+	public void setUndoButton(boolean highlight) {
+		if (highlight)
 			undoButton.setColor(buttonHighlightColor);
 		else
 			undoButton.setColor(buttonDefaultColor);
@@ -699,6 +699,11 @@ public class PetrinetToolbar extends JToolBar {
 	 */
 	public String getDockingPlace() {
 		return dockingPlace;
+	}
+
+	public void resetUndoRedoButtons() {
+		undoButton.setColor(buttonDefaultColor);
+		redoButton.setColor(buttonDefaultColor);
 	}
 
 }

@@ -1,6 +1,6 @@
 package core;
 
-import listeners.ToolbarToggleListener;
+import listeners.ToolbarButtonListener;
 
 //TODO add comments
 /**

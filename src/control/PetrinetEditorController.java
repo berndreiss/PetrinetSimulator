@@ -9,7 +9,7 @@ import core.Transition;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import gui.PetrinetGraph;
-import listeners.ToolbarToggleListener;
+import listeners.ToolbarButtonListener;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,7 +25,7 @@ public class PetrinetEditorController {
 	/** */
 	private Petrinet petrinet; 
 	/** */
-	private ToolbarToggleListener toolbarToggleListener;
+	private ToolbarButtonListener toolbarToggleListener;
 	/** */
 	private PetrinetElement[] addEdge;
 	/** */
@@ -41,7 +41,7 @@ public class PetrinetEditorController {
 	 * @param petrinetController 
 	 * @param petrinetGraph 
 	 */
-	public PetrinetEditorController(PetrinetViewerController petrinetController, PetrinetGraph petrinetGraph, ToolbarToggleListener toolbarToggleListener) {
+	public PetrinetEditorController(PetrinetViewerController petrinetController, PetrinetGraph petrinetGraph, ToolbarButtonListener toolbarToggleListener) {
 		this.petrinetController = petrinetController;
 		this.petrinetGraph = petrinetGraph;
 		this.petrinet = petrinetController.getPetrinet();

@@ -1,6 +1,6 @@
 package core;
 
-import listeners.ToolbarToggleListener;
+import listeners.ToolbarButtonListener;
 
 /**
  * <p>
@@ -12,7 +12,7 @@ public class ReachabilityGraphUndoQueue {
 	/** The reachability graph. */
 	private ReachabilityGraph reachabilityGraph;
 	/** The listener for the toolbar buttons. */
-	private ToolbarToggleListener toolbarToggleListener;
+	private ToolbarButtonListener toolbarButtonListener;
 	/** The current state of the queue. */
 	private ReachabilityGraphUndoQueueState currentState = null;
 
@@ -21,12 +21,12 @@ public class ReachabilityGraphUndoQueue {
 	 *
 	 * @param reachabilityGraph     The reachability graph for which this queue is
 	 *                              used.
-	 * @param toolbarToggleListener The listener for the toolbar buttons.
+	 * @param toolbarButtonListener The listener for the toolbar buttons.
 	 */
 	public ReachabilityGraphUndoQueue(ReachabilityGraph reachabilityGraph,
-			ToolbarToggleListener toolbarToggleListener) {
+			ToolbarButtonListener toolbarButtonListener) {
 		this.reachabilityGraph = reachabilityGraph;
-		this.toolbarToggleListener = toolbarToggleListener;
+		this.toolbarButtonListener = toolbarButtonListener;
 
 	}
 
@@ -46,15 +46,15 @@ public class ReachabilityGraphUndoQueue {
 		ReachabilityGraphUndoQueueState newState = new ReachabilityGraphUndoQueueState(currentState, state, currentEdge,
 				stateAdded, transition, skippable);
 
-		// toggle undo change button if it is the beginning of the queue
-		if ((currentState == null || currentState.isFirst()) && toolbarToggleListener != null)
-			toolbarToggleListener.onUndoChanged();
-
+		// set undo button to not be highlighted if it is the beginning of the queue
+		if ((currentState == null || currentState.isFirst()) && toolbarButtonListener != null)
+			toolbarButtonListener.onSetUndoButton(true);
 		// if the current state exists add new state as successor
 		if (currentState != null) {
-			// if the current state had a next one we need to toggle the redo button
-			if (currentState.hasNext() && toolbarToggleListener != null)
-				toolbarToggleListener.onRedoChanged();
+			// if the current state had a next one we need to set the redo button to be not
+			// be highlighted
+			if (currentState.hasNext() && toolbarButtonListener != null)
+				toolbarButtonListener.onSetRedoButton(false);
 			currentState.setNextState(newState);
 		}
 
@@ -77,9 +77,10 @@ public class ReachabilityGraphUndoQueue {
 		// do not push changes made to the reachability graph -> all steps already exist
 		reachabilityGraph.setPushing(false);
 
-		// if we are at the end of the queue we have to toggle the redo button
-		if (!currentState.hasNext() && toolbarToggleListener != null)
-			toolbarToggleListener.onRedoChanged();
+		// if we are at the end of the queue we have to set the redo button to be
+		// highlighted
+		if (!currentState.hasNext() && toolbarButtonListener != null)
+			toolbarButtonListener.onSetRedoButton(true);
 
 		// UNDO CURRENT STEP
 		// if state has been added, remove it
@@ -97,9 +98,10 @@ public class ReachabilityGraphUndoQueue {
 		reachabilityGraph.setCurrentState(currentState.getState());
 		reachabilityGraph.setCurrentEdge(currentState.getEdge());
 
-		// if we reached the beginning of the queue toggle undo button
-		if (currentState.isFirst() && toolbarToggleListener != null)
-			toolbarToggleListener.onUndoChanged();
+		// if we reached the beginning of the queue set undo button to not be
+		// highlighted
+		if (currentState.isFirst() && toolbarButtonListener != null)
+			toolbarButtonListener.onSetUndoButton(false);
 
 		// if the current step is skippable we need to continue
 		if (currentState.isSkippable())
@@ -122,9 +124,10 @@ public class ReachabilityGraphUndoQueue {
 		// do not push changes made to the reachability graph -> all steps already exist
 		reachabilityGraph.setPushing(false);
 
-		// if we are at the beginning of the queue we have to toggle the undo button
-		if (currentState.isFirst() && toolbarToggleListener != null)
-			toolbarToggleListener.onUndoChanged();
+		// if we are at the beginning of the queue we have to set undo button to not be
+		// highlighted
+		if (currentState.isFirst() && toolbarButtonListener != null)
+			toolbarButtonListener.onSetUndoButton(true);
 
 		// update current state
 		currentState = currentState.getNext();
@@ -143,9 +146,10 @@ public class ReachabilityGraphUndoQueue {
 		} else
 			reachabilityGraph.setCurrentState(currentState.getState());
 
-		// if we are at the end of the queue we need to toggle the redo button
-		if (!currentState.hasNext() && toolbarToggleListener != null)
-			toolbarToggleListener.onRedoChanged();
+		// if we are at the end of the queue we need to set the redo button to not be
+		// highlighted
+		if (!currentState.hasNext() && toolbarButtonListener != null)
+			toolbarButtonListener.onSetRedoButton(false);
 
 		// if the current step is skippable we need to continue
 		if (currentState.isSkippable())
@@ -158,7 +162,14 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	public void reset() {
-		currentState = null;
+		rewind();
+		currentState.setNextState(null);
+
+		System.out.println("CURRENT IS FIRST? " + currentState.isFirst());
+		System.out.println(currentState.getLast());
+		if (toolbarButtonListener != null)
+			toolbarButtonListener.resetUndoRedoButtons();
+
 	}
 
 	/**
@@ -195,6 +206,42 @@ public class ReachabilityGraphUndoQueue {
 	 */
 	public ReachabilityGraphUndoQueueState getCurrentState() {
 		return currentState;
+	}
+
+	/**
+	 * Sets reachability graph to given state in the queue if it exists.
+	 * 
+	 * @param state State to be set.
+	 */
+	public void setToState(ReachabilityGraphUndoQueueState state) {
+		ReachabilityGraphUndoQueueState stateTemp = currentState;
+		rewind();
+
+		if (state.isFirst()) {
+			toolbarButtonListener.onSetUndoButton(false);
+			toolbarButtonListener.onSetRedoButton(currentState.hasNext());
+			return;
+		}
+
+		boolean stateExists = false;
+
+		while (currentState != state && currentState.hasNext()) {
+			goForward();
+			if (currentState == state) {
+				stateExists = true;
+				System.out.println("STATE EXISTS");
+			}
+		}
+
+		if (!stateExists) {
+			rewind();
+			while (currentState != stateTemp && currentState.hasNext())
+				goForward();
+
+		}
+		toolbarButtonListener.onSetUndoButton(true);
+		toolbarButtonListener.onSetRedoButton(currentState.hasNext());
+
 	}
 
 }

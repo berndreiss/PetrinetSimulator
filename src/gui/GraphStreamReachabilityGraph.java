@@ -7,6 +7,7 @@ import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
 import core.ReachabilityGraphUndoQueue;
+import core.ReachabilityGraphUndoQueueState;
 import core.PetrinetState;
 import core.ReachabilityGraph;
 import core.Transition;
@@ -83,6 +84,9 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// because the graph is reinstantiated
 		ReachabilityGraphUndoQueue queue = reachabilityGraphModel.getUndoQueue();
 
+		// keep track of current state
+		ReachabilityGraphUndoQueueState currentState = queue.getCurrentState();
+		
 		// rewind the queue to the beginning (silent because old states might still
 		// think another graph exists and make changes to it when rewinding the queue)
 		queue.rewindSilent();
@@ -176,6 +180,9 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// add existing states and edges in the right order
 		while (queue.goForward()) {
 		}
+		
+		//set queue to original current state
+		queue.setToState(currentState);
 
 	}
 

@@ -2,7 +2,7 @@ package listeners;
 
 /**
  * <p>
- * The listener interface for receiving events that need to toggle certain
+ * The listener interface for receiving events that need to set certain
  * buttons of the toolbar.
  * </p>
  *
@@ -10,7 +10,7 @@ package listeners;
  * These buttons are adding/removing edges and the un-/redo buttons.
  * </p>
  */
-public interface ToolbarToggleListener {
+public interface ToolbarButtonListener {
 
 	/**
 	 * An edge has been added and the add edge button needs to be reset.
@@ -24,13 +24,22 @@ public interface ToolbarToggleListener {
 
 	/**
 	 * The state of being able to redo steps has changed and the button needs to be
-	 * toggled.
+	 * set.
+	 * 
+	 * @param highlight True, if button should be highlighted.
 	 */
-	void onRedoChanged();
+	void onSetRedoButton(boolean highlight);
 
 	/**
 	 * The state of being able to undo steps has changed and the button needs to be
-	 * toggled.
+	 * set.
+	 * 
+	 * @param highlight True, if button should be highlighted.
 	 */
-	void onUndoChanged();
+	void onSetUndoButton(boolean highlight);
+
+	/**
+	 * Reset the buttons for un-/redo -> remove highlight.
+	 */
+	void resetUndoRedoButtons();
 }
