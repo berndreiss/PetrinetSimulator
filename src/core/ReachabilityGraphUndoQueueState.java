@@ -9,7 +9,7 @@ import listeners.ToolbarButtonListener;
  * </p>
  */
 public class ReachabilityGraphUndoQueueState {
-	
+
 	/** The currently active petrinet state of the reachability graph. */
 	private PetrinetState state;
 	/** The currently active edge of the reachability graph. */
@@ -20,13 +20,12 @@ public class ReachabilityGraphUndoQueueState {
 	private AddedType stateAdded = AddedType.NOTHING;
 	/** True if this step can be skipped on un-/redo. */
 	private boolean skippable;
-	
+
 	/** The state before this. */
 	private ReachabilityGraphUndoQueueState lastState = null;
 	/** The state after this. */
 	private ReachabilityGraphUndoQueueState nextState = null;
 
-	
 	/**
 	 * 
 	 * @param state
@@ -35,8 +34,8 @@ public class ReachabilityGraphUndoQueueState {
 	 * @param transition
 	 * @param skippable
 	 */
-	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState lastState, PetrinetState state, String currentEdge, AddedType stateAdded,
-			Transition transition, boolean skippable) {
+	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState lastState, PetrinetState state,
+			String currentEdge, AddedType stateAdded, Transition transition, boolean skippable) {
 
 		this.lastState = lastState;
 		this.state = state;
@@ -46,7 +45,7 @@ public class ReachabilityGraphUndoQueueState {
 		this.skippable = skippable;
 
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -81,12 +80,14 @@ public class ReachabilityGraphUndoQueueState {
 	public AddedType stateAdded() {
 		return stateAdded;
 	}
+
 	/**
 	 * 
 	 */
 	public String getEdge() {
 		return currentEdge;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -94,6 +95,7 @@ public class ReachabilityGraphUndoQueueState {
 	public boolean isSkippable() {
 		return skippable;
 	}
+
 	/**
 	 * 
 	 * @param nextState
@@ -101,7 +103,7 @@ public class ReachabilityGraphUndoQueueState {
 	public void setNextState(ReachabilityGraphUndoQueueState nextState) {
 		this.nextState = nextState;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -109,7 +111,7 @@ public class ReachabilityGraphUndoQueueState {
 	public boolean hasNext() {
 		return nextState != null;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -117,7 +119,7 @@ public class ReachabilityGraphUndoQueueState {
 	public boolean isFirst() {
 		return lastState == null;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -125,6 +127,7 @@ public class ReachabilityGraphUndoQueueState {
 	public ReachabilityGraphUndoQueueState getLast() {
 		return lastState;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -133,6 +136,10 @@ public class ReachabilityGraphUndoQueueState {
 		return nextState;
 	}
 
+	/**
+	 * 
+	 * @param newPetrinetState
+	 */
 	public void setPetrinetState(PetrinetState newPetrinetState) {
 		this.state = newPetrinetState;
 	}

@@ -378,10 +378,9 @@ public class PetrinetState {
 
 		// remove all transitions
 		for (Transition t : transitions) 
-			if (stateChangeListener != null) {
+			if (stateChangeListener != null) 
 				stateChangeListener.onRemoveEdge(predecessor, this, t);
-				System.out.println("REMOVING " + t.getId());
-			}
+			
 
 		// remove the entry in the map
 		transitionMap.remove(predecessor.getState() + getState());

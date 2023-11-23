@@ -4,7 +4,7 @@ import listeners.ToolbarButtonListener;
 
 /**
  * <p>
- * Class representing an undo queue for a reachabilty graph.
+ * Class representing an undo queue for a reachability graph.
  * </p>
  */
 public class ReachabilityGraphUndoQueue {
@@ -161,12 +161,18 @@ public class ReachabilityGraphUndoQueue {
 		return true;
 	}
 
+	/**
+	 * Rewind the queue, remove everything but initial state and reset the toolbar
+	 * buttons.
+	 */
 	public void reset() {
+
 		rewind();
+
+		// "cut head off"
 		currentState.setNextState(null);
 
-		System.out.println("CURRENT IS FIRST? " + currentState.isFirst());
-		System.out.println(currentState.getLast());
+		// reset buttons
 		if (toolbarButtonListener != null)
 			toolbarButtonListener.resetUndoRedoButtons();
 
@@ -186,15 +192,19 @@ public class ReachabilityGraphUndoQueue {
 	 */
 	public void rewindSilent() {
 
+		// get to the first state
 		while (!currentState.isFirst())
 			currentState = currentState.getLast();
 
+		// do not push changes (since they already exist in the queue
 		reachabilityGraph.setPushing(false);
 
+		// set current parameters
 		reachabilityGraph.getPetrinet().setState(currentState.getState());
 		reachabilityGraph.setCurrentState(currentState.getState());
 		reachabilityGraph.setCurrentEdge(currentState.getEdge());
 
+		// reenable pushing
 		reachabilityGraph.setPushing(true);
 
 	}
@@ -214,31 +224,38 @@ public class ReachabilityGraphUndoQueue {
 	 * @param state State to be set.
 	 */
 	public void setToState(ReachabilityGraphUndoQueueState state) {
+		// keep track of current state to reset to is state does not exist in queue
 		ReachabilityGraphUndoQueueState stateTemp = currentState;
+		// rewind the queue
 		rewind();
 
+		// if the state is the first state, nothing to be done but setting the toolbar
+		// buttons
 		if (state.isFirst()) {
 			toolbarButtonListener.onSetUndoButton(false);
 			toolbarButtonListener.onSetRedoButton(currentState.hasNext());
 			return;
 		}
 
+		// keep track of whether state exists in queue
 		boolean stateExists = false;
 
+		// search for state in queue and in the process redo steps
 		while (currentState != state && currentState.hasNext()) {
 			goForward();
-			if (currentState == state) {
+			if (currentState == state)
 				stateExists = true;
-				System.out.println("STATE EXISTS");
-			}
 		}
 
+		// if state did not exist restore to previous state
 		if (!stateExists) {
 			rewind();
 			while (currentState != stateTemp && currentState.hasNext())
 				goForward();
 
 		}
+		
+		// handle toolbar buttons
 		toolbarButtonListener.onSetUndoButton(true);
 		toolbarButtonListener.onSetRedoButton(currentState.hasNext());
 

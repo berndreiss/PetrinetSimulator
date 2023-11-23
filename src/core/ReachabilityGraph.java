@@ -166,9 +166,6 @@ public class ReachabilityGraph {
 	 */
 	public PetrinetState addNewState(Petrinet petrinet, Transition transition) {
 
-		if (petrinet != null && transition != null)
-			System.out.println("ADDING: " + petrinet.getStateString() + "; " + transition.getId());
-
 		// if there is no petrinet or the petrinet does not have places return
 		if (petrinet == null || !petrinet.hasPlaces())
 			return null;
@@ -376,10 +373,6 @@ public class ReachabilityGraph {
 	 */
 	public void removeState(PetrinetState state) {
 
-		System.out.println(petrinetStates.containsKey(state.getState()));
-		for (PetrinetState pred : state.getPredecessors())
-			for (Transition t : pred.getTransitions(state))
-				System.out.println(t.getId());
 		// safety measure
 		if (state == null)
 			return;
@@ -398,7 +391,6 @@ public class ReachabilityGraph {
 		petrinetStates.remove(state.getState());
 		if (stateChangeListener != null)
 			stateChangeListener.onRemove(state);
-		System.out.println(petrinetStates.containsKey(state.getState()));
 	}
 
 	/**
