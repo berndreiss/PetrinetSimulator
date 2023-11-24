@@ -28,9 +28,6 @@ public class ReachabilityGraph {
 	/** The petrinet this reachability graph is linked to. */
 	private Petrinet petrinet;
 
-	/** Listener for un-/redo button in toolbar. */
-	private ToolbarButtonListener toolbarToggleListener;
-
 	/** The currently active state in the reachability graph. */
 	private PetrinetState currentState;
 
@@ -71,7 +68,6 @@ public class ReachabilityGraph {
 	public ReachabilityGraph(Petrinet petrinet, ToolbarButtonListener toolbarToggleListener) {
 
 		this.petrinet = petrinet;
-		this.toolbarToggleListener = toolbarToggleListener;
 
 		undoQueue = new ReachabilityGraphUndoQueue(this, toolbarToggleListener);
 		petrinetStates = new IterableMap<String, PetrinetState>();
@@ -163,6 +159,7 @@ public class ReachabilityGraph {
 	 *
 	 * @param petrinet   The petrinet for which to add the current state from.
 	 * @param transition The transition that has been fired.
+	 * @return the state that has been added (null if non has been added)
 	 */
 	public PetrinetState addNewState(Petrinet petrinet, Transition transition) {
 

@@ -5,7 +5,7 @@ import listeners.ToolbarButtonListener;
 //TODO add comments
 /**
  * <p>
- * 
+ * Class representing a state in the undo queue.
  * </p>
  */
 public class ReachabilityGraphUndoQueueState {
@@ -22,7 +22,7 @@ public class ReachabilityGraphUndoQueueState {
 	private boolean skippable;
 
 	/** The state before this. */
-	private ReachabilityGraphUndoQueueState lastState = null;
+	private ReachabilityGraphUndoQueueState previousState = null;
 	/** The state after this. */
 	private ReachabilityGraphUndoQueueState nextState = null;
 
@@ -34,10 +34,10 @@ public class ReachabilityGraphUndoQueueState {
 	 * @param transition
 	 * @param skippable
 	 */
-	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState lastState, PetrinetState state,
+	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState previousState, PetrinetState state,
 			String currentEdge, AddedType stateAdded, Transition transition, boolean skippable) {
 
-		this.lastState = lastState;
+		this.previousState = previousState;
 		this.state = state;
 		this.currentEdge = currentEdge;
 		this.stateAdded = stateAdded;
@@ -117,7 +117,7 @@ public class ReachabilityGraphUndoQueueState {
 	 * @return
 	 */
 	public boolean isFirst() {
-		return lastState == null;
+		return previousState == null;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class ReachabilityGraphUndoQueueState {
 	 * @return
 	 */
 	public ReachabilityGraphUndoQueueState getLast() {
-		return lastState;
+		return previousState;
 	}
 
 	/**

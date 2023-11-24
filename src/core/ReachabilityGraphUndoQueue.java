@@ -63,7 +63,6 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-	// TODO on un-/redo edges not properly removed
 
 	/**
 	 * Go a step back in the queue.
@@ -114,6 +113,7 @@ public class ReachabilityGraphUndoQueue {
 
 	/**
 	 * Go a step forward in the queue.
+	 * @return true if a step forward has been taken
 	 */
 	public boolean goForward() {
 
@@ -227,7 +227,7 @@ public class ReachabilityGraphUndoQueue {
 		// keep track of current state to reset to is state does not exist in queue
 		ReachabilityGraphUndoQueueState stateTemp = currentState;
 		// rewind the queue
-		rewind();
+		rewindSilent();
 
 		// if the state is the first state, nothing to be done but setting the toolbar
 		// buttons
@@ -249,7 +249,7 @@ public class ReachabilityGraphUndoQueue {
 
 		// if state did not exist restore to previous state
 		if (!stateExists) {
-			rewind();
+			rewindSilent();
 			while (currentState != stateTemp && currentState.hasNext())
 				goForward();
 

@@ -670,6 +670,7 @@ public class PetrinetToolbar extends JToolBar {
 	/**
 	 * Toggle redo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
+	 * @param highlight If true, buttons are highlighted, highlighting removed otherwise.
 	 */
 	public void setRedoButton(boolean highlight) {
 
@@ -701,6 +702,9 @@ public class PetrinetToolbar extends JToolBar {
 		return dockingPlace;
 	}
 
+	/**
+	* Reset the un-/redo buttons to not be highlighted.
+	*/
 	public void resetUndoRedoButtons() {
 		undoButton.setColor(buttonDefaultColor);
 		redoButton.setColor(buttonDefaultColor);
