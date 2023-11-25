@@ -33,45 +33,55 @@ import reachabilityGraphLayout.LayoutType;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class MainController.
+ * <p>
+ * A controller managing all the GUI components at the level of the mainframe.
+ * </p>
+ * 
+ * <p>
+ * This includes the menu, toolbar, the text area and the panels inside the
+ * TabbedPane.
+ * </p>
+ * 
  */
 public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarButtonListener {
 
 	// TODO warn if unsaved changes
 
+	/** The last directory visited. */
 	private File lastDirectory;
-	private MainFrame parent;
-
+	/** The mainFrame holding all components. */
+	private MainFrame mainFrame;
+	/** The petrinet panel that is currently loaded. */
 	private PetrinetPanel currentPetrinetPanel;
-
+	/**  */
 	private boolean tabAdded;
-
+	/** */
 	private LayoutType layoutType = LayoutType.TREE;
 
 	/**
 	 * Instantiates a new main controller.
 	 *
-	 * @param parent the parent
+	 * @param mainFrame the main frame
 	 */
-	public MainController(MainFrame parent) {
-		this.parent = parent;
+	public MainController(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 
 		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		setStatusLabel();
 
-		parent.getTabbedPane().addChangeListener(new ChangeListener() {
+		mainFrame.getTabbedPane().addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
 
-				if (tabAdded) {
-					tabAdded = false;// prevent component at selected index to update editorToolbar with outdated
-										// instance of PetrinetPanel and therefore highlighting buttons that should not
-										// be highlighted
-					return;
-				}
+//				if (tabAdded) {
+//					tabAdded = false;// prevent component at selected index to update editorToolbar with outdated
+//										// instance of PetrinetPanel and therefore highlighting buttons that should not
+//										// be highlighted
+//					return;
+//				}
 
-				JTabbedPane tabbedPane = parent.getTabbedPane();
+				JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 				int index = tabbedPane.getSelectedIndex();
 
 				if (index < 0)
@@ -80,7 +90,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
 
-				parent.setStatusLabel(getStatusLabel());
+				mainFrame.setStatusLabel(getStatusLabel());
 				setToolbarMode(currentPetrinetPanel.getToolbarMode());
 
 				getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
@@ -98,7 +108,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	 * @return the frame
 	 */
 	public MainFrame getFrame() {
-		return parent;
+		return mainFrame;
 	}
 
 	/**
@@ -121,11 +131,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	private void setStatusLabel() {
 
-		JTabbedPane tabbedPane = parent.getTabbedPane();
+		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 
 		String labelString = getStatusLabel();
 
-		parent.setStatusLabel(labelString);
+		mainFrame.setStatusLabel(labelString);
 		int index = tabbedPane.getSelectedIndex();
 		if (index >= 0)
 			tabbedPane.setTitleAt(index, getTabString(labelString));
@@ -176,7 +186,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 
-		JTabbedPane tabbedPane = parent.getTabbedPane();
+		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 
 		if (tabbedPane.getTabCount() == 0) {
 			newTab = true;
@@ -217,7 +227,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onOpen() {
 
-		JTabbedPane tabbedPane = parent.getTabbedPane();
+		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 
 		if (tabbedPane.getTabCount() == 0) {
 			onOpenInNewTab();
@@ -248,7 +258,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		setFileChosserFilter(fileChooser);
 
 		fileChooser.setCurrentDirectory(lastDirectory);
-		int result = fileChooser.showOpenDialog(parent);
+		int result = fileChooser.showOpenDialog(mainFrame);
 
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
@@ -305,7 +315,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		setFileChosserFilter(fileChooser);
 
 		fileChooser.setCurrentDirectory(lastDirectory);
-		int result = fileChooser.showOpenDialog(parent);
+		int result = fileChooser.showOpenDialog(mainFrame);
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
 			lastDirectory = file.getParentFile();
@@ -325,7 +335,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		fileChooser.setCurrentDirectory(lastDirectory);
 
-		int result = fileChooser.showOpenDialog(parent);
+		int result = fileChooser.showOpenDialog(mainFrame);
 
 		if (!(result == JFileChooser.APPROVE_OPTION))
 			return;
@@ -347,7 +357,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
-		parent.print(printResults(results));
+		mainFrame.print(printResults(results));
 
 	}
 
@@ -418,10 +428,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
 
-		
 		int index = tabbedPane.getSelectedIndex();
 
 		tabbedPane.remove(index);
@@ -451,7 +460,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onInfo() {
 
-		JOptionPane.showMessageDialog(parent, "java.version = " + System.getProperty("java.version") + "\n\nuser.dir = "
+		JOptionPane.showMessageDialog(mainFrame, "java.version = " + System.getProperty("java.version") + "\n\nuser.dir = "
 				+ System.getProperty("user.dir") + "\n", "Information", JOptionPane.PLAIN_MESSAGE);
 	}
 
@@ -622,7 +631,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
-		PetrinetToolbar toolbar = parent.getToolbar();
+		PetrinetToolbar toolbar = mainFrame.getToolbar();
 
 		if (editor.addsEdge()) {
 			editor.abortAddEdge();
@@ -706,7 +715,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		PetrinetAnalyser analyser = currentPetrinetPanel.analyse();
 		String[][] result = { analyser.getResults() };
-		parent.print(printResults(result));
+		mainFrame.print(printResults(result));
 
 		JOptionPane.showMessageDialog(null, "The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".",
 				"", JOptionPane.INFORMATION_MESSAGE);
@@ -722,7 +731,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onClearTextArea() {
-		parent.clearTextArea();
+		mainFrame.clearTextArea();
 	}
 
 	@Override
@@ -761,10 +770,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 		layoutType = LayoutType.TREE;
 
-		parent.getToolbar().toggleTreeLayoutButton();
+		mainFrame.getToolbar().toggleTreeLayoutButton();
 
-		if (parent.getTabbedPane().getTabCount() != 0) {
-			for (Component comp : parent.getTabbedPane().getComponents())
+		if (mainFrame.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
 
@@ -775,10 +784,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 //		if (layoutType == LayoutType.CIRCLE)
 //			return;
 		layoutType = LayoutType.CIRCLE;
-		parent.getToolbar().toggleCircleLayoutButton();
+		mainFrame.getToolbar().toggleCircleLayoutButton();
 
-		if (parent.getTabbedPane().getTabCount() != 0) {
-			for (Component comp : parent.getTabbedPane().getComponents())
+		if (mainFrame.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
 	}
@@ -789,9 +798,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 		layoutType = LayoutType.AUTOMATIC;
 
-		parent.getToolbar().toggleAutoLayoutButton();
-		if (parent.getTabbedPane().getTabCount() != 0) {
-			for (Component comp : parent.getTabbedPane().getComponents())
+		mainFrame.getToolbar().toggleAutoLayoutButton();
+		if (mainFrame.getTabbedPane().getTabCount() != 0) {
+			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
 	}
@@ -799,19 +808,19 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onSetUndoButton(boolean highlight) {
 
-		parent.getToolbar().setUndoButton(highlight);
+		mainFrame.getToolbar().setUndoButton(highlight);
 	}
 
 	@Override
 	public void onSetRedoButton(boolean highlight) {
-		parent.getToolbar().setRedoButton(highlight);
+		mainFrame.getToolbar().setRedoButton(highlight);
 	}
 
 	// DESIGN/WINDOW RELATED METHODS
 
 	@Override
 	public void onSetSplitPanesDefault() {
-		ResizableSplitPane mainSplitPane = parent.getSplitPane();
+		ResizableSplitPane mainSplitPane = mainFrame.getSplitPane();
 
 		mainSplitPane.setDividerRatio(SPLIT_PANE_DEFAULT_RATIO);
 		mainSplitPane.resetDivider();
@@ -826,8 +835,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onChaneLookAndFeel() {
-		parent.changeLookAndFeel();
-		JTabbedPane tabbedPane = parent.getTabbedPane();
+		mainFrame.changeLookAndFeel();
+		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 		for (Component comp : tabbedPane.getComponents())
 			((PetrinetPanel) comp).setSplitPane();
 	}
@@ -836,11 +845,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void onReadjustDividers() {
 		if (currentPetrinetPanel != null)
 			currentPetrinetPanel.getGraphSplitPane().resetDivider();
-		parent.getSplitPane().resetDivider();
+		mainFrame.getSplitPane().resetDivider();
 	}
 
 	@Override
 	public void resetUndoRedoButtons() {
-		parent.getToolbar().resetUndoRedoButtons();
+		mainFrame.getToolbar().resetUndoRedoButtons();
 	}
 }

@@ -64,6 +64,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 
+	//TODO somehow edges are not removed properly see example 118 -> they seem to not be added correctly in goForward()
 	/**
 	 * Go a step back in the queue.
 	 */
@@ -84,17 +85,17 @@ public class ReachabilityGraphUndoQueue {
 		// UNDO CURRENT STEP
 		// if state has been added, remove it
 		if (currentState.getAdded() == AddedType.STATE)
-			reachabilityGraph.removeState(currentState.getState());
+			reachabilityGraph.removeState(currentState.getPetrinetState());
 		// if only edge has been added, remove it
 		if (currentState.getAdded() == AddedType.EDGE)
-			reachabilityGraph.removeEdge(currentState.getLast().getState(), currentState.getState(),
+			reachabilityGraph.removeEdge(currentState.getPrevious().getPetrinetState(), currentState.getPetrinetState(),
 					currentState.getTransition());
 
 		// change current state and set currently active components in reachability
 		// graph
-		currentState = currentState.getLast();
-		reachabilityGraph.getPetrinet().setState(currentState.getState());
-		reachabilityGraph.setCurrentState(currentState.getState());
+		currentState = currentState.getPrevious();
+		reachabilityGraph.getPetrinet().setState(currentState.getPetrinetState());
+		reachabilityGraph.setCurrentState(currentState.getPetrinetState());
 		reachabilityGraph.setCurrentEdge(currentState.getEdge());
 
 		// if we reached the beginning of the queue set undo button to not be
@@ -134,17 +135,17 @@ public class ReachabilityGraphUndoQueue {
 
 		// first reset the petrinet (in order to redo change in step)
 		Petrinet petrinet = reachabilityGraph.getPetrinet();
-		petrinet.setState(currentState.getState());
+		petrinet.setState(currentState.getPetrinetState());
 
 		// if something has been added, readd state with transition, otherwise only set
 		// reachability graph to given state
-		if (currentState.stateAdded() != AddedType.NOTHING) {
+		if (currentState.getAddedType() != AddedType.NOTHING) {
 			// since a new petrinet state is created it needs to be updated in the queue
 			// state
 			PetrinetState newPetrinetState = reachabilityGraph.addNewState(petrinet, currentState.getTransition());
 			currentState.setPetrinetState(newPetrinetState);
 		} else
-			reachabilityGraph.setCurrentState(currentState.getState());
+			reachabilityGraph.setCurrentState(currentState.getPetrinetState());
 
 		// if we are at the end of the queue we need to set the redo button to not be
 		// highlighted
@@ -194,14 +195,14 @@ public class ReachabilityGraphUndoQueue {
 
 		// get to the first state
 		while (!currentState.isFirst())
-			currentState = currentState.getLast();
+			currentState = currentState.getPrevious();
 
 		// do not push changes (since they already exist in the queue
 		reachabilityGraph.setPushing(false);
 
 		// set current parameters
-		reachabilityGraph.getPetrinet().setState(currentState.getState());
-		reachabilityGraph.setCurrentState(currentState.getState());
+		reachabilityGraph.getPetrinet().setState(currentState.getPetrinetState());
+		reachabilityGraph.setCurrentState(currentState.getPetrinetState());
 		reachabilityGraph.setCurrentEdge(currentState.getEdge());
 
 		// reenable pushing

@@ -230,7 +230,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		}
 
 		// check if the new edge exists and add if necessary
-		Edge newEdge = this.getEdge(predecessor.getState() + id + transitionId);
+		Edge newEdge = getEdge(predecessor.getState() + id + transitionId);
+				
 		if (newEdge == null) {
 			newEdge = this.addEdge(predecessor.getState() + id + transitionId, predNode, node, true);
 			// set sprite to the edge having the transition as a label

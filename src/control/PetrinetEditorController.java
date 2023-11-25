@@ -109,6 +109,8 @@ public class PetrinetEditorController {
 		
 		return changed;
 	}
+	
+	//TODO adding place causes compiler error due to 
 	/**
 	 * Adds the place.
 	 *
