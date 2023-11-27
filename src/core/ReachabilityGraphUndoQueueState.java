@@ -140,8 +140,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * 
-	 * @param newPetrinetState
+	 * Set the petrinet state.
+	 * @param newPetrinetState The new petrinet state.
 	 */
 	public void setPetrinetState(PetrinetState newPetrinetState) {
 		this.state = newPetrinetState;

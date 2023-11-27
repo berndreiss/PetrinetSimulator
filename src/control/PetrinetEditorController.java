@@ -52,7 +52,6 @@ public class PetrinetEditorController {
 
 	/**
 	 * 
-	 * @param label
 	 */
 
 	public boolean setLabel() {

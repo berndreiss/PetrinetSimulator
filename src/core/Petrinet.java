@@ -56,7 +56,7 @@ public class Petrinet {
 	private PetrinetComponentChangedListener petrinetComponentChangedListener;
 
 	/**
-	 * Sets the petrinet change listener.
+	 * Set the petrinet change listener.
 	 *
 	 * @param petrinetChangedListener The new petrinet change listener.
 	 */
@@ -65,7 +65,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Sets the petrinet component changed listener.
+	 * Set the petrinet component changed listener.
 	 *
 	 * @param petrinetComponentChangedListener The new petrinet component changed
 	 *                                         listener.
@@ -75,7 +75,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Gets the activated transitions.
+	 * Get the activated transitions.
 	 *
 	 * @return the activated transitions
 	 */
@@ -90,7 +90,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Calculates (x,y) coordinates right above the left most element in the
+	 * Calculate (x,y) coordinates right above the left most element in the
 	 * petrinet and sets the element that is being added to that coordinates.
 	 *
 	 * @param petrinetElement The new element that is being added.
@@ -173,7 +173,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Gets the transitions.
+	 * Get the transitions.
 	 *
 	 * @return the transitions
 	 */
@@ -191,7 +191,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Gets a petrinet element. Returns null if element does not exist.
+	 * Get a petrinet element. Returns null if element does not exist.
 	 *
 	 * @param id The id for which to get the petrinet element.
 	 * @return the petrinet element corresponding to the id
@@ -204,7 +204,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Sets the coordinates of an element corresponding to the id.
+	 * Set the coordinates of an element corresponding to the id.
 	 *
 	 * @param id The id of the petrinet element for which to set coordinates.
 	 * @param x  The x coordinate.
@@ -227,7 +227,7 @@ public class Petrinet {
 
 	
 	/**
-	 * Removes a petrinet element with the corresponding id. Also removes the id from the orignal arc ids.
+	 * Remove a petrinet element with the corresponding id. Also removes the id from the orignal arc ids.
 	 *
 	 * @param id The id of the element to be removed.
 	 */
@@ -559,7 +559,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Gets the original arc id from the edge id.
+	 * Get the original arc id from the edge id.
 	 *
 	 * @param edgeId The id of the edge (sourceId + targetId)
 	 * @return the original arc id
@@ -633,7 +633,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Gets the state of the petrinet as string.
+	 * Get the state of the petrinet as string.
 	 *
 	 * @return the state string
 	 */
@@ -651,7 +651,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Sets the petrinet element name.
+	 * Set the petrinet element name.
 	 *
 	 * @param id   The id of the element.
 	 * @param label The new label for the element.
@@ -666,7 +666,7 @@ public class Petrinet {
 	}
 
 	/**
-	 * Checks for places -> if petrinet has no places it is stateless.
+	 * Check for places -> if petrinet has no places it is stateless.
 	 *
 	 * @return true, if the petrinet has places
 	 */

@@ -684,7 +684,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * Toggle undo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
 	 * 
-	 * @param highlight
+	 * @param highlight True if undo button is highlighted.
 	 */
 	public void setUndoButton(boolean highlight) {
 		if (highlight)

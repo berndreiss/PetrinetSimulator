@@ -88,7 +88,7 @@ public class ToolbarButton extends JButton {
 	 * certain look and feels this method provides an alternative way to set the
 	 * background.
 	 * 
-	 * @param color
+	 * @param color Color for the button.
 	 */
 	public void setColor(Color color) {
 		LookAndFeel laf = UIManager.getLookAndFeel();

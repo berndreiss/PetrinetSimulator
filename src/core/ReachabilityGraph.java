@@ -454,7 +454,7 @@ public class ReachabilityGraph {
 	 * If set true all changes made to the reachability graph are flagged as
 	 * skippable an will be skipped when re-/undoing changes. False by default.
 	 * 
-	 * @param skippableMode
+	 * @param skippableMode If true, added steps are flagged skippable in the undo queue.
 	 */
 	public void setSkippableMode(boolean skippableMode) {
 		this.skippableMode = skippableMode;
@@ -463,7 +463,7 @@ public class ReachabilityGraph {
 	/**
 	 * When set to true all changes are pushed onto the undo queue. True by default.
 	 * 
-	 * @param pushing
+	 * @param pushing If true, changes will not be pushed to the undo queue.
 	 */
 	public void setPushing(boolean pushing) {
 		this.pushing = pushing;
