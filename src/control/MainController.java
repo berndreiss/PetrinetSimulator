@@ -53,46 +53,53 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private MainFrame mainFrame;
 	/** The petrinet panel that is currently loaded. */
 	private PetrinetPanel currentPetrinetPanel;
-	/**  */
-	private boolean tabAdded;
-	/** */
+//	/** Keeps track of whether a tab has been added. */
+//	private boolean tabAdded;//TODO remove?
+	/** The layout type currently in use. */
 	private LayoutType layoutType = LayoutType.TREE;
 
 	/**
 	 * Instantiates a new main controller.
 	 *
-	 * @param mainFrame the main frame
+	 * @param mainFrame The main frame.
 	 */
 	public MainController(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 
+		// set default dirctory
 		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
+		// set status label
 		setStatusLabel();
 
+		// set listener for tabbed pane -> if tabs are switched panel status label and
+		// toolbar need to be updated
 		mainFrame.getTabbedPane().addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
 
-//				if (tabAdded) {
+//				if (tabAdded) {//TODO remove?
 //					tabAdded = false;// prevent component at selected index to update editorToolbar with outdated
 //										// instance of PetrinetPanel and therefore highlighting buttons that should not
 //										// be highlighted
 //					return;
 //				}
 
+				// get the selected tab
 				JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 				int index = tabbedPane.getSelectedIndex();
 
+				// safety measure for case there are no tabs already
 				if (index < 0)
 					return;
 
+				// get panel and upadte current panel
 				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
 
+				// update status label and toolbar
 				mainFrame.setStatusLabel(getStatusLabel());
 				setToolbarMode(currentPetrinetPanel.getToolbarMode());
-
 				getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 			}
 
@@ -103,7 +110,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	// GETTER METHODS
 
 	/**
-	 * Gets the frame.
+	 * Get the frame.
 	 *
 	 * @return the frame
 	 */
@@ -112,7 +119,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	/**
-	 * Gets the current panel.
+	 * Get the current panel.
 	 *
 	 * @return the current panel
 	 */
@@ -121,7 +128,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	/**
-	 * Gets the layout type.
+	 * Get the layout type.
 	 *
 	 * @return the layout type
 	 */
@@ -129,44 +136,53 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		return layoutType;
 	}
 
+	// set status label and currently selected tab to current file if panel is open;
+	// to user directory and system information otherwise (see getStatusLabel()
 	private void setStatusLabel() {
 
-		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
-
+		// get label string and set label to it
 		String labelString = getStatusLabel();
-
 		mainFrame.setStatusLabel(labelString);
+
+		// get tabbed pane and if selected index >= 0 set title to status label
+		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 		int index = tabbedPane.getSelectedIndex();
 		if (index >= 0)
 			tabbedPane.setTitleAt(index, getTabString(labelString));
 
 	}
 
+	// get the status label -> if no panel is open it provides the java version and
+	// current working directory; otherwise it it returns "filename" ("*filename"
+	// for changed files)
 	private String getStatusLabel() {
 
+		// return system information
 		if (currentPetrinetPanel == null) {
 			return "java.version = " + System.getProperty("java.version") + "  |  user.dir = "
 					+ System.getProperty("user.dir");
 		}
 
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		// get the current file
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 		File file = controller.getCurrentFile();
 
+		// if it is null return "*New File", return filname otherwise
 		if (file == null)
 			return "*New File";
-
 		else if (controller.getFileChanged())
 			return "*" + file.getName();
-
 		else
 			return file.getName();
 
 	}
 
+	// set up a new panel 
 	private void setNewPanel(File file, boolean newTab) {
 
-		tabAdded = true;
+//		tabAdded = true;//TODO remove?
 
+		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
 			newPanel = new PetrinetPanel(this, file, layoutType);
@@ -177,40 +193,45 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 		}
 
+		// set current panel to new panel
 		currentPetrinetPanel = newPanel;
 
+		// if no file has been provided open the editor
 		if (file == null)
 			setToolbarMode(ToolbarMode.EDITOR);
 		else
 			setToolbarMode(ToolbarMode.VIEWER);
 
+		// get tabbed pane and create new tab / update old tab
 		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
-
 		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 
-		if (tabbedPane.getTabCount() == 0) {
+		// if there are no tabs in the pane we have to create a new tab
+		if (tabbedPane.getTabCount() == 0)
 			newTab = true;
-		}
 		if (newTab) {
 			tabbedPane.add(getTabString(getStatusLabel()), currentPetrinetPanel);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 
 		} else {
+			// insert into current index and remove the old tab
 			int index = tabbedPane.getSelectedIndex();
 			tabbedPane.insertTab(getTabString(getStatusLabel()), null, currentPetrinetPanel, null, index);
 			tabbedPane.setSelectedIndex(index);
-
 			tabbedPane.remove(index + 1);
 
 		}
+		
+		// update status label
 		setStatusLabel();
 
 		// for some reason the divider jumps all the way to the left when using look and
 		// feel Metal
-		if (UIManager.getLookAndFeel().getName().equals("Metal"))
-			currentPetrinetPanel.getGraphSplitPane().resetDivider();
+//		if (UIManager.getLookAndFeel().getName().equals("Metal")) //TODO remove?
+//			currentPetrinetPanel.getGraphSplitPane().resetDivider();
 	}
 
+	// set toolbar, panel and this controller to mode
 	private void setToolbarMode(ToolbarMode toolbarMode) {
 		if (currentPetrinetPanel == null)
 			return;
@@ -229,12 +250,15 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 
+		// if there are no tabs open in new tab
 		if (tabbedPane.getTabCount() == 0) {
 			onOpenInNewTab();
 			return;
 		}
 
+		// let user choose file
 		File file = getFile();
+		// no file provided
 		if (file == null)
 			return;
 
@@ -244,22 +268,29 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onOpenInNewTab() {
+		
+		// let user choose file
 		File file = getFile();
+		
+		// no file has been provided
 		if (file == null)
 			return;
 
 		setNewPanel(file, true);
 	}
 
+	// open current working directory and let user choose file
 	private File getFile() {
 
+		// the file chooser
 		JFileChooser fileChooser = new JFileChooser();
-
 		setFileChosserFilter(fileChooser);
-
 		fileChooser.setCurrentDirectory(lastDirectory);
+		
+		// catch result
 		int result = fileChooser.showOpenDialog(mainFrame);
 
+		// if file was chosen get it and update current working directory
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
 			lastDirectory = file.getParentFile();
@@ -268,6 +299,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		return null;
 	}
 
+	// get string with filename formatted for tabs (truncated)
 	private String getTabString(String fileName) {
 		if (fileName == null)
 			return null;
@@ -281,35 +313,47 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onReload() {
+		
+		// if no panel is open return
 		if (currentPetrinetPanel == null)
 			return;
 
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		// get controller
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		// if no file has been opened return
 		if (controller.getCurrentFile() == null)
 			return;
 
+		// reload
 		setNewPanel(controller.getCurrentFile(), false);
 
 	}
 
 	@Override
 	public void onSave() {
+		// if no panel is open return
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		
+		// get the controller
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		// if no file is defined switch to save as
 		if (controller.getCurrentFile() == null)
 			onSaveAs();
+		
+		// write changes and update status label
 		controller.writeToFile();
 		setStatusLabel();
 	}
 
+	//TODO continue from here
 	@Override
 	public void onSaveAs() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		JFileChooser fileChooser = new JFileChooser();
 		setFileChosserFilter(fileChooser);
@@ -460,8 +504,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onInfo() {
 
-		JOptionPane.showMessageDialog(mainFrame, "java.version = " + System.getProperty("java.version") + "\n\nuser.dir = "
-				+ System.getProperty("user.dir") + "\n", "Information", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(mainFrame, "java.version = " + System.getProperty("java.version")
+				+ "\n\nuser.dir = " + System.getProperty("user.dir") + "\n", "Information", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	@Override
@@ -495,7 +539,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	private File getFileFromCurrentFile(FileEnum fileEnum) {
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		File currentFile = controller.getCurrentFile();
 
@@ -537,7 +581,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void onResetPetrinet() {
 		if (currentPetrinetPanel == null)
 			return;
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 		controller.resetPetrinet();
 	}
 
@@ -570,7 +614,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onAddPlace() {
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		String id = null;
 
@@ -596,7 +640,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onAddTransition() {
 
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		String id = null;
 

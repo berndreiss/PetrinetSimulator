@@ -10,7 +10,7 @@ import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import gui.PetrinetGraph;
 import listeners.ToolbarButtonListener;
-
+//TODO when adding edges nodes are not untoggled and toolbar is not toggled
 // TODO: Auto-generated Javadoc
 /**
  * <p> 

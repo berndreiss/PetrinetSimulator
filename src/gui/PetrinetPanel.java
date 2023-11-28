@@ -339,7 +339,7 @@ public class PetrinetPanel extends JPanel {
 	 *
 	 * @return the petrinet controller
 	 */
-	public PetrinetViewerController getPetrinetController() {
+	public PetrinetViewerController getPetrinetViewerController() {
 		return petrinetController;
 	}
 

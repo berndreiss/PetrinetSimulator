@@ -650,7 +650,7 @@ public class PetrinetToolbar extends JToolBar {
 			toggleRemoveEdgeButton();
 
 		// set undo / redo buttons
-		PetrinetViewerController controller = petrinetPanel.getPetrinetController();
+		PetrinetViewerController controller = petrinetPanel.getPetrinetViewerController();
 		ReachabilityGraphUndoQueue queue = controller.getPetrinetQueue();
 
 		if (queue == null) // safety check
