@@ -48,7 +48,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	// TODO warn if unsaved changes
 
 	/** The last directory visited. */
-	private File lastDirectory;
+	private File workingDirectory;
 	/** The mainFrame holding all components. */
 	private MainFrame mainFrame;
 	/** The petrinet panel that is currently loaded. */
@@ -67,7 +67,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		this.mainFrame = mainFrame;
 
 		// set default dirctory
-		lastDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
+		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		// set status label
 		setStatusLabel();
 
@@ -89,6 +89,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 				int index = tabbedPane.getSelectedIndex();
 
+				// if last tab was closed set current panel to null and reset status label
+				if (tabbedPane.getTabCount() == 0) {
+					currentPetrinetPanel = null;
+					setStatusLabel();
+				}
 				// safety measure for case there are no tabs already
 				if (index < 0)
 					return;
@@ -177,7 +182,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	}
 
-	// set up a new panel 
+	// set up a new panel
 	private void setNewPanel(File file, boolean newTab) {
 
 //		tabAdded = true;//TODO remove?
@@ -221,7 +226,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			tabbedPane.remove(index + 1);
 
 		}
-		
+
 		// update status label
 		setStatusLabel();
 
@@ -268,10 +273,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onOpenInNewTab() {
-		
+
 		// let user choose file
 		File file = getFile();
-		
+
 		// no file has been provided
 		if (file == null)
 			return;
@@ -284,16 +289,16 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// the file chooser
 		JFileChooser fileChooser = new JFileChooser();
-		setFileChosserFilter(fileChooser);
-		fileChooser.setCurrentDirectory(lastDirectory);
-		
+		setFileChooserFilter(fileChooser);
+		fileChooser.setCurrentDirectory(workingDirectory);
+
 		// catch result
 		int result = fileChooser.showOpenDialog(mainFrame);
 
 		// if file was chosen get it and update current working directory
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
-			lastDirectory = file.getParentFile();
+			workingDirectory = file.getParentFile();
 			return file;
 		}
 		return null;
@@ -313,7 +318,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onReload() {
-		
+
 		// if no panel is open return
 		if (currentPetrinetPanel == null)
 			return;
@@ -335,36 +340,45 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// if no panel is open return
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// get the controller
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		// if no file is defined switch to save as
 		if (controller.getCurrentFile() == null)
 			onSaveAs();
-		
+
 		// write changes and update status label
 		controller.writeToFile();
 		setStatusLabel();
 	}
 
-	//TODO continue from here
 	@Override
 	public void onSaveAs() {
+
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
+
+		// get the controller
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		// create a file chooser for getting a file, assigning a filter and setting it
+		// to the current working directory
 		JFileChooser fileChooser = new JFileChooser();
-		setFileChosserFilter(fileChooser);
+		setFileChooserFilter(fileChooser);
+		fileChooser.setCurrentDirectory(workingDirectory);
 
-		fileChooser.setCurrentDirectory(lastDirectory);
+		// get file
 		int result = fileChooser.showOpenDialog(mainFrame);
+
+		// if file was chosen, save to given path
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
-			lastDirectory = file.getParentFile();
-
+			// reset working directory
+			workingDirectory = file.getParentFile();
 			controller.writeToFile(file);
+			// update status label
 			setStatusLabel();
 		}
 
@@ -372,69 +386,81 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onAnalyseMany() {
+
+		// get files to analyse from user
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(true);
-
-		setFileChosserFilter(fileChooser);
-
-		fileChooser.setCurrentDirectory(lastDirectory);
+		setFileChooserFilter(fileChooser);
+		fileChooser.setCurrentDirectory(workingDirectory);
 
 		int result = fileChooser.showOpenDialog(mainFrame);
 
+		// if file chooser was aborted do nothing
 		if (!(result == JFileChooser.APPROVE_OPTION))
 			return;
 
+		// retrieve files
 		File[] files = fileChooser.getSelectedFiles();
 
-		lastDirectory = files[0].getParentFile();
+		// update working directory
+		workingDirectory = files[0].getParentFile();
 
+		// array holding results
 		String[][] results = new String[files.length][3];
 
-		int counter = 0;
-
-		for (File f : files) {
+		// iterate through files and get resutls, catch parsing errors
+		for (int i = 0; i < files.length; i++) {
 			try {
-				results[counter] = (new PetrinetAnalyser(f)).getResults();
-				counter++;
+				results[i] = (new PetrinetAnalyser(files[i])).getResults();
 			} catch (PetrinetException e) {
-				JOptionPane.showMessageDialog(null, "Could not parse file " + f.getName() + " -> " + e.getMessage(), "",
+				JOptionPane.showMessageDialog(null,
+						"Could not parse file " + files[i].getName() + " -> " + e.getMessage(), "",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
+
+		// print results
 		mainFrame.print(printResults(results));
 
 	}
 
+	// print results provided as array of array of strings in three columns and
+	// strings.length rows
 	private static String printResults(String[][] strings) {
 		String[] header = { "File", " Bounded? ", " Nodes/Edges -- Path length; m, m'" };
 
+		// initialize maximum lengths for columns with header
 		int max1 = header[0].length(), max2 = header[1].length(), max3 = header[2].length();
 
+		// get the maximum length of each column by looping through all rows
 		for (String[] s : strings) {
 			max1 = Math.max(max1, s[0].length());
 			max2 = Math.max(max2, s[1].length());
 			max3 = Math.max(max3, s[2].length());
 		}
 
+		// format the string
 		String format = "%-" + max1 + "s|%-" + max2 + "s|%-" + max3 + "s\n";
 
+		// create string builder and append header plus line consisting of '-'
 		StringBuilder sb = new StringBuilder();
-
 		sb.append(formatStringForAnalysesOutput(header, format));
-
+		// fill up header array with '-'
 		header[0] = String.format("%-" + max1 + "s", " ").replace(' ', '-');
 		header[1] = String.format("%-" + max2 + "s", " ").replace(' ', '-');
 		header[2] = String.format("%-" + max3 + "s", " ").replace(' ', '-');
-
 		sb.append(formatStringForAnalysesOutput(header, format));
 
+		// append all rows
 		for (String[] s : strings)
 			sb.append(formatStringForAnalysesOutput(s, format));
 
+		// append new lines and return
 		sb.append("\n\n");
 		return sb.toString();
 	}
 
+	// checks whether array is too long or too short and formats the string
 	private static String formatStringForAnalysesOutput(String[] strings, String format) {
 
 		if (strings.length != 3) {
@@ -448,7 +474,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		return String.format(format, strings[0], strings[1], strings[2]);
 	}
 
-	private void setFileChosserFilter(JFileChooser fileChooser) {
+	// filter for returning only files ending with ".pnml"
+	private void setFileChooserFilter(JFileChooser fileChooser) {
 		fileChooser.setFileFilter(new FileFilter() {
 
 			@Override
@@ -469,24 +496,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onClose() {
-
+		// TODO implement save query
+		// if no panle is open do nothing
 		if (currentPetrinetPanel == null)
 			return;
 
+		// get tab index and remove tab
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
-
 		int index = tabbedPane.getSelectedIndex();
-
 		tabbedPane.remove(index);
 
-		if (tabbedPane.getTabCount() == 0) {
-			currentPetrinetPanel = null;
-			setStatusLabel();
-		}
 	}
 
 	@Override
 	public void onExit() {
+		// TODO implement save query
 		System.exit(0);
 	}
 
@@ -508,14 +532,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				+ "\n\nuser.dir = " + System.getProperty("user.dir") + "\n", "Information", JOptionPane.PLAIN_MESSAGE);
 	}
 
+	private enum FileEnum {
+		NEXT_FILE, PREVIOUS_FILE;
+	}
+
 	@Override
 	public void onPrevious() {
 
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
-		File previousFile = getFileFromCurrentFile(FileEnum.PREVIOUS_FILE);
+		// get previous file
+		File previousFile = getFileNextToCurrentFile(FileEnum.PREVIOUS_FILE);
 
+		// set new panel if there is a previous file
 		if (previousFile != null) {
 			setNewPanel(previousFile, false);
 
@@ -525,62 +556,76 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onNext() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
-		File nextFile = getFileFromCurrentFile(FileEnum.NEXT_FILE);
-
+		// get previous file
+		File nextFile = getFileNextToCurrentFile(FileEnum.NEXT_FILE);
+		// set new panel if there is a previous file
 		if (nextFile != null) {
 			setNewPanel(nextFile, false);
 		}
 	}
 
-	private enum FileEnum {
-		NEXT_FILE, PREVIOUS_FILE;
-	}
-
-	private File getFileFromCurrentFile(FileEnum fileEnum) {
+	// get  previous or next file adjacent to the current file in alphabetical order
+	private File getFileNextToCurrentFile(FileEnum fileEnum) {
+		
+		// get the controller
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		// get current file
 		File currentFile = controller.getCurrentFile();
 
+		// safety measure
 		if (currentFile == null || !currentFile.exists())
 			return null;
 
+		// get directory
 		File directory = currentFile.getParentFile();
 
+		// safety measure
 		if (directory == null || !directory.isDirectory())
 			return null;
 
+		// get all files from directory as array
 		File[] files = directory.listFiles();
 
+		// safety measure
 		if (files == null)
 			return null;
 
+		// tree to sort files
 		TreeMap<String, File> tree = new TreeMap<String, File>(String.CASE_INSENSITIVE_ORDER);
 
+		// put files in tree
 		for (File f : files)
 			if (f.getName().endsWith(".pnml"))
 				tree.put(f.getName(), f);
 
+		// get the next/previous file
 		String soughtFileString = null;
 		if (fileEnum == FileEnum.NEXT_FILE)
 			soughtFileString = tree.higherKey(currentFile.getName());
 		if (fileEnum == FileEnum.PREVIOUS_FILE)
 			soughtFileString = tree.lowerKey(currentFile.getName());
 
+		// if no file was found return
 		if (soughtFileString == null)
 			return null;
 
+		// get next file and return it
 		File nextFile = tree.get(soughtFileString);
 		return nextFile;
 	}
 
-	// PETRINET RELATED METHODS
-
 	@Override
 	public void onResetPetrinet() {
+		
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
+		
+		// get controller and reset petrinet
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 		controller.resetPetrinet();
 	}
