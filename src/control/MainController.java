@@ -10,13 +10,9 @@ import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
-
-import org.miv.pherd.IdAlreadyInUseException;
 
 import core.PetrinetAnalyser;
 import exceptions.DuplicateIdException;
@@ -31,7 +27,6 @@ import gui.ToolbarMode;
 import listeners.ToolbarButtonListener;
 import reachabilityGraphLayout.LayoutType;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * A controller managing all the GUI components at the level of the mainframe.
@@ -567,9 +562,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		}
 	}
 
-	// get  previous or next file adjacent to the current file in alphabetical order
+	// get previous or next file adjacent to the current file in alphabetical order
 	private File getFileNextToCurrentFile(FileEnum fileEnum) {
-		
+
 		// get the controller
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
@@ -620,11 +615,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onResetPetrinet() {
-		
+
 		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// get controller and reset petrinet
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 		controller.resetPetrinet();
@@ -634,11 +629,14 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onIncrement() {
+
+		// if there is no panel, return
 		if (currentPetrinetPanel == null)
 			return;
 
+		// try incrementing the place and get whether there has been a change -> if so,
+		// set the status label
 		boolean changed = currentPetrinetPanel.getEditor().incrementMarkedPlace();
-
 		if (changed)
 			setStatusLabel();
 
@@ -646,32 +644,37 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onDecrement() {
+
+		// if there is no panel, return
 		if (currentPetrinetPanel == null)
 			return;
 
+		// try incrementing the place and get whether there has been a change -> if so,
+		// set the status label
 		boolean changed = currentPetrinetPanel.getEditor().decrementMarkedPlace();
-
-		if (!changed)
-			return;
-
-		setStatusLabel();
+		if (changed)
+			setStatusLabel();
 	}
 
 	@Override
 	public void onAddPlace() {
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		// id for element
 		String id = null;
 
+		// get id from user
 		id = JOptionPane.showInputDialog(null, "Enter id for place:");
 
+		// safety measure
 		if (id == null)
 			return;
+		// show error message if id is empty
 		if (id.trim().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Invalid id: the id cannot be empty.", "",
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
+		// try adding the place and catch duplicate id exception
 		try {
 			currentPetrinetPanel.getEditor().addPlace(id);
 		} catch (DuplicateIdException e) {
@@ -679,25 +682,31 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 		}
 
+		// set the status label
 		setStatusLabel();
 	}
 
 	@Override
 	public void onAddTransition() {
 
-		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
-
+		// id for element
 		String id = null;
 
+		// get id from user
 		id = JOptionPane.showInputDialog(null, "Enter id for transition:");
 
+		// safety measure
 		if (id == null)
 			return;
+
+		// show error message if id is empty
 		if (id.trim().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Invalid id: the id cannot be empty.", "",
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
+
+		// try adding the transition and catch duplicate id exception
 		try {
 			currentPetrinetPanel.getEditor().addTransition(id);
 		} catch (DuplicateIdException e) {
@@ -706,6 +715,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 		}
 
+		// set the status label
 		setStatusLabel();
 	}
 
@@ -718,27 +728,38 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onAddEdge() {
 
+		// get the editor
 		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
+		// get the toolbar
 		PetrinetToolbar toolbar = mainFrame.getToolbar();
 
+		// if editor is already in add edge mode, abort adding edge, update toolbar and
+		// return
 		if (editor.addsEdge()) {
 			editor.abortAddEdge();
 			toolbar.toggleAddEdgeButton();
 			return;
 		}
 
+		// id for edge
 		String id = null;
 
+		// get id from user
 		id = JOptionPane.showInputDialog(null, "Enter id for edge:");
 
+		// safety measure
 		if (id == null)
 			return;
+
+		// show error message if id is empty
 		if (id.trim().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Invalid id: the id cannot be empty.", "",
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
+
+		// try invoking add edge and catch duplicate id exception
 		try {
 			editor.addEdge(id);
 			toolbar.toggleAddEdgeButton();
@@ -748,6 +769,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 
+		// set the status label
+		setStatusLabel();
 	}
 
 	@Override
@@ -759,6 +782,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onRemoveEdge() {
+		// safety measure
+		if (currentPetrinetPanel == null)
+			return;
 		currentPetrinetPanel.getEditor().toggleRemoveEdge();
 		getFrame().getToolbar().toggleRemoveEdgeButton();
 	}
@@ -781,6 +807,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onZoomInPetrinet() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -789,6 +816,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onZoomOutPetrinet() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -799,13 +827,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onAnalyse() {
+
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
+		// analyse the petrinet and get the analyser
 		PetrinetAnalyser analyser = currentPetrinetPanel.analyse();
+
+		// get result of analysis
 		String[][] result = { analyser.getResults() };
+
+		// print results
 		mainFrame.print(printResults(result));
 
+		// show information to user
 		JOptionPane.showMessageDialog(null, "The petrinet is " + (analyser.isBounded() ? "bounded" : "unbounded") + ".",
 				"", JOptionPane.INFORMATION_MESSAGE);
 
@@ -813,6 +849,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onReset() {
+
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 		currentPetrinetPanel.resetReachabilityGraph();
@@ -825,6 +863,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onUndo() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 		currentPetrinetPanel.undo();
@@ -832,6 +871,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onRedo() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 		currentPetrinetPanel.redo();
@@ -839,6 +879,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onZoomInReachability() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -847,6 +888,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onZoomOutReachability() {
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
@@ -855,12 +897,16 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onToggleTreeLayout() {
+		// layout is already of type TREE
 		if (layoutType == LayoutType.TREE)
 			return;
+
 		layoutType = LayoutType.TREE;
 
+		// set the toolbar button
 		mainFrame.getToolbar().toggleTreeLayoutButton();
 
+		// update every panel in the tabbed pane to tree layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
@@ -870,11 +916,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onToggleCircleLayout() {
-//		if (layoutType == LayoutType.CIRCLE)
-//			return;
+
 		layoutType = LayoutType.CIRCLE;
+
+		// set the toolbar button
 		mainFrame.getToolbar().toggleCircleLayoutButton();
 
+		// update every panel in the tabbed pane to circle layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
@@ -883,11 +931,17 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onToggleAutoLayout() {
+
+		// layout is already of type AUTOMATIC
 		if (layoutType == LayoutType.AUTOMATIC)
 			return;
+
 		layoutType = LayoutType.AUTOMATIC;
 
+		// set the toolbar button
 		mainFrame.getToolbar().toggleAutoLayoutButton();
+
+		// update every panel in the tabbed pane to automatic layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
@@ -896,7 +950,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onSetUndoButton(boolean highlight) {
-
 		mainFrame.getToolbar().setUndoButton(highlight);
 	}
 
@@ -909,14 +962,19 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onSetSplitPanesDefault() {
+
+		// get the split pane in the main frame
 		ResizableSplitPane mainSplitPane = mainFrame.getSplitPane();
 
+		// set divider ratio to default and reset divider
 		mainSplitPane.setDividerRatio(SPLIT_PANE_DEFAULT_RATIO);
 		mainSplitPane.resetDivider();
 
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
 
+		// update divider for the split pane in the current petrinet panel
 		ResizableSplitPane graphSplitPane = currentPetrinetPanel.getGraphSplitPane();
 		graphSplitPane.setDividerRatio(GRAPH_SPLIT_PANE_DEFAULT_RATIO);
 		graphSplitPane.resetDivider();
@@ -925,6 +983,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onChaneLookAndFeel() {
 		mainFrame.changeLookAndFeel();
+
+		// reset the split pane for every petrinet panel in the tabbed pane -> if
+		// components are not redone they are not displayed properly
 		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 		for (Component comp : tabbedPane.getComponents())
 			((PetrinetPanel) comp).setSplitPane();
