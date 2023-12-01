@@ -24,7 +24,7 @@ import gui.PetrinetToolbar;
 import gui.PetrinetToolbarController;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
-import listeners.ToolbarButtonListener;
+import listeners.ToolbarChangeListener;
 import reachabilityGraphLayout.LayoutType;
 
 /**
@@ -38,7 +38,7 @@ import reachabilityGraphLayout.LayoutType;
  * </p>
  * 
  */
-public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarButtonListener {
+public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarChangeListener {
 
 	// TODO warn if unsaved changes
 
@@ -727,7 +727,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onAddEdge() {
-
+		//safety measure
+		if (currentPetrinetPanel == null)
+			return;
+		
 		// get the editor
 		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
@@ -785,8 +788,15 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
-		currentPetrinetPanel.getEditor().toggleRemoveEdge();
-		getFrame().getToolbar().toggleRemoveEdgeButton();
+		
+		// get the editor
+		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
+
+		// get the toolbar
+		PetrinetToolbar toolbar = mainFrame.getToolbar();
+		
+		editor.toggleRemoveEdge();
+		toolbar.toggleRemoveEdgeButton();
 	}
 
 	@Override

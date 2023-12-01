@@ -5,7 +5,7 @@ import java.util.List;
 
 import listeners.PetrinetStateChangedListener;
 import listeners.ReachabilityStateChangeListener;
-import listeners.ToolbarButtonListener;
+import listeners.ToolbarChangeListener;
 import util.IterableMap;
 
 /**
@@ -65,7 +65,7 @@ public class ReachabilityGraph {
 	 *                              graph.
 	 * @param toolbarToggleListener The toolbar listener for un-/redo buttons.
 	 */
-	public ReachabilityGraph(Petrinet petrinet, ToolbarButtonListener toolbarToggleListener) {
+	public ReachabilityGraph(Petrinet petrinet, ToolbarChangeListener toolbarToggleListener) {
 
 		this.petrinet = petrinet;
 

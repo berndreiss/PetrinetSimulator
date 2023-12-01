@@ -13,7 +13,7 @@ import core.Place;
 import core.ReachabilityGraph;
 import core.Transition;
 import exceptions.PetrinetException;
-import listeners.ToolbarButtonListener;
+import listeners.ToolbarChangeListener;
 import propra.pnml.PNMLWopedWriter;
 
 /**
@@ -45,7 +45,7 @@ public class PetrinetViewerController {
 	 * @param toolbarListener Listener for highlighting toolbar buttons.
 	 * @throws PetrinetException Thrown by PNMLParser.
 	 */
-	public PetrinetViewerController(File file, ToolbarButtonListener toolbarListener) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarChangeListener toolbarListener) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 

@@ -1,6 +1,6 @@
 package core;
 
-import listeners.ToolbarButtonListener;
+import listeners.ToolbarChangeListener;
 
 /**
  * <p>
@@ -12,7 +12,7 @@ public class ReachabilityGraphUndoQueue {
 	/** The reachability graph. */
 	private ReachabilityGraph reachabilityGraph;
 	/** The listener for the toolbar buttons. */
-	private ToolbarButtonListener toolbarButtonListener;
+	private ToolbarChangeListener toolbarButtonListener;
 	/** The current state of the queue. */
 	private ReachabilityGraphUndoQueueState currentState = null;
 
@@ -24,7 +24,7 @@ public class ReachabilityGraphUndoQueue {
 	 * @param toolbarButtonListener The listener for the toolbar buttons.
 	 */
 	public ReachabilityGraphUndoQueue(ReachabilityGraph reachabilityGraph,
-			ToolbarButtonListener toolbarButtonListener) {
+			ToolbarChangeListener toolbarButtonListener) {
 		this.reachabilityGraph = reachabilityGraph;
 		this.toolbarButtonListener = toolbarButtonListener;
 

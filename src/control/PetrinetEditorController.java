@@ -9,46 +9,55 @@ import core.Transition;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import gui.PetrinetGraph;
-import listeners.ToolbarButtonListener;
+import listeners.ToolbarChangeListener;
+
 //TODO when adding edges nodes are not untoggled and toolbar is not toggled
 // TODO: Auto-generated Javadoc
 /**
- * <p> 
- * An editor for an instance of {@link Petrinet} being linked to an implementing instance of {@link PetrinetGraph}.
- * </p> 
+ * <p>
+ * An editor for an instance of {@link Petrinet} being linked to an implementing
+ * instance of {@link PetrinetGraph}.
+ * </p>
  */
 public class PetrinetEditorController {
-	/** */
+	/** An instance of an implementation of petrinet graph. */
 	private PetrinetGraph petrinetGraph;
-	/** */
-	private PetrinetViewerController petrinetController;
-	/** */
-	private Petrinet petrinet; 
-	/** */
-	private ToolbarButtonListener toolbarToggleListener;
-	/** */
-	private PetrinetElement[] addEdge;
-	/** */
+	/** The view controller for the petrinet. */
+	private PetrinetViewerController petrinetViewerController;
+	/** The petrinet itself. */
+	private Petrinet petrinet;
+	/** Listener for changes of toolbar buttons. */
+	private ToolbarChangeListener toolbarChangeListener;
+	/** Keeps track of whether edge is being added. */
+	private boolean addsEdge = false;
+	/**
+	 * Keeps track of source when adding an edge. Null, if no edge is being addded.
+	 */
+	private PetrinetElement addEdgeSource;
+	/** Keeps track of id for edge to add.*/
 	private String edgeToAddId;
+	/** Keeps track of whether edge is being removed. */
+	private boolean removesEdge = false;
 	/** */
-	private PetrinetElement[] removeEdge;
+	private PetrinetElement removeEdgeSource;
 
 	/** */
 	private Transition transitionMarked;
-	
+
 	/**
 	 * Instantiates a new editor.
-	 * @param petrinetController 
-	 * @param petrinetGraph 
+	 * 
+	 * @param petrinetViewerController The controller for the petrinet view.
+	 * @param petrinetGraph            The instance implementing petrinet graph.
+	 * @param toolbarToggleListener
 	 */
-	public PetrinetEditorController(PetrinetViewerController petrinetController, PetrinetGraph petrinetGraph, ToolbarButtonListener toolbarToggleListener) {
-		this.petrinetController = petrinetController;
+	public PetrinetEditorController(PetrinetViewerController petrinetViewerController, PetrinetGraph petrinetGraph,
+			ToolbarChangeListener toolbarToggleListener) {
+		this.petrinetViewerController = petrinetViewerController;
 		this.petrinetGraph = petrinetGraph;
-		this.petrinet = petrinetController.getPetrinet();
-		this.toolbarToggleListener = toolbarToggleListener;
+		this.petrinet = petrinetViewerController.getPetrinet();
+		this.toolbarChangeListener = toolbarToggleListener;
 	}
-
-	
 
 	/**
 	 * 
@@ -65,18 +74,17 @@ public class PetrinetEditorController {
 		if (label == null)
 			return false;
 
-
 		if (markedNode.getName().equals(label))
 			return false;
 
-		petrinetController.setFileChanged(true);// has to be set first so that petrinetQueue receives changes
+		petrinetViewerController.setFileChanged(true);// has to be set first so that petrinetQueue receives changes
 
 		petrinet.setPetrinetElementLabel(markedNode.getId(), label);
-		
+
 		return true;
 
 	}
-	
+
 	/**
 	 * Increment marked place.
 	 *
@@ -87,8 +95,8 @@ public class PetrinetEditorController {
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
 		boolean changed = petrinet.incrementPlace(petrinetElement);
 
-		if (changed && !petrinetController.getFileChanged())
-			petrinetController.setFileChanged(true);
+		if (changed && !petrinetViewerController.getFileChanged())
+			petrinetViewerController.setFileChanged(true);
 
 		return changed;
 	}
@@ -100,16 +108,16 @@ public class PetrinetEditorController {
 	 */
 	public boolean decrementMarkedPlace() {
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
-		
+
 		boolean changed = petrinet.decrementPlace(petrinetElement);
 
-		if (changed && !petrinetController.getFileChanged())
-			petrinetController.setFileChanged(true);
-		
+		if (changed && !petrinetViewerController.getFileChanged())
+			petrinetViewerController.setFileChanged(true);
+
 		return changed;
 	}
-	
-	//TODO adding place causes compiler error due to 
+
+	// TODO adding place causes compiler error due to
 	/**
 	 * Adds the place.
 	 *
@@ -122,7 +130,7 @@ public class PetrinetEditorController {
 		Place p = petrinet.addPlace(id);
 		if (p == null)
 			return false;
-		petrinetController.setFileChanged(true);
+		petrinetViewerController.setFileChanged(true);
 		petrinet.setAddedElementPosition(p);
 
 		return true;
@@ -142,41 +150,49 @@ public class PetrinetEditorController {
 		if (t == null)
 			return false;
 
-		petrinetController.setFileChanged(true);
+		petrinetViewerController.setFileChanged(true);
 		petrinet.setAddedElementPosition(t);
 
 		return true;
 	}
-/**
- * 
- */
+
+	/**
+	 * 
+	 */
 	public void abortAddEdge() {
-		addEdge = null;
+		addEdgeSource = null;
+		addsEdge = false;
 	}
-	
+	/**
+	 * 
+	 */
+	public void abortRemoveEdge() {
+		removeEdgeSource = null;
+		removesEdge = false;
+	}
 	/**
 	 * Toggle add edge.
 	 *
 	 * @param id the id
-	 * @return true, if successful
-	 * @throws DuplicateIdException 
+	 * @throws DuplicateIdException
 	 */
-	public boolean addEdge(String id) throws DuplicateIdException {
+	public void addEdge(String id) throws DuplicateIdException {
 		if (addsEdge()) {
-			addEdge = null;
+			addsEdge = false;;
+			addEdgeSource = null;
+			return;
 		}
 
+		addsEdge = true;
 		if (petrinet.containsElementWithId(id))
 			throw new DuplicateIdException(id);
 		edgeToAddId = id;
-		addEdge = new PetrinetElement[2];
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode != null)
-			addEdge[0] = markedNode;
+			addEdgeSource = markedNode;
 
 		if (removesEdge())
-			removeEdge = null;
-		return true;
+			removeEdgeSource = null;
 	}
 
 	/**
@@ -184,20 +200,19 @@ public class PetrinetEditorController {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean toggleRemoveEdge() {
+	public void toggleRemoveEdge() {
 		if (removesEdge()) {
-			removeEdge = null;
-			return true;
+			removesEdge = false;
+			removeEdgeSource = null;
 		}
+		removesEdge = true;
 
-		removeEdge = new PetrinetElement[2];
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode != null)
-			removeEdge[0] = markedNode;
+			removeEdgeSource = markedNode;
 
 		if (addsEdge())
-			addEdge = null;
-		return true;
+			addEdgeSource = null;
 	}
 
 	/**
@@ -206,7 +221,7 @@ public class PetrinetEditorController {
 	 * @return true, if successful
 	 */
 	public boolean addsEdge() {
-		return addEdge != null;
+		return addsEdge;
 	}
 
 	/**
@@ -215,7 +230,7 @@ public class PetrinetEditorController {
 	 * @return true, if successful
 	 */
 	public boolean removesEdge() {
-		return removeEdge != null;
+		return removesEdge;
 	}
 
 	/**
@@ -227,84 +242,82 @@ public class PetrinetEditorController {
 
 		if (markedElement == null)
 			return;
-		petrinetController.setFileChanged(true);
+		petrinetViewerController.setFileChanged(true);
 		petrinet.removePetrinetElement(markedElement.getId());
 
 	}
 
 	/**
 	 * Clicked node in graph.
-	 * @param id 
+	 * 
+	 * @param id
 	 */
-	public void clickedNodeInGraph(String id){
+	public void clickedNodeInGraph(String id) {
 
-		PetrinetElement petrinetElement = petrinet.getPetrinetElement(id);
-		
+		PetrinetElement edgeTarget = petrinet.getPetrinetElement(id);
+
 		if (addsEdge()) {
-			if (addEdge[0] == null) {
-				addEdge[0] = petrinetElement;
-				petrinetGraph.toggleNodeMark(petrinetElement);
+			if (addEdgeSource == null) {
+				addEdgeSource = edgeTarget;
+				petrinetGraph.toggleNodeMark(edgeTarget);
 				return;
 			}
 
-			if (addEdge[0] == petrinetElement) {
-				addEdge[0] = null;
-				petrinetGraph.toggleNodeMark(petrinetElement);
+			if (addEdgeSource == edgeTarget) {
+				addEdgeSource = null;
+				petrinetGraph.toggleNodeMark(edgeTarget);
 				return;
 			}
-
-			addEdge[1] = petrinetElement;
 
 			try {
-				petrinet.addEdge(addEdge[0], addEdge[1], edgeToAddId);
-			} catch (InvalidEdgeOperationException | DuplicateIdException e ) {
+				petrinet.addEdge(addEdgeSource, edgeTarget, edgeToAddId);
+			} catch (InvalidEdgeOperationException | DuplicateIdException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 
-			addEdge = null;
+			addEdgeSource = null;
 			edgeToAddId = null;
 
-			petrinetController.setFileChanged(true);
+			petrinetViewerController.setFileChanged(true);
 			petrinetGraph.toggleNodeMark(null);
 
-			if (toolbarToggleListener != null)
-				toolbarToggleListener.onEdgeAdded();
+			if (toolbarChangeListener != null)
+				toolbarChangeListener.onEdgeAdded();
 
 			return;
 		}
 
 		if (removesEdge()) {
-			if (removeEdge[0] == null) {
-				removeEdge[0] = petrinetElement;
-				petrinetGraph.toggleNodeMark(petrinetElement);
+			if (removeEdgeSource == null) {
+				removeEdgeSource = edgeTarget;
+				petrinetGraph.toggleNodeMark(edgeTarget);
 				return;
 
 			}
-			if (removeEdge[0] == petrinetElement) {
-				removeEdge[0] = null;
-				petrinetGraph.toggleNodeMark(petrinetElement);
+			if (removeEdgeSource == edgeTarget) {
+				removeEdgeSource = null;
+				petrinetGraph.toggleNodeMark(edgeTarget);
 				return;
 			}
 
-			removeEdge[1] = petrinetElement;
 			try {
-				petrinet.removeEdge(removeEdge[0], removeEdge[1]);
+				petrinet.removeEdge(removeEdgeSource, edgeTarget);
 			} catch (InvalidEdgeOperationException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 				return;
 
 			}
-			removeEdge = null;
+			removeEdgeSource = null;
 			petrinetGraph.toggleNodeMark(null);
-			petrinetController.setFileChanged(true);
-			if (toolbarToggleListener != null)
-				toolbarToggleListener.onEdgeRemoved();
+			petrinetViewerController.setFileChanged(true);
+			if (toolbarChangeListener != null)
+				toolbarChangeListener.onEdgeRemoved();
 			return;
 
 		}
 
-		petrinetGraph.toggleNodeMark(petrinetElement);
+		petrinetGraph.toggleNodeMark(edgeTarget);
 
 	}
 

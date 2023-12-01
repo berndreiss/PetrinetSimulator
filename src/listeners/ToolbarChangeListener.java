@@ -10,7 +10,7 @@ package listeners;
  * These buttons are adding/removing edges and the un-/redo buttons.
  * </p>
  */
-public interface ToolbarButtonListener {
+public interface ToolbarChangeListener {
 
 	/**
 	 * An edge has been added and the add edge button needs to be reset.
