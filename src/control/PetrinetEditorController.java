@@ -12,7 +12,6 @@ import gui.PetrinetGraph;
 import listeners.ToolbarChangeListener;
 
 //TODO when adding edges nodes are not untoggled and toolbar is not toggled
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * An editor for an instance of {@link Petrinet} being linked to an implementing
@@ -34,51 +33,58 @@ public class PetrinetEditorController {
 	 * Keeps track of source when adding an edge. Null, if no edge is being addded.
 	 */
 	private PetrinetElement addEdgeSource;
-	/** Keeps track of id for edge to add.*/
+	/** Keeps track of id for edge to add. */
 	private String edgeToAddId;
 	/** Keeps track of whether edge is being removed. */
 	private boolean removesEdge = false;
-	/** */
+	/** Keeps track of the source of the edge to be removed. */
 	private PetrinetElement removeEdgeSource;
-
-	/** */
-	private Transition transitionMarked;
 
 	/**
 	 * Instantiates a new editor.
 	 * 
 	 * @param petrinetViewerController The controller for the petrinet view.
 	 * @param petrinetGraph            The instance implementing petrinet graph.
-	 * @param toolbarToggleListener
+	 * @param toolbarChangeListener    Listener for change of the toolbar buttons.
 	 */
 	public PetrinetEditorController(PetrinetViewerController petrinetViewerController, PetrinetGraph petrinetGraph,
-			ToolbarChangeListener toolbarToggleListener) {
+			ToolbarChangeListener toolbarChangeListener) {
 		this.petrinetViewerController = petrinetViewerController;
 		this.petrinetGraph = petrinetGraph;
 		this.petrinet = petrinetViewerController.getPetrinet();
-		this.toolbarChangeListener = toolbarToggleListener;
+		this.toolbarChangeListener = toolbarChangeListener;
 	}
 
 	/**
+	 * Set new label for the marked node in the petrinet graph.
 	 * 
+	 * @return true, if label has been set
 	 */
 
 	public boolean setLabel() {
+
+		// get marked node in the petrinet graph
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 
+		// if no node is marked return false
 		if (markedNode == null)
 			return false;
 
+		// get label from user
 		String label = JOptionPane.showInputDialog(null, "Enter label for element:");
 
+		// if no valid label has been provided return false
 		if (label == null)
 			return false;
 
+		// if label is already the same, return false
 		if (markedNode.getName().equals(label))
 			return false;
+		// inform petrinet viewer controller that the file has been changed -> has to be
+		// set first so that petrinetQueue receives changes
+		petrinetViewerController.setFileChanged(true);
 
-		petrinetViewerController.setFileChanged(true);// has to be set first so that petrinetQueue receives changes
-
+		// set the label
 		petrinet.setPetrinetElementLabel(markedNode.getId(), label);
 
 		return true;
@@ -92,10 +98,12 @@ public class PetrinetEditorController {
 	 */
 	public boolean incrementMarkedPlace() {
 
+		// get the marked node from the petrinet graph
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
+		// keep track of whether element has been changed
 		boolean changed = petrinet.incrementPlace(petrinetElement);
-
-		if (changed && !petrinetViewerController.getFileChanged())
+		// inform the petrinet viewer controller about changes
+		if (changed)
 			petrinetViewerController.setFileChanged(true);
 
 		return changed;
@@ -107,217 +115,268 @@ public class PetrinetEditorController {
 	 * @return true, if successful
 	 */
 	public boolean decrementMarkedPlace() {
+
+		// get the marked node from the petrinet graph
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
 
+		// keep track of whether element has been changed
 		boolean changed = petrinet.decrementPlace(petrinetElement);
 
-		if (changed && !petrinetViewerController.getFileChanged())
+		// inform the petrinet viewer controller about changes
+		if (changed)
 			petrinetViewerController.setFileChanged(true);
 
 		return changed;
 	}
 
-	// TODO adding place causes compiler error due to
 	/**
-	 * Adds the place.
+	 * Adds a place.
 	 *
-	 * @param id the id
+	 * @param id the id of the place to be added
 	 * @return true, if successful
-	 * @throws DuplicateIdException the duplicate id exception
+	 * @throws DuplicateIdException thrown if id already exists
 	 */
 	public boolean addPlace(String id) throws DuplicateIdException {
 
+		// add place and keep track of it
 		Place p = petrinet.addPlace(id);
+
+		// if no place has been added return false
 		if (p == null)
 			return false;
+
+		// inform petrinet viewer controller about changes
 		petrinetViewerController.setFileChanged(true);
+
+		// set newly added element to be above the top left most element in the petrinet
 		petrinet.setAddedElementPosition(p);
 
 		return true;
 	}
 
 	/**
-	 * Adds the transition.
+	 * Adds a transition.
 	 *
-	 * @param id the id
+	 * @param id the id of the transition to be added
 	 * @return true, if successful
-	 * @throws DuplicateIdException the duplicate id exception
+	 * @throws DuplicateIdException thrown if id already exists
 	 */
 	public boolean addTransition(String id) throws DuplicateIdException {
 
+		// add transition and keep track of it
 		Transition t = petrinet.addTransition(id);
-
+		// if no transition has been added return false
 		if (t == null)
 			return false;
-
+		// inform petrinet viewer controller about changes
 		petrinetViewerController.setFileChanged(true);
+		// set newly added element to be above the top left most element in the petrinet
 		petrinet.setAddedElementPosition(t);
 
 		return true;
 	}
 
 	/**
-	 * 
+	 * Abort adding edge.
 	 */
 	public void abortAddEdge() {
 		addEdgeSource = null;
 		addsEdge = false;
+		edgeToAddId = null;
 	}
+
 	/**
-	 * 
+	 * Abort removing edge.
 	 */
 	public void abortRemoveEdge() {
 		removeEdgeSource = null;
 		removesEdge = false;
 	}
+
 	/**
-	 * Toggle add edge.
+	 * Add an edge. If already adding an edge, adding edge gets aborted.
 	 *
-	 * @param id the id
-	 * @throws DuplicateIdException
+	 * @param id the id of the edge to be added
+	 * @throws DuplicateIdException thrown if id already exists
 	 */
 	public void addEdge(String id) throws DuplicateIdException {
+		// if already adding edge, abort adding edge
 		if (addsEdge()) {
-			addsEdge = false;;
-			addEdgeSource = null;
+			abortAddEdge();
 			return;
 		}
 
 		addsEdge = true;
+
+		// check for duplicate id
 		if (petrinet.containsElementWithId(id))
 			throw new DuplicateIdException(id);
+
 		edgeToAddId = id;
+
+		// get the source of the edge if there is a marked node
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode != null)
 			addEdgeSource = markedNode;
 
+		// if removing edge, abort
 		if (removesEdge())
-			removeEdgeSource = null;
+			abortRemoveEdge();
 	}
 
 	/**
-	 * Toggle remove edge.
+	 * Remove an edge. If already removing an edge, removing edge gets aborted.
 	 *
-	 * @return true, if successful
 	 */
-	public void toggleRemoveEdge() {
+	public void removeEdge() {
 		if (removesEdge()) {
-			removesEdge = false;
-			removeEdgeSource = null;
+			abortRemoveEdge();
+			return;
 		}
+
 		removesEdge = true;
 
+		// get the source of the edge if there is a marked node
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
 		if (markedNode != null)
 			removeEdgeSource = markedNode;
 
+		// if adding edge, abort
 		if (addsEdge())
 			addEdgeSource = null;
 	}
 
 	/**
-	 * Adds edge.
+	 * Check whether editor is in the process of adding an edge.
 	 *
-	 * @return true, if successful
+	 * @return true, if in process of adding an edge
 	 */
 	public boolean addsEdge() {
 		return addsEdge;
 	}
 
 	/**
-	 * Removes edge.
+	 * Check whether editor is in the process of removing an edge.
 	 *
-	 * @return true, if successful
+	 * @return true, if in process of removing an edge
 	 */
 	public boolean removesEdge() {
 		return removesEdge;
 	}
 
 	/**
-	 * Removes the component.
+	 * Removes the component being marked in the petrinet graph.
 	 */
 	public void removeComponent() {
 
+		// get the marked element
 		PetrinetElement markedElement = petrinetGraph.getMarkedNode();
 
+		// if no element is marked, return
 		if (markedElement == null)
 			return;
+
+		// inform petrinet viewer controller about changes
 		petrinetViewerController.setFileChanged(true);
+		// remove the element
 		petrinet.removePetrinetElement(markedElement.getId());
 
 	}
 
 	/**
-	 * Clicked node in graph.
+	 * Handles clicks on nodes in the petrinet graph.
 	 * 
-	 * @param id
+	 * @param id id of the element being clicked
 	 */
 	public void clickedNodeInGraph(String id) {
 
-		PetrinetElement edgeTarget = petrinet.getPetrinetElement(id);
+		// get currently marked element
+		PetrinetElement petrinetElement = petrinet.getPetrinetElement(id);
 
+		// if in the process of adding an edge set edge source or, if source already
+		// exists, add the edge
 		if (addsEdge()) {
+
+			// if source does not exist, set source and mark element in graph
 			if (addEdgeSource == null) {
-				addEdgeSource = edgeTarget;
-				petrinetGraph.toggleNodeMark(edgeTarget);
+				addEdgeSource = petrinetElement;
+				petrinetGraph.toggleNodeMark(petrinetElement);
 				return;
 			}
 
-			if (addEdgeSource == edgeTarget) {
+			// if source if marked element, set source to null and unmark element in graph
+			if (addEdgeSource == petrinetElement) {
 				addEdgeSource = null;
-				petrinetGraph.toggleNodeMark(edgeTarget);
+				petrinetGraph.toggleNodeMark(petrinetElement);
 				return;
 			}
 
+			// else add edge and catch duplicate id exception
 			try {
-				petrinet.addEdge(addEdgeSource, edgeTarget, edgeToAddId);
+				petrinet.addEdge(addEdgeSource, petrinetElement, edgeToAddId);
 			} catch (InvalidEdgeOperationException | DuplicateIdException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 
-			addEdgeSource = null;
-			edgeToAddId = null;
+			abortAddEdge();
 
+			// inform petrinet viewer controller about changes
 			petrinetViewerController.setFileChanged(true);
+
+			// TODO does not work!
+			// unmark element in petrinet graph
 			petrinetGraph.toggleNodeMark(null);
 
+			// TODO does not unmark button
+			// inform the listener
 			if (toolbarChangeListener != null)
 				toolbarChangeListener.onEdgeAdded();
 
 			return;
 		}
 
+		// if in the process of removing an edge set edge source or, if source already
+		// exists, remove the edge
 		if (removesEdge()) {
+			// if source does not exist, set source and mark element in graph
 			if (removeEdgeSource == null) {
-				removeEdgeSource = edgeTarget;
-				petrinetGraph.toggleNodeMark(edgeTarget);
+				removeEdgeSource = petrinetElement;
+				petrinetGraph.toggleNodeMark(petrinetElement);
 				return;
 
 			}
-			if (removeEdgeSource == edgeTarget) {
+			// if source if marked element, set source to null and unmark element in graph
+			if (removeEdgeSource == petrinetElement) {
 				removeEdgeSource = null;
-				petrinetGraph.toggleNodeMark(edgeTarget);
+				petrinetGraph.toggleNodeMark(petrinetElement);
 				return;
 			}
 
+			// else remove edge and catch invalid edge operation exception
 			try {
-				petrinet.removeEdge(removeEdgeSource, edgeTarget);
+				petrinet.removeEdge(removeEdgeSource, petrinetElement);
 			} catch (InvalidEdgeOperationException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "", JOptionPane.INFORMATION_MESSAGE);
 				return;
 
 			}
-			removeEdgeSource = null;
+			abortRemoveEdge();
+			// TODO does not work!
+			// unmark element in petrinet graph
 			petrinetGraph.toggleNodeMark(null);
+			// inform petrinet viewer controller about changes
 			petrinetViewerController.setFileChanged(true);
+			// TODO does not unmark button
+			// inform the listener
 			if (toolbarChangeListener != null)
 				toolbarChangeListener.onEdgeRemoved();
 			return;
 
 		}
 
-		petrinetGraph.toggleNodeMark(edgeTarget);
+		// if none of the above, simply mark/unmark element
+		petrinetGraph.toggleNodeMark(petrinetElement);
 
 	}
 

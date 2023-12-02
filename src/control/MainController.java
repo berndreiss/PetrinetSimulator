@@ -795,7 +795,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// get the toolbar
 		PetrinetToolbar toolbar = mainFrame.getToolbar();
 		
-		editor.toggleRemoveEdge();
+		editor.removeEdge();
 		toolbar.toggleRemoveEdgeButton();
 	}
 
