@@ -324,6 +324,9 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		// remove edge and sprite
 		String edgeString = stateSource.getState() + stateTarget.getState() + t.getId();
+		Edge edge = getEdge(edgeString);
+		if (edge == null)
+			return null;
 		Edge removedEdge = removeEdge(edgeString);
 		spriteMan.removeSprite("s" + edgeString);
 

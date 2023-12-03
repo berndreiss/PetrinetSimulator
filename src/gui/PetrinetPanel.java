@@ -578,6 +578,7 @@ public class PetrinetPanel extends JPanel {
 		adjustArrowHeads = false;
 		petrinetController.getPetrinetQueue().goBack();
 		adjustArrowHeads = true;
+		adjustArrowHeads();
 	}
 	/**
 	 * Undo the last step in the reachability graph shown.
@@ -586,5 +587,6 @@ public class PetrinetPanel extends JPanel {
 		adjustArrowHeads = false;
 		petrinetController.getPetrinetQueue().goForward();
 		adjustArrowHeads = true;
+		adjustArrowHeads();
 	}
 }
