@@ -3,6 +3,7 @@ package util;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,31 @@ public class IterableMap<K, V> implements Map<K, V>, Iterable<V> {// does not ex
 	public IterableMap(Comparator<K> comparator) {
 		internalMap = new TreeMap<K, V>(comparator);
 	}
+	
+	/**
+	 * Creates a copy of the given map.
+	 * @return a copy of the given map
+	 */
+	public IterableMap<K,V> copy(){
+		IterableMap<K,V> newMap = new IterableMap<K, V>();
+		for (K k: internalMap.keySet())
+			newMap.put(k, internalMap.get(k));
+		return newMap;
+	}
 
+	/**
+	 * Converts given map to HashSet.
+	 * @return the map as Set
+	 */
+	public Set<V> castToSet() {
+		Set<V> set = new HashSet<V>();
+		
+		for (V v: this)
+			set.add(v);
+		
+		return set;
+	}
+	
 	@Override
 	public Iterator<V> iterator() {
 		return new CustomIterator<V>(this);

@@ -2,8 +2,11 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
@@ -90,8 +93,8 @@ public class Petrinet {
 	}
 
 	/**
-	 * Calculate (x,y) coordinates right above the left most element in the
-	 * petrinet and sets the element that is being added to that coordinates.
+	 * Calculate (x,y) coordinates right above the left most element in the petrinet
+	 * and sets the element that is being added to that coordinates.
 	 *
 	 * @param petrinetElement The new element that is being added.
 	 */
@@ -150,7 +153,7 @@ public class Petrinet {
 				y = p.getY();
 			}
 		}
-		
+
 		// set added element just above the left upper most element in the petrinet
 		setCoordinates(petrinetElement.getId(), leftHightestElement.getX(), leftHightestElement.getY() + 20);
 
@@ -225,9 +228,9 @@ public class Petrinet {
 
 	}
 
-	
 	/**
-	 * Remove a petrinet element with the corresponding id. Also removes the id from the orignal arc ids.
+	 * Remove a petrinet element with the corresponding id. Also removes the id from
+	 * the orignal arc ids.
 	 *
 	 * @param id The id of the element to be removed.
 	 */
@@ -242,7 +245,8 @@ public class Petrinet {
 
 			Place p = (Place) element;
 
-			// extra lists because inputs and outputs are modified when removing edge (see removeEdge())
+			// extra lists because inputs and outputs are modified when removing edge (see
+			// removeEdge())
 			ArrayList<Transition> inputs = new ArrayList<Transition>();
 			ArrayList<Transition> outputs = new ArrayList<Transition>();
 
@@ -271,12 +275,13 @@ public class Petrinet {
 			// remove place
 			places.remove(p.getId());
 		}
-		
+
 		// handle transition
 		if (element instanceof Transition) {
 			Transition t = (Transition) element;
-			
-			// extra lists because inputs and outputs are modified when removing edge (see removeEdge())
+
+			// extra lists because inputs and outputs are modified when removing edge (see
+			// removeEdge())
 			ArrayList<Place> inputs = new ArrayList<Place>();
 			ArrayList<Place> outputs = new ArrayList<Place>();
 
@@ -336,7 +341,8 @@ public class Petrinet {
 
 		transitions.put(id, t);
 
-		// link the petrinet component changed listener to the transition state changed listener
+		// link the petrinet component changed listener to the transition state changed
+		// listener
 		t.setTransitionStateListener(() -> {
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onTransitionStateChanged(t);
@@ -364,13 +370,14 @@ public class Petrinet {
 
 		if (containsElementWithId(id))
 			throw new DuplicateIdException("Duplicate ID: place \"" + id + "\" already exists.");
-		
+
 		Place p = new Place(id);
 		places.put(id, p);
-		
-		// link the component and state changed listener to the place token count changed listener
+
+		// link the component and state changed listener to the place token count
+		// changed listener
 		p.setNumberOfTokensListener(newNumber -> {
-			
+
 			if (petrinetComponentChangedListener != null)
 				petrinetComponentChangedListener.onPlaceTokenCountChanged(p);
 
@@ -379,7 +386,7 @@ public class Petrinet {
 		// inform the listener that the state of the petrinet has changed
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onPetrinetChanged(this);
-		
+
 		// inform the listener that an element has changed
 		if (petrinetComponentChangedListener != null)
 			petrinetComponentChangedListener.onPetrinetElementAdded(p);
@@ -393,7 +400,7 @@ public class Petrinet {
 	 * @param numberOfTokens The number of tokens to be set.
 	 */
 	void setTokens(String id, int numberOfTokens) {
-		
+
 		// abort if place does not exist
 		if (!places.containsKey(id))
 			return;
@@ -409,7 +416,6 @@ public class Petrinet {
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onPetrinetChanged(this);
 
-
 	}
 
 	/**
@@ -418,8 +424,11 @@ public class Petrinet {
 	 * @param source The source of the edge.
 	 * @param target The target of the edge.
 	 * @param id     The id for the edge.
-	 * @throws InvalidEdgeOperationException Thrown if source or target do not exist, if both source and target are transitions/places or if the edge already exists.
-	 * @throws DuplicateIdException Thrown if id already exists.
+	 * @throws InvalidEdgeOperationException Thrown if source or target do not
+	 *                                       exist, if both source and target are
+	 *                                       transitions/places or if the edge
+	 *                                       already exists.
+	 * @throws DuplicateIdException          Thrown if id already exists.
 	 */
 	public void addEdge(String source, String target, String id)
 			throws InvalidEdgeOperationException, DuplicateIdException {
@@ -443,8 +452,11 @@ public class Petrinet {
 	 * @param source The source of the edge.
 	 * @param target The target of the edge.
 	 * @param id     The id for the edge.
-	 * @throws InvalidEdgeOperationException Thrown if source or target do not exist, if both source and target are transitions/places or if the edge already exists.
-	 * @throws DuplicateIdException Thrown if id already exists.
+	 * @throws InvalidEdgeOperationException Thrown if source or target do not
+	 *                                       exist, if both source and target are
+	 *                                       transitions/places or if the edge
+	 *                                       already exists.
+	 * @throws DuplicateIdException          Thrown if id already exists.
 	 */
 	public void addEdge(PetrinetElement source, PetrinetElement target, String id)
 			throws InvalidEdgeOperationException, DuplicateIdException {
@@ -534,7 +546,7 @@ public class Petrinet {
 	 * @param id The id of the transition to be fired.
 	 */
 	public void fireTransition(String id) {
-		
+
 		// if there is no transition with given id abort
 		if (!isTransition(id))
 			return;
@@ -554,7 +566,6 @@ public class Petrinet {
 		// inform the state changed listener
 		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onTransitionFire(t);
-
 
 	}
 
@@ -581,11 +592,10 @@ public class Petrinet {
 		Iterator<Integer> integerIt = state.getPlaceTokens();
 
 		if (places.size() == state.numberOfPlaces())
-			for (Place p : places) 
+			for (Place p : places)
 				p.setNumberOfTokens(integerIt.next());
 
 	}
-
 
 	/**
 	 * Increment given place.
@@ -596,7 +606,8 @@ public class Petrinet {
 	public boolean incrementPlace(PetrinetElement place) {
 		if (place == null)
 			return false;
-		if (!places.containsKey(place.getId())|| !(place instanceof Place))// should not happen -> here for safety reasons
+		if (!places.containsKey(place.getId()) || !(place instanceof Place))// should not happen -> here for safety
+																			// reasons
 			return false;
 
 		Place p = (Place) place;
@@ -618,7 +629,8 @@ public class Petrinet {
 		if (place == null)
 			return false;
 
-		if (!places.containsKey(place.getId()) || !(place instanceof Place))// should not happen -> here for safety reasons
+		if (!places.containsKey(place.getId()) || !(place instanceof Place))// should not happen -> here for safety
+																			// reasons
 			return false;
 
 		Place p = (Place) place;
@@ -642,7 +654,7 @@ public class Petrinet {
 
 		sb.append("(");
 
-		for (Place p : getPlaces()) 
+		for (Place p : getPlaces())
 			sb.append(p.getNumberOfTokens() + "|");
 
 		sb.deleteCharAt(sb.length() - 1);
@@ -653,7 +665,7 @@ public class Petrinet {
 	/**
 	 * Set the petrinet element name.
 	 *
-	 * @param id   The id of the element.
+	 * @param id    The id of the element.
 	 * @param label The new label for the element.
 	 */
 	public void setPetrinetElementLabel(String id, String label) {
@@ -670,9 +682,56 @@ public class Petrinet {
 	 *
 	 * @return true, if the petrinet has places
 	 */
-	boolean hasPlaces() {
+	public boolean hasPlaces() {
 
 		return places.size() > 0;
+	}
+
+	/**
+	 * Checks whether all components of the given petrinet are connected to each
+	 * other.
+	 * 
+	 * @return true, if petrinet is connected
+	 */
+	public boolean isConnected() {
+
+		// empty net or a net with only places or only transitions is treated as not
+		// connected
+		if (places.isEmpty() || transitions.isEmpty()) {
+			return false;
+		}
+
+		// get starting point
+		PetrinetElement startElement = places.iterator().next();
+
+		// keep track of visited elements
+		Set<PetrinetElement> visited = new HashSet<PetrinetElement>();
+
+		// stack for DFS
+		Stack<PetrinetElement> stack = new Stack<PetrinetElement>();
+		stack.push(startElement);
+
+		// do DFS
+		while (!stack.isEmpty()) {
+			PetrinetElement current = stack.pop();
+			if (!visited.contains(current)) {
+				visited.add(current);
+
+				// add connected elements to the stack
+				if (current instanceof Place) {
+					Place place = (Place) current;
+					place.getInputs().forEach(transition -> stack.push(transition));
+					place.getOutputs().forEach(transition -> stack.push(transition));
+				} else if (current instanceof Transition) {
+					Transition transition = (Transition) current;
+					transition.getInputs().forEach(place -> stack.push(place));
+					transition.getOutputs().forEach(place -> stack.push(place));
+				}
+			}
+		}
+
+		// Check if all elements were visited
+		return visited.containsAll(places.castToSet()) && visited.containsAll(transitions.castToSet());
 	}
 
 }
