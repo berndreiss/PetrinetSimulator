@@ -22,7 +22,7 @@ import control.PetrinetEditorController;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
 import reachabilityGraphLayout.LayoutType;
-
+//TODO changing layout always sets toolbar to viewermode
 /**
  * <p>
  * A toolbar for interactions with petrinets via a

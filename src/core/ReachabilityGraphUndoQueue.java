@@ -117,6 +117,9 @@ public class ReachabilityGraphUndoQueue {
 	 * @return true if a step forward has been taken
 	 */
 	public boolean goForward() {
+		
+		if (currentState == null)
+			return false;
 
 		// if there is no next step we can not go further.
 		if (!currentState.hasNext())
@@ -168,6 +171,9 @@ public class ReachabilityGraphUndoQueue {
 	 */
 	public void reset() {
 
+		if (currentState == null)
+			return;
+		
 		rewind();
 
 		// "cut head off"
@@ -184,6 +190,9 @@ public class ReachabilityGraphUndoQueue {
 	 */
 	public void rewind() {
 
+		if (currentState == null)
+			return;
+		
 		while (!currentState.isFirst())
 			goBack();
 	}
@@ -193,6 +202,10 @@ public class ReachabilityGraphUndoQueue {
 	 */
 	public void rewindSilent() {
 
+		// case when editor is opened
+		if (currentState == null)
+			return;
+		
 		// get to the first state
 		while (!currentState.isFirst())
 			currentState = currentState.getPrevious();
@@ -225,6 +238,10 @@ public class ReachabilityGraphUndoQueue {
 	 * @param state State to be set.
 	 */
 	public void setToState(ReachabilityGraphUndoQueueState state) {
+		
+		if (state == null)
+			return;
+		
 		// keep track of current state to reset to is state does not exist in queue
 		ReachabilityGraphUndoQueueState stateTemp = currentState;
 		// rewind the queue

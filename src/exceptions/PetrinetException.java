@@ -13,7 +13,7 @@ public class PetrinetException extends Exception {
 	 *
 	 * @param message the message
 	 */
-	PetrinetException(String message) {
+	public PetrinetException(String message) {
 		super(message);
 	}
 

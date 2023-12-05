@@ -12,6 +12,7 @@ import gui.PetrinetGraph;
 import listeners.ToolbarChangeListener;
 
 //TODO when adding edges nodes are not untoggled and toolbar is not toggled
+//TODO removing elements does not work anymore
 /**
  * <p>
  * An editor for an instance of {@link Petrinet} being linked to an implementing

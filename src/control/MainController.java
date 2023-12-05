@@ -185,7 +185,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
-			newPanel = new PetrinetPanel(this, file, layoutType);
+			newPanel = new PetrinetPanel(this, file, layoutType, (file == null || currentPetrinetPanel.getToolbarMode() == ToolbarMode.EDITOR)? ToolbarMode.EDITOR : ToolbarMode.VIEWER);
 		} catch (PetrinetException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
@@ -199,8 +199,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// if no file has been provided open the editor
 		if (file == null)
 			setToolbarMode(ToolbarMode.EDITOR);
-		else
-			setToolbarMode(ToolbarMode.VIEWER);
 
 		// get tabbed pane and create new tab / update old tab
 		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
@@ -241,6 +239,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onNew() {
+		setToolbarMode(ToolbarMode.EDITOR);
 		setNewPanel(null, false);
 		onSetSplitPanesDefault();
 	}
@@ -517,6 +516,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onCloseEditor() {
+		
+		if (currentPetrinetPanel == null)
+			return;
+		if (!currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
+			JOptionPane.showMessageDialog(mainFrame, "Petrinet is not connected. You can still save changes but the petrinet can not be shown.", "Information", JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
 		setToolbarMode(ToolbarMode.VIEWER);
 	}
 

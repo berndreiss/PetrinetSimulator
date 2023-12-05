@@ -2,7 +2,6 @@ package control;
 
 import java.io.File;
 
-
 import core.PNMLParser;
 import core.Petrinet;
 import core.PetrinetAnalyser;
@@ -13,6 +12,7 @@ import core.Place;
 import core.ReachabilityGraph;
 import core.Transition;
 import exceptions.PetrinetException;
+import gui.ToolbarMode;
 import listeners.ToolbarChangeListener;
 import propra.pnml.PNMLWopedWriter;
 
@@ -22,7 +22,8 @@ import propra.pnml.PNMLWopedWriter;
  * </p>
  * 
  * <p>
- * It also creates and handles a reachability graph model linked to petrinet (see {@link ReachabilityGraph}).
+ * It also creates and handles a reachability graph model linked to petrinet
+ * (see {@link ReachabilityGraph}).
  * </p>
  */
 public class PetrinetViewerController {
@@ -43,15 +44,20 @@ public class PetrinetViewerController {
 	 *
 	 * @param file            The file that is loaded.
 	 * @param toolbarListener Listener for highlighting toolbar buttons.
+	 * @param toolbarMode toolbar mode to be used
 	 * @throws PetrinetException Thrown by PNMLParser.
 	 */
-	public PetrinetViewerController(File file, ToolbarChangeListener toolbarListener) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarChangeListener toolbarListener, ToolbarMode toolbarMode) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 
 		// load file if it was provided
 		if (file != null)
 			new PNMLParser(file, petrinet);
+
+		if (toolbarMode == ToolbarMode.VIEWER && !petrinet.isConnected())
+			throw new PetrinetException(
+					"Petrinet is not connected. You can not view it but still open it in the editor.");
 
 		// create reachability graph model
 		this.reachabilityGraphModel = new ReachabilityGraph(petrinet, toolbarListener);
@@ -227,18 +233,19 @@ public class PetrinetViewerController {
 	 * it; otherwise return element for graph to handle it.
 	 * 
 	 * @param id Element that has been clicked.
-	 * @return The element, if it was of type Place, null otherwise (or also if it hasn't been found).
+	 * @return The element, if it was of type Place, null otherwise (or also if it
+	 *         hasn't been found).
 	 */
 	public PetrinetElement onPetrinetNodeClicked(String id) {
 		// get the element
 		PetrinetElement pe = petrinet.getPetrinetElement(id);
-		
+
 		// if it is a transition, fire it
 		if (pe instanceof Transition) {
 			petrinet.fireTransition(id);
 			return null;
 		}
-		
+
 		// return element
 		return pe;
 	}

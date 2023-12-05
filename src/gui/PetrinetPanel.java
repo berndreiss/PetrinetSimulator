@@ -112,17 +112,19 @@ public class PetrinetPanel extends JPanel {
 	/**
 	 * Instantiates a new petrinet panel.
 	 *
-	 * @param mainController The controller serving as an interface to the main GUI
+	 * @param mainController the controller serving as an interface to the main GUI
 	 *                       components.
-	 * @param file           The pnml file from which contents will be loaded. If
+	 * @param file           the pnml file from which contents will be loaded. If
 	 *                       null goes into {@link ToolbarMode} EDITOR.
-	 * @param layoutType     The layout type used.
+	 * @param layoutType     the layout type used.
+	 * @param toolbarMode 	 the toolbar mode that is being used 
 	 * @throws PetrinetException If there is a problem reading a file an exception
 	 *                           is thrown.
 	 */
-	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType) throws PetrinetException {
+	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode) throws PetrinetException {
 
-		this.petrinetController = new PetrinetViewerController(file, mainController);
+		this.toolbarMode = toolbarMode;
+		this.petrinetController = new PetrinetViewerController(file, mainController, toolbarMode);
 		this.mainController = mainController;
 
 		this.petrinetGraph = new GraphStreamPetrinetGraph(petrinetController.getPetrinet());

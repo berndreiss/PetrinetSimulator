@@ -54,7 +54,7 @@ public class PetrinetAnalyser {
 	 *                           structure.
 	 */
 	public PetrinetAnalyser(File file) throws PetrinetException {
-		this(new PetrinetViewerController(file, null));
+		this(new PetrinetViewerController(file, null, null));
 	}
 
 	/**
