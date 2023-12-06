@@ -28,7 +28,7 @@ public interface PetrinetMenuController {
 	 * in a new tab.
 	 */
 	void onOpenInNewTab();
-
+	
 	/**
 	 * Save changes to the file the petrinet has been opened from.
 	 */

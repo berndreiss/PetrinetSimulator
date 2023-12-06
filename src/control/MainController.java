@@ -185,7 +185,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
-			newPanel = new PetrinetPanel(this, file, layoutType, (file == null || currentPetrinetPanel.getToolbarMode() == ToolbarMode.EDITOR)? ToolbarMode.EDITOR : ToolbarMode.VIEWER);
+			newPanel = new PetrinetPanel(this, file, layoutType, (file == null
+					|| (currentPetrinetPanel != null && currentPetrinetPanel.getToolbarMode() == ToolbarMode.EDITOR))
+							? ToolbarMode.EDITOR
+							: ToolbarMode.VIEWER);
 		} catch (PetrinetException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
@@ -495,6 +498,20 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		if (currentPetrinetPanel == null)
 			return;
 
+		if (currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) {
+
+			int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
+
+			// 0=yes, 1=no, 2=cancel
+			switch (input) {
+			case 0:
+				onSave();
+				break;
+			case 2:
+				return;
+			}
+		}
+
 		// get tab index and remove tab
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
 		int index = tabbedPane.getSelectedIndex();
@@ -505,6 +522,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onExit() {
 		// TODO implement save query
+		
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) {
+
+			int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
+
+			// 0=yes, 1=no, 2=cancel
+			switch (input) {
+			case 0:
+				onSave();
+				break;
+			case 2:
+				return;
+			}
+		}
+
 		System.exit(0);
 	}
 
@@ -516,11 +548,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onCloseEditor() {
-		
+
 		if (currentPetrinetPanel == null)
 			return;
 		if (!currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
-			JOptionPane.showMessageDialog(mainFrame, "Petrinet is not connected. You can still save changes but the petrinet can not be shown.", "Information", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(mainFrame,
+					"Petrinet is not connected. You can still save changes but the petrinet can not be shown.",
+					"Information", JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		setToolbarMode(ToolbarMode.VIEWER);
@@ -733,10 +767,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onAddEdge() {
-		//safety measure
+		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// get the editor
 		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
@@ -794,13 +828,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// safety measure
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// get the editor
 		PetrinetEditorController editor = currentPetrinetPanel.getEditor();
 
 		// get the toolbar
 		PetrinetToolbar toolbar = mainFrame.getToolbar();
-		
+
 		editor.removeEdge();
 		toolbar.toggleRemoveEdgeButton();
 	}
