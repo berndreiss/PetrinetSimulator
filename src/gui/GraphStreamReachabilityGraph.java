@@ -86,7 +86,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		// keep track of current state
 		ReachabilityGraphUndoQueueState currentState = queue.getCurrentState();
-		
+
 		// rewind the queue to the beginning (silent because old states might still
 		// think another graph exists and make changes to it when rewinding the queue)
 		queue.rewindSilent();
@@ -115,16 +115,15 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 				if (state != null)
 					setCurrent(getNode(state.getState()));
 
-				
 			}
-			
+
 			@Override
 			public void onResetCurrentEdge() {
 				// reset current edge if necessary
-					if (currentEdge == null)
-						return;
-					currentEdge.setAttribute("ui.class", "edge");
-					currentEdge = null;
+				if (currentEdge == null)
+					return;
+				currentEdge.setAttribute("ui.class", "edge");
+				currentEdge = null;
 
 			}
 
@@ -180,8 +179,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// add existing states and edges in the right order
 		while (queue.goForward()) {
 		}
-		
-		//set queue to original current state
+
+		// set queue to original current state
 		queue.setToState(currentState);
 
 	}
@@ -231,7 +230,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		// check if the new edge exists and add if necessary
 		Edge newEdge = getEdge(predecessor.getState() + id + transitionId);
-				
+
 		if (newEdge == null) {
 			newEdge = this.addEdge(predecessor.getState() + id + transitionId, predNode, node, true);
 			// set sprite to the edge having the transition as a label
@@ -340,8 +339,15 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	// remove a state from the graph
 	private Node removeState(PetrinetState state) {
 
+		// check if node exists
+		Node node = getNode(state.getState());
+
+		// safety check
+		if (node == null)
+			return null;
+
 		// remove node and sprite
-		Node node = removeNode(state.getState());
+		node = removeNode(state.getState());
 		spriteMan.removeSprite("s" + state.getState());
 
 		// remove node from layout manager if custom layout is set
@@ -477,5 +483,5 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	public boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
 	}
-	
+
 }

@@ -40,8 +40,6 @@ import reachabilityGraphLayout.LayoutType;
  */
 public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarChangeListener {
 
-	// TODO warn if unsaved changes
-
 	/** The last directory visited. */
 	private File workingDirectory;
 	/** The mainFrame holding all components. */
@@ -52,6 +50,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 //	private boolean tabAdded;//TODO remove?
 	/** The layout type currently in use. */
 	private LayoutType layoutType = LayoutType.TREE;
+	/** The toolbar mode. */
+	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
+	
 
 	/**
 	 * Instantiates a new main controller.
@@ -185,10 +186,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
-			newPanel = new PetrinetPanel(this, file, layoutType, (file == null
-					|| (currentPetrinetPanel != null && currentPetrinetPanel.getToolbarMode() == ToolbarMode.EDITOR))
-							? ToolbarMode.EDITOR
-							: ToolbarMode.VIEWER);
+			newPanel = new PetrinetPanel(this, file, layoutType, toolbarMode);
 		} catch (PetrinetException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
@@ -234,10 +232,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	// set toolbar, panel and this controller to mode
 	private void setToolbarMode(ToolbarMode toolbarMode) {
-		if (currentPetrinetPanel == null)
-			return;
-		currentPetrinetPanel.setToolbarMode(toolbarMode);
+		if (currentPetrinetPanel != null)
+			currentPetrinetPanel.setToolbarMode(toolbarMode);
 		getFrame().getToolbar().setToolbarMode(toolbarMode);
+		this.toolbarMode = toolbarMode;
 	}
 
 	@Override
@@ -493,7 +491,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onClose() {
-		// TODO implement save query
 		// if no panle is open do nothing
 		if (currentPetrinetPanel == null)
 			return;
@@ -521,8 +518,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onExit() {
-		// TODO implement save query
-		
+
 		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) {
 
 			int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
@@ -542,16 +538,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onOpenEditor() {
-		if (currentPetrinetPanel != null)
-			setToolbarMode(ToolbarMode.EDITOR);
+		setToolbarMode(ToolbarMode.EDITOR);
 	}
 
 	@Override
 	public void onCloseEditor() {
 
-		if (currentPetrinetPanel == null)
-			return;
-		if (!currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
+		if (currentPetrinetPanel != null && !currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
 			JOptionPane.showMessageDialog(mainFrame,
 					"Petrinet is not connected. You can still save changes but the petrinet can not be shown.",
 					"Information", JOptionPane.PLAIN_MESSAGE);
@@ -1039,6 +1032,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 		for (Component comp : tabbedPane.getComponents())
 			((PetrinetPanel) comp).setSplitPane();
+		setToolbarMode(toolbarMode);
 	}
 
 	@Override
