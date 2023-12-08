@@ -346,6 +346,9 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		if (node == null)
 			return null;
 
+		if (initialNode == node)
+			initialNode = null;
+		
 		// remove node and sprite
 		node = removeNode(state.getState());
 		spriteMan.removeSprite("s" + state.getState());

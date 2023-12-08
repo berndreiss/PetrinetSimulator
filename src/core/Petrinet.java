@@ -612,8 +612,8 @@ public class Petrinet {
 
 		Place p = (Place) place;
 		p.incrementTokens();
-
-		if (petrinetStateChangedListener != null)
+		
+		if (petrinetStateChangedListener != null) 
 			petrinetStateChangedListener.onPetrinetChanged(this);
 
 		return true;

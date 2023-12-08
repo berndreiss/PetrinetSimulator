@@ -63,8 +63,8 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-
-	//TODO somehow edges are not removed properly see example 118 -> they seem to not be added correctly in goForward()
+	// TODO somehow edges are not removed properly see example 118 -> they seem to
+	// not be added correctly in goForward()
 	/**
 	 * Go a step back in the queue.
 	 */
@@ -114,10 +114,11 @@ public class ReachabilityGraphUndoQueue {
 
 	/**
 	 * Go a step forward in the queue.
+	 * 
 	 * @return true if a step forward has been taken
 	 */
 	public boolean goForward() {
-		
+
 		if (currentState == null)
 			return false;
 
@@ -173,7 +174,7 @@ public class ReachabilityGraphUndoQueue {
 
 		if (currentState == null)
 			return;
-		
+
 		rewind();
 
 		// "cut head off"
@@ -192,7 +193,7 @@ public class ReachabilityGraphUndoQueue {
 
 		if (currentState == null)
 			return;
-		
+
 		while (!currentState.isFirst())
 			goBack();
 	}
@@ -205,7 +206,7 @@ public class ReachabilityGraphUndoQueue {
 		// case when editor is opened
 		if (currentState == null)
 			return;
-		
+
 		// get to the first state
 		while (!currentState.isFirst())
 			currentState = currentState.getPrevious();
@@ -238,10 +239,10 @@ public class ReachabilityGraphUndoQueue {
 	 * @param state State to be set.
 	 */
 	public void setToState(ReachabilityGraphUndoQueueState state) {
-		
+
 		if (state == null)
 			return;
-		
+
 		// keep track of current state to reset to is state does not exist in queue
 		ReachabilityGraphUndoQueueState stateTemp = currentState;
 		// rewind the queue
@@ -272,11 +273,12 @@ public class ReachabilityGraphUndoQueue {
 				goForward();
 
 		}
-		
+
 		// handle toolbar buttons
 		toolbarButtonListener.onSetUndoButton(true);
 		toolbarButtonListener.onSetRedoButton(currentState.hasNext());
 
 	}
+
 
 }

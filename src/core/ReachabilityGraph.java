@@ -85,12 +85,15 @@ public class ReachabilityGraph {
 
 			@Override
 			public void onPetrinetChanged(Petrinet petrinet) {
-				reset();
-				PetrinetState initialState = getInitialState();
+				
+				undoQueue = new ReachabilityGraphUndoQueue(ReachabilityGraph.this, toolbarToggleListener);
+				makeEmpty();
 				if (initialState != null)
 					removeState(initialState);
+				initialState = null;
 				addNewState(petrinet, null);
 
+				
 			}
 
 		});
@@ -326,6 +329,17 @@ public class ReachabilityGraph {
 		if (undoQueue != null)
 			undoQueue.reset();
 
+		makeEmpty();
+
+		if (initialState != null) {
+			petrinetStates.put(initialState.getState(), initialState);
+			setCurrentState(initialState);
+		}
+
+	}
+	
+	// empty all states and edges except for initial state
+	private void makeEmpty() {
 		// if there are not states return
 		if (petrinetStates.size() == 0)
 			return;
@@ -356,11 +370,6 @@ public class ReachabilityGraph {
 
 		// clear all states and reset the initial state
 		petrinetStates.clear();
-		if (initialState != null) {
-			petrinetStates.put(initialState.getState(), initialState);
-			setCurrentState(initialState);
-		}
-
 	}
 
 	/**
