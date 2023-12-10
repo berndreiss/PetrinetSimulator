@@ -159,6 +159,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
+
 				addState(state, predecessor, t, true);
 
 				// reset arrow heads

@@ -87,13 +87,17 @@ public class ReachabilityGraph {
 			public void onPetrinetChanged(Petrinet petrinet) {
 				
 				undoQueue = new ReachabilityGraphUndoQueue(ReachabilityGraph.this, toolbarToggleListener);
+			
 				makeEmpty();
-				if (initialState != null)
+				if (initialState != null) {
 					removeState(initialState);
+					stateChangeListener.onRemove(initialState);
+				}
 				initialState = null;
+				currentState = null;
+				currentEdge = null;
 				addNewState(petrinet, null);
-
-				
+				toolbarToggleListener.resetUndoRedoButtons();	
 			}
 
 		});
