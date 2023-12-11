@@ -2,7 +2,6 @@ package reachabilityGraphLayout;
 
 import java.awt.Dimension;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * Class representing a rectangle.

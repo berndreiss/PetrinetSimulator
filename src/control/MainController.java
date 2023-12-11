@@ -659,7 +659,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	// EDITOR RELATED METHODS
-
+	//TODO save alert on previous / next / open
 	@Override
 	public void onIncrement() {
 

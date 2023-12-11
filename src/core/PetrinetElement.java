@@ -1,7 +1,6 @@
 package core;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PetrinetElement.
  */

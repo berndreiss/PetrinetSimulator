@@ -15,7 +15,6 @@ import core.PetrinetState;
 import core.Transition;
 import util.IterableMap;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * This class implements the custom layouts in {@link LayoutType} for the
@@ -836,8 +835,6 @@ public class Layout {
 		nodeMap.remove(node.getId());
 		List<LayoutNode> nodeList = listHierarchy.get(layoutNode.getLevel());
 		nodeList.remove(layoutNode);
-
-		// TODO should also handle nodeList.size()==0, but it should not be a big
 
 		// remove node from graphical objects list
 		graphicalObjectList.remove(layoutNode);

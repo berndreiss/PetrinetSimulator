@@ -2,7 +2,6 @@ package gui;
 
 import core.Petrinet;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * An enum representing the two modes the toolbar can be in: VIEWER and EDITOR.

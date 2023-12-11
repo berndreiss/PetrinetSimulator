@@ -11,8 +11,6 @@ import exceptions.InvalidEdgeOperationException;
 import gui.PetrinetGraph;
 import listeners.ToolbarChangeListener;
 
-//TODO when adding edges nodes are not untoggled and toolbar is not toggled
-//TODO removing elements does not work anymore
 /**
  * <p>
  * An editor for an instance of {@link Petrinet} being linked to an implementing
@@ -325,11 +323,9 @@ public class PetrinetEditorController {
 			// inform petrinet viewer controller about changes
 			petrinetViewerController.setFileChanged(true);
 
-			// TODO does not work!
 			// unmark element in petrinet graph
 			petrinetGraph.toggleNodeMark(null);
 
-			// TODO does not unmark button
 			// inform the listener
 			if (toolbarChangeListener != null)
 				toolbarChangeListener.onEdgeAdded();
@@ -363,12 +359,10 @@ public class PetrinetEditorController {
 
 			}
 			abortRemoveEdge();
-			// TODO does not work!
 			// unmark element in petrinet graph
 			petrinetGraph.toggleNodeMark(null);
 			// inform petrinet viewer controller about changes
 			petrinetViewerController.setFileChanged(true);
-			// TODO does not unmark button
 			// inform the listener
 			if (toolbarChangeListener != null)
 				toolbarChangeListener.onEdgeRemoved();

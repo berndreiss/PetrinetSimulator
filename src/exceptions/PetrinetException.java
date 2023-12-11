@@ -1,6 +1,5 @@
 package exceptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PetrinetException.
  */

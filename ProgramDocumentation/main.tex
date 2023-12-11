@@ -1,7 +1,13 @@
 \documentclass[10pt, a4paper]{article}
 
+\usepackage[a4paper, margin=2cm]{geometry}
 \usepackage[english]{babel}
 \usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{ulem}
+\usepackage{setspace}
+
 %\usepackage{hologo}
 
 %\usepackage{float}
@@ -17,9 +23,26 @@
 
 \begin{document}
 
+\pagenumbering{roman} 
+\include{titelblatt} 
+%\normalem 
+% \blankpage
+
+%\textcolor{white}{彩蛋}
+\thispagestyle{empty}
+\newpage 
+
+\tableofcontents \thispagestyle{plain} \newpage
+
+
+\pagenumbering{arabic} \rmfamily \onehalfspace 
 
 \section{Introduction to the Program}
 %\label{sec1}
+
+The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions. The reachability graph will show whether it encountered a state that is unbounded and mark the beginning and ending nodes on the path signifying the unboundedness of the petrinet. Additionally there is the option to analyse a given petrinet with regards to its boundedness and build the reachability graph with the click of a button. Furthermore it provides an user interface for editing petrinets. 
+
+The following sections give an overview of the menus and toolbars and the functionality provided by it. 
 
 \subsection{The Menu}
 
@@ -29,9 +52,9 @@ The \textit{File} menu consists of the following entries:
 
 \begin{itemize}
 
-\item \textbf{New:} opens a new empty file for editing. 
+\item \textbf{New:} opens a new empty file for editing -> automatically opens the Editor view (see \ref{label:editor}). 
 \item \textbf{Open:} opens saved file from directory.
-\item \textbf{Open in new Tab:} same as open but in new tab.
+\item \textbf{Open in new Tab:} same as open but in a new tab.
 \item \textbf{Reload:} reload the currently opened file.
 \item \textbf{Save:} save changes.
 \item \textbf{Save as:} save changes and choose directory/name.
@@ -39,15 +62,22 @@ The \textit{File} menu consists of the following entries:
 \item \textbf{Close:} close currently opened file.
 \item \textbf{Exit:} close the program.
 
+\end{itemize}
+
+
+\subsubsection{Edit}
+
+
 The \textit{Edit} menu consists of the following entries:
 
-\end{itemize}
 
 \begin{itemize}
 \item \textbf{Open Editor:} opens the Editor.
 \item \textbf{Close Editor:} closes the Editor and reverts back to Viewer.
 \item \textbf{Change Look and Feel:} change between Nimbus and Metal look and feel.
 \end{itemize}
+
+\subsubsection{Help}
 
 The \textit{Help} menu only consists of the element \textit{Info}, which shows information about the Java version used and the user directory.
 
@@ -67,7 +97,7 @@ The \textit{Help} menu only consists of the element \textit{Info}, which shows i
 %\ref{sec1}
 
 \subsection{The Editor}
-
+\label{label:editor}
 \subsubsection{Petrinet Toolbar}
 
 \includegraphics[width=5cm]{Editor_Toolbar.png}
@@ -76,6 +106,15 @@ The \textit{Help} menu only consists of the element \textit{Info}, which shows i
 
 %\item{}
 %\end{itemize}
+
+
+\section{Exploring the Technical Depths}
+
+
+\subsection{General Design of the Program}
+
+\subsection{Packages}
+
 
 
 %\begin{table}[t]

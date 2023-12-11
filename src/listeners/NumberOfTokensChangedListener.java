@@ -1,6 +1,5 @@
 package listeners;
 
-// TODO: Auto-generated Javadoc
 /**
  * <p>
  * The listener interface for receiving events signifying the number of tokens

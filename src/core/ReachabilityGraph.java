@@ -328,7 +328,7 @@ public class ReachabilityGraph {
 	 * Reset the reachability graph.
 	 */
 	public void reset() {
-
+		//TODO reset buttons of undoqueue 
 		// reset undo queue and buttons in the toolbar
 		if (undoQueue != null)
 			undoQueue.reset();

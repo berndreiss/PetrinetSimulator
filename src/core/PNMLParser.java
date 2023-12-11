@@ -11,7 +11,6 @@ import exceptions.InvalidEdgeOperationException;
 import exceptions.PetrinetException;
 import propra.pnml.PNMLWopedParser;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PNMLParser.
  */

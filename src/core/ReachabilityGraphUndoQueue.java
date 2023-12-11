@@ -63,8 +63,6 @@ public class ReachabilityGraphUndoQueue {
 
 	}
 
-	// TODO somehow edges are not removed properly see example 118 -> they seem to
-	// not be added correctly in goForward()
 	/**
 	 * Go a step back in the queue.
 	 */

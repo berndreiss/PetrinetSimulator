@@ -12,7 +12,6 @@ import core.Place;
 import core.Transition;
 import listeners.PetrinetComponentChangedListener;
 
-// TODO: Auto-generated Javadoc
 /**
  *
  * <p>
