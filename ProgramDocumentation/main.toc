@@ -4,8 +4,29 @@
 \contentsline {subsubsection}{\numberline {1.1.1}File}{1}{subsubsection.1.1.1}%
 \contentsline {subsubsection}{\numberline {1.1.2}Edit}{1}{subsubsection.1.1.2}%
 \contentsline {subsubsection}{\numberline {1.1.3}Help}{1}{subsubsection.1.1.3}%
-\contentsline {subsection}{\numberline {1.2}The Viewer}{1}{subsection.1.2}%
-\contentsline {subsubsection}{\numberline {1.2.1}Petrinet Toolbar}{1}{subsubsection.1.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2}Reachbility Graph Toolbar}{1}{subsubsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.3}The Editor}{2}{subsection.1.3}%
-\contentsline {subsubsection}{\numberline {1.3.1}Petrinet Toolbar}{2}{subsubsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.2}Toolbar Modes}{1}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Viewer Mode}{2}{subsubsection.1.2.1}%
+\contentsline {paragraph}{Petrinet Toolbar}{2}{section*.2}%
+\contentsline {paragraph}{Reachbility Graph Toolbar}{2}{section*.3}%
+\contentsline {subsubsection}{\numberline {1.2.2}Editor Mode}{3}{subsubsection.1.2.2}%
+\contentsline {paragraph}{Petrinet Toolbar}{3}{section*.4}%
+\contentsline {paragraph}{Reachability Graph Toolbar}{3}{section*.5}%
+\contentsline {section}{\numberline {2}Exploring the Technical Depths}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}General Design of the Program}{3}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Controllers}{3}{subsubsection.2.1.1}%
+\contentsline {paragraph}{Main Controller}{3}{section*.6}%
+\contentsline {paragraph}{Petrinet Panel Interface}{4}{section*.7}%
+\contentsline {paragraph}{Petrinet Viewer Controller}{4}{section*.8}%
+\contentsline {paragraph}{Petrinet Editor Controller}{4}{section*.9}%
+\contentsline {subsubsection}{\numberline {2.1.2}Listeners}{4}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Layout}{4}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Tree Layout}{4}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Circle Layout}{4}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Packages}{4}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}control}{4}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}core}{4}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}exceptions}{4}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}gui}{4}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}listeners}{4}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}reachabilityGraphLayout}{4}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}util}{4}{subsubsection.2.3.7}%

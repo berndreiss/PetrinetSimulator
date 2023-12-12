@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
+import control.PetrinetPanelInterface;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
 import reachabilityGraphLayout.LayoutType;
@@ -26,7 +27,7 @@ import reachabilityGraphLayout.LayoutType;
  * <p>
  * A toolbar for interactions with petrinets via a
  * {@link PetrinetToolbarController} representing the current state of a
- * {@link PetrinetPanel}.
+ * {@link PetrinetPanelInterface}.
  * </p>
  * 
  * <p>
@@ -614,7 +615,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * @param petrinetPanel The panel the toolbar represents.
 	 * @param layoutType    The layoutType used.
 	 */
-	public void setToolbarTo(PetrinetPanel petrinetPanel, LayoutType layoutType) {
+	public void setToolbarTo(PetrinetPanelInterface petrinetPanel, LayoutType layoutType) {
 
 		// get default color of current look and feel
 		JButton button = new JButton();

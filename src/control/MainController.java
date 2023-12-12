@@ -45,7 +45,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	/** The mainFrame holding all components. */
 	private MainFrame mainFrame;
 	/** The petrinet panel that is currently loaded. */
-	private PetrinetPanel currentPetrinetPanel;
+	private PetrinetPanelInterface currentPetrinetPanel;
 //	/** Keeps track of whether a tab has been added. */
 //	private boolean tabAdded;//TODO remove?
 	/** The layout type currently in use. */
@@ -95,7 +95,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 					return;
 
 				// get panel and upadte current panel
-				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
+				PetrinetPanelInterface panel = (PetrinetPanelInterface) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
 
 				// update status label and toolbar
@@ -124,7 +124,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	 *
 	 * @return the current panel
 	 */
-	public PetrinetPanel getCurrentPanel() {
+	public PetrinetPanelInterface getCurrentPanel() {
 		return currentPetrinetPanel;
 	}
 
@@ -209,13 +209,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		if (tabbedPane.getTabCount() == 0)
 			newTab = true;
 		if (newTab) {
-			tabbedPane.add(getTabString(getStatusLabel()), currentPetrinetPanel);
+			tabbedPane.add(getTabString(getStatusLabel()), (Component) currentPetrinetPanel);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 
 		} else {
 			// insert into current index and remove the old tab
 			int index = tabbedPane.getSelectedIndex();
-			tabbedPane.insertTab(getTabString(getStatusLabel()), null, currentPetrinetPanel, null, index);
+			tabbedPane.insertTab(getTabString(getStatusLabel()), null, (Component) currentPetrinetPanel, null, index);
 			tabbedPane.setSelectedIndex(index);
 			tabbedPane.remove(index + 1);
 
@@ -876,7 +876,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 
 		// analyse the petrinet and get the analyser
-		PetrinetAnalyser analyser = currentPetrinetPanel.analyse();
+		PetrinetAnalyser analyser = currentPetrinetPanel.getAnalyser();
 
 		// get result of analysis
 		String[][] result = { analyser.getResults() };

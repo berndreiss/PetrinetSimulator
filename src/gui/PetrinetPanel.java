@@ -28,6 +28,7 @@ import org.graphstream.ui.view.util.InteractiveElement;
 import control.MainController;
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
+import control.PetrinetPanelInterface;
 import core.Petrinet;
 import core.PetrinetAnalyser;
 import core.PetrinetElement;
@@ -37,14 +38,10 @@ import reachabilityGraphLayout.LayoutType;
 
 /**
  * <p>
- * A {@link JPanel} presenting a {@link Petrinet} with its according
- * reachability graph loaded from a file. It serves on the one hand as a
- * intermediary between the main controller and the petrinet controller and on
- * the other mediates clicks on the {@link PetrinetGraph} between the
- * {@link PetrinetViewerController} and the {@link PetrinetEditorController}.
- * According to the {@link ToolbarMode} it is currently set to.
+ * An implementation of the {@link PetrinetPanelInterface}.
  * </p>
  * 
+ * <p>
  * It holds a horizontal {@link ResizableSplitPane} containing a
  * {@link GraphStreamPetrinetGraph} on the left and a
  * {@link GraphStreamReachabilityGraph} on the right. Creates and holds a
@@ -55,8 +52,9 @@ import reachabilityGraphLayout.LayoutType;
  * user can edit the {@link Petrinet} using the {@link PetrinetToolbar}.
  * Additionally it deals with the problem of GraphStream graphs arrow heads not
  * adjusting correctly when resizing components or adding / removing elements.
+ * </p>
  */
-public class PetrinetPanel extends JPanel {
+public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,7 +87,7 @@ public class PetrinetPanel extends JPanel {
 	private ViewPanel reachabilityViewPanel;
 
 	/** controller managing the interaction with the data model */
-	private PetrinetViewerController petrinetController;
+	private PetrinetViewerController petrinetViewerController;
 	/** controller managing the interaction with toolbar and menu */
 	private MainController mainController;
 	/** controller managing changes to the petrinet */
@@ -124,19 +122,14 @@ public class PetrinetPanel extends JPanel {
 	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode) throws PetrinetException {
 
 		this.toolbarMode = toolbarMode;
-		this.petrinetController = new PetrinetViewerController(file, mainController, toolbarMode);
+		this.petrinetViewerController = new PetrinetViewerController(file, mainController, toolbarMode);
 		this.mainController = mainController;
 
-		this.petrinetGraph = new GraphStreamPetrinetGraph(petrinetController.getPetrinet());
+		this.petrinetGraph = new GraphStreamPetrinetGraph(petrinetViewerController.getPetrinet());
 
-		this.editor = new PetrinetEditorController(petrinetController, petrinetGraph, mainController);
+		this.editor = new PetrinetEditorController(petrinetViewerController, petrinetGraph, mainController);
 
 		this.setLayout(new BorderLayout());
-
-		// TODO REMOVE?
-		// linking the petrinet controller to the toolbar via the main controller ->
-		// needed for toggling the layout and un-/redo buttons
-//		petrinetController.setToolbarToggleListener(mainController);
 
 		petrinetPanel = new JPanel();
 		petrinetPanel.setLayout(new BorderLayout());
@@ -172,7 +165,7 @@ public class PetrinetPanel extends JPanel {
 		if (reachabilityPanel.getComponentCount() != 0)
 			reachabilityPanel.remove(reachabilityViewPanel);
 
-		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetController.getReachabilityGraphModel(),
+		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetViewerController.getReachabilityGraphModel(),
 				layoutType);
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
@@ -230,51 +223,33 @@ public class PetrinetPanel extends JPanel {
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
 	}
 
-	/**
-	 * 
-	 * Analyse whether the current petrinet is bounded or unbounded. In the process
-	 * also adjusts the arrow heads in the GraphStream graph.
-	 * 
-	 * @return a petrinet analyser
-	 * 
-	 */
-	public PetrinetAnalyser analyse() {
+	@Override
+	public PetrinetAnalyser getAnalyser() {
 
 		// do not adjust arrow heads while analysing but adjust them afterwards
 		this.adjustArrowHeads = false;
-		PetrinetAnalyser analyser = petrinetController.analyse();
+		PetrinetAnalyser analyser = petrinetViewerController.analyse();
 		this.adjustArrowHeads = true;
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
 		return analyser;
 	}
 
-	/**
-	 * Gets the graph split pane containing the petrinet graph panel and the
-	 * reachabilty graph panel.
-	 *
-	 * @return the graph split pane
-	 */
+	@Override
 	public ResizableSplitPane getGraphSplitPane() {
 		return graphSplitPane;
 	}
 
-	/**
-	 * Zoom into the petrinet graph.
-	 */
+	@Override
 	public void zoomInPetrinet() {
 		zoomIn(petrinetViewPanel);
 	}
 
-	/**
-	 * Zoom out of the petrinet graph.
-	 */
+	@Override
 	public void zoomOutPetrinet() {
 		zoomOut(petrinetViewPanel);
 	}
 
-	/**
-	 * Zoom into the reachability graph.
-	 */
+	@Override
 	public void zoomInReachability() {
 		// disable zoom if there's only one node in graph, since there are problems with
 		// nodes disappearing and a zoom on one node does not make any difference
@@ -282,10 +257,8 @@ public class PetrinetPanel extends JPanel {
 			return;
 		zoomIn(reachabilityViewPanel);
 	}
-
-	/**
-	 * Zoom out reachability.
-	 */
+	
+	@Override
 	public void zoomOutReachability() {
 		// disable zoom if there's only one node in graph, since there are problems with
 		// nodes disappearing and a zoom on one node does not make any difference
@@ -336,41 +309,23 @@ public class PetrinetPanel extends JPanel {
 		adjustArrowHeads();
 	}
 
-	/**
-	 * Gets the petrinet controller.
-	 *
-	 * @return the petrinet controller
-	 */
+	@Override
 	public PetrinetViewerController getPetrinetViewerController() {
-		return petrinetController;
+		return petrinetViewerController;
 	}
 
-	/**
-	 * Gets the editor.
-	 *
-	 * @return the editor
-	 */
+	@Override
 	public PetrinetEditorController getEditor() {
 		return editor;
 	}
 
-	/**
-	 * Gets the toolbar mode.
-	 *
-	 * @return the toolbar mode
-	 */
+	@Override
 	public ToolbarMode getToolbarMode() {
 
 		return toolbarMode;
 	}
 
-	/**
-	 * Sets the toolbar mode. If it changes to EDITOR resets the reachability graph.
-	 * If it changes to VIEWER handles marked transitions (since transitions cannot
-	 * be marked in VIEWER mode).
-	 *
-	 * @param toolbarMode The toolbar mode to use.
-	 */
+	@Override
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 
 		if (this.toolbarMode == toolbarMode)
@@ -378,8 +333,8 @@ public class PetrinetPanel extends JPanel {
 
 		// if switching to EDITOR reset reachability graph
 		if (toolbarMode == ToolbarMode.EDITOR) {
-			petrinetController.resetReachabilityGraph();
-			editor = new PetrinetEditorController(petrinetController, petrinetGraph, mainController);
+			petrinetViewerController.resetReachabilityGraph();
+			editor = new PetrinetEditorController(petrinetViewerController, petrinetGraph, mainController);
 		}
 		// if switching to VIEWER make sure no transitions are marked anymore
 		if (toolbarMode == ToolbarMode.VIEWER) {
@@ -455,7 +410,7 @@ public class PetrinetPanel extends JPanel {
 
 					// refer mouse click to the right method in the right controller
 					if (graph instanceof GraphStreamReachabilityGraph) {
-						petrinetController.onReachabilityGraphNodeClicked(id);
+						petrinetViewerController.onReachabilityGraphNodeClicked(id);
 					} else {
 
 						// if graph is instance of petrinet graph check whether node has been dragged or
@@ -463,7 +418,7 @@ public class PetrinetPanel extends JPanel {
 						if (element != null)
 							// if node has been dragged, give corresponding coordinates to controller
 							if (element.getX() != x || element.getY() != y) {
-								petrinetController.onPetrinetNodeDragged(id, element.getX(), element.getY());
+								petrinetViewerController.onPetrinetNodeDragged(id, element.getX(), element.getY());
 							}
 							//
 							else {
@@ -474,7 +429,7 @@ public class PetrinetPanel extends JPanel {
 									// if node is transition controller handles the event and null is returned;
 									// otherwise a place is returned and the event has to be referred back to the
 									// graph
-									PetrinetElement pe = petrinetController.onPetrinetNodeClicked(id);
+									PetrinetElement pe = petrinetViewerController.onPetrinetNodeClicked(id);
 
 									// refer event back to the graph
 									if (pe != null)
@@ -563,31 +518,26 @@ public class PetrinetPanel extends JPanel {
 
 	}
 
-	/**
-	 * Reset the reachability graph.
-	 */
+	@Override
 	public void resetReachabilityGraph() {
 		resetReachabilityZoom();
 		adjustArrowHeads = false;
-		petrinetController.resetReachabilityGraph();
+		petrinetViewerController.resetReachabilityGraph();
 		adjustArrowHeads = true;
 	}
 
-	/**
-	 * Undo the last step in the reachability graph shown.
-	 */
+	@Override
 	public void undo() {
 		adjustArrowHeads = false;
-		petrinetController.getPetrinetQueue().goBack();
+		petrinetViewerController.getPetrinetQueue().goBack();
 		adjustArrowHeads = true;
 		adjustArrowHeads();
 	}
-	/**
-	 * Undo the last step in the reachability graph shown.
-	 */
+
+	@Override
 	public void redo() {
 		adjustArrowHeads = false;
-		petrinetController.getPetrinetQueue().goForward();
+		petrinetViewerController.getPetrinetQueue().goForward();
 		adjustArrowHeads = true;
 		adjustArrowHeads();
 	}
