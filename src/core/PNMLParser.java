@@ -19,17 +19,17 @@ public class PNMLParser extends PNMLWopedParser {
 	private Map<String, Arc> arcs = new HashMap<String, Arc>();
 	private List<String> places = new ArrayList<String>();
 	private List<String> transitions = new ArrayList<String>();
+	private Map<String, Integer> tokensMap = new HashMap<String, Integer>();
 	private Petrinet petrinet;
 
 	private boolean idCheck = true;
-	
-	
-	
-	
+
+	private String duplicateArcId = null;
+
 	/**
 	 * Instantiates a new PNML parser.
 	 *
-	 * @param pnml the pnml
+	 * @param pnml     the pnml
 	 * @param petrinet the petrinet
 	 * @throws PetrinetException the petrinet exception
 	 */
@@ -40,17 +40,29 @@ public class PNMLParser extends PNMLWopedParser {
 		else
 			this.petrinet = petrinet;
 		this.initParser();
+
+		// get transitions and places in temporary data structure
 		this.parse();
 
-		for (String s: places)
+		// add places and transitions to petrinet -> done seperately so
+		// PetrinetException can be thrown
+		for (String s : places)
 			petrinet.addPlace(s);
-		for (String s: transitions)
+		for (String s : transitions)
 			petrinet.addTransition(s);
-		
+
 		idCheck = false;
 		this.initParser();
 		this.parse();
-		
+
+		// duplicate ids in arcs have to be checked separately as a second arc with the
+		// same id would simply overwrite the old one in the map
+		if (duplicateArcId != null)
+			throw new DuplicateIdException("arc with id \"" + duplicateArcId + "\" already exists.");
+
+		for (String place : tokensMap.keySet())
+			petrinet.setTokens(place, tokensMap.get(place));
+
 		handleTransitions();
 	}
 
@@ -72,7 +84,7 @@ public class PNMLParser extends PNMLWopedParser {
 	 */
 	@Override
 	public void newPlace(final String id) {
-		
+
 		if (idCheck)
 			places.add(id);
 	}
@@ -80,7 +92,7 @@ public class PNMLParser extends PNMLWopedParser {
 	/**
 	 * New arc.
 	 *
-	 * @param id the id
+	 * @param id     the id
 	 * @param source the source
 	 * @param target the target
 	 */
@@ -88,6 +100,10 @@ public class PNMLParser extends PNMLWopedParser {
 	public void newArc(final String id, final String source, final String target) {
 		if (idCheck)
 			return;
+
+		if (arcs.get(id) != null)
+			duplicateArcId = id;
+
 		arcs.put(id, new Arc(id, source, target));
 	}
 
@@ -95,8 +111,8 @@ public class PNMLParser extends PNMLWopedParser {
 	 * Sets the position.
 	 *
 	 * @param id the id
-	 * @param x the x
-	 * @param y the y
+	 * @param x  the x
+	 * @param y  the y
 	 */
 	public void setPosition(final String id, final String x, final String y) {
 		if (idCheck)
@@ -111,14 +127,14 @@ public class PNMLParser extends PNMLWopedParser {
 	/**
 	 * Sets the name.
 	 *
-	 * @param id the id
+	 * @param id   the id
 	 * @param name the name
 	 */
 	@Override
 	public void setName(final String id, final String name) {
 		if (idCheck)
 			return;
-		
+
 		petrinet.setPetrinetElementLabel(id, name);
 
 	}
@@ -126,21 +142,21 @@ public class PNMLParser extends PNMLWopedParser {
 	/**
 	 * Sets the tokens.
 	 *
-	 * @param id the id
+	 * @param id     the id
 	 * @param tokens the tokens
 	 */
 	@Override
 	public void setTokens(final String id, final String tokens) {
 		if (idCheck)
 			return;
-		
-		petrinet.setTokens(id, Integer.parseInt(tokens));
+
+		tokensMap.put(id, Integer.parseInt(tokens));
 	}
 
 	private void handleTransitions() throws InvalidEdgeOperationException, DuplicateIdException {
 		if (idCheck)
 			return;
-		
+
 		for (String s : arcs.keySet()) {
 
 			Arc a = arcs.get(s);
@@ -172,7 +188,7 @@ public class PNMLParser extends PNMLWopedParser {
 			return target;
 		}
 	}
-	
+
 	/**
 	 * Gets the petrinet.
 	 *

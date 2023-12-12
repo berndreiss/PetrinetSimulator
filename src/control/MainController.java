@@ -183,6 +183,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 //		tabAdded = true;//TODO remove?
 
+		// ask if changes should be saved, on abort return
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
+			if (saveDialog()) 
+				return;
+		
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
@@ -495,20 +500,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		if (currentPetrinetPanel == null)
 			return;
 
-		if (currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) {
-
-			int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
-
-			// 0=yes, 1=no, 2=cancel
-			switch (input) {
-			case 0:
-				onSave();
-				break;
-			case 2:
+		// ask if changes should be saved, on abort return
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
+			if (saveDialog()) 
 				return;
-			}
-		}
-
+		
 		// get tab index and remove tab
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
 		int index = tabbedPane.getSelectedIndex();
@@ -519,23 +515,29 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onExit() {
 
-		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) {
-
-			int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
-
-			// 0=yes, 1=no, 2=cancel
-			switch (input) {
-			case 0:
-				onSave();
-				break;
-			case 2:
+		// ask if changes should be saved, on abort return
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
+			if (saveDialog()) 
 				return;
-			}
-		}
-
+		
 		System.exit(0);
 	}
 
+	// ask if changes should be saved, returns true on abort
+	private boolean saveDialog() {
+		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
+
+		// 0=yes, 1=no, 2=cancel
+		switch (input) {
+		case 0:
+			onSave();
+			return false;
+		case 2:
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void onOpenEditor() {
 		setToolbarMode(ToolbarMode.EDITOR);
@@ -576,6 +578,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// set new panel if there is a previous file
 		if (previousFile != null) {
+			// ask if changes should be saved, on abort return
+			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
+				if (saveDialog()) 
+					return;
 			setNewPanel(previousFile, false);
 
 		}
@@ -591,6 +597,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		File nextFile = getFileNextToCurrentFile(FileEnum.NEXT_FILE);
 		// set new panel if there is a previous file
 		if (nextFile != null) {
+			// ask if changes should be saved, on abort return
+			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
+				if (saveDialog()) 
+					return;
 			setNewPanel(nextFile, false);
 		}
 	}
@@ -946,8 +956,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		layoutType = LayoutType.TREE;
 
-		// set the toolbar button
-		mainFrame.getToolbar().toggleTreeLayoutButton();
 
 		// update every panel in the tabbed pane to tree layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
@@ -955,6 +963,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
 
+		// set the toolbar buttons
+		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 	}
 
 	@Override
@@ -962,14 +972,14 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		layoutType = LayoutType.CIRCLE;
 
-		// set the toolbar button
-		mainFrame.getToolbar().toggleCircleLayoutButton();
-
 		// update every panel in the tabbed pane to circle layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
+		
+		// set the toolbar buttons
+		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 	}
 
 	@Override
@@ -981,14 +991,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		layoutType = LayoutType.AUTOMATIC;
 
-		// set the toolbar button
-		mainFrame.getToolbar().toggleAutoLayoutButton();
-
 		// update every panel in the tabbed pane to automatic layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
+		// set the toolbar buttons
+		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 	}
 
 	@Override

@@ -453,14 +453,9 @@ public class PetrinetState {
 		predecessor.removeSuccessorEdge(this, transition);
 	}
 
-	/**
-	 * Removes the successor edge.
-	 *
-	 * @param successor  the successor
-	 * @param transition the transition
-	 */
+	
+	 // removes the successor edge.
 	private void removeSuccessorEdge(PetrinetState successor, Transition transition) {
-		// TODO integrate this function into removePredecessorEdge
 		List<Transition> transitions = transitionMap.get(getState() + successor.getState());
 
 		if (transitions == null)// could be the case if there is an edge from a state to itself and edge has

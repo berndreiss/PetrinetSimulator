@@ -10,6 +10,7 @@ import java.util.Stack;
 
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
+import exceptions.PetrinetException;
 import listeners.PetrinetComponentChangedListener;
 import listeners.PetrinetStateChangedListener;
 import util.IterableMap;
@@ -399,12 +400,15 @@ public class Petrinet {
 	 * @param id             The id of the place.
 	 * @param numberOfTokens The number of tokens to be set.
 	 */
-	void setTokens(String id, int numberOfTokens) {
+	void setTokens(String id, int numberOfTokens) throws PetrinetException{
 
 		// abort if place does not exist
 		if (!places.containsKey(id))
 			return;
 
+		if (numberOfTokens < 0)
+			throw new PetrinetException("number of tokens has to be positive.");
+		
 		Place p = places.get(id);
 
 		// if number of tokens is the same as before abort
@@ -697,9 +701,13 @@ public class Petrinet {
 
 		// empty net or a net with only places or only transitions is treated as not
 		// connected
-		if (places.isEmpty() || transitions.isEmpty()) {
+		if (places.isEmpty() && transitions.isEmpty()) {
 			return false;
 		}
+		
+		
+//		if (places.size() + transitions.size() == 1)
+//			return true;
 
 		// get starting point
 		PetrinetElement startElement = places.iterator().next();

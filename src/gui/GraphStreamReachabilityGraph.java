@@ -16,7 +16,6 @@ import listeners.AdjustArrowHeadsListener;
 import reachabilityGraphLayout.Layout;
 import reachabilityGraphLayout.LayoutType;
 
-//TODO arrow heads not adjusting when adding to auto layout
 /**
  *
  * <p>
