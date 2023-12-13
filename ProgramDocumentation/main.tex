@@ -87,7 +87,7 @@ The \textit{Edit} menu consists of the following entries:
 The \textit{Help} menu only consists of the element \textit{Info}, which shows information about the Java version used and the user directory.
 
 \subsection{Toolbar Modes}
-
+\label{label:modes}
 The program has two distinct toolbar modes: viewer mode and editor mode. This section discusses the two modes and toolbar buttons associated with it. In general the toolbar is fully de- and reattachable (except for the bottom of the program being reserved for the status bar). All icons for the toolbar buttons are taken from \url{https://iconoir.com/}.
 
 \subsubsection{Viewer Mode}
@@ -176,26 +176,27 @@ From left to right the buttons provide the following functionality:
 \section{Exploring the Technical Depths}
 
 
-\subsection{General Design of the Program}
+\subsection{Design of the Program}
 
-Figure \ref{figure:design} shows the general design of the program. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure only demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program are included in the text as well. The following sections give a detailed description of how the data models are structured and how controllers and listeners work. On a general level it can be noted controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. 
+Figure \ref{figure:design} shows the general control flow of the program. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure only demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program are included in the text as well. The following sections give a detailed description of how the data models are structured and how controllers and listeners work. On a general level it can be noted controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. 
 
 \include{GeneralDesign.tex}
 
 
 \subsubsection{Data Models}
 
-\paragraph{Petrinet Model}
-\paragraph{Reachability Graph Model}
-\paragraph{Reachability Graph Undo Queue}
+\paragraph{Petrinet Model} It handles everything belonging only to the petrinet. It has functions for modifying the petrinet (such as adding or removing elements) and checks whether an action is valid. If an action is not valid it throws an according \textit{PetrinetException}. The petrinet model holds helper data structures \textit{Place} and \textit{Transition}. There is no data structure for arcs, as they are fully defined via the places and transitions connected to them\footnote{For storing ids belonging to arcs a map is used.}. Rather arcs are defined by lists of elements preceding and succeeding places and transitions. Places contain information about the number of tokens stored in them. Transitions have a status of being activated or not activated.   
+\paragraph{Reachability Graph Model} It provides methods for adding/removing states to/from the reachability graph and giving information about the graph. It contains a list of \textit{PetrinetStates}. Such a state contains predecessor and successor states, information about the tokens on the places in the petrinet as well as a state called \textit{m}, being the first state on a path that marks the given state as unbounded. When a new state is added the model checks whether the new state completes a path signifying unboudedness (see \ref{label:algorithm}. If so, the state at the start of the path is remembered by the state and the reachability graph model remembers the last state on the path. The states also store transitions leading up to them and from them. These are stored in lists in a map.
+\paragraph{Reachability Graph Undo Queue} This queue records all the steps taken in the reachabilty graph and keeps track of the actions being taken (i.e. whether something has been added). To this end it has its own data structure called \textit{ReachabilityGraphUndoQueueState}. The queue can go back or forward or can be rewinded/reset. If it goes backward, alls steps are undone. Going forward means redoing all steps. The reachability model has methods to stop pushing steps onto the queue. Furthermore steps can be recorded as \enquote{skippable}. A step being skippable means on un-/redo it does not stop but continues going back-/forwards. This enables a multi step process like adding steps when analysing the petrinet to be treated as one big step.  
 
 \subsubsection{Controllers}
 There are three controllers in the program: the main controller, the petrinet viewer controller and the petrinet editor controller. Additionally the \textit{PetrinetPanelInterface} serves as an intermediary between the main controller and the other controllers.
 
-\paragraph{Main Controller} On a general level there is a main frame and a number of petrinets in tabs. The task of the main controller is to pass user interactions with elements pertaining to the main frame (menus and toolbars) to the petrinet panel that is currently active. If tabs are switched it is also the task of the main controller to restore the state of the toolbar with regards to highlighted buttons for the activated petrinet. 
-\paragraph{Petrinet Panel Interface} This interface forwards messages from the main controller. In the implementation of the petrinet panel at hand the panel also handles clicks and forwards them to either the viewer controller or the editor controller. 
-\paragraph{Petrinet Viewer Controller} This controller manages all clicks on the petrinet when in viewer mode and clicks on the reachability graph.  
-\paragraph{Petrinet Editor Controller} This controller manages all clicks on the petrinet when in editor mode. It also is tasked with providing functionality when editing the given petrinet. 
+\paragraph{Main Controller} On a general level there is a main frame and a number of petrinets in tabs. The task of the main controller is to pass user interactions with elements belonging to the main frame (menus and toolbars) to the petrinet panel that is currently active. If tabs are switched it is also the task of the main controller to restore the state of the toolbar with regards to highlighted buttons for the active petrinet or switching to editor/viewer mode (see \ref{label:modes}). 
+\paragraph{Petrinet Panel Interface} This interface forwards messages from the main controller. It also handles clicks and forwards them to either the viewer controller or the editor controller. Additionally it keeps track of the toolbar mode and handles GUI related actions for an instance of a petrinet. 
+\paragraph{Petrinet Viewer Controller} This controller manages all clicks on the petrinet when in viewer mode and clicks on the reachability graph. It provides methods for interactions with the petrinet and reachability graph except those pertaining to editing the petrinet.  
+\paragraph{Petrinet Editor Controller} This controller manages all clicks on the petrinet when in editor mode. It is tasked with providing functionality when editing the given petrinet. This controller could have been part of the petrinet viewer controller. But because the size of both controllers being combined as one would have been quite big and clicks on transitions are handled differently in viewer and editor mode this solution appeared more manageable.
+
 \subsubsection{Listeners}
 
 \paragraph{Petrinet State Changed Listener}
@@ -205,11 +206,17 @@ There are three controllers in the program: the main controller, the petrinet vi
 \paragraph{Reachability State Changed Listener}
 \paragraph{Toolbar Changed Listener}
 \paragraph{Adjust Arrow Heads Listener}
+
+\subsubsection{The Algorithm for Checking Boundedness}
+\label{label:algorithm}
+
 \subsection{Layout}
 \label{label:layout}
 
 \subsubsection{Tree Layout}
 \label{label:treeLayout}
+
+%Talk about levels in \textit{PetrinetState}
 
 \subsubsection{Circle Layout}
 \label{label:circleLayout}

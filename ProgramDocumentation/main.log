@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.11.30)  12 DEC 2023 12:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.11.30)  13 DEC 2023 09:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -776,7 +776,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 
 ]
-<./Pictures//Viewer_Petrinet_Toolbar.png, id=143, 331.2375pt x 37.13875pt>
+<./Pictures//Viewer_Petrinet_Toolbar.png, id=148, 331.2375pt x 37.13875pt>
 File: ./Pictures//Viewer_Petrinet_Toolbar.png Graphic file (type png)
 <use ./Pictures//Viewer_Petrinet_Toolbar.png>
 Package pdftex.def Info: ./Pictures//Viewer_Petrinet_Toolbar.png  used on input
@@ -784,97 +784,97 @@ Package pdftex.def Info: ./Pictures//Viewer_Petrinet_Toolbar.png  used on input
 (pdftex.def)             Requested size: 126.8824pt x 14.22636pt.
 
 [1]
-<../resources/images/Toolbar/folder.png, id=153, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/folder.png, id=158, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/folder.png Graphic file (type png)
 <use ../resources/images/Toolbar/folder.png>
 Package pdftex.def Info: ../resources/images/Toolbar/folder.png  used on input 
 line 106.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/save.png, id=155, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/save.png, id=160, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/save.png Graphic file (type png)
 <use ../resources/images/Toolbar/save.png>
 Package pdftex.def Info: ../resources/images/Toolbar/save.png  used on input li
 ne 107.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/left.png, id=157, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/left.png, id=162, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/left.png Graphic file (type png)
 <use ../resources/images/Toolbar/left.png>
 Package pdftex.def Info: ../resources/images/Toolbar/left.png  used on input li
 ne 108.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/right.png, id=158, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/right.png, id=163, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/right.png Graphic file (type png)
 <use ../resources/images/Toolbar/right.png>
 Package pdftex.def Info: ../resources/images/Toolbar/right.png  used on input l
 ine 109.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/plus.png, id=159, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/plus.png, id=164, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/plus.png Graphic file (type png)
 <use ../resources/images/Toolbar/plus.png>
 Package pdftex.def Info: ../resources/images/Toolbar/plus.png  used on input li
 ne 110.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/minus.png, id=160, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/minus.png, id=165, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/minus.png Graphic file (type png)
 <use ../resources/images/Toolbar/minus.png>
 Package pdftex.def Info: ../resources/images/Toolbar/minus.png  used on input l
 ine 111.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/restart.png, id=161, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/restart.png, id=166, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/restart.png Graphic file (type png)
 <use ../resources/images/Toolbar/restart.png>
 Package pdftex.def Info: ../resources/images/Toolbar/restart.png  used on input
  line 112.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/zoom-in.png, id=162, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/zoom-in.png, id=167, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/zoom-in.png Graphic file (type png)
 <use ../resources/images/Toolbar/zoom-in.png>
 Package pdftex.def Info: ../resources/images/Toolbar/zoom-in.png  used on input
  line 113.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/zoom-out.png, id=163, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/zoom-out.png, id=168, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/zoom-out.png Graphic file (type png)
 <use ../resources/images/Toolbar/zoom-out.png>
 Package pdftex.def Info: ../resources/images/Toolbar/zoom-out.png  used on inpu
 t line 114.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/edit.png, id=164, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/edit.png, id=169, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/edit.png Graphic file (type png)
 <use ../resources/images/Toolbar/edit.png>
 Package pdftex.def Info: ../resources/images/Toolbar/edit.png  used on input li
 ne 115.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<./Pictures//Viewer_Reachability_Toolbar.png, id=166, 365.365pt x 34.1275pt>
+<./Pictures//Viewer_Reachability_Toolbar.png, id=171, 365.365pt x 34.1275pt>
 File: ./Pictures//Viewer_Reachability_Toolbar.png Graphic file (type png)
 <use ./Pictures//Viewer_Reachability_Toolbar.png>
 Package pdftex.def Info: ./Pictures//Viewer_Reachability_Toolbar.png  used on i
 nput line 120.
 (pdftex.def)             Requested size: 152.30379pt x 14.22636pt.
-<../resources/images/Toolbar/stats.png, id=167, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/stats.png, id=172, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/stats.png Graphic file (type png)
 <use ../resources/images/Toolbar/stats.png>
 Package pdftex.def Info: ../resources/images/Toolbar/stats.png  used on input l
 ine 124.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/delete.png, id=168, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/delete.png, id=173, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/delete.png Graphic file (type png)
 <use ../resources/images/Toolbar/delete.png>
 Package pdftex.def Info: ../resources/images/Toolbar/delete.png  used on input 
 line 125.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/undo.png, id=169, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/undo.png, id=174, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/undo.png Graphic file (type png)
 <use ../resources/images/Toolbar/undo.png>
 Package pdftex.def Info: ../resources/images/Toolbar/undo.png  used on input li
 ne 126.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/redo.png, id=170, 16.06pt x 16.06pt>
+<../resources/images/Toolbar/redo.png, id=175, 16.06pt x 16.06pt>
 File: ../resources/images/Toolbar/redo.png Graphic file (type png)
 <use ../resources/images/Toolbar/redo.png>
 Package pdftex.def Info: ../resources/images/Toolbar/redo.png  used on input li
 ne 127.
 (pdftex.def)             Requested size: 6.42387pt x 6.42387pt.
-<../resources/images/Toolbar/input.png, id=171, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/input.png, id=176, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/input.png Graphic file (type png)
 <use ../resources/images/Toolbar/input.png>
 Package pdftex.def Info: ../resources/images/Toolbar/input.png  used on input l
@@ -890,37 +890,37 @@ File: ../resources/images/Toolbar/zoom-out.png Graphic file (type png)
 Package pdftex.def Info: ../resources/images/Toolbar/zoom-out.png  used on inpu
 t line 130.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/tree-layout.png, id=172, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/tree-layout.png, id=177, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/tree-layout.png Graphic file (type png)
 <use ../resources/images/Toolbar/tree-layout.png>
 Package pdftex.def Info: ../resources/images/Toolbar/tree-layout.png  used on i
 nput line 131.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/circle-layout.png, id=174, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/circle-layout.png, id=179, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/circle-layout.png Graphic file (type png)
 <use ../resources/images/Toolbar/circle-layout.png>
 Package pdftex.def Info: ../resources/images/Toolbar/circle-layout.png  used on
  input line 132.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/auto-layout.png, id=176, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/auto-layout.png, id=181, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/auto-layout.png Graphic file (type png)
 <use ../resources/images/Toolbar/auto-layout.png>
 Package pdftex.def Info: ../resources/images/Toolbar/auto-layout.png  used on i
 nput line 133.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/layout.png, id=177, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/layout.png, id=182, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/layout.png Graphic file (type png)
 <use ../resources/images/Toolbar/layout.png>
 Package pdftex.def Info: ../resources/images/Toolbar/layout.png  used on input 
 line 134.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/design.png, id=178, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/design.png, id=183, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/design.png Graphic file (type png)
 <use ../resources/images/Toolbar/design.png>
 Package pdftex.def Info: ../resources/images/Toolbar/design.png  used on input 
 line 135.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<./Pictures//Editor_Toolbar.png, id=179, 462.72874pt x 32.12pt>
+<./Pictures//Editor_Toolbar.png, id=184, 462.72874pt x 32.12pt>
 File: ./Pictures//Editor_Toolbar.png Graphic file (type png)
 <use ./Pictures//Editor_Toolbar.png>
 Package pdftex.def Info: ./Pictures//Editor_Toolbar.png  used on input line 144
@@ -978,49 +978,49 @@ File: ../resources/images/Toolbar/zoom-out.png Graphic file (type png)
 Package pdftex.def Info: ../resources/images/Toolbar/zoom-out.png  used on inpu
 t line 155.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/add-circle.png, id=217, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/add-circle.png, id=222, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/add-circle.png Graphic file (type png)
 <use ../resources/images/Toolbar/add-circle.png>
 Package pdftex.def Info: ../resources/images/Toolbar/add-circle.png  used on in
 put line 156.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/add-square.png, id=218, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/add-square.png, id=223, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/add-square.png Graphic file (type png)
 <use ../resources/images/Toolbar/add-square.png>
 Package pdftex.def Info: ../resources/images/Toolbar/add-square.png  used on in
 put line 157.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/erase.png, id=219, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/erase.png, id=224, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/erase.png Graphic file (type png)
 <use ../resources/images/Toolbar/erase.png>
 Package pdftex.def Info: ../resources/images/Toolbar/erase.png  used on input l
 ine 158.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/arc.png, id=220, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/arc.png, id=225, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/arc.png Graphic file (type png)
 <use ../resources/images/Toolbar/arc.png>
 Package pdftex.def Info: ../resources/images/Toolbar/arc.png  used on input lin
 e 159.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/remove-edge.png, id=221, 16.06pt x 16.06pt>
+<../resources/images/Toolbar/remove-edge.png, id=226, 16.06pt x 16.06pt>
 File: ../resources/images/Toolbar/remove-edge.png Graphic file (type png)
 <use ../resources/images/Toolbar/remove-edge.png>
 Package pdftex.def Info: ../resources/images/Toolbar/remove-edge.png  used on i
 nput line 160.
 (pdftex.def)             Requested size: 6.42387pt x 6.42387pt.
-<../resources/images/Toolbar/label.png, id=222, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/label.png, id=227, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/label.png Graphic file (type png)
 <use ../resources/images/Toolbar/label.png>
 Package pdftex.def Info: ../resources/images/Toolbar/label.png  used on input l
 ine 161.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<../resources/images/Toolbar/eye.png, id=223, 20.075pt x 20.075pt>
+<../resources/images/Toolbar/eye.png, id=228, 20.075pt x 20.075pt>
 File: ../resources/images/Toolbar/eye.png Graphic file (type png)
 <use ../resources/images/Toolbar/eye.png>
 Package pdftex.def Info: ../resources/images/Toolbar/eye.png  used on input lin
 e 162.
 (pdftex.def)             Requested size: 8.02985pt x 8.02985pt.
-<./Pictures//Editor_Reachability.png, id=225, 66.2475pt x 37.13875pt>
+<./Pictures//Editor_Reachability.png, id=230, 66.2475pt x 37.13875pt>
 File: ./Pictures//Editor_Reachability.png Graphic file (type png)
 <use ./Pictures//Editor_Reachability.png>
 Package pdftex.def Info: ./Pictures//Editor_Reachability.png  used on input lin
@@ -1044,11 +1044,16 @@ bar/eye.png> <./Pictures//Editor_Reachability.png>]
 \openout2 = `GeneralDesign.aux'.
 
  (./GeneralDesign.tex
-Overfull \hbox (49.0672pt too wide) in paragraph at lines 72--73
+Overfull \hbox (49.0672pt too wide) in paragraph at lines 73--74
  [] 
  []
 
-) [4] [5
+) [4]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 188.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 188.
+ [5
 
 
 
@@ -1058,32 +1063,38 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.28pt have occurred.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: E3277CD40887029624EBFDC607610D3F;2926.
+(rerunfilecheck)             Checksum: C6A04C8E7E2535F71110AE00C0572441;3153.
  )
 (\end occurred inside a group at level 1)
 
 ### semi simple group (level 1) entered at line 43 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 24106 strings out of 480194
- 480033 string characters out of 5893741
- 788796 words of memory out of 5000000
- 41593 multiletter control sequences out of 15000+600000
- 473839 words of font info for 44 fonts, out of 8000000 for 9000
+ 24124 strings out of 480194
+ 480239 string characters out of 5893741
+ 789086 words of memory out of 5000000
+ 41603 multiletter control sequences out of 15000+600000
+ 475662 words of font info for 50 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 100i,16n,104p,693b,1341s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/bernd/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/e
-c/tcrm1000.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (8 pages, 145636 bytes).
+ 100i,16n,104p,844b,1341s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{Hfootnote.1} has been referenced bu
+t does not exist, replaced by a fixed one
+
+ </home/bernd/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmtt10.pfb>
+Output written on main.pdf (8 pages, 178466 bytes).
 PDF statistics:
- 322 PDF objects out of 1000 (max. 8388607)
- 232 compressed objects within 3 object streams
- 53 named destinations out of 1000 (max. 500000)
- 360 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 346 PDF objects out of 1000 (max. 8388607)
+ 250 compressed objects within 3 object streams
+ 55 named destinations out of 1000 (max. 500000)
+ 368 words of extra memory for PDF output out of 10000 (max. 10000000)
 

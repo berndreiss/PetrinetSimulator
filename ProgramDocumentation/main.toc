@@ -12,7 +12,7 @@
 \contentsline {paragraph}{Petrinet Toolbar}{3}{section*.4}%
 \contentsline {paragraph}{Reachability Graph Toolbar}{3}{section*.5}%
 \contentsline {section}{\numberline {2}Exploring the Technical Depths}{3}{section.2}%
-\contentsline {subsection}{\numberline {2.1}General Design of the Program}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.1}Design of the Program}{3}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Data Models}{5}{subsubsection.2.1.1}%
 \contentsline {paragraph}{Petrinet Model}{5}{section*.6}%
 \contentsline {paragraph}{Reachability Graph Model}{5}{section*.7}%
@@ -24,12 +24,13 @@
 \contentsline {paragraph}{Petrinet Editor Controller}{5}{section*.12}%
 \contentsline {subsubsection}{\numberline {2.1.3}Listeners}{5}{subsubsection.2.1.3}%
 \contentsline {paragraph}{Petrinet State Changed Listener}{5}{section*.13}%
-\contentsline {paragraph}{Petrinet Component Changed Listener}{5}{section*.14}%
-\contentsline {paragraph}{Number of Tokens Changed Listener}{5}{section*.15}%
-\contentsline {paragraph}{Transition State Listener}{5}{section*.16}%
-\contentsline {paragraph}{Reachability State Changed Listener}{5}{section*.17}%
-\contentsline {paragraph}{Toolbar Changed Listener}{5}{section*.18}%
-\contentsline {paragraph}{Adjust Arrow Heads Listener}{5}{section*.19}%
+\contentsline {paragraph}{Petrinet Component Changed Listener}{6}{section*.14}%
+\contentsline {paragraph}{Number of Tokens Changed Listener}{6}{section*.15}%
+\contentsline {paragraph}{Transition State Listener}{6}{section*.16}%
+\contentsline {paragraph}{Reachability State Changed Listener}{6}{section*.17}%
+\contentsline {paragraph}{Toolbar Changed Listener}{6}{section*.18}%
+\contentsline {paragraph}{Adjust Arrow Heads Listener}{6}{section*.19}%
+\contentsline {subsubsection}{\numberline {2.1.4}The Algorithm for Checking Boundedness}{6}{subsubsection.2.1.4}%
 \contentsline {subsection}{\numberline {2.2}Layout}{6}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Tree Layout}{6}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}Circle Layout}{6}{subsubsection.2.2.2}%
