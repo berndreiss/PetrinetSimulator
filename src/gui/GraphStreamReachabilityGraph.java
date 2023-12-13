@@ -11,7 +11,7 @@ import core.ReachabilityGraphUndoQueueState;
 import core.PetrinetState;
 import core.ReachabilityGraph;
 import core.Transition;
-import listeners.ReachabilityStateChangeListener;
+import listeners.ReachabilityStateChangedListener;
 import listeners.AdjustArrowHeadsListener;
 import reachabilityGraphLayout.Layout;
 import reachabilityGraphLayout.LayoutType;
@@ -25,7 +25,7 @@ import reachabilityGraphLayout.LayoutType;
  * 
  * <p>
  * The graph listens to changes in the reachability graph passed to it via a
- * {@link ReachabilityStateChangeListener}. If the reachability graph model is
+ * {@link ReachabilityStateChangedListener}. If the reachability graph model is
  * not empty it adds all containing components. The graph implements custom
  * {@link Layout}s which can be changed (see also {@link LayoutType}).
  * </p>
@@ -106,7 +106,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		}
 
 		// set the state change listener
-		reachabilityGraphModel.setStateChangeListener(new ReachabilityStateChangeListener() {
+		reachabilityGraphModel.setStateChangeListener(new ReachabilityStateChangedListener() {
 
 			@Override
 			public void onSetCurrent(PetrinetState state) {

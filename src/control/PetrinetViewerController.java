@@ -13,7 +13,7 @@ import core.ReachabilityGraph;
 import core.Transition;
 import exceptions.PetrinetException;
 import gui.ToolbarMode;
-import listeners.ToolbarChangeListener;
+import listeners.ToolbarChangedListener;
 import propra.pnml.PNMLWopedWriter;
 
 /**
@@ -47,7 +47,7 @@ public class PetrinetViewerController {
 	 * @param toolbarMode toolbar mode to be used
 	 * @throws PetrinetException Thrown by PNMLParser.
 	 */
-	public PetrinetViewerController(File file, ToolbarChangeListener toolbarListener, ToolbarMode toolbarMode) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarChangedListener toolbarListener, ToolbarMode toolbarMode) throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 

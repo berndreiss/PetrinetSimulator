@@ -12,7 +12,7 @@ import core.Transition;
  * It informs the View it needs to be updated.
  * </p>
  */
-public interface ReachabilityStateChangeListener {
+public interface ReachabilityStateChangedListener {
 
 	/**
 	 * The View needs to set a new state to the current state.

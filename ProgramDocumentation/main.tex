@@ -7,6 +7,11 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{ulem}
 \usepackage{setspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows, shapes}
+\newlength{\mytw}
+\settowidth{\mytw}{A few lines of text in a block}
+
 
 %\usepackage{hologo}
 
@@ -168,11 +173,21 @@ From left to right the buttons provide the following functionality:
 \item\includegraphics[scale=0.4]{../resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
 \end{itemize}
 
-
 \section{Exploring the Technical Depths}
 
 
 \subsection{General Design of the Program}
+
+Figure \ref{figure:design} shows the general design of the program. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure only demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program are included in the text as well. The following sections give a detailed description of how the data models are structured and how controllers and listeners work. On a general level it can be noted controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. 
+
+\include{GeneralDesign.tex}
+
+
+\subsubsection{Data Models}
+
+\paragraph{Petrinet Model}
+\paragraph{Reachability Graph Model}
+\paragraph{Reachability Graph Undo Queue}
 
 \subsubsection{Controllers}
 There are three controllers in the program: the main controller, the petrinet viewer controller and the petrinet editor controller. Additionally the \textit{PetrinetPanelInterface} serves as an intermediary between the main controller and the other controllers.
@@ -182,6 +197,14 @@ There are three controllers in the program: the main controller, the petrinet vi
 \paragraph{Petrinet Viewer Controller} This controller manages all clicks on the petrinet when in viewer mode and clicks on the reachability graph.  
 \paragraph{Petrinet Editor Controller} This controller manages all clicks on the petrinet when in editor mode. It also is tasked with providing functionality when editing the given petrinet. 
 \subsubsection{Listeners}
+
+\paragraph{Petrinet State Changed Listener}
+\paragraph{Petrinet Component Changed Listener}
+\paragraph{Number of Tokens Changed Listener}
+\paragraph{Transition State Listener}
+\paragraph{Reachability State Changed Listener}
+\paragraph{Toolbar Changed Listener}
+\paragraph{Adjust Arrow Heads Listener}
 \subsection{Layout}
 \label{label:layout}
 
@@ -202,6 +225,8 @@ There are three controllers in the program: the main controller, the petrinet vi
 \subsubsection{reachabilityGraphLayout}
 \subsubsection{util}
 
+
+\newpage
 %\begin{table}[t]
 
 %\centering

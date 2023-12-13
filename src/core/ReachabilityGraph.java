@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import listeners.PetrinetStateChangedListener;
-import listeners.ReachabilityStateChangeListener;
-import listeners.ToolbarChangeListener;
+import listeners.ReachabilityStateChangedListener;
+import listeners.ToolbarChangedListener;
 import util.IterableMap;
 
 /**
@@ -20,7 +20,7 @@ import util.IterableMap;
  * {@link PetrinetState}s this class holds information about the current state,
  * current edge, validity of the petrinet (concerning its boundedness) and
  * methods for adding and removing states. Additionally it provides a
- * {@link ReachabilityStateChangeListener}.
+ * {@link ReachabilityStateChangedListener}.
  * </p>
  */
 public class ReachabilityGraph {
@@ -44,7 +44,7 @@ public class ReachabilityGraph {
 	private IterableMap<String, PetrinetState> petrinetStates;
 
 	/** State change listener. */
-	private ReachabilityStateChangeListener stateChangeListener;
+	private ReachabilityStateChangedListener stateChangeListener;
 
 	/** Queue recording changes made to the reachability graph. */
 	private ReachabilityGraphUndoQueue undoQueue;
@@ -65,7 +65,7 @@ public class ReachabilityGraph {
 	 *                              graph.
 	 * @param toolbarToggleListener The toolbar listener for un-/redo buttons.
 	 */
-	public ReachabilityGraph(Petrinet petrinet, ToolbarChangeListener toolbarToggleListener) {
+	public ReachabilityGraph(Petrinet petrinet, ToolbarChangedListener toolbarToggleListener) {
 
 		this.petrinet = petrinet;
 
@@ -302,7 +302,7 @@ public class ReachabilityGraph {
 	 *
 	 * @param reachabilityStateChangeListener the new state change listener
 	 */
-	public void setStateChangeListener(ReachabilityStateChangeListener reachabilityStateChangeListener) {
+	public void setStateChangeListener(ReachabilityStateChangedListener reachabilityStateChangeListener) {
 		this.stateChangeListener = reachabilityStateChangeListener;
 	}
 

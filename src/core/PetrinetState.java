@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import listeners.ReachabilityStateChangeListener;
+import listeners.ReachabilityStateChangedListener;
 import util.IterableMap;
 
 /**
@@ -367,7 +367,7 @@ public class PetrinetState {
 	 * @param stateChangeListener the state change listener listening for the
 	 *                            removal of transitions
 	 */
-	private void removePredecessor(PetrinetState predecessor, ReachabilityStateChangeListener stateChangeListener) {
+	private void removePredecessor(PetrinetState predecessor, ReachabilityStateChangedListener stateChangeListener) {
 		if (!predecessors.containsKey(predecessor.getState()))
 			return;
 
@@ -400,7 +400,7 @@ public class PetrinetState {
 	 * @param stateChangeListener the state change listener listening for the
 	 *                            removal of transitions
 	 */
-	public void removeSuccessor(PetrinetState successor, ReachabilityStateChangeListener stateChangeListener) {
+	public void removeSuccessor(PetrinetState successor, ReachabilityStateChangedListener stateChangeListener) {
 
 		if (!successors.containsKey(successor.getState()))
 			return;
@@ -436,7 +436,7 @@ public class PetrinetState {
 	 *                            removals
 	 */
 	void removePredecessorEdge(PetrinetState predecessor, Transition transition,
-			ReachabilityStateChangeListener stateChangeListener) {
+			ReachabilityStateChangedListener stateChangeListener) {
 		if (stateChangeListener != null)// only update graph on predecessor edge removal -> otherwise edge would be
 										// removed two times and graphstream throws exception
 			stateChangeListener.onRemoveEdge(predecessor, this, transition);
@@ -491,7 +491,7 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	public void removeAllPredecessors(ReachabilityStateChangeListener stateChangeListener) {
+	public void removeAllPredecessors(ReachabilityStateChangedListener stateChangeListener) {
 
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> predecessorStrings = new ArrayList<String>();
@@ -509,7 +509,7 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	public void removeAllSuccessors(ReachabilityStateChangeListener stateChangeListener) {
+	public void removeAllSuccessors(ReachabilityStateChangedListener stateChangeListener) {
 
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> successorStrings = new ArrayList<String>();

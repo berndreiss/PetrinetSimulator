@@ -24,7 +24,7 @@ import gui.PetrinetToolbar;
 import gui.PetrinetToolbarController;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
-import listeners.ToolbarChangeListener;
+import listeners.ToolbarChangedListener;
 import reachabilityGraphLayout.LayoutType;
 
 /**
@@ -38,7 +38,7 @@ import reachabilityGraphLayout.LayoutType;
  * </p>
  * 
  */
-public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarChangeListener {
+public class MainController implements PetrinetMenuController, PetrinetToolbarController, ToolbarChangedListener {
 
 	/** The last directory visited. */
 	private File workingDirectory;
