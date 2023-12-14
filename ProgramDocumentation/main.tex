@@ -80,6 +80,8 @@ The \textit{Edit} menu consists of the following entries:
 \item \textbf{Open Editor:} opens the Editor.
 \item \textbf{Close Editor:} closes the Editor and reverts back to Viewer.
 \item \textbf{Change Look and Feel:} change between Nimbus and Metal look and feel.
+\item \textbf{Enable Automatic Boundedness Check:} automatically check for boundedness when building reachabilty graph.
+\item \textbf{Disable Automatic Boundedness Check:} do noe automatically check for boundedness when building reachabilty graph.
 \end{itemize}
 
 \subsubsection{Help}
@@ -199,16 +201,21 @@ There are three controllers in the program: the main controller, the petrinet vi
 
 \subsubsection{Listeners}
 
-\paragraph{Petrinet State Changed Listener}
-\paragraph{Petrinet Component Changed Listener}
-\paragraph{Number of Tokens Changed Listener}
-\paragraph{Transition State Listener}
-\paragraph{Reachability State Changed Listener}
-\paragraph{Toolbar Changed Listener}
-\paragraph{Adjust Arrow Heads Listener}
+\paragraph{Petrinet State Changed Listener} This listener serves as an intermediary between the petrinet model and the reachability graph model. When the petrinet changes states the reachability graph is informed. It distinguishes between states changing because a transition has been fired and changing states because the petrinet has changed $\rightarrow$ in the latter case the reachability graph and its initial state have to be reset.
+\paragraph{Petrinet Component Changed Listener} This listener communicates changes in components of the petrinet to the petrinet graph. Whenever elements are added/removed or their attributes are changed it forwards this information.  Because it listens for changes in elements it also listens to the \textit{NumberOfTokensChangedListener} and the \textit{TransitionStateListener} and forwards their events.
+\paragraph{Number of Tokens Changed Listener} Part of the data structure \textit{Place} it listens to changes in the number of tokens on the place. If the number changes it informs the petrinet component changed listener. 
+\paragraph{Transition State Listener} Part of the data structure \textit{Transition} it listens to changes in the activation state of the transition. If the state changes it informs the petrinet component changed listener.
+\paragraph{Reachability State Changed Listener} Listens for changes in the reachability graph model and communicates it to the reachability graph. It contains methods for adding/removing states and also methods for modifying edges.
+\paragraph{Toolbar Changed Listener} Listens for events belonging to the un-/redo buttons and the add/remove edge buttons. If events happen the buttons are highlighted accordingly.
+\paragraph{Adjust Arrow Heads Listener} This is a special listener for GraphStream. As the arrow heads don't adjust appropriately when adding/removing elements in the graph they need to be adjusted manually. This listener watches for events where arrow heads need to be adjusted.
 
-\subsubsection{The Algorithm for Checking Boundedness}
+\subsubsection{Petrinet Analyser and the Algorithm for Checking Boundedness}
 \label{label:algorithm}
+
+The \textit{PetrinetAnalyser} simulates clicking through the transitions of the petrinet and records the results. For this purpose it starts with the initial state and gets all activated transitions. It fires each transition one by one, gets the resulting new state and recursively calls the analyse method. At each firing of a transition the boundedness of the resulting state is checked. If it signifies the petrinet being unbouded the analyser terminates. Otherwise it terminates if it does not encounter new states. It therefore uses a depth first search approach to build the reachability graph step by step.
+
+The actual algorithm for checking the boundedness of a given state is implemented in the reachability graph model 
+
 
 \subsection{Layout}
 \label{label:layout}

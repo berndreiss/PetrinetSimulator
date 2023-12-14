@@ -141,7 +141,7 @@ public class ReachabilityGraphUndoQueue {
 
 		// if something has been added, readd state with transition, otherwise only set
 		// reachability graph to given state
-		if (currentState.getAddedType() != AddedType.NOTHING) {
+		if (currentState.getAddedType() != AddedType.NOTHING || currentState.getTransition() != null) {
 			// since a new petrinet state is created it needs to be updated in the queue
 			// state
 			PetrinetState newPetrinetState = reachabilityGraph.addNewState(petrinet, currentState.getTransition());

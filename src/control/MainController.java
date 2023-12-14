@@ -52,6 +52,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private LayoutType layoutType = LayoutType.TREE;
 	/** The toolbar mode. */
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
+	/** Keeps track of whether boundedness should be shown.*/
+	private boolean showBoundedness = true;
 	
 
 	/**
@@ -202,6 +204,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// set current panel to new panel
 		currentPetrinetPanel = newPanel;
 
+		currentPetrinetPanel.getReachabilityGraph().setShowBoundedness(showBoundedness);
+		
 		// if no file has been provided open the editor
 		if (file == null)
 			setToolbarMode(ToolbarMode.EDITOR);
@@ -1054,5 +1058,18 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void resetUndoRedoButtons() {
 		mainFrame.getToolbar().resetUndoRedoButtons();
+	}
+
+	@Override
+	public void enableAutomaticBoundednessCheck() {
+		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
+			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(true);
+		
+	}
+
+	@Override
+	public void disableAutomaticBoundednessCheck() {
+		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
+			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(false);		
 	}
 }

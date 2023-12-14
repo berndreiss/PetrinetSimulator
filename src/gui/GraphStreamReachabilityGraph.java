@@ -32,6 +32,8 @@ import reachabilityGraphLayout.LayoutType;
  */
 public class GraphStreamReachabilityGraph extends MultiGraph {
 
+	
+	//TODO removing states does not maintain m and m'
 	/** The CSS file for the GraphStream graph */
 	private static String CSS_FILE = "url(" + GraphStreamPetrinetGraph.class.getResource("/reachability_graph.css")
 			+ ")";
@@ -62,6 +64,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	private Layout layoutManager;
 	/** The layout type */
 	private LayoutType layoutType = LayoutType.TREE;
+	/** Flag whether boundedness is shown. */
+	private boolean showBoundedness = true;
 
 	/**
 	 * Instantiates a new reachability graph.
@@ -375,13 +379,13 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			if (node == initialNode) {
 
 				// handle case M (mix of initial color and color for M)
-				if (node == nodeM) {
+				if (node == nodeM && showBoundedness) {
 					node.setAttribute("ui.class", "initial_m_highlight");
 					return;
 				}
 
 				// handle case M Mark (mix of initial color and color for M Mark)
-				if (node == nodeMMark) {
+				if (node == nodeMMark && showBoundedness) {
 					node.setAttribute("ui.class", "initial_m_mark_highlight");
 					return;
 				}
@@ -392,13 +396,13 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			}
 
 			// handle case M -> different color for M
-			if (node == nodeM) {
+			if (node == nodeM && showBoundedness) {
 				node.setAttribute("ui.class", "m_highlight");
 				return;
 			}
 
 			// handle case M Mark -> different color for M Mark
-			if (node == nodeMMark) {
+			if (node == nodeMMark && showBoundedness) {
 				node.setAttribute("ui.class", "m_mark_highlight");
 				return;
 			}
@@ -425,12 +429,12 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		}
 		// handle case M -> different color for M
-		if (node == nodeM) {
+		if (node == nodeM && showBoundedness) {
 			node.setAttribute("ui.class", "m");
 			return;
 		}
 		// handle case M Mark -> different color for M Mark
-		if (node == nodeMMark) {
+		if (node == nodeMMark && showBoundedness) {
 			node.setAttribute("ui.class", "m_mark");
 			return;
 		}
@@ -485,6 +489,15 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 */
 	public boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
+	}
+	
+	/**
+	 * If true, boundedness is shown in graph.
+	 * @param show true if boundedness should be shown
+	 */
+	public void setShowBoundedness(boolean show) {
+		showBoundedness = show;
+		
 	}
 
 }

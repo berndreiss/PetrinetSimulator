@@ -26,6 +26,8 @@ import javax.swing.JMenuItem;
  *         <li>Open Editor</li>
  *         <li>Close Editor</li>
  *         <li>Change Look and Feel</li>
+ *         <li>Enable Automatic Boundedness Check</li>
+ *         <li>Disable Automatic Boundedness Check</li>
  *     </ul>
  * 
  *     <li>Help:</li>
@@ -75,6 +77,8 @@ public class PetrinetMenu extends JMenuBar {
 		JMenuItem openEditorMenuItem = new JMenuItem("Open Editor");
 		JMenuItem closeEditorMenuItem = new JMenuItem("Close Editor");
 		JMenuItem changeLookAndFeelMenuItem = new JMenuItem("Change Look and Feel");
+		JMenuItem enableAutomaticBoundednessMenuItem = new JMenuItem("Enable Automatic Boundedness Check");
+		JMenuItem disableAutomaticBoundednessMenuItem = new JMenuItem("Disable Automatic Boundedness Check");
 		JMenuItem showInfoMenuItem = new JMenuItem("Info");
 
 		files.add(newMenuItem);
@@ -89,6 +93,8 @@ public class PetrinetMenu extends JMenuBar {
 		edit.add(openEditorMenuItem);
 		edit.add(closeEditorMenuItem);
 		edit.add(changeLookAndFeelMenuItem);
+		edit.add(enableAutomaticBoundednessMenuItem);
+		edit.add(disableAutomaticBoundednessMenuItem);
 		help.add(showInfoMenuItem);
 
 		newMenuItem.addActionListener(e -> menuController.onNew());
@@ -115,6 +121,10 @@ public class PetrinetMenu extends JMenuBar {
 
 		changeLookAndFeelMenuItem.addActionListener(e -> menuController.onChaneLookAndFeel());
 
+		enableAutomaticBoundednessMenuItem.addActionListener(e -> menuController.enableAutomaticBoundednessCheck());
+		
+		disableAutomaticBoundednessMenuItem.addActionListener(e -> menuController.disableAutomaticBoundednessCheck());
+		
 		showInfoMenuItem.addActionListener(e -> menuController.onInfo());
 	}
 }

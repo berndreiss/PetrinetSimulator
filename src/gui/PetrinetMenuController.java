@@ -87,4 +87,14 @@ public interface PetrinetMenuController {
 	 */
 	void onInfo();
 
+	/**
+	 * Enables automatic checks for boundedness.
+	 */
+	void enableAutomaticBoundednessCheck();
+
+	
+	/**
+	 * Disables automatic checks for boundedness.
+	 */
+	void disableAutomaticBoundednessCheck();
 }

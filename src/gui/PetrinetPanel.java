@@ -541,4 +541,9 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 		adjustArrowHeads = true;
 		adjustArrowHeads();
 	}
+
+	@Override
+	public GraphStreamReachabilityGraph getReachabilityGraph() {
+		return reachabilityGraph;
+	}
 }
