@@ -125,6 +125,12 @@ node.m_mark_highlight{
 
 }
 
+node.path{
+	
+	fill-color: #bfac98;
+
+}
+
 node.initial{
 	fill-color: #d3d3d3;
 

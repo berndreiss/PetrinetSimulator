@@ -159,8 +159,8 @@ public class PetrinetState {
 			transitionList.add(transition);
 			added = true;
 		}
-		
-		//synchronize successor
+
+		// synchronize successor
 		newSuccessor.addPredecessor(this, transition);
 
 		return added;
@@ -215,7 +215,7 @@ public class PetrinetState {
 			transitionList.add(transition);
 			added = true;
 		}
-		
+
 		return added;
 	}
 
@@ -303,11 +303,31 @@ public class PetrinetState {
 	 */
 	List<PetrinetState> getPathFromOtherState(PetrinetState other) {
 
-		List<PetrinetState> list = getPathFromOther(this, other, new HashSet<PetrinetState>(),
-				new ArrayList<PetrinetState>());
+		List<List<PetrinetState>> paths = new ArrayList<List<PetrinetState>>();
+
+		for (PetrinetState rs : this.getPredecessors()) {
+			paths.add(getPathFromOther(rs, other, new HashSet<PetrinetState>(), new ArrayList<PetrinetState>()));
+		}
+
+		List<PetrinetState> list = null;
+
+		for (List<PetrinetState> l : paths) {
+			if (list == null)
+				list = l;
+			
+			if (l.size() < list.size())
+				list = l;
+		}
+//		List<PetrinetState> list = getPathFromOther(this, other, new HashSet<PetrinetState>(),
+//				new ArrayList<PetrinetState>());
+
+//		System.out.println(list.size());
+//		for (PetrinetState ps: list)
+//			System.out.println(ps.getState());
+
 		// path does not include current state
-		if (list.contains(this))
-			list.remove(this);
+//		if (list.contains(this))
+//			list.remove(this);
 		return list;
 	}
 
@@ -377,10 +397,9 @@ public class PetrinetState {
 			return;
 
 		// remove all transitions
-		for (Transition t : transitions) 
-			if (stateChangeListener != null) 
+		for (Transition t : transitions)
+			if (stateChangeListener != null)
 				stateChangeListener.onRemoveEdge(predecessor, this, t);
-			
 
 		// remove the entry in the map
 		transitionMap.remove(predecessor.getState() + getState());
@@ -411,10 +430,9 @@ public class PetrinetState {
 			return;
 
 		// remove all transitions
-		for (Transition t : transitions) 
+		for (Transition t : transitions)
 			if (stateChangeListener != null)
 				stateChangeListener.onRemoveEdge(this, successor, t);
-		
 
 		// remove entry from map
 		transitionMap.remove(getState() + successor.getState());
@@ -453,8 +471,7 @@ public class PetrinetState {
 		predecessor.removeSuccessorEdge(this, transition);
 	}
 
-	
-	 // removes the successor edge.
+	// removes the successor edge.
 	private void removeSuccessorEdge(PetrinetState successor, Transition transition) {
 		List<Transition> transitions = transitionMap.get(getState() + successor.getState());
 

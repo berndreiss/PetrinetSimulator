@@ -256,10 +256,35 @@ public class ReachabilityGraph {
 
 			// if state exists set invalid state and inform listener
 			if (state != null) {
+				
 				invalidState = currentState;
 				currentState.setM(state);
+
+				
+
+				System.out.println("M -> " + state.getState());
+				System.out.println("M' -> " + currentState.getState());
+				
+				if (stateChangeListener != null)
+					stateChangeListener.onResetPath();
+				
+				List<PetrinetState> pathMMarked = currentState.getPathFromOtherState(state);
+				
+				
+				List<PetrinetState> pathM = state.getPathFromOtherState(initialState);
+				
+				if (stateChangeListener != null) {
+					if (pathMMarked != null)
+						for (PetrinetState ps: pathMMarked) 
+							stateChangeListener.onAddToPath(ps);
+					if (pathM != null)
+						for (PetrinetState ps: pathM) 
+							stateChangeListener.onAddToPath(ps);
+				}
+				
 				if (stateChangeListener != null)
 					stateChangeListener.onMarkUnboundedPath(state, currentState);
+				
 				return false;
 			}
 		}
@@ -280,16 +305,16 @@ public class ReachabilityGraph {
 		visitedStates.add(state);
 
 		// compare states
-		if (originalState.isBiggerThan(state))
+		if (originalState.isBiggerThan(state)) {
 			return state;
-
+		}
 		// recursively check all predecessors
 		for (PetrinetState s : state.getPredecessors()) {
 
 			PetrinetState newState = checkIfStateIsBounded(s, visitedStates, originalState);
 
 			// if state has been found return state
-			if (newState != null)
+			if (newState != null) 
 				return newState;
 		}
 

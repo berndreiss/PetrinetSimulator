@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.ArrayList;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -66,6 +68,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	private LayoutType layoutType = LayoutType.TREE;
 	/** Flag whether boundedness is shown. */
 	private boolean showBoundedness = true;
+	/** Nodes on the path to unboundedness. */
+	private ArrayList<Node> nodesOnPath = new ArrayList<Node>();
 
 	/**
 	 * Instantiates a new reachability graph.
@@ -177,6 +181,23 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			@Override
 			public void onSetCurrentEdge(String edge) {
 				setCurrentEdge(edge);
+			}
+
+			@Override
+			public void onResetPath() {
+				for (Node n: nodesOnPath) 
+					n.setAttribute("ui.class", "node");
+				nodesOnPath.clear();
+			}
+
+			@Override
+			public void onAddToPath(PetrinetState state) {
+				if (!showBoundedness)
+					return;
+				System.out.println("CHECK " + state.getState());
+				Node node = getNode(state.getState());
+				node.setAttribute("ui.class", "path");
+				nodesOnPath.add(node);
 			}
 
 		});
@@ -371,7 +392,13 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// safety check
 		if (node == null)
 			return;
+	
 
+//		if (nodesOnPath.contains(node)) {
+//			node.setAttribute("ui.class", "path");
+//			return;
+//		}
+		
 		// if node is current node it needs to be highlighted
 		if (node == currentNode) {
 
@@ -497,6 +524,15 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 */
 	public void setShowBoundedness(boolean show) {
 		showBoundedness = show;
+		
+	}
+	
+	/**
+	 * Get whether boundedness is shown in graph.
+	 * @return true if boundedness is shown
+	 */
+	public boolean getShowBoundedness() {
+		return showBoundedness;
 		
 	}
 

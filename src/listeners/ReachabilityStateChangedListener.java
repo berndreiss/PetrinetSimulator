@@ -69,5 +69,14 @@ public interface ReachabilityStateChangedListener {
 	 * The current edge is being reset.
 	 */
 	void onResetCurrentEdge();
+	
+	/**
+	 * Resets the path in the graph.
+	 */
+	void onResetPath();
 
+	/**
+	 * Add a state to the path.
+	 */
+	void onAddToPath(PetrinetState state);
 }
