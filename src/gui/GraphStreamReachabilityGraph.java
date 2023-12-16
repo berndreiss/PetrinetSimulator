@@ -34,8 +34,7 @@ import reachabilityGraphLayout.LayoutType;
  */
 public class GraphStreamReachabilityGraph extends MultiGraph {
 
-	
-	//TODO removing states does not maintain m and m'
+	// TODO removing states does not maintain m and m'
 	/** The CSS file for the GraphStream graph */
 	private static String CSS_FILE = "url(" + GraphStreamPetrinetGraph.class.getResource("/reachability_graph.css")
 			+ ")";
@@ -185,7 +184,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 			@Override
 			public void onResetPath() {
-				for (Node n: nodesOnPath) 
+				for (Node n : nodesOnPath)
 					n.setAttribute("ui.class", "node");
 				nodesOnPath.clear();
 			}
@@ -194,7 +193,6 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			public void onAddToPath(PetrinetState state) {
 				if (!showBoundedness)
 					return;
-				System.out.println("CHECK " + state.getState());
 				Node node = getNode(state.getState());
 				node.setAttribute("ui.class", "path");
 				nodesOnPath.add(node);
@@ -373,7 +371,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		if (initialNode == node)
 			initialNode = null;
-		
+
 		// remove node and sprite
 		node = removeNode(state.getState());
 		spriteMan.removeSprite("s" + state.getState());
@@ -433,6 +431,11 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 				node.setAttribute("ui.class", "m_mark_highlight");
 				return;
 			}
+			
+			if (nodesOnPath.contains(node) && showBoundedness) {
+				node.setAttribute("ui.class", "path_highlight");
+				return;
+			}
 
 			node.setAttribute("ui.class", "highlight");
 			return;
@@ -466,6 +469,11 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			return;
 		}
 
+		if (nodesOnPath.contains(node) && showBoundedness) {
+			node.setAttribute("ui.class", "path");
+			return;
+		}
+		
 		node.setAttribute("ui.class", "node");
 
 	}
@@ -517,23 +525,25 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	public boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
 	}
-	
+
 	/**
 	 * If true, boundedness is shown in graph.
+	 * 
 	 * @param show true if boundedness should be shown
 	 */
 	public void setShowBoundedness(boolean show) {
 		showBoundedness = show;
-		
+
 	}
-	
+
 	/**
 	 * Get whether boundedness is shown in graph.
+	 * 
 	 * @return true if boundedness is shown
 	 */
 	public boolean getShowBoundedness() {
 		return showBoundedness;
-		
+
 	}
 
 }

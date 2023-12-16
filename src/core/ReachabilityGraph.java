@@ -221,7 +221,8 @@ public class ReachabilityGraph {
 		setNewCurrentState(petrinetState);
 
 		// check if current state is on path signifying unboundedness
-		checkIfCurrentStateIsBounded();
+		if (invalidState == null)
+			checkIfCurrentStateIsBounded();
 
 		// push onto undo queue
 		if (pushing)
@@ -260,11 +261,6 @@ public class ReachabilityGraph {
 				invalidState = currentState;
 				currentState.setM(state);
 
-				
-
-				System.out.println("M -> " + state.getState());
-				System.out.println("M' -> " + currentState.getState());
-				
 				if (stateChangeListener != null)
 					stateChangeListener.onResetPath();
 				
@@ -416,6 +412,10 @@ public class ReachabilityGraph {
 		// handle state being current state
 		if (currentState == state)
 			currentState = null;
+		
+		// reset invalid state if it is identical to state
+		if (invalidState == state)
+			invalidState = null;
 
 		// remove edges
 		if (state.hasEdges()) {

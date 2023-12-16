@@ -131,6 +131,11 @@ node.path{
 
 }
 
+node.path_highlight{
+	
+	fill-color: #bfac98;
+  stroke-width: 3px;
+}
 node.initial{
 	fill-color: #d3d3d3;
 

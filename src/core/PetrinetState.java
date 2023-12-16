@@ -312,8 +312,13 @@ public class PetrinetState {
 		List<PetrinetState> list = null;
 
 		for (List<PetrinetState> l : paths) {
-			if (list == null)
+			if (l == null)
+				continue;
+			
+			if (list == null) {
 				list = l;
+				continue;
+			}
 			
 			if (l.size() < list.size())
 				list = l;
