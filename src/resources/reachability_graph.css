@@ -1,0 +1,205 @@
+/*
+	Dies ist die css-Datei, in der das Layout des Graphen beschrieben ist.
+*/
+
+/*
+	Style-Angabe fuer einen Knoten
+*/
+graph {
+
+	padding: 100px;
+	
+}
+
+node {
+
+
+	shape: box;
+
+	size: 140px,30px;
+	
+	fill-color: #99ccff;
+	
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+}
+
+node.initial_m{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m.png');
+
+}
+
+node.initial_m_highlight{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m.png');
+	
+}
+
+node.initial_m__mark{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m_mark.png');
+
+}
+
+node.inital_highlight_m__mark{
+	shape: box;
+	size: 125px,30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0,-5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+	
+	
+	fill-mode: image-scaled;
+	fill-image: url('images/initial_m_mark.png');
+	
+}
+
+node.m{
+	
+	fill-color: #ffff00;
+
+}
+
+node.m_highlight{
+	fill-color: #ffff00;
+	stroke-width: 3px;
+}
+
+node.m_mark{
+	
+	fill-color: #ff0000;
+
+}
+
+node.m_mark_highlight{
+	fill-color: #ff0000;
+	stroke-width: 3px;
+
+
+}
+
+node.path{
+	
+	fill-color: #bfac98;
+
+}
+
+node.path_highlight{
+	
+	fill-color: #bfac98;
+  stroke-width: 3px;
+}
+node.initial{
+	fill-color: #d3d3d3;
+
+}
+
+
+node.initial_highlight{
+	fill-color: #d3d3d3;
+	stroke-color: #000000;
+	stroke-width: 3px;
+}
+
+/*
+   zusaetzliches Attribut "highlight" fuer einen Knoten, der
+   hervorgehoben werden soll
+*/
+node.highlight {
+
+	stroke-color: #0000ff;
+	stroke-width: 3px;
+}
+
+node.blank{
+	size: 0px; 
+	fill-color: rgba(0,0,0,0);
+}
+
+
+/*
+	Style-Angabe fuer eine Kante
+*/
+edge {
+/*
+	shape: line;*/
+	fill-color: #003366;
+	
+	arrow-shape: arrow;
+	arrow-size: 9px, 6px;
+	/*
+	text-size:  12;
+  text-color: #003366;
+	text-color: purple;
+	*/
+}
+
+edge.highlight{
+	
+	fill-color: #000000;
+	size: 3px;
+}
+
+/*
+	Style-Angabe fuer ein Sprite, dass als Label für eine Kante benutzt wird
+*/
+
+sprite.edgeLabel {
+
+	text-background-mode: rounded-box;
+	text-background-color: white;
+	text-padding: 2px;
+
+	text-size: 12;
+	text-alignment: center;
+	text-offset: 0,-3;
+
+}
+

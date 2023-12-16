@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -68,16 +69,13 @@ public class ToolbarButton extends JButton {
 
 	// set the button to the image provided
 	private void setImage(ToolbarImage toolbarImage) {
-
-		String imagePath = System.getProperty("user.dir");
-		String imgLocation = toolbarImage.imagePath();
-		ImageIcon icon = new ImageIcon(imagePath + imgLocation, altText);
-
-		if (imagePath != null) {
+		URL iconUrl = getClass().getResource(toolbarImage.imagePath());
+		if (iconUrl != null) {
+			ImageIcon icon = new ImageIcon(iconUrl, altText);
 			setIcon(icon);
 		} else {
 			setText(altText);
-			System.err.println("Resource not found: " + imgLocation);
+			System.err.println("Resource not found: " + toolbarImage.imagePath());
 		}
 
 	}
