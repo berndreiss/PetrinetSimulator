@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -235,8 +236,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// for some reason the divider jumps all the way to the left when using look and
 		// feel Metal
-//		if (UIManager.getLookAndFeel().getName().equals("Metal")) //TODO remove?
-//			currentPetrinetPanel.getGraphSplitPane().resetDivider();
+		if (UIManager.getLookAndFeel().getName().equals("Metal")) 
+			currentPetrinetPanel.getGraphSplitPane().resetDivider();
 	}
 
 	// set toolbar, panel and this controller to mode
@@ -706,6 +707,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onAddPlace() {
 
+		if (currentPetrinetPanel == null)
+			return;
+		
 		// id for element
 		String id = null;
 
@@ -736,6 +740,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onAddTransition() {
 
+		if (currentPetrinetPanel == null)
+			return;
+		
 		// id for element
 		String id = null;
 
@@ -768,6 +775,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	@Override
 	public void onRemoveComponent() {
+		if (currentPetrinetPanel == null)
+			return;
 		currentPetrinetPanel.getEditor().removeComponent();
 		setStatusLabel();
 	}
@@ -856,6 +865,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onAddLabel() {
 
+		if (currentPetrinetPanel == null)
+			return;
+		
 		boolean changed = currentPetrinetPanel.getEditor().setLabel();
 
 		if (changed)
