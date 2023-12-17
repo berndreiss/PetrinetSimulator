@@ -1064,12 +1064,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void enableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
 			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(true);
+		showBoundedness = true;
 		
 	}
 
 	@Override
 	public void disableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
-			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(false);		
+			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(false);
+		showBoundedness = false;
+	}
+	/**
+	 * Gets whether boundedness is shown in real time.
+	 * @return whether boudedness is shown in real time
+	 */
+	public boolean getShowBoundedness() {
+		return showBoundedness;
 	}
 }

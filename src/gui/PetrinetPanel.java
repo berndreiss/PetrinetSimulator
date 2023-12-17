@@ -147,7 +147,7 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 
 		// set up reachability panel -> has own method so that on layout changes between
 		// auto layout and custom layouts can be reset
-		setReachabilityPanel(layoutType);
+		setReachabilityPanel(layoutType, false);
 
 		// replays the graph and adjusts auto layout -> otherwise it does not render
 		// properly for some reason
@@ -160,13 +160,13 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	 * been added and getting the GraphStream view panel, adding it to the split
 	 * pane
 	 */
-	private void setReachabilityPanel(LayoutType layoutType) {
+	private void setReachabilityPanel(LayoutType layoutType, boolean showPath) {
 
 		if (reachabilityPanel.getComponentCount() != 0)
 			reachabilityPanel.remove(reachabilityViewPanel);
 
 		reachabilityGraph = new GraphStreamReachabilityGraph(petrinetViewerController.getReachabilityGraphModel(),
-				layoutType);
+				layoutType, mainController.getShowBoundedness(), showPath);
 
 		reachabilityViewPanel = initGraphStreamView(reachabilityGraph, reachabilityPanel);
 		reachabilityPanel.add(reachabilityViewPanel, BorderLayout.CENTER);
@@ -209,10 +209,10 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 
 		// reset the reachability panel if there is a change from or to auto layout,
 		// only update reachability graph otherwise
-		if (layoutType == LayoutType.AUTOMATIC || reachabilityGraph.getLayoutType() == LayoutType.AUTOMATIC) {
-			setReachabilityPanel(layoutType);
+		if (layoutType == LayoutType.AUTOMATIC || reachabilityGraph.getLayoutType() == LayoutType.AUTOMATIC) 
+			setReachabilityPanel(layoutType, reachabilityGraph.pathShown());
 
-		} else {
+		 else {
 			reachabilityGraph.setLayoutType(layoutType);
 			resetReachabilityZoom();
 

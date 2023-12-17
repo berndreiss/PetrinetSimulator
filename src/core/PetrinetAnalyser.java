@@ -121,10 +121,10 @@ public class PetrinetAnalyser {
 
 			// fire transition
 			petrinet.fireTransition(t.getId());
-
+			
 			// check whether new state is bounded and abort analysis if not
 			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded();
-			if (!stateBounded) {
+			if (!stateBounded || !bounded) {
 				bounded = false;
 				return;
 
