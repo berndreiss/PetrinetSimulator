@@ -226,11 +226,14 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	@Override
 	public PetrinetAnalyser getAnalyser() {
 
+		boolean originalShowBoundedness = reachabilityGraph.getShowBoundedness();
+		reachabilityGraph.setShowBoundedness(true);
 		// do not adjust arrow heads while analysing but adjust them afterwards
 		this.adjustArrowHeads = false;
 		PetrinetAnalyser analyser = petrinetViewerController.analyse();
 		this.adjustArrowHeads = true;
 		SwingUtilities.invokeLater(() -> adjustArrowHeads());
+		reachabilityGraph.setShowBoundedness(originalShowBoundedness);
 		return analyser;
 	}
 

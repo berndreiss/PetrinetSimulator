@@ -43,7 +43,7 @@ node.initial_m{
 	
 	
 	fill-mode: image-scaled;
-	fill-image: url('images/initial_m.png');
+	fill-image: url('src/resources/images/initial_m.png');
 
 }
 
@@ -61,7 +61,7 @@ node.initial_m_highlight{
 	
 	
 	fill-mode: image-scaled;
-	fill-image: url('images/initial_m.png');
+	fill-image: url('src/resources/images/initial_m.png');
 	
 }
 
@@ -79,7 +79,7 @@ node.initial_m__mark{
 	
 	
 	fill-mode: image-scaled;
-	fill-image: url('images/initial_m_mark.png');
+	fill-image: url('src/resources/images/initial_m_mark.png');
 
 }
 
@@ -97,7 +97,7 @@ node.inital_highlight_m__mark{
 	
 	
 	fill-mode: image-scaled;
-	fill-image: url('images/initial_m_mark.png');
+	fill-image: url('src/resources/images/initial_m_mark.png');
 	
 }
 

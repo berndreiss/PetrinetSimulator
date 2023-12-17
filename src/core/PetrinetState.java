@@ -301,7 +301,7 @@ public class PetrinetState {
 	 * @param other The other path from which to return path.
 	 * @return the path from other state
 	 */
-	List<PetrinetState> getPathFromOtherState(PetrinetState other) {
+	public List<PetrinetState> getPathFromOtherState(PetrinetState other) {
 
 		List<List<PetrinetState>> paths = new ArrayList<List<PetrinetState>>();
 
@@ -323,17 +323,9 @@ public class PetrinetState {
 			if (l.size() < list.size())
 				list = l;
 		}
-//		List<PetrinetState> list = getPathFromOther(this, other, new HashSet<PetrinetState>(),
-//				new ArrayList<PetrinetState>());
 
-//		System.out.println(list.size());
-//		for (PetrinetState ps: list)
-//			System.out.println(ps.getState());
-
-		// path does not include current state
-//		if (list.contains(this))
-//			list.remove(this);
-		return list;
+		// return empty list if it is null, the list otherwise
+		return list == null ? new ArrayList<PetrinetState>() : list;
 	}
 
 	// crawls backward recursively through list of all predecessors and returns the

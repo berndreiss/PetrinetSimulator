@@ -1,6 +1,7 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -36,8 +37,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 	// TODO removing states does not maintain m and m'
 	/** The CSS file for the GraphStream graph */
-	private static String CSS_FILE = "url(" + GraphStreamPetrinetGraph.class.getResource("/reachability_graph.css")
-			+ ")";
+	private String CSS_FILE = "url(" + getClass().getResource("/resources/reachability_graph.css") + ")";
 	/**
 	 * Listens for certain instances the graph needs to be replayed -> needed for
 	 * adjusting arrow heads (see also {@link PetrinetPanel})
@@ -166,10 +166,20 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			@Override
 			public void onAdd(PetrinetState state, PetrinetState predecessor, Transition t) {
 
+				Node node = getNode(state.getState());
+				
+				if (node != null) {
+					setCurrent(node);
+					setCurrentEdge(t.getId()+predecessor.getState()+state.getState());
+					//TODO handleEdges
+					return;
+				}
+				
 				addState(state, predecessor, t, true);
-
+				
 				// reset arrow heads
 				adjustArrowheads();
+			
 			}
 
 			@Override
@@ -206,12 +216,37 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// set queue to original current state
 		queue.setToState(currentState);
 
+		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
+
+		// handle reachability graphs that are unbounded
+		if (invalidState != null && showBoundedness) {
+			// get the nodes m and m' and highlight them
+			nodeMMark = getNode(invalidState.getState());
+			nodeM = getNode(invalidState.getM().getState());
+			setHighlight(nodeM);
+			setHighlight(nodeMMark);
+
+			// get paths from m' to m and from m to initial node
+			for (PetrinetState ps : invalidState.getPathFromOtherState(invalidState.getM())) {
+				nodesOnPath.add(getNode(ps.getState()));
+			}
+			for (PetrinetState ps : invalidState.getM()
+					.getPathFromOtherState(reachabilityGraphModel.getInitialState())) {
+				nodesOnPath.add(getNode(ps.getState()));
+			}
+
+			// highlight path
+			for (Node n : nodesOnPath)
+				setHighlight(n);
+		}
+
 	}
 
 	// adds a state with an edge going from the predecessor to the new state
 	// is resetCurrent == true set new state and edge to current
 	private Node addState(PetrinetState newState, PetrinetState predecessor, Transition t, boolean resetCurrent) {
 
+		
 		// node for new state
 		Node node;
 
@@ -320,8 +355,11 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// unmark old and mark new nodes
 		setHighlight(oldM);
 		setHighlight(oldMMarked);
+		if (!showBoundedness)
+			return;
 		setHighlight(nodeM);
 		setHighlight(nodeMMark);
+		
 	}
 
 	// set a node to be the current node
@@ -372,6 +410,26 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		if (initialNode == node)
 			initialNode = null;
 
+		// handle marked nodes (m, m' and nodes on path)
+		if (nodeMMark == node || nodeM == node) {
+			Node mTemp = nodeM;
+			Node mMarkTemp = nodeMMark;
+			nodeMMark = null;
+			nodeM = null;
+			setHighlight(mTemp);
+			setHighlight(mMarkTemp);
+
+			ArrayList<Node> pathNodes = new ArrayList<Node>();
+			for (Node n : nodesOnPath) {
+				pathNodes.add(n);
+			}
+
+			for (Node n : pathNodes) {
+				nodesOnPath.remove(n);
+				setHighlight(n);
+			}
+		}
+
 		// remove node and sprite
 		node = removeNode(state.getState());
 		spriteMan.removeSprite("s" + state.getState());
@@ -390,13 +448,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// safety check
 		if (node == null)
 			return;
-	
 
-//		if (nodesOnPath.contains(node)) {
-//			node.setAttribute("ui.class", "path");
-//			return;
-//		}
-		
+		String nodeClass = (String) node.getAttribute("ui.class");
 		// if node is current node it needs to be highlighted
 		if (node == currentNode) {
 
@@ -404,13 +457,13 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			if (node == initialNode) {
 
 				// handle case M (mix of initial color and color for M)
-				if (node == nodeM && showBoundedness) {
+				if ((node == nodeM && showBoundedness) || nodeClass != null && nodeClass.equals("initial_m")) {
 					node.setAttribute("ui.class", "initial_m_highlight");
 					return;
 				}
 
 				// handle case M Mark (mix of initial color and color for M Mark)
-				if (node == nodeMMark && showBoundedness) {
+				if ((node == nodeMMark && showBoundedness)  ||  nodeClass != null && nodeClass.equals("initial_m_mark")) {
 					node.setAttribute("ui.class", "initial_m_mark_highlight");
 					return;
 				}
@@ -421,18 +474,18 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			}
 
 			// handle case M -> different color for M
-			if (node == nodeM && showBoundedness) {
+			if ((node == nodeM && showBoundedness)  ||  nodeClass != null && nodeClass.equals("m")) {
 				node.setAttribute("ui.class", "m_highlight");
 				return;
 			}
 
 			// handle case M Mark -> different color for M Mark
-			if (node == nodeMMark && showBoundedness) {
+			if ((node == nodeMMark && showBoundedness)  ||  nodeClass != null && nodeClass.equals("m_mark")) {
 				node.setAttribute("ui.class", "m_mark_highlight");
 				return;
 			}
-			
-			if (nodesOnPath.contains(node) && showBoundedness) {
+
+			if ((nodesOnPath.contains(node) && showBoundedness)  ||  nodeClass != null && nodeClass.equals("path")) {
 				node.setAttribute("ui.class", "path_highlight");
 				return;
 			}
@@ -444,12 +497,12 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		// case when node is initial node but not current node
 		if (node == initialNode) {
 			// handle case M (mix of initial color and color for M)
-			if (node == nodeM) {
+			if ((node == nodeM && showBoundedness)  ||  nodeClass != null && nodeClass.equals("initial_m_highlight")) {
 				node.setAttribute("ui.class", "initial_m");
 				return;
 			}
 			// handle case M Mark (mix of initial color and color for M Mark)
-			if (node == nodeMMark) {
+			if ((node == nodeMMark && showBoundedness)  ||  nodeClass != null && nodeClass.equals("initial_m_mark_highlight")) {
 				node.setAttribute("ui.class", "initial_m_mark");
 				return;
 			}
@@ -459,21 +512,21 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 		}
 		// handle case M -> different color for M
-		if (node == nodeM && showBoundedness) {
+		if ((node == nodeM && showBoundedness)  ||  nodeClass != null && nodeClass.equals("m_highlight")) {
 			node.setAttribute("ui.class", "m");
 			return;
 		}
 		// handle case M Mark -> different color for M Mark
-		if (node == nodeMMark && showBoundedness) {
+		if ((node == nodeMMark && showBoundedness)  ||  nodeClass != null && nodeClass.equals("m_mark_highlight")) {
 			node.setAttribute("ui.class", "m_mark");
 			return;
 		}
 
-		if (nodesOnPath.contains(node) && showBoundedness) {
+		if ((nodesOnPath.contains(node) && showBoundedness)  || nodeClass != null &&  nodeClass.equals("path_highlight")) {
 			node.setAttribute("ui.class", "path");
 			return;
 		}
-		
+
 		node.setAttribute("ui.class", "node");
 
 	}
@@ -533,7 +586,18 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 */
 	public void setShowBoundedness(boolean show) {
 		showBoundedness = show;
+		
+		if (!show)
+			return;
+		
+		if (nodeM != null)
+			setHighlight(nodeM);
 
+		if (nodeMMark != null)
+			setHighlight(nodeMMark);
+		
+		for (Node n: nodesOnPath)
+			setHighlight(n);
 	}
 
 	/**

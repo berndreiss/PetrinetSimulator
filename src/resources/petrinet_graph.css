@@ -69,16 +69,6 @@ node.transition_edit {
 }
 
 /*
-   zusaetzliches Attribut "bild" fuer einen Knoten mit einer Abbildung
-*/
-node.bild {
-	shape: rounded-box;
-	size: 50;
-	fill-mode: image-scaled;
-	fill-image: url('images/logo_grau.png');
-}
-
-/*
 	Style-Angabe fuer eine Kante
 */
 edge {

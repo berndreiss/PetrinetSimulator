@@ -28,7 +28,7 @@ import listeners.PetrinetComponentChangedListener;
 public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph{
 
 	/** URL referencing CSS file */
-	private static String CSS_FILE = "url(" + GraphStreamPetrinetGraph.class.getResource("/petrinet_graph.css") + ")";
+	private String CSS_FILE = "url(" + getClass().getResource("/resources/petrinet_graph.css") + ")";
 
 	/** The graphs sprite mangager */
 	private SpriteManager spriteMan;
