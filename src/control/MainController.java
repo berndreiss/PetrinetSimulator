@@ -53,9 +53,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private LayoutType layoutType = LayoutType.TREE;
 	/** The toolbar mode. */
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
-	/** Keeps track of whether boundedness should be shown.*/
+	/** Keeps track of whether boundedness should be shown. */
 	private boolean showBoundedness = true;
-	
 
 	/**
 	 * Instantiates a new main controller.
@@ -187,10 +186,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 //		tabAdded = true;//TODO remove?
 
 		// ask if changes should be saved, on abort return
-		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
-			if (saveDialog()) 
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+			if (saveDialog())
 				return;
-		
+
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
@@ -206,7 +205,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		currentPetrinetPanel = newPanel;
 
 		currentPetrinetPanel.getReachabilityGraph().setShowBoundedness(showBoundedness);
-		
+
 		// if no file has been provided open the editor
 		if (file == null)
 			setToolbarMode(ToolbarMode.EDITOR);
@@ -234,10 +233,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// update status label
 		setStatusLabel();
 
-		// for some reason the divider jumps all the way to the left when using look and
-		// feel Metal
-		if (UIManager.getLookAndFeel().getName().equals("Metal")) 
-			currentPetrinetPanel.getGraphSplitPane().resetDivider();
+		// for some reason the divider jumps all the way to the left when in the editor
+		currentPetrinetPanel.getGraphSplitPane().resetDivider();
 	}
 
 	// set toolbar, panel and this controller to mode
@@ -506,10 +503,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			return;
 
 		// ask if changes should be saved, on abort return
-		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
-			if (saveDialog()) 
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+			if (saveDialog())
 				return;
-		
+
 		// get tab index and remove tab
 		JTabbedPane tabbedPane = getFrame().getTabbedPane();
 		int index = tabbedPane.getSelectedIndex();
@@ -521,10 +518,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public void onExit() {
 
 		// ask if changes should be saved, on abort return
-		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
-			if (saveDialog()) 
+		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+			if (saveDialog())
 				return;
-		
+
 		System.exit(0);
 	}
 
@@ -542,7 +539,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onOpenEditor() {
 		setToolbarMode(ToolbarMode.EDITOR);
@@ -551,7 +548,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onCloseEditor() {
 
-		if (currentPetrinetPanel != null && !currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
+		if (currentPetrinetPanel != null
+				&& !currentPetrinetPanel.getPetrinetViewerController().getPetrinet().isConnected()) {
 			JOptionPane.showMessageDialog(mainFrame,
 					"Petrinet is not connected. You can still save changes but the petrinet can not be shown.",
 					"Information", JOptionPane.PLAIN_MESSAGE);
@@ -584,8 +582,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// set new panel if there is a previous file
 		if (previousFile != null) {
 			// ask if changes should be saved, on abort return
-			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
-				if (saveDialog()) 
+			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+				if (saveDialog())
 					return;
 			setNewPanel(previousFile, false);
 
@@ -603,8 +601,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// set new panel if there is a previous file
 		if (nextFile != null) {
 			// ask if changes should be saved, on abort return
-			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged()) 
-				if (saveDialog()) 
+			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+				if (saveDialog())
 					return;
 			setNewPanel(nextFile, false);
 		}
@@ -674,7 +672,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	// EDITOR RELATED METHODS
-	//TODO save alert on previous / next / open
+	// TODO save alert on previous / next / open
 	@Override
 	public void onIncrement() {
 
@@ -709,7 +707,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// id for element
 		String id = null;
 
@@ -742,7 +740,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		// id for element
 		String id = null;
 
@@ -867,7 +865,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		if (currentPetrinetPanel == null)
 			return;
-		
+
 		boolean changed = currentPetrinetPanel.getEditor().setLabel();
 
 		if (changed)
@@ -972,7 +970,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		layoutType = LayoutType.TREE;
 
-
 		// update every panel in the tabbed pane to tree layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
@@ -993,7 +990,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
 				((PetrinetPanel) comp).setLayoutType(layoutType);
 		}
-		
+
 		// set the toolbar buttons
 		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
 	}
@@ -1075,19 +1072,23 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void enableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
-			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(true);
+			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
+					.setShowBoundedness(true);
 		showBoundedness = true;
-		
+
 	}
 
 	@Override
 	public void disableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
-			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph().setShowBoundedness(false);
+			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
+					.setShowBoundedness(false);
 		showBoundedness = false;
 	}
+
 	/**
 	 * Gets whether boundedness is shown in real time.
+	 * 
 	 * @return whether boudedness is shown in real time
 	 */
 	public boolean getShowBoundedness() {
