@@ -47,7 +47,7 @@ public class PetrinetState {
 	private HashMap<String, List<Transition>> transitionMap = new HashMap<String, List<Transition>>();
 	/**
 	 * Steps being taken from an initial state -> initial state being defined as a
-	 * state without predecessors.
+	 * state without predecessors. Needed for the tree layout.
 	 */
 	private int level;
 

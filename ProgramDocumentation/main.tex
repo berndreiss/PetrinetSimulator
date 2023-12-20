@@ -45,9 +45,22 @@
 \section{Introduction to the Program}
 %\label{sec1}
 
-The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions. The reachability graph will show whether it encountered a state that is unbounded and mark the beginning and ending nodes on the path signifying the unboundedness of the petrinet. Additionally there is the option to analyse a given petrinet with regards to its boundedness and build the reachability graph with the click of a button. Furthermore it provides an user interface for editing petrinets. 
+The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions using the \textit{GraphStream} library\footnote{\url{https://graphstream-project.org/}}. The reachability graph will show whether it encountered a state that is unbounded and mark the beginning and ending nodes on the path signifying the unboundedness of the petrinet. Additionally there is the option to analyse a given petrinet with regards to its boundedness and build the reachability graph with the click of a button.
 
-The following sections give an overview of the menus and toolbars and the functionality provided by it.
+The following sections give an overview of additional features implemented in the program as well as of the menus and toolbars.
+
+\subsection{Additional features}
+
+\paragraph{Automatic Boundedness Check} By default building the reachability check automatically checks whether the petrinet is bounded or not (see also \ref{label:algorithm}). This can be turned off in the menu.
+
+\paragraph{Tabs} A new petrinet can be opened in a new tab. This can be done via the menu.
+
+\paragraph{Undo/Redo} The reachability graph provides undo/redo functionality.
+
+\paragraph{Custom Layouts} The Petrinet Simulator provides two custom layouts: tree layout and circle layout (see \ref{label:layout}). Users can switch between these two and the automatic layout provided by GraphStream.
+
+\paragraph{Editor Mode} Petrinets can be edited in an editor mode (see \ref{label:editor}).
+
 
 \subsection{The Menu}
 
@@ -222,13 +235,17 @@ All the analyser has to do is start from the initial state and simulate all poss
 \subsection{Layout}
 \label{label:layout}
 
+The program supports three layouts: two custom layouts and the automatic layout\footnote{see Automatic layout at \url{https://graphstream-project.org/doc/Tutorials/Graph-Visualisation/1.0/}} provided by GraphStream. Only the two custom layouts are discussed in this section.
+
 \subsubsection{Tree Layout}
 \label{label:treeLayout}
 
-%Talk about levels in \textit{PetrinetState}
+The tree layout organizes nodes in the reachability graph as a tree. The level in which a node goes into is defined by the length of the path from the initial node and is defined for each state in the class \textit{PetrinetState} and therefore provided to the graph whenever a state is added. On each level the nodes are ordered by their proximity to the parent in the level above $\rightarrow$ nodes should be near below the parent node so edges don't intersect too much with other nodes. Unfortunately this does not prevent intersecting edges altogether. For example if a node has a child directly below and the child has another child directly below and the child of the child has an edge to the grandparent the edge between the grandchild and the grandparent will intersect the child. For this reason adding a new node to the tree performs two additional checks: \textit{checkEdgeIntersection} and \textit{spreadSprites}. The former checks whether any edges intersect with any nodes. If so the nodes are pushed to the left or right according to their position on the level. This is repeated until no edges intersect nodes anymore or until the function has looped 20 times. The latter checks three cases: parallel edges and crossing edges. On parallel edges the sprites need to be moved because they are almost guaranteed to cross each other. This is easy since the default position of sprites is in the middle and can be shifted accordingly. Crossing edges are more tricky. An additional check has to be performed to check whether the sprites actually intersect. To this end the \textit{reachabilityGraphLayout} package (see \ref{label:package:layout}) provides data structures and functions to work with rectangles. The layout may not solve all issues but in most cases it provides a pleasant experience.
 
 \subsubsection{Circle Layout}
 \label{label:circleLayout}
+
+
 
 \subsection{Packages}
 
@@ -239,6 +256,7 @@ All the analyser has to do is start from the initial state and simulate all poss
 \subsubsection{gui}
 \subsubsection{listeners}
 \subsubsection{reachabilityGraphLayout}
+\label{label:package:layout}
 \subsubsection{util}
 
 
