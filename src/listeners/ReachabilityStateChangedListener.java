@@ -77,6 +77,7 @@ public interface ReachabilityStateChangedListener {
 
 	/**
 	 * Add a state to the path.
+	 * @param state State to be added
 	 */
 	void onAddToPath(PetrinetState state);
 }

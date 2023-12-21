@@ -40,11 +40,11 @@
 \contentsline {subsection}{\numberline {2.2}Layout}{8}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Tree Layout}{8}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}Circle Layout}{8}{subsubsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.3}Packages}{8}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}control}{8}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}core}{8}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}exceptions}{8}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}gui}{8}{subsubsection.2.3.4}%
-\contentsline {subsubsection}{\numberline {2.3.5}listeners}{8}{subsubsection.2.3.5}%
-\contentsline {subsubsection}{\numberline {2.3.6}reachabilityGraphLayout}{8}{subsubsection.2.3.6}%
-\contentsline {subsubsection}{\numberline {2.3.7}util}{8}{subsubsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3}Packages}{9}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}control}{9}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}core}{9}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}exceptions}{9}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}gui}{9}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}listeners}{9}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}reachabilityGraphLayout}{9}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}util}{9}{subsubsection.2.3.7}%

@@ -1,7 +1,6 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -190,14 +189,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 					highlightPath();
 					updateBoundednessHighlighting = false;
 				}
-				Node node = getNode(state.getState());
-
-//				if (node != null) {
-//					setCurrent(node);
-//					setCurrentEdge(getEdgeId(predecessor, state, t));
-//					return;
-//				}
-
+	
 				addState(state, predecessor, t, true);
 
 				// reset arrow heads
@@ -659,6 +651,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * 
 	 * Gets whether path is currently shown or not.
 	 * returns true if path is shown
+	 * @return true, if path is shown
 	 */
 	public boolean pathShown() {
 		if (nodeM == null)
