@@ -13,6 +13,9 @@
 \settowidth{\mytw}{A few lines of text in a block}
 
 
+\usepackage{algorithm} 
+\usepackage{algpseudocode}
+
 %\usepackage{hologo}
 
 %\usepackage{float}
@@ -224,6 +227,10 @@ There are three controllers in the program: the main controller, the petrinet vi
 
 \subsubsection{Petrinet Analyser and the Algorithm for Checking Boundedness}
 \label{label:algorithm}
+
+\include{algorithm.tex}
+
+\include{algorithm_analyser.tex}
 
 The \textit{PetrinetAnalyser} simulates clicking through the transitions of the petrinet and records the results. For this purpose it starts with the initial state and gets all activated transitions. It fires each transition one by one, gets the resulting new state and recursively calls the analyse method. At each firing of a transition the boundedness of the resulting state is checked. If it signifies the petrinet being unbouded the analyser terminates. Otherwise it terminates if it does not encounter new states. It therefore uses a depth first search approach to build the reachability graph step by step.
 

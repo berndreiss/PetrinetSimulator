@@ -1,0 +1,37 @@
+\begin{algorithm}
+\caption{Check if Current State is Bounded in a Petri Net}
+\begin{algorithmic}
+
+\Function{CheckIfCurrentStateIsBounded}{}
+    \For{each predecessor state $s$ of currentState}
+        \State $state \gets$ \Call{CheckIfStateIsBounded}{$s$, new list, currentState}
+        \If{$state \neq null$}
+            \State $invalidState \gets currentState$
+            \State $currentState.setM(state)$
+            \State $pathMMarked \gets currentState.getPathFromOtherState(state)$
+            \State $pathM \gets state.getPathFromOtherState(initialState)$
+            \State \Return $false$
+        \EndIf
+    \EndFor
+    \State \Return $true$
+\EndFunction
+
+\Function{CheckIfStateIsBounded}{$state$, $visitedStates$, $originalState$}
+    \If{$state$ is in $visitedStates$}
+        \State \Return $null$
+    \EndIf
+    \State Add $state$ to $visitedStates$
+    \If{$originalState.isBiggerThan(state)$}
+        \State \Return $state$
+    \EndIf
+    \For{each predecessor state $s$ of $state$}
+        \State $newState \gets$ \Call{CheckIfStateIsBounded}{$s$, $visitedStates$, $originalState$}
+        \If{$newState \neq null$}
+            \State \Return $newState$
+        \EndIf
+    \EndFor
+    \State \Return $null$
+\EndFunction
+
+\end{algorithmic}
+\end{algorithm}

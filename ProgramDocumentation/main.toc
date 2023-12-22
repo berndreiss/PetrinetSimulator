@@ -37,14 +37,14 @@
 \contentsline {paragraph}{Toolbar Changed Listener}{7}{section*.23}%
 \contentsline {paragraph}{Adjust Arrow Heads Listener}{7}{section*.24}%
 \contentsline {subsubsection}{\numberline {2.1.4}Petrinet Analyser and the Algorithm for Checking Boundedness}{7}{subsubsection.2.1.4}%
-\contentsline {subsection}{\numberline {2.2}Layout}{8}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Tree Layout}{8}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Circle Layout}{8}{subsubsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.3}Packages}{9}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}control}{9}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}core}{9}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}exceptions}{9}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}gui}{9}{subsubsection.2.3.4}%
-\contentsline {subsubsection}{\numberline {2.3.5}listeners}{9}{subsubsection.2.3.5}%
-\contentsline {subsubsection}{\numberline {2.3.6}reachabilityGraphLayout}{9}{subsubsection.2.3.6}%
-\contentsline {subsubsection}{\numberline {2.3.7}util}{9}{subsubsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.2}Layout}{10}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Tree Layout}{10}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Circle Layout}{11}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Packages}{11}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}control}{11}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}core}{11}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}exceptions}{11}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}gui}{11}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}listeners}{11}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}reachabilityGraphLayout}{11}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}util}{11}{subsubsection.2.3.7}%

@@ -1,0 +1,29 @@
+\begin{algorithm}
+\caption{Analyse State in a Petri Net}
+\begin{algorithmic}
+
+\Function{AnalyseState}{$state$, $visited$}
+    \If{$state$ is in $visited$}
+        \State \Return
+    \EndIf
+    \State $numberOfNodes \gets numberOfNodes + 1$
+    \State Add $state$ to $visited$
+    \State $petrinet.setState(state)$
+
+    \For{each activated transition $t$ in $petrinet$}
+        \State $petrinet.fireTransition(t.getId())$
+        \State $stateBounded \gets controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded()$
+        \If{not $stateBounded$ or not $bounded$}
+            \State $bounded \gets false$
+            \State \Return
+        \EndIf
+        \State $numberOfEdges \gets numberOfEdges + 1$
+        \State \Call{AnalyseState}{$reachabilityGraphModel.getCurrentPetrinetState()$, $visited$}
+        \State $reachabilityGraphModel.setCurrentState(state)$
+        \State $petrinet.setState(state)$
+    \EndFor
+\EndFunction
+
+\end{algorithmic}
+\end{algorithm}
+
