@@ -1,15 +1,16 @@
 \begin{algorithm}
-\caption{Check if Current State is Bounded in a Petri Net}
+\caption{Check if Current State is Bounded in a Petrinet}
+\label{algorithm:boundedness}
 \begin{algorithmic}
 
 \Function{CheckIfCurrentStateIsBounded}{}
     \For{each predecessor state $s$ of currentState}
         \State $state \gets$ \Call{CheckIfStateIsBounded}{$s$, new list, currentState}
         \If{$state \neq null$}
-            \State $invalidState \gets currentState$
-            \State $currentState.setM(state)$
-            \State $pathMMarked \gets currentState.getPathFromOtherState(state)$
-            \State $pathM \gets state.getPathFromOtherState(initialState)$
+%            \State $invalidState \gets currentState$
+%            \State $currentState.setM(state)$
+%            \State $pathMMarked \gets currentState.getPathFromOtherState(state)$
+%            \State $pathM \gets state.getPathFromOtherState(initialState)$
             \State \Return $false$
         \EndIf
     \EndFor

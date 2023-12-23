@@ -1,8 +1,13 @@
 \begin{algorithm}
-\caption{Analyse State in a Petri Net}
+\caption{Analyse State in a Petrinet}
+\label{algorithm:analyser}
 \begin{algorithmic}
 
 \Function{AnalyseState}{$state$, $visited$}
+
+    \If{not $bounded$}
+    	\State \Return
+    \EndIf
     \If{$state$ is in $visited$}
         \State \Return
     \EndIf
@@ -11,9 +16,9 @@
     \State $petrinet.setState(state)$
 
     \For{each activated transition $t$ in $petrinet$}
-        \State $petrinet.fireTransition(t.getId())$
-        \State $stateBounded \gets controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded()$
-        \If{not $stateBounded$ or not $bounded$}
+        \State $petrinet.fireTransition(t)$
+        \State $stateBounded \gets reachabilityGraphModel.checkIfCurrentStateIsBounded()$
+        \If{not $stateBounded$}
             \State $bounded \gets false$
             \State \Return
         \EndIf

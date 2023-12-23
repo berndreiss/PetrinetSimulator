@@ -45,10 +45,21 @@
 
 \pagenumbering{arabic} \rmfamily \onehalfspace 
 
-\section{Introduction to the Program}
+\section{Manual}
 %\label{sec1}
+The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions using the \textit{GraphStream} library\footnote{\url{https://graphstream-project.org/}}. The following picture shows the programs surface:
 
-The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions using the \textit{GraphStream} library\footnote{\url{https://graphstream-project.org/}}. The reachability graph will show whether it encountered a state that is unbounded and mark the beginning and ending nodes on the path signifying the unboundedness of the petrinet. Additionally there is the option to analyse a given petrinet with regards to its boundedness and build the reachability graph with the click of a button.
+\begin{center}
+\includegraphics[width=\textwidth]{Pictures/Example_276.png}
+\end{center}
+
+In the petrinet on the left activated transitions are marked bold. The current state is marked bold in the reachabiltiy graph on the right. Additionally the initial state is marked grey. After performing the boundedness analysis the graphs look like this: 
+
+\begin{center}
+\includegraphics[width=\textwidth]{Pictures/Example_276_analysed.png}
+\end{center}
+
+The reachability graph shows whether it encountered a state that is unbounded and mark the beginning (yellow) and ending (red) nodes on the path signifying the unboundedness of the petrinet. Any states on the paths between these nodes and between the yellow and intial node are marked also (brown).
 
 The following sections give an overview of additional features implemented in the program as well as of the menus and toolbars.
 
@@ -191,14 +202,14 @@ From left to right the buttons provide the following functionality:
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
 \end{itemize}
 
-\section{Exploring the Technical Depths}
+\section{Design of the Program}
 
 
-\subsection{Design of the Program}
+\subsection{General Structure}
 
 Figure \ref{figure:design} shows the general control flow of the program. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure only demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program are included in the text as well. The following sections give a detailed description of how the data models are structured and how controllers and listeners work. On a general level it can be noted controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. 
 
-\include{GeneralDesign.tex}
+\input{GeneralDesign.tex}
 
 
 \subsubsection{Data Models}
@@ -225,18 +236,21 @@ There are three controllers in the program: the main controller, the petrinet vi
 \paragraph{Toolbar Changed Listener} Listens for events belonging to the un-/redo buttons and the add/remove edge buttons. If events happen the buttons are highlighted accordingly.
 \paragraph{Adjust Arrow Heads Listener} This is a special listener for GraphStream. As the arrow heads don't adjust appropriately when adding/removing elements in the graph they need to be adjusted manually. This listener watches for events where arrow heads need to be adjusted.
 
-\subsubsection{Petrinet Analyser and the Algorithm for Checking Boundedness}
+\subsection{Petrinet Analyser and the Algorithm for Checking Boundedness}
 \label{label:algorithm}
 
-\include{algorithm.tex}
 
-\include{algorithm_analyser.tex}
 
 The \textit{PetrinetAnalyser} simulates clicking through the transitions of the petrinet and records the results. For this purpose it starts with the initial state and gets all activated transitions. It fires each transition one by one, gets the resulting new state and recursively calls the analyse method. At each firing of a transition the boundedness of the resulting state is checked. If it signifies the petrinet being unbouded the analyser terminates. Otherwise it terminates if it does not encounter new states. It therefore uses a depth first search approach to build the reachability graph step by step.
 
-The actual algorithm for checking the boundedness of a given state is implemented in the reachability graph model itself. When a state is added the reachability graph model automatically checks for unboundedness. As each instance of the petrinet state model knows its predecessors it can search for states that mark the current state as unbounded. To this end the petrinet state model implements a method called \textit{isBiggerThan} that takes a state as a parameter and returns whether the number of tokens on any place is bigger while the tokens on all the other places are the same or bigger also. By performing a depth first search all states in the reachability graph model are checked iteratively until an \textit{m} is found or all states have been checked.
+\input{algorithm.tex}
 
-All the analyser has to do is start from the initial state and simulate all possible configurations of the petrinet at hand. It iteratively performs a depth first approach of firing all transitions -> for each state it loops over all activated transitions, fires them and calls the analyse function for the new state in turn firing all activated transitions in the new state. It does so until the reachability model informs the analyser that the petrinet is unbounded or all configurations have been exhausted. If the petrinet is unbounded the analyser updates the reachability graph by resetting it to the initial state and only firing the transitions leading up to and including the path marking the petrinet unbouded. This way only the relevant information is shown in the reachability graph.
+The actual algorithm for checking the boundedness of a given state is implemented in the reachability graph model itself and is represented by algorithm \ref{algorithm:boundedness}. When a state is added the reachability graph model automatically checks for unboundedness. The state is the \textit{currentState} in the algorithm as any added state becomes the current state in the reachability graph model. As each instance of the petrinet state model knows its predecessors it can search for states that mark the current state as unbounded $\rightarrow$ the algorithm loops through them for the current state and calls the \textit{CHECKIFSTATEISBOUNDED} method for every one of them. This medhod in turn loops through every predecessor of the state passed to it and calls itself recursively. The base case terminating the recursive loop is if the state has already been visitied or if it signifies that the given petrinet is unbounded. To this end the petrinet state model implements a method called \textit{isBiggerThan} that takes a state as a parameter and returns whether the number of tokens on any place is bigger while the tokens on all the other places are the same or bigger also. The algorithm checks the original state (the current in the reachability graph model) and checks it against the state currently passed to the method. This means by performing a depth first search all states in the reachability graph model are checked iteratively until an \textit{m} is found or all states have been checked.
+
+
+\input{algorithm_analyser.tex}
+
+Algorithm \ref{algorithm:analyser} shows how the \textit{PetrinetAnalyser} works. All the analyser has to do is start from the initial state and simulate all possible configurations of the petrinet at hand. It iteratively performs a depth first approach of firing all transitions $\rightarrow$ for each state it loops over all activated transitions, fires them and calls the analyse function for the resulting new state in turn firing all activated transitions in this new state. It does so until all configurations have been exhausted, the reachability model informs the analyser that the petrinet is unbounded or the petrinet has been found unbounded in another configuration (this what the variable \textit{bounded} keeps track of). If the petrinet is unbounded the analyser updates the reachability graph by resetting it to the initial state and only firing the transitions leading up to and including the path marking the petrinet unbouded. This way only the relevant information is shown in the reachability graph.
 
 
 \subsection{Layout}
@@ -247,24 +261,24 @@ The program supports three layouts: two custom layouts and the automatic layout\
 \subsubsection{Tree Layout}
 \label{label:treeLayout}
 
-The tree layout organizes nodes in the reachability graph as a tree. The level in which a node goes into is defined by the length of the path from the initial node and is defined for each state in the class \textit{PetrinetState} and therefore provided to the graph whenever a state is added. On each level the nodes are ordered by their proximity to the parent in the level above $\rightarrow$ nodes should be near below the parent node so edges don't intersect too much with other nodes. Unfortunately this does not prevent intersecting edges altogether. For example if a node has a child directly below and the child has another child directly below and the child of the child has an edge to the grandparent the edge between the grandchild and the grandparent will intersect the child. For this reason adding a new node to the tree performs two additional checks: \textit{checkEdgeIntersection} and \textit{spreadSprites}. The former checks whether any edges intersect with any nodes. If so the nodes are pushed to the left or right according to their position on the level. This is repeated until no edges intersect nodes anymore or until the function has looped 20 times. The latter checks three cases: parallel edges and crossing edges. On parallel edges the sprites need to be moved because they are almost guaranteed to cross each other. This is easy since the default position of sprites is in the middle and can be shifted accordingly. Crossing edges are more tricky. An additional check has to be performed to check whether the sprites actually intersect. To this end the \textit{reachabilityGraphLayout} package (see \ref{label:package:layout}) provides data structures and functions to work with rectangles. The layout may not solve all issues but in most cases it provides a pleasant experience.
+The tree layout organizes nodes in the reachability graph as a tree. The level in which a node goes into is defined by the length of the path from the initial node and is defined for each state in the class \textit{PetrinetState} and therefore provided to the graph whenever a state is added. On each level the nodes are ordered by their proximity to the parent in the level above $\rightarrow$ nodes should be near below the parent node so edges don't intersect too much with other nodes. Unfortunately this does not prevent intersecting edges altogether. For example if a node has a child directly below and the child has another child directly below and the child of the child has an edge to the grandparent the edge between the grandchild and the grandparent will intersect the child. For this reason adding a new node to the tree performs two additional checks: \textit{checkEdgeIntersection} and \textit{spreadSprites}. The former checks whether any edges intersect with any nodes. If so the nodes are pushed to the left or right according to their position on the level. This is repeated until no edges intersect nodes anymore or until the function has looped 20 times. The latter checks three cases: parallel edges and crossing edges. On parallel edges the sprites need to be moved because they are almost guaranteed to cross each other. This is easy since the default position of sprites is in the middle and can be shifted accordingly. Crossing edges are more tricky. An additional check has to be performed to check whether the sprites actually intersect. To this end the \textit{reachabilityGraphLayout} package provides data structures and functions to work with rectangles. The layout may not solve all issues but in most cases it provides a pleasant experience.
 
 \subsubsection{Circle Layout}
 \label{label:circleLayout}
 
 This layout organizes nodes around a circle -- or to be more precise an ellipse. Initially the nodes are ordered by level. Just putting them around a circle would lead to level clusters and most importantly edges clustering at the circles scope. To avoid clusters the initial ordering of nodes is spread evenly around the circle by a certain ratio\footnote{For a more in depth explanation of how the algorithm works please refer to the comments in the source code.}. The ratio to which nodes are spread around the circle can be modified by clicking the circle layout button repeatedly.
 
-\subsection{Packages}
+%\subsection{Packages}
 
-\subsubsection{control}
+%\subsubsection{control}
 
-\subsubsection{core}
-\subsubsection{exceptions}
-\subsubsection{gui}
-\subsubsection{listeners}
-\subsubsection{reachabilityGraphLayout}
-\label{label:package:layout}
-\subsubsection{util}
+%\subsubsection{core}
+%\subsubsection{exceptions}
+%\subsubsection{gui}
+%\subsubsection{listeners}
+%\subsubsection{reachabilityGraphLayout}
+%\label{label:package:layout}
+%\subsubsection{util}
 
 
 \newpage

@@ -104,6 +104,10 @@ public class PetrinetAnalyser {
 	// state the petrinet is in; if a state has already been visited return
 	private void analyseState(PetrinetState state, Set<PetrinetState> visited) {
 
+		// if bounded state has been found before abort
+		if (!bounded)
+			return;
+		
 		// return if state has been visited
 		if (visited.contains(state))
 			return;
@@ -114,7 +118,7 @@ public class PetrinetAnalyser {
 
 		visited.add(state);
 		petrinet.setState(state);
-
+		
 		// fire every activated transition in the given state, check whether the state
 		// is bounded and if so call function recursively for new state
 		for (Transition t : petrinet.getActivatedTransitions()) {
@@ -124,7 +128,7 @@ public class PetrinetAnalyser {
 			
 			// check whether new state is bounded and abort analysis if not
 			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded();
-			if (!stateBounded || !bounded) {
+			if (!stateBounded) {
 				bounded = false;
 				return;
 
