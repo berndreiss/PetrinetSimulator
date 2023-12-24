@@ -8,12 +8,15 @@ package reachabilityGraphLayout;
 public interface LayoutPointInterface {
 
 	/**
-	 * Get the x coordinate.
+	 * Gets the x coordinate.
+	 * 
 	 * @return x
 	 */
 	double getX();
+
 	/**
-	 * Get the y coordinate
+	 * Gets the y coordinate
+	 * 
 	 * @return y
 	 */
 	double getY();

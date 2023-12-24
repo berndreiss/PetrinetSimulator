@@ -107,7 +107,7 @@ public class PetrinetAnalyser {
 		// if bounded state has been found before abort
 		if (!bounded)
 			return;
-		
+
 		// return if state has been visited
 		if (visited.contains(state))
 			return;
@@ -118,14 +118,14 @@ public class PetrinetAnalyser {
 
 		visited.add(state);
 		petrinet.setState(state);
-		
+
 		// fire every activated transition in the given state, check whether the state
 		// is bounded and if so call function recursively for new state
 		for (Transition t : petrinet.getActivatedTransitions()) {
 
 			// fire transition
 			petrinet.fireTransition(t.getId());
-			
+
 			// check whether new state is bounded and abort analysis if not
 			boolean stateBounded = controller.getReachabilityGraphModel().checkIfCurrentStateIsBounded();
 			if (!stateBounded) {
@@ -149,7 +149,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get boundedness.
+	 * Gets boundedness.
 	 *
 	 * @return true, if petrinet is bounded
 	 */
@@ -158,7 +158,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get the count of states (nodes) in the reachability graph.
+	 * Gets the count of states (nodes) in the reachability graph.
 	 *
 	 * @return the state count of the reachability graph
 	 */
@@ -167,7 +167,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get the number of edges in the reachability graph.
+	 * Gets the number of edges in the reachability graph.
 	 *
 	 * @return the edge count
 	 */
@@ -176,7 +176,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get the first node on the path proving unboudedness.
+	 * Gets the first node on the path proving unboudedness.
 	 *
 	 * @return the m
 	 */
@@ -185,7 +185,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get the last node on the path proving unboudedness
+	 * Gets the last node on the path proving unboudedness
 	 *
 	 * @return the m'
 	 */
@@ -194,7 +194,7 @@ public class PetrinetAnalyser {
 	}
 
 	/**
-	 * Get the transitions on the path proving unboudedness.
+	 * Gets the transitions on the path proving unboudedness.
 	 *
 	 * @return the transitions on path to m'
 	 */

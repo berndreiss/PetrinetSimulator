@@ -1,9 +1,14 @@
 package exceptions;
 
 /**
+ * <p>
  * The Class InvalidEdgeOperationException.
+ * </p>
+ * <p>
+ * Gets thrown when an edge operation is invalid.
+ * </p>
  */
-public class InvalidEdgeOperationException extends PetrinetException{
+public class InvalidEdgeOperationException extends PetrinetException {
 
 	private static final long serialVersionUID = 1L;
 

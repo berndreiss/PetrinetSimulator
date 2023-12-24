@@ -9,8 +9,9 @@ import util.IterableMap;
  * </p>
  * 
  * <p>
- * Every place always knows the transitions (see {@link Transition}) it is connected to (inputs and
- * outputs). They are synchronized when added and removed.
+ * Every place always knows the transitions (see {@link Transition}) it is
+ * connected to (inputs and outputs). They are synchronized when added and
+ * removed.
  * </p>
  * 
  */
@@ -31,7 +32,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Instantiates a new place.
 	 *
-	 * @param id The id of the place.
+	 * @param id the id of the place
 	 */
 	public Place(String id) {
 		super(id);
@@ -49,7 +50,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Returns the number of tokens currently at the place.
 	 * 
-	 * @return Number of tokens.
+	 * @return number of tokens
 	 */
 	public int getNumberOfTokens() {
 		return numberOfTokens;
@@ -58,7 +59,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Sets the number of tokens.
 	 *
-	 * @param numberOfTokens The new number of tokens.
+	 * @param numberOfTokens the new number of tokens
 	 */
 	public void setNumberOfTokens(int numberOfTokens) {
 
@@ -87,7 +88,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Sets the number of tokens listener.
 	 *
-	 * @param numberOfTokensListener The new number of tokens listener.
+	 * @param numberOfTokensListener the new number of tokens listener
 	 */
 	public void setNumberOfTokensListener(NumberOfTokensChangedListener numberOfTokensListener) {
 		this.numberOfTokensListener = numberOfTokensListener;
@@ -119,7 +120,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Adds a transition to the set of transitions in the output.
 	 *
-	 * @param transition The transition to be added.
+	 * @param transition the transition to be added
 	 */
 	public void addOutput(Transition transition) {
 		outputs.put(transition.getId(), transition);
@@ -128,7 +129,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Adds a transition to the set of transitions in the output.
 	 *
-	 * @param transition The transition to be added.
+	 * @param transition the transition to be added
 	 */
 	public void addInput(Transition transition) {
 		inputs.put(transition.getId(), transition);
@@ -137,7 +138,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Gets the transitions in the output.
 	 *
-	 * @return The transitions in the output.
+	 * @return the transitions in the output
 	 */
 	public Iterable<Transition> getOutputs() {
 		return outputs;
@@ -146,36 +147,38 @@ public class Place extends PetrinetElement {
 	/**
 	 * Gets the transitions in the input.
 	 *
-	 * @return The transitions in the input.
+	 * @return the transitions in the input
 	 */
 	public Iterable<Transition> getInputs() {
 		return inputs;
 	}
 
 	/**
-	 * Removes a transition from the outputs. Also removes the place from the transitions inputs.
+	 * Removes a transition from the outputs. Also removes the place from the
+	 * transitions inputs.
 	 *
-	 * @param transition The transition to be removed.
+	 * @param transition the transition to be removed
 	 */
 	public void removeOutput(Transition transition) {
 		if (!outputs.containsKey(transition.getId()))
 			return;
 		outputs.remove(transition.getId());
-		
+
 		// synchronize transition
 		transition.removeInput(this);
 	}
 
 	/**
-	 * Removes a transition from the inputs. Also removes the place from the transitions outputs.
+	 * Removes a transition from the inputs. Also removes the place from the
+	 * transitions outputs.
 	 *
-	 * @param transition The transition to be removed.
+	 * @param transition the transition to be removed
 	 */
 	public void removeInput(Transition transition) {
 		if (!inputs.containsKey(transition.getId()))
 			return;
 		inputs.remove(transition.getId());
-		
+
 		// synchronize transition
 		transition.removeOutput(this);
 	}

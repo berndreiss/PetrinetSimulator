@@ -16,7 +16,7 @@ public interface NumberOfTokensChangedListener {
 	/**
 	 * On number of tokens changed inform the petrinet.
 	 *
-	 * @param newNumber The new number of tokens.
+	 * @param newNumber the new number of tokens
 	 */
 	void onNumberChanged(int newNumber);
 }

@@ -21,8 +21,8 @@ import core.Petrinet;
  */
 public enum ToolbarMode {
 
-	/** The viewer mode */
+	/** The viewer mode. */
 	VIEWER,
-	/** The editor mode */
+	/** The editor mode. */
 	EDITOR;
 }

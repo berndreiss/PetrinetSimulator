@@ -12,7 +12,7 @@ package listeners;
 public interface TransitionStateListener {
 
 	/**
-	 * Inform the petrinet that the state of a transition has changed.
+	 * Informs the petrinet that the state of a transition has changed.
 	 */
 	void onStateChanged();
 }

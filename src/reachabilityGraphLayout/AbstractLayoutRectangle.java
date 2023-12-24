@@ -8,44 +8,44 @@ package reachabilityGraphLayout;
 public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
 
 	/**
-	 * Get the left lower corner of the object.
+	 * Gets the left lower corner of the object.
 	 *
 	 * @return the left lower corner
 	 */
-	public 	abstract LayoutPoint leftLowerCorner();
+	public abstract LayoutPoint leftLowerCorner();
 
 	/**
-	 * Get the left upper corner of the object.
+	 * Gets the left upper corner of the object.
 	 *
 	 * @return the left upper corner
 	 */
-	public 	abstract LayoutPoint leftUpperCorner();
+	public abstract LayoutPoint leftUpperCorner();
 
 	/**
-	 * Get the right lower corner of the object.
+	 * Gets the right lower corner of the object.
 	 *
 	 * @return the right lower corner
 	 */
-	public 	abstract LayoutPoint rightLowerCorner();
+	public abstract LayoutPoint rightLowerCorner();
 
 	/**
-	 * Get the right upper corner of the object.
+	 * Gets the right upper corner of the object.
 	 *
 	 * @return the right upper corner
 	 */
-	public 	abstract LayoutPoint rightUpperCorner();
+	public abstract LayoutPoint rightUpperCorner();
 
 	/**
-	 * Get the left side of the object.
+	 * Gets the left side of the object.
 	 *
 	 * @return the left side
 	 */
-	public 	LayoutLine leftSide() {
+	public LayoutLine leftSide() {
 		return new LayoutLine(leftLowerCorner(), leftUpperCorner());
 	}
 
 	/**
-	 * Get the right side of the object.
+	 * Gets the right side of the object.
 	 *
 	 * @return the right side
 	 */
@@ -54,7 +54,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Get the upper side of the object.
+	 * Gets the upper side of the object.
 	 *
 	 * @return the layout line
 	 */
@@ -63,7 +63,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Get the lower side of the object.
+	 * Gets the lower side of the object.
 	 *
 	 * @return the layout line
 	 */
@@ -72,10 +72,10 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Compare the centers of two rectangles primarily by their x value and
+	 * Compares the centers of two rectangles primarily by their x value and
 	 * secondarily by the y value.
 	 *
-	 * @param other The other rectangle.
+	 * @param other the other rectangle
 	 * @return -1 if left/lower, 1 if right/upper, 0 if the same
 	 */
 	@Override
@@ -95,9 +95,9 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Check whether the given rectangle intersects another rectangle.
+	 * Checks whether the given rectangle intersects another rectangle.
 	 *
-	 * @param other The other rectangle.
+	 * @param other the other rectangle
 	 * @return true, if rectangles intersect, false if not
 	 */
 	public boolean rectanglesIntersect(AbstractLayoutRectangle other) {
@@ -121,9 +121,9 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Check whether a point is inside the rectangle.
+	 * Checks whether a point is inside the rectangle.
 	 *
-	 * @param p The point to be checked.
+	 * @param p the point to be checked
 	 * @return true, if it lies inside the rectangle, false if not
 	 */
 	public boolean pointIsInsideRectangle(LayoutPointInterface p) {
@@ -142,9 +142,9 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	}
 
 	/**
-	 * Check whether edge intersects rectangle.
+	 * Checks whether edge intersects rectangle.
 	 *
-	 * @param layoutEdge The edge to be checked.
+	 * @param layoutEdge the edge to be checked
 	 * @return true, if it intersects, false if not
 	 */
 	public boolean edgeIntersectsRectangle(LayoutEdge layoutEdge) {
@@ -171,22 +171,19 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 		// check right side
 		intersectionPoint = edge.findIntersectionPoint(rightSide());
 		if (intersectionPoint != null && intersectionPoint.getX() >= edge.getXMin()
-				&& intersectionPoint.getX() <= edge.getXMax()
-				&& pointIsInsideRectangle(intersectionPoint))
+				&& intersectionPoint.getX() <= edge.getXMax() && pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// check lower side
 		intersectionPoint = edge.findIntersectionPoint(lowerSide());
 		if (intersectionPoint != null && intersectionPoint.getY() >= edge.getYMin()
-				&& intersectionPoint.getY() <= edge.getYMax()
-				&& pointIsInsideRectangle(intersectionPoint))
+				&& intersectionPoint.getY() <= edge.getYMax() && pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// check upper side
 		intersectionPoint = edge.findIntersectionPoint(upperSide());
 		if (intersectionPoint != null && intersectionPoint.getY() >= edge.getYMin()
-				&& intersectionPoint.getY() <= edge.getYMax()
-				&& pointIsInsideRectangle(intersectionPoint))
+				&& intersectionPoint.getY() <= edge.getYMax() && pointIsInsideRectangle(intersectionPoint))
 			return true;
 
 		// all checks failed

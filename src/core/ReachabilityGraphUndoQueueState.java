@@ -25,14 +25,15 @@ public class ReachabilityGraphUndoQueueState {
 
 	/**
 	 * Instantiate a new state for the queue.
+	 * 
 	 * @param previousState The state preceding the current state.
 	 * 
-	 * @param petrinetState The petrinets state currently active in the reachability
-	 *                      graph.
-	 * @param currentEdge   The edge currently active in the reachability graph.
-	 * @param stateAdded    Defines the type of component that has been added.
-	 * @param transition    Transition that has been fired.
-	 * @param skippable     If true, state is skippable.
+	 * @param petrinetState the petrinets state currently active in the reachability
+	 *                      graph
+	 * @param currentEdge   the edge currently active in the reachability graph
+	 * @param stateAdded    defines the type of component that has been added
+	 * @param transition    transition that has been fired
+	 * @param skippable     if true, state is skippable
 	 */
 	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState previousState, PetrinetState petrinetState,
 			String currentEdge, AddedType stateAdded, Transition transition, boolean skippable) {
@@ -47,7 +48,7 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the type that has been added.
+	 * Gets the type that has been added.
 	 * 
 	 * @return added type
 	 */
@@ -56,7 +57,7 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the petrinet state.
+	 * Gets the petrinet state.
 	 *
 	 * @return the petrinet state
 	 */
@@ -65,7 +66,7 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the transition.
+	 * Gets the transition.
 	 *
 	 * @return the transition
 	 */
@@ -74,7 +75,7 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the type that has been added.
+	 * Gets the type that has been added.
 	 *
 	 * @return the type added
 	 */
@@ -83,7 +84,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the edge currently active in the reachability graph.
+	 * Gets the edge currently active in the reachability graph.
+	 * 
 	 * @return the edge
 	 * 
 	 */
@@ -92,7 +94,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Return whether state is skippable when un-/redoing steps.
+	 * Returns whether state is skippable when un-/redoing steps.
+	 * 
 	 * @return true, if state is skippable
 	 */
 	public boolean isSkippable() {
@@ -100,15 +103,17 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Set the next state.
-	 * @param nextState State to be set.
+	 * Sets the next state.
+	 * 
+	 * @param nextState state to be set
 	 */
 	public void setNextState(ReachabilityGraphUndoQueueState nextState) {
 		this.nextState = nextState;
 	}
 
 	/**
-	 * Check whether there is a next state.
+	 * Checks whether there is a next state.
+	 * 
 	 * @return true, if there is a next state
 	 */
 	public boolean hasNext() {
@@ -116,7 +121,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Check whether current state is first state.
+	 * Checks whether current state is first state.
+	 * 
 	 * @return true, if state is the first
 	 */
 	public boolean isFirst() {
@@ -124,7 +130,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the previous state.
+	 * Gets the previous state.
+	 * 
 	 * @return the previous state
 	 */
 	public ReachabilityGraphUndoQueueState getPrevious() {
@@ -132,7 +139,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Get the next state.
+	 * Gets the next state.
+	 * 
 	 * @return the next state
 	 */
 	public ReachabilityGraphUndoQueueState getNext() {
@@ -140,7 +148,8 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Set the petrinet state.
+	 * Sets the petrinet state.
+	 * 
 	 * @param newPetrinetState The new petrinet state.
 	 */
 	public void setPetrinetState(PetrinetState newPetrinetState) {

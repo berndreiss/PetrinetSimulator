@@ -23,6 +23,7 @@ import control.PetrinetPanelInterface;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
 import reachabilityGraphLayout.LayoutType;
+
 /**
  * <p>
  * A toolbar for interactions with petrinets via a
@@ -44,74 +45,74 @@ public class PetrinetToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * keep track of default button color of look and feel so it can be highlighted
-	 * and changed back
+	 * Keep track of default button color of look and feel so it can be highlighted
+	 * and changed back.
 	 */
 	private Color buttonDefaultColor;
-	/** default highlight color */
+	/** Default highlight color. */
 	private Color buttonHighlightColor = Color.LIGHT_GRAY;
 
 	// BUTTONS SHOWN IN VIEWER MODE ONLY
-	/** button to start analysis of the current petrinet */
+	/** Button to start analysis of the current petrinet. */
 	private JButton analyseButton;
-	/** set petrinet to initial markings */
+	/** Set petrinet to initial markings. */
 	private JButton restartButton;
-	/** open the editro */
+	/** Open the editor. */
 	private JButton openEditorButton;
-	/** reset the reachability graph (and therefore the petrinet) */
+	/** Reset the reachability graph (and therefore the petrinet). */
 	private JButton resetButton;
-	/** undo last step -> is highlighted when there are steps to undo */
+	/** Undo last step -> is highlighted when there are steps to undo. */
 	private ToolbarButton undoButton;
-	/** redo last step -> is highlighted when there are steps to redo */
+	/** Redo last step -> is highlighted when there are steps to redo. */
 	private ToolbarButton redoButton;
-	/** clear the text area in the main frame */
+	/** Clear the text area in the main frame. */
 	private JButton clearTextButton;
-	/** zoom into the reachability graph */
+	/** Zoom into the reachability graph. */
 	private JButton zoomInReachabilityButton;
-	/** zoom out of the reachability graph */
+	/** Zoom out of the reachability graph. */
 	private JButton zoomOutReachabilityButton;
-	/** choose tree layout for reachability graph */
+	/** Choose tree layout for reachability graph. */
 	private ToolbarButton toggleTreeLayoutButton;
-	/** choose circle layout for reachability graph */
+	/** Choose circle layout for reachability graph. */
 	private ToolbarButton toggleCircleLayoutButton;
-	/** choose auto layout for reachability graph */
+	/** Choose auto layout for reachability graph. */
 	private ToolbarButton toggleAutoLayoutButton;
-	/** */
+	/** Change the look and feel. */
 	private JButton changeLookAndFeelButton;
 
 	// BUTTONS SHOWN IN EDITOR MODE ONLY
 
-	/** add a new place to the petrinet */
+	/** Add a new place to the petrinet. */
 	private JButton addPlaceButton;
-	/** add new transition to the petrinet */
+	/** Add new transition to the petrinet. */
 	private JButton addTransitionButton;
-	/** delete marked component */
+	/** Delete marked component. */
 	private JButton deleteComponentButton;
 	/**
-	 * add a new edge to the petrinet -> is highlighted while adding and is reset
-	 * when the adding process is done
+	 * Add a new edge to the petrinet -> is highlighted while adding and is reset
+	 * when the adding process is done.
 	 */
 	private ToolbarButton addEdgeButton;
-	/** remove an edge from the petrinet */
+	/** Remove an edge from the petrinet. */
 	private ToolbarButton removeEdgeButton;
 	/**
-	 * add a label to an element -> is highlighted while removing and is reset when
-	 * the adding process is done
+	 * Add a label to an element -> is highlighted while removing and is reset when
+	 * the adding process is done.
 	 */
 	private JButton addLabelButton;
-	/** close the editor */
+	/** Close the editor. */
 	private JButton closeEditorButton;
 
 	/**
-	 * keeps track of the place in the BorderLayout of the main frame where the
-	 * toolbar is docked to
+	 * Keeps track of the place in the BorderLayout of the main frame where the
+	 * toolbar is docked to.
 	 */
 	private String dockingPlace = BorderLayout.NORTH;
 
 	/**
 	 * Instantiates a new petrinet toolbar.
 	 *
-	 * @param mainController The controller controlling the toolbar.
+	 * @param mainController the controller controlling the toolbar
 	 */
 	PetrinetToolbar(PetrinetToolbarController mainController, JFrame parent) {
 
@@ -295,7 +296,7 @@ public class PetrinetToolbar extends JToolBar {
 				"Reset the petrinet graph", "Reset p");
 
 		JButton zoomInButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomInPetrinet(),
-				"Zoom in into petrinet", "zoom in");
+				"Zoom into petrinet", "zoom in");
 
 		JButton zoomOutButton = new ToolbarButton(ToolbarImage.ZOOM_OUT, e -> mainController.onZoomOutPetrinet(),
 				"Zoom out of petrinet", "zoom out");
@@ -349,7 +350,7 @@ public class PetrinetToolbar extends JToolBar {
 				"Clear text area", "clear");
 
 		zoomInReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_IN, e -> mainController.onZoomInReachability(),
-				"Zoom in into reachability graph", "zoom in");
+				"Zoom into reachability graph", "zoom in");
 
 		zoomOutReachabilityButton = new ToolbarButton(ToolbarImage.ZOOM_OUT,
 				e -> mainController.onZoomOutReachability(), "Zoom out of reachability graph", "zoom out");
@@ -435,7 +436,7 @@ public class PetrinetToolbar extends JToolBar {
 	/**
 	 * Sets the toolbar mode. Buttons are set visible / invisible according to mode.
 	 *
-	 * @param toolbarMode The mode the toolbar is set to.
+	 * @param toolbarMode the mode the toolbar is set to
 	 */
 	public void setToolbarMode(ToolbarMode toolbarMode) {
 
@@ -498,7 +499,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle add edge button. If it is highlighted unmark it. Is synchronized with
+	 * Toggles add edge button. If it is highlighted unmark it. Is synchronized with
 	 * remove edge button -> only one can be hightlighted at a time.
 	 */
 	public void toggleAddEdgeButton() {
@@ -517,7 +518,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle remove edge button. If it is highlighted unmark it. Is synchronized
+	 * Toggles remove edge button. If it is highlighted unmark it. Is synchronized
 	 * with add edge button -> only one can be hightlighted at a time.
 	 */
 	public void toggleRemoveEdgeButton() {
@@ -537,7 +538,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle tree layout button. Activate auto tree if not active and highlight
+	 * Toggles tree layout button. Activate auto tree if not active and highlight
 	 * button. Synchronizes with toggle circle / auto layout buttons -> only one can
 	 * be highlighted at a time.
 	 */
@@ -556,7 +557,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle circle layout button. Activate circle layout if not active and
+	 * Toggles circle layout button. Activate circle layout if not active and
 	 * highlight button. Synchronizes with toggle auto / tree layout buttons -> only
 	 * one can be highlighted at a time.
 	 */
@@ -575,7 +576,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle auto layout button. Activate auto layout if not active and highlight
+	 * Toggles auto layout button. Activate auto layout if not active and highlight
 	 * button. Synchronizes with toggle circle / tree layout buttons -> only one can
 	 * be highlighted at a time.
 	 */
@@ -612,8 +613,8 @@ public class PetrinetToolbar extends JToolBar {
 	 * Sets the toolbar to the given panels state. Un- / redo buttons, add / remove
 	 * edge buttons and layout buttons are highlighted accordingly.
 	 *
-	 * @param petrinetPanel The panel the toolbar represents.
-	 * @param layoutType    The layoutType used.
+	 * @param petrinetPanel the panel the toolbar represents
+	 * @param layoutType    the layoutType used
 	 */
 	public void setToolbarTo(PetrinetPanelInterface petrinetPanel, LayoutType layoutType) {
 
@@ -668,9 +669,11 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle redo button. If it is not highlighted, highlight it. Set to default
+	 * Toggles redo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
-	 * @param highlight If true, buttons are highlighted, highlighting removed otherwise.
+	 * 
+	 * @param highlight if true, buttons are highlighted, highlighting removed
+	 *                  otherwise
 	 */
 	public void setRedoButton(boolean highlight) {
 
@@ -681,10 +684,10 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggle undo button. If it is not highlighted, highlight it. Set to default
+	 * Toggles undo button. If it is not highlighted, highlight it. Set to default
 	 * color otherwise.
 	 * 
-	 * @param highlight True if undo button is highlighted.
+	 * @param highlight true if undo button is highlighted
 	 */
 	public void setUndoButton(boolean highlight) {
 		if (highlight)
@@ -703,8 +706,8 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	* Reset the un-/redo buttons to not be highlighted.
-	*/
+	 * Reset the un-/redo buttons to not be highlighted.
+	 */
 	public void resetUndoRedoButtons() {
 		undoButton.setColor(buttonDefaultColor);
 		redoButton.setColor(buttonDefaultColor);

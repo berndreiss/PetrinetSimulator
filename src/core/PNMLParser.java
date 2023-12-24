@@ -29,9 +29,9 @@ public class PNMLParser extends PNMLWopedParser {
 	/**
 	 * Instantiates a new PNML parser.
 	 *
-	 * @param pnml     the pnml
+	 * @param pnml     the pnml file
 	 * @param petrinet the petrinet
-	 * @throws PetrinetException the petrinet exception
+	 * @throws PetrinetException thrown when adding elements
 	 */
 	public PNMLParser(File pnml, Petrinet petrinet) throws PetrinetException {
 		super(pnml);

@@ -30,7 +30,7 @@ public class LayoutLine {
 	 * overlapping). Code adapted from <a href=
 	 * "https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/">GeeksForGeeks</a>.
 	 *
-	 * @param other The line for which to find intersection.
+	 * @param other the line for which to find intersection
 	 * @return the point where the lines intersect, null if there is no unambiguous
 	 *         single point
 	 */
@@ -63,7 +63,7 @@ public class LayoutLine {
 	}
 
 	/**
-	 * Get the biggest x coordinate on the line.
+	 * Gets the biggest x coordinate on the line.
 	 * 
 	 * @return biggest x coordinate
 	 */
@@ -72,7 +72,7 @@ public class LayoutLine {
 	}
 
 	/**
-	 * Get the smallest x coordinate on the line.
+	 * Gets the smallest x coordinate on the line.
 	 * 
 	 * @return smallest x coordinate
 	 */
@@ -81,7 +81,7 @@ public class LayoutLine {
 	}
 
 	/**
-	 * Get the biggest y coordinate on the line.
+	 * Gets the biggest y coordinate on the line.
 	 * 
 	 * @return biggest y coordinate
 	 */
@@ -90,7 +90,7 @@ public class LayoutLine {
 	}
 
 	/**
-	 * Get the smallest y coordinate on the line.
+	 * Gets the smallest y coordinate on the line.
 	 * 
 	 * @return smallest y coordinate
 	 */

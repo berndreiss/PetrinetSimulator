@@ -96,8 +96,8 @@ public class Layout {
 	/**
 	 * Instantiates a new layout.
 	 *
-	 * @param spriteMan  The sprite manager of the GraphStream graph.
-	 * @param layoutType The custom layout type used.
+	 * @param spriteMan  the sprite manager of the GraphStream graph
+	 * @param layoutType the custom layout type used
 	 */
 	public Layout(SpriteManager spriteMan, LayoutType layoutType) {
 		this.spriteMan = spriteMan;
@@ -110,10 +110,10 @@ public class Layout {
 	 * exist in the layout it is created and an edge is added; if both exist only
 	 * the edge is added.
 	 *
-	 * @param source         The source node for the new edge.
-	 * @param target         The target node for the new edge.
-	 * @param transition     The transition which created the edge.
-	 * @param levelToAddFrom The level from which the transition was fired from.
+	 * @param source         the source node for the new edge
+	 * @param target         the target node for the new edge
+	 * @param transition     the transition which created the edge
+	 * @param levelToAddFrom the level from which the transition was fired from
 	 */
 	public void add(Node source, Node target, Transition transition, int levelToAddFrom) {
 
@@ -205,7 +205,7 @@ public class Layout {
 	 * primarily in accordance with the parent (for more information see
 	 * LayoutNode).
 	 *
-	 * @param node The node to be added.
+	 * @param node the node to be added
 	 */
 	public void addNodeToLevel(LayoutNode node) {
 
@@ -785,9 +785,9 @@ public class Layout {
 	/**
 	 * Removes an edge from the layout.
 	 *
-	 * @param stateSource The source node of the edge.
-	 * @param stateTarget The target node of the edge.
-	 * @param transition  The transition belonging to the edge.
+	 * @param stateSource the source node of the edge
+	 * @param stateTarget the target node of the edge
+	 * @param transition  the transition belonging to the edge
 	 */
 	public void removeEdge(PetrinetState stateSource, PetrinetState stateTarget, Transition transition) {
 
@@ -819,10 +819,10 @@ public class Layout {
 	}
 
 	/**
-	 * Remove a node from the layout. DOES NOT REMOVE EDGES ATTACHED TO THE NODE ->
+	 * Removes a node from the layout. DOES NOT REMOVE EDGES ATTACHED TO THE NODE ->
 	 * NEED TO BE REMOVED MANUALLY.
 	 *
-	 * @param node The node to be removed.
+	 * @param node the node to be removed
 	 */
 	public void removeNode(Node node) {
 
@@ -845,10 +845,10 @@ public class Layout {
 	}
 
 	/**
-	 * Set the layout type. If CIRCLE is already set and passed again it increases
+	 * Sets the layout type. If CIRCLE is already set and passed again it increases
 	 * the circle spread ratio.
 	 *
-	 * @param layoutType The new layout type to be set.
+	 * @param layoutType the new layout type to be set
 	 */
 	public void setLayoutType(LayoutType layoutType) {
 

@@ -17,12 +17,12 @@ public interface PetrinetGraph {
 	PetrinetElement getMarkedNode();
 
 	/**
-	 * Mark the node representing the element if it is has not been selected and
+	 * Marks the node representing the element if it is has not been selected and
 	 * unmark the former marked node (if there was one). If the provided node is
 	 * already marked unmark it. If null is passed unmark the currently marked node.
 	 *
-	 * @param petrinetElement Element for which node should be marked / unmarked
-	 *                        (null -> currently marked node is unmarked).
+	 * @param petrinetElement rlement for which node should be marked / unmarked
+	 *                        (null -> currently marked node is unmarked)
 	 */
 	void toggleNodeMark(PetrinetElement petrinetElement);
 }

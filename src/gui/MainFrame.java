@@ -73,7 +73,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Instantiates a new main frame.
 	 *
-	 * @param title Title being shown in the title bar.
+	 * @param title title being shown in the title bar
 	 */
 	public MainFrame(String title) {
 		super(title);
@@ -171,7 +171,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Prints to the text area in the bottom half of the split pane.
 	 *
-	 * @param text Text to be printed.
+	 * @param text text to be printed
 	 */
 	public void print(String text) {
 		textArea.append(text);
@@ -187,7 +187,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * Sets the status label.
 	 *
-	 * @param status New status label to be set.
+	 * @param status new status label to be set
 	 */
 	public void setStatusLabel(String status) {
 		statusLabel.setText(status);

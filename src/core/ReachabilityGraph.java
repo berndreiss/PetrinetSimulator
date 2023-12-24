@@ -61,9 +61,9 @@ public class ReachabilityGraph {
 	/**
 	 * Instantiates a new reachability graph model.
 	 *
-	 * @param petrinet              The petrinet being linked to the reachability
-	 *                              graph.
-	 * @param toolbarToggleListener The toolbar listener for un-/redo buttons.
+	 * @param petrinet              the petrinet being linked to the reachability
+	 *                              graph
+	 * @param toolbarToggleListener the toolbar listener for un-/redo buttons
 	 */
 	public ReachabilityGraph(Petrinet petrinet, ToolbarChangedListener toolbarToggleListener) {
 
@@ -85,9 +85,9 @@ public class ReachabilityGraph {
 
 			@Override
 			public void onPetrinetChanged(Petrinet petrinet) {
-				
+
 				undoQueue = new ReachabilityGraphUndoQueue(ReachabilityGraph.this, toolbarToggleListener);
-			
+
 				makeEmpty();
 				if (initialState != null) {
 					removeState(initialState);
@@ -97,7 +97,7 @@ public class ReachabilityGraph {
 				currentState = null;
 				currentEdge = null;
 				addNewState(petrinet, null);
-				toolbarToggleListener.resetUndoRedoButtons();	
+				toolbarToggleListener.resetUndoRedoButtons();
 			}
 
 		});
@@ -105,7 +105,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Get the states currently in the reachability graph.
+	 * Gets the states currently in the reachability graph.
 	 *
 	 * @return the states in the reachability graph
 	 */
@@ -114,9 +114,9 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Get the state represented by the string.
+	 * Gets the state represented by the string.
 	 *
-	 * @param state The state to get.
+	 * @param state the state to get
 	 * @return the state represented by the string
 	 */
 	public PetrinetState getState(String state) {
@@ -133,7 +133,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Set the current state.
+	 * Sets the current state.
 	 *
 	 * @param petrinetState the new current state
 	 */
@@ -151,9 +151,9 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Set the current edge.
+	 * Sets the current edge.
 	 * 
-	 * @param edge The edge to set active.
+	 * @param edge the edge to set active
 	 */
 	public void setCurrentEdge(String edge) {
 		this.currentEdge = edge;
@@ -164,8 +164,8 @@ public class ReachabilityGraph {
 	/**
 	 * Adds a new state.
 	 *
-	 * @param petrinet   The petrinet for which to add the current state from.
-	 * @param transition The transition that has been fired.
+	 * @param petrinet   the petrinet for which to add the current state from
+	 * @param transition the transition that has been fired
 	 * @return the state that has been added (null if non has been added)
 	 */
 	public PetrinetState addNewState(Petrinet petrinet, Transition transition) {
@@ -227,7 +227,7 @@ public class ReachabilityGraph {
 		// push onto undo queue
 		if (pushing)
 			undoQueue.push(currentState, currentEdge, added, transition, skippableMode);
-		
+
 		return petrinetState;
 
 	}
@@ -241,7 +241,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Check if current state is bounded by backwards checking whether any state is
+	 * Checks if current state is bounded by backwards checking whether any state is
 	 * smaller than the given state (see PetrinetState).
 	 *
 	 * @return true, if state is bounded
@@ -257,30 +257,29 @@ public class ReachabilityGraph {
 
 			// if state exists set invalid state and inform listener
 			if (state != null) {
-				
+
 				invalidState = currentState;
 				currentState.setM(state);
 
 				if (stateChangeListener != null)
 					stateChangeListener.onResetPath();
-				
+
 				List<PetrinetState> pathMMarked = currentState.getPathFromOtherState(state);
-				
-				
+
 				List<PetrinetState> pathM = state.getPathFromOtherState(initialState);
-				
+
 				if (stateChangeListener != null) {
 					if (pathMMarked != null)
-						for (PetrinetState ps: pathMMarked) 
+						for (PetrinetState ps : pathMMarked)
 							stateChangeListener.onAddToPath(ps);
 					if (pathM != null)
-						for (PetrinetState ps: pathM) 
+						for (PetrinetState ps : pathM)
 							stateChangeListener.onAddToPath(ps);
 				}
-				
+
 				if (stateChangeListener != null)
 					stateChangeListener.onMarkUnboundedPath(state, currentState);
-				
+
 				return false;
 			}
 		}
@@ -310,7 +309,7 @@ public class ReachabilityGraph {
 			PetrinetState newState = checkIfStateIsBounded(s, visitedStates, originalState);
 
 			// if state has been found return state
-			if (newState != null) 
+			if (newState != null)
 				return newState;
 		}
 
@@ -319,7 +318,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Set the state change listener.
+	 * Sets the state change listener.
 	 *
 	 * @param reachabilityStateChangeListener the new state change listener
 	 */
@@ -328,7 +327,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Get the invalid state.
+	 * Gets the invalid state.
 	 *
 	 * @return the invalid state
 	 */
@@ -337,7 +336,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Get the initial state.
+	 * Gets the initial state.
 	 *
 	 * @return the initial state
 	 */
@@ -346,7 +345,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Reset the reachability graph.
+	 * Resets the reachability graph.
 	 */
 	public void reset() {
 		// reset undo queue and buttons in the toolbar
@@ -363,7 +362,7 @@ public class ReachabilityGraph {
 		}
 
 	}
-	
+
 	// empty all states and edges except for initial state
 	private void makeEmpty() {
 		// if there are not states return
@@ -399,9 +398,9 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Remove state from reachability graph.
+	 * Removes state from reachability graph.
 	 *
-	 * @param state The state to be removed.
+	 * @param state the state to be removed
 	 */
 	public void removeState(PetrinetState state) {
 
@@ -412,7 +411,7 @@ public class ReachabilityGraph {
 		// handle state being current state
 		if (currentState == state)
 			currentState = null;
-		
+
 		// reset invalid state if it is identical to state
 		if (invalidState == state)
 			invalidState = null;
@@ -430,7 +429,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Set the reachability graph to the initial state.
+	 * Sets the reachability graph to the initial state.
 	 */
 	public void setInitial() {
 		setCurrentState(initialState);
@@ -438,11 +437,11 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Remove an edge.
+	 * Removes an edge.
 	 *
-	 * @param source     The source state of the edge
-	 * @param target     The target state of the edge.
-	 * @param transition The transition that has been fired.
+	 * @param source     the source state of the edge
+	 * @param target     the target state of the edge
+	 * @param transition the transition that has been fired
 	 */
 	void removeEdge(PetrinetState source, PetrinetState target, Transition transition) {
 		target.removePredecessorEdge(source, transition, stateChangeListener);
@@ -452,7 +451,7 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Get current edge.
+	 * Gets current edge.
 	 * 
 	 * @return the current edge
 	 */
@@ -462,7 +461,7 @@ public class ReachabilityGraph {
 
 	/**
 	 * 
-	 * Get the petrinet associated with the reachability graph.
+	 * Gets the petrinet associated with the reachability graph.
 	 * 
 	 * @return the petrinet
 	 */
@@ -481,9 +480,9 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Set the undo queue.
+	 * Sets the undo queue.
 	 * 
-	 * @param undoQueue The queue to be set.
+	 * @param undoQueue the queue to be set
 	 */
 	public void setPetrinetQueue(ReachabilityGraphUndoQueue undoQueue) {
 		this.undoQueue = undoQueue;
@@ -493,7 +492,8 @@ public class ReachabilityGraph {
 	 * If set true all changes made to the reachability graph are flagged as
 	 * skippable an will be skipped when re-/undoing changes. False by default.
 	 * 
-	 * @param skippableMode If true, added steps are flagged skippable in the undo queue.
+	 * @param skippableMode if true, added steps are flagged skippable in the undo
+	 *                      queue
 	 */
 	public void setSkippableMode(boolean skippableMode) {
 		this.skippableMode = skippableMode;
@@ -502,7 +502,7 @@ public class ReachabilityGraph {
 	/**
 	 * When set to true all changes are pushed onto the undo queue. True by default.
 	 * 
-	 * @param pushing If true, changes will not be pushed to the undo queue.
+	 * @param pushing if true, changes will be pushed to the undo queue
 	 */
 	public void setPushing(boolean pushing) {
 		this.pushing = pushing;

@@ -21,7 +21,7 @@ import java.util.TreeMap;
 public class IterableMap<K, V> implements Map<K, V>, Iterable<V> {// does not extend specific Map so it can represent
 																	// Hash- and TreeMap
 
-	/** the internal map */
+	/** The internal map. */
 	private Map<K, V> internalMap;
 
 	/**
@@ -34,36 +34,38 @@ public class IterableMap<K, V> implements Map<K, V>, Iterable<V> {// does not ex
 	/**
 	 * Instantiates a new iterable TreeMap with sorted keys.
 	 *
-	 * @param comparator The comparator for sorting keys.
+	 * @param comparator the comparator for sorting keys
 	 */
 	public IterableMap(Comparator<K> comparator) {
 		internalMap = new TreeMap<K, V>(comparator);
 	}
-	
+
 	/**
 	 * Creates a copy of the given map.
+	 * 
 	 * @return a copy of the given map
 	 */
-	public IterableMap<K,V> copy(){
-		IterableMap<K,V> newMap = new IterableMap<K, V>();
-		for (K k: internalMap.keySet())
+	public IterableMap<K, V> copy() {
+		IterableMap<K, V> newMap = new IterableMap<K, V>();
+		for (K k : internalMap.keySet())
 			newMap.put(k, internalMap.get(k));
 		return newMap;
 	}
 
 	/**
 	 * Converts given map to HashSet.
+	 * 
 	 * @return the map as Set
 	 */
 	public Set<V> castToSet() {
 		Set<V> set = new HashSet<V>();
-		
-		for (V v: this)
+
+		for (V v : this)
 			set.add(v);
-		
+
 		return set;
 	}
-	
+
 	@Override
 	public Iterator<V> iterator() {
 		return new CustomIterator<V>(this);

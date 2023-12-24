@@ -7,29 +7,29 @@ import java.awt.Dimension;
  * Class representing a rectangle.
  * </p>
  */
-public class LayoutRectangle extends AbstractLayoutRectangle implements LayoutPointInterface{
-	
-	/** the coordinates of the center */
+public class LayoutRectangle extends AbstractLayoutRectangle implements LayoutPointInterface {
+
+	/** The coordinates of the center. */
 	private double x, y;
-	
-	/**  */
+
+	/** The size size of the center. */
 	private Dimension POINT_SIZE;
-	
+
 	/**
-	 * Instantiates a new layout point.
+	 * Instantiates a new LayoutRectangle.
 	 *
 	 * @param x the x
 	 * @param y the y
 	 */
-	LayoutRectangle(double x, double y){
+	LayoutRectangle(double x, double y) {
 		this(x, y, Layout.NODE_SIZE);
 	}
 
 	/**
-	 * Instantiates a new layout point.
+	 * Instantiates a new LayoutRectangle.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x         the x
+	 * @param y         the y
 	 * @param dimension the dimension
 	 */
 	LayoutRectangle(double x, double y, Dimension dimension) {
@@ -77,7 +77,6 @@ public class LayoutRectangle extends AbstractLayoutRectangle implements LayoutPo
 	public LayoutPoint rightUpperCorner() {
 		return new LayoutPoint(x + POINT_SIZE.getWidth() / 2, y + POINT_SIZE.getHeight() / 2);
 	}
-
 
 	@Override
 	public double getX() {

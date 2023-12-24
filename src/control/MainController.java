@@ -46,8 +46,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private MainFrame mainFrame;
 	/** The petrinet panel that is currently loaded. */
 	private PetrinetPanelInterface currentPetrinetPanel;
-//	/** Keeps track of whether a tab has been added. */
-//	private boolean tabAdded;//TODO remove?
 	/** The layout type currently in use. */
 	private LayoutType layoutType = LayoutType.TREE;
 	/** The toolbar mode. */
@@ -63,7 +61,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	public MainController(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 
-		// set default dirctory
+		// set default directory
 		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		// set status label
 		setStatusLabel();
@@ -74,13 +72,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-
-//				if (tabAdded) {//TODO remove?
-//					tabAdded = false;// prevent component at selected index to update editorToolbar with outdated
-//										// instance of PetrinetPanel and therefore highlighting buttons that should not
-//										// be highlighted
-//					return;
-//				}
 
 				// get the selected tab
 				JTabbedPane tabbedPane = mainFrame.getTabbedPane();
@@ -112,7 +103,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	// GETTER METHODS
 
 	/**
-	 * Get the frame.
+	 * Gets the main frame.
 	 *
 	 * @return the frame
 	 */
@@ -121,7 +112,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	/**
-	 * Get the current panel.
+	 * Gets the current panel.
 	 *
 	 * @return the current panel
 	 */
@@ -130,7 +121,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	/**
-	 * Get the layout type.
+	 * Gets the layout type.
 	 *
 	 * @return the layout type
 	 */
@@ -181,8 +172,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	// set up a new panel
 	private void setNewPanel(File file, boolean newTab) {
-
-//		tabAdded = true;//TODO remove?
 
 		// ask if changes should be saved, on abort return
 		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
@@ -671,7 +660,6 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	// EDITOR RELATED METHODS
-	// TODO save alert on previous / next / open
 	@Override
 	public void onIncrement() {
 

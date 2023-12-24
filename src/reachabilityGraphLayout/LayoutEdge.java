@@ -8,7 +8,8 @@ import org.graphstream.ui.spriteManager.Sprite;
  * </p>
  * 
  * <p>
- * Because it contains a GraphStream sprite it extends the abstract rectangle class.
+ * Because it contains a GraphStream sprite it extends the abstract rectangle
+ * class.
  * </p>
  */
 public class LayoutEdge extends AbstractLayoutRectangle {
@@ -25,9 +26,9 @@ public class LayoutEdge extends AbstractLayoutRectangle {
 	/**
 	 * Instantiates a new layout edge.
 	 *
-	 * @param source The source node.
-	 * @param target The target node.
-	 * @param sprite The sprite from GraphStream.
+	 * @param source the source node
+	 * @param target the target node
+	 * @param sprite the sprite from GraphStream
 	 */
 	LayoutEdge(LayoutNode source, LayoutNode target, Sprite sprite) {
 		this.source = source;
@@ -76,7 +77,8 @@ public class LayoutEdge extends AbstractLayoutRectangle {
 	}
 
 	/**
-	 * Get the length calculated using Pythagorean Theorem: the square root of (x_2-x_1)^2 + (y_2-y_1)^2.
+	 * Gets the length calculated using Pythagorean Theorem: the square root of
+	 * (x_2-x_1)^2 + (y_2-y_1)^2.
 	 *
 	 * @return the length of the edge
 	 */
@@ -85,7 +87,8 @@ public class LayoutEdge extends AbstractLayoutRectangle {
 	}
 
 	/**
-	 * Get the edge as an instance of LayoutLine.
+	 * Gets the edge as an instance of LayoutLine.
+	 * 
 	 * @return the edge as a layout line
 	 */
 	public LayoutLine getEdgeLine() {

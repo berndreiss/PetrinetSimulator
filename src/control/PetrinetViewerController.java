@@ -42,12 +42,13 @@ public class PetrinetViewerController {
 	/**
 	 * Instantiates a new petrinet controller.
 	 *
-	 * @param file            The file that is loaded.
-	 * @param toolbarListener Listener for highlighting toolbar buttons.
-	 * @param toolbarMode toolbar mode to be used
-	 * @throws PetrinetException Thrown by PNMLParser.
+	 * @param file            the file that is loaded
+	 * @param toolbarListener listener for highlighting toolbar buttons
+	 * @param toolbarMode     toolbar mode to be used
+	 * @throws PetrinetException thrown by PNMLParser
 	 */
-	public PetrinetViewerController(File file, ToolbarChangedListener toolbarListener, ToolbarMode toolbarMode) throws PetrinetException {
+	public PetrinetViewerController(File file, ToolbarChangedListener toolbarListener, ToolbarMode toolbarMode)
+			throws PetrinetException {
 		this.file = file;
 		this.petrinet = new Petrinet();
 
@@ -65,7 +66,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Get the reachability undo queue.
+	 * Gets the reachability undo queue.
 	 *
 	 * @return the reachability undo queue
 	 */
@@ -74,7 +75,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Get the petrinet.
+	 * Gets the petrinet.
 	 *
 	 * @return the petrinet
 	 */
@@ -83,7 +84,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Get the reachability graph model.
+	 * Gets the reachability graph model.
 	 *
 	 * @return the reachability graph model
 	 */
@@ -92,7 +93,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Reset the petrinet -> sets it to the initial state. The initial state is
+	 * Resets the petrinet -> sets it to the initial state. The initial state is
 	 * reset when petrinet is modified.
 	 */
 	public void resetPetrinet() {
@@ -102,7 +103,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Get the current file.
+	 * Gets the current file.
 	 *
 	 * @return the current file
 	 */
@@ -111,7 +112,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Reset the reachability graph. Also resets the petrinet to the initial state.
+	 * Resets the reachability graph. Also resets the petrinet to the initial state.
 	 */
 	public void resetReachabilityGraph() {
 		petrinet.setState(reachabilityGraphModel.getInitialState());
@@ -120,7 +121,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Analyse the petrinet.
+	 * Analyses the petrinet.
 	 *
 	 * @return the petrinet analyser
 	 */
@@ -132,7 +133,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Return whether file has been changed.
+	 * Returns whether file has been changed.
 	 *
 	 * @return true, if file has been changed
 	 */
@@ -141,7 +142,7 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Write changes to the file.
+	 * Writes changes to the file.
 	 */
 	public void writeToFile() {
 		if (file == null)// safety check
@@ -150,9 +151,9 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Write changes to the file provided.
+	 * Writes changes to the file provided.
 	 *
-	 * @param file The file changes are written to.
+	 * @param file the file changes are written to
 	 */
 	public void writeToFile(File file) {
 
@@ -184,20 +185,20 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Set file changed.
+	 * Sets file changed.
 	 *
-	 * @param changed True, if file has been modified.
+	 * @param changed true, if file has been modified
 	 */
 	public void setFileChanged(boolean changed) {
 		fileChanged = changed;
 	}
 
 	/**
-	 * Update the coordinates of an element.
+	 * Updates the coordinates of an element.
 	 * 
-	 * @param id Id of the element.
-	 * @param x  The new x.
-	 * @param y  The new y.
+	 * @param id id of the element
+	 * @param x  the new x
+	 * @param y  the new y
 	 */
 	public void onPetrinetNodeDragged(String id, double x, double y) {
 
@@ -216,10 +217,10 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Handle clicks in the reachability graph -> sets petrinet to the state that
+	 * Handles clicks in the reachability graph -> sets petrinet to the state that
 	 * has been clicked and updates reachability graph model.
 	 * 
-	 * @param id Element that has been clicked.
+	 * @param id element that has been clicked
 	 */
 	public void onReachabilityGraphNodeClicked(String id) {
 		PetrinetState state = reachabilityGraphModel.getState(id);
@@ -229,11 +230,11 @@ public class PetrinetViewerController {
 	}
 
 	/**
-	 * Handle clicks in the petrinet graph -> if the element was a transition, fire
+	 * Handles clicks in the petrinet graph -> if the element was a transition, fire
 	 * it; otherwise return element for graph to handle it.
 	 * 
-	 * @param id Element that has been clicked.
-	 * @return The element, if it was of type Place, null otherwise (or also if it
+	 * @param id dlement that has been clicked
+	 * @return the element, if it was of type Place, null otherwise (or also if it
 	 *         hasn't been found).
 	 */
 	public PetrinetElement onPetrinetNodeClicked(String id) {

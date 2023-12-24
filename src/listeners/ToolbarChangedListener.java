@@ -2,8 +2,8 @@ package listeners;
 
 /**
  * <p>
- * The listener interface for receiving events that need to set certain
- * buttons of the toolbar.
+ * The listener interface for receiving events that need to set certain buttons
+ * of the toolbar.
  * </p>
  *
  * <p>
@@ -26,7 +26,7 @@ public interface ToolbarChangedListener {
 	 * The state of being able to redo steps has changed and the button needs to be
 	 * set.
 	 * 
-	 * @param highlight True, if button should be highlighted.
+	 * @param highlight true, if button should be highlighted
 	 */
 	void onSetRedoButton(boolean highlight);
 
@@ -34,12 +34,12 @@ public interface ToolbarChangedListener {
 	 * The state of being able to undo steps has changed and the button needs to be
 	 * set.
 	 * 
-	 * @param highlight True, if button should be highlighted.
+	 * @param highlight true, if button should be highlighted
 	 */
 	void onSetUndoButton(boolean highlight);
 
 	/**
-	 * Reset the buttons for un-/redo -> remove highlight.
+	 * Resets the buttons for un-/redo -> remove highlight.
 	 */
 	void resetUndoRedoButtons();
 }

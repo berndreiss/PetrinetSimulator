@@ -69,7 +69,7 @@ public class Transition extends PetrinetElement {
 	}
 
 	/**
-	 * Check if transition is activated.
+	 * Checks if transition is activated.
 	 *
 	 * @return true, if is activated
 	 */
@@ -78,16 +78,16 @@ public class Transition extends PetrinetElement {
 	}
 
 	/**
-	 * Check the activation status and update it.
+	 * Checks the activation status and update it.
 	 */
 	public void updateActivationStatus() {
 		setActivated(checkActivated());
 	}
 
 	/**
-	 * Set the transition state listener.
+	 * Sets the transition state listener.
 	 *
-	 * @param transitionStateListener The new transition state listener.
+	 * @param transitionStateListener the new transition state listener
 	 */
 	public void setTransitionStateListener(TransitionStateListener transitionStateListener) {
 		this.transitionStateListener = transitionStateListener;
@@ -109,7 +109,7 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Adds a place to the set of input places (preset).
 	 * 
-	 * @param place Place to be added as input.
+	 * @param place place to be added as input
 	 */
 	public void addInput(Place place) {
 
@@ -129,7 +129,7 @@ public class Transition extends PetrinetElement {
 			return;
 
 		this.activated = activated;
-		
+
 		// inform the state change listener
 		if (transitionStateListener != null)
 			transitionStateListener.onStateChanged();
@@ -138,13 +138,13 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Adds a place to the set of output places (postset).
 	 * 
-	 * @param place Place to be added as an output.
+	 * @param place place to be added as an output
 	 */
 	public void addOutput(Place place) {
 		if (outputs.containsKey(place.getId()))
 			return;
 		outputs.put(place.getId(), place);
-		
+
 		// synchronize place
 		place.addInput(this);
 	}
@@ -170,16 +170,16 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Removes a place from the inputs (preset).
 	 *
-	 * @param place The place to be removed.
+	 * @param place the place to be removed
 	 */
 	void removeInput(Place place) {
 		if (!inputs.containsKey(place.getId()))
 			return;
 		inputs.remove(place.getId());
-		
+
 		// activation status might have changed
 		updateActivationStatus();
-		
+
 		// synchronize place
 		place.removeOutput(this);
 
@@ -188,13 +188,13 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Removes a place from the outputs (postset).
 	 *
-	 * @param place The place to be removed.
+	 * @param place the place to be removed
 	 */
 	void removeOutput(Place place) {
 		if (!outputs.containsKey(place.getId()))
 			return;
 		outputs.remove(place.getId());
-		
+
 		// synchronize place
 		place.removeInput(this);
 	}

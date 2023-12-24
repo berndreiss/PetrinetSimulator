@@ -19,62 +19,62 @@ public interface PetrinetMenuController {
 	void onNew();
 
 	/**
-	 * Open a dialog to choose a pnml file from which to load a petrinet.
+	 * Opens a dialog to choose a pnml file from which to load a petrinet.
 	 */
 	void onOpen();
 
 	/**
-	 * Open a dialog to choose a pnml file from which to load a petrinet and open it
-	 * in a new tab.
+	 * Opens a dialog to choose a pnml file from which to load a petrinet and open
+	 * it in a new tab.
 	 */
 	void onOpenInNewTab();
-	
+
 	/**
-	 * Save changes to the file the petrinet has been opened from.
+	 * Saves changes to the file the petrinet has been opened from.
 	 */
 	void onSave();
 
 	/**
-	 * Open a dialog to choose a directory and file name to save the current
+	 * Opens a dialog to choose a directory and file name to save the current
 	 * petrinet to.
 	 */
 	void onSaveAs();
 
 	/**
-	 * Reload the contents of the currently opened file.
+	 * Reloads the contents of the currently opened file.
 	 */
 	void onReload();
 
 	/**
-	 * Open a dialog to choose (multiple) pnml file(s) to analyse. The results are
+	 * Opens a dialog to choose (multiple) pnml file(s) to analyse. The results are
 	 * printed in the text area of {@link MainFrame}.
 	 */
 	void onAnalyseMany();
 
 	/**
-	 * Close the currently opened file.
+	 * Closes the currently opened file.
 	 */
 	void onClose();
 
 	/**
-	 * Exit the program.
+	 * Exits the program.
 	 */
 	void onExit();
 
 	// METHODS FOR EDIT
 
 	/**
-	 * Open the {@link PetrinetEditorController}.
+	 * Opens the {@link PetrinetEditorController}.
 	 */
 	void onOpenEditor();
 
 	/**
-	 * Close the {@link PetrinetEditorController}.
+	 * Closes the {@link PetrinetEditorController}.
 	 */
 	void onCloseEditor();
 
 	/**
-	 * Change between the {@link LookAndFeel} "Nimbus" (default) and "Metal" (java
+	 * Changes between the {@link LookAndFeel} "Nimbus" (default) and "Metal" (java
 	 * default).
 	 */
 
@@ -83,7 +83,7 @@ public interface PetrinetMenuController {
 	// METHODS FOR HELP
 
 	/**
-	 * Open an info box showing java version and user directory used.
+	 * Opens an info box showing java version and user directory used.
 	 */
 	void onInfo();
 
@@ -92,7 +92,6 @@ public interface PetrinetMenuController {
 	 */
 	void enableAutomaticBoundednessCheck();
 
-	
 	/**
 	 * Disables automatic checks for boundedness.
 	 */

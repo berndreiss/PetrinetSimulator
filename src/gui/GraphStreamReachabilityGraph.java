@@ -34,7 +34,6 @@ import reachabilityGraphLayout.LayoutType;
  */
 public class GraphStreamReachabilityGraph extends MultiGraph {
 
-	// TODO removing states does not maintain m and m'
 	/** The CSS file for the GraphStream graph */
 	private String CSS_FILE = "url(" + getClass().getResource("/resources/reachability_graph.css") + ")";
 	/**
@@ -77,8 +76,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	/**
 	 * Instantiates a new reachability graph.
 	 *
-	 * @param reachabilityGraphModel The model the graph represents.
-	 * @param layoutType             The layout type the graph is set to.
+	 * @param reachabilityGraphModel the model the graph represents
+	 * @param layoutType             the layout type the graph is set to
 	 * @param showBoundedness        determines whether boundedness is shown or not
 	 * @param pathShown              true, it reachability graph is not empty and
 	 *                               path has been shown before
@@ -189,7 +188,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 					highlightPath();
 					updateBoundednessHighlighting = false;
 				}
-	
+
 				addState(state, predecessor, t, true);
 
 				// reset arrow heads
@@ -233,13 +232,13 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			}
 
 		});
-		// add existing states and edges in the right order until encountering current state
+		// add existing states and edges in the right order until encountering current
+		// state
 		while (queue.getCurrentState() != currentState && queue.goForward()) {
 		}
 
-
 		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
-		
+
 		// handle reachability graphs that are unbounded
 		if (invalidState != null) {
 			// get the nodes m and m' and highlight them
@@ -255,7 +254,6 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 				nodesOnPath.add(getNode(ps.getState()));
 			}
 
-		
 			// highlight path
 			if (showBoundedness || pathShown) {
 				boolean boundednessOld = showBoundedness;
@@ -263,7 +261,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 				highlightPath();
 				this.showBoundedness = boundednessOld;
 			}
-			
+
 		}
 
 	}
@@ -568,8 +566,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	/**
 	 * Sets listener providing methods for adjusting arrowheads.
 	 *
-	 * @param AdjustArrowHeadsListener Listener for instances where arrow heads need
-	 *                                 to be adjusted.
+	 * @param AdjustArrowHeadsListener listener for instances where arrow heads need
+	 *                                 to be adjusted
 	 */
 	public void setAdjustArrowHeadsListener(AdjustArrowHeadsListener AdjustArrowHeadsListener) {
 		this.adjustArrowHeadsListener = AdjustArrowHeadsListener;
@@ -585,7 +583,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	/**
 	 * Sets the layout type.
 	 *
-	 * @param layoutType The new layout type.
+	 * @param layoutType the new layout type
 	 */
 	public void setLayoutType(LayoutType layoutType) {
 		this.layoutType = layoutType;
@@ -605,7 +603,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	}
 
 	/**
-	 * Check whether graph has less than two nodes.
+	 * Checks whether graph has less than two nodes.
 	 * 
 	 * @return true if 0 or 1 nodes, false otherwise
 	 */
@@ -627,7 +625,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 
 	// highlight nodes m, m' and path
 	private void highlightPath() {
-		
+
 		if (nodeM != null)
 			setHighlight(nodeM);
 
@@ -639,7 +637,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	}
 
 	/**
-	 * Get whether boundedness is shown in graph.
+	 * Gets whether boundedness is shown in graph.
 	 * 
 	 * @return true if boundedness is shown
 	 */
@@ -647,18 +645,20 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		return showBoundedness;
 
 	}
+
 	/**
 	 * 
-	 * Gets whether path is currently shown or not.
-	 * returns true if path is shown
+	 * Gets whether path is currently shown or not. returns true if path is shown
+	 * 
 	 * @return true, if path is shown
 	 */
 	public boolean pathShown() {
 		if (nodeM == null)
 			return false;
-		
+
 		String mClass = (String) nodeM.getAttribute("ui.class");
-		if (mClass.equals("initial_m") || mClass.equals("initial_m_highlight") || mClass.equals("m") || mClass.equals("m_highlight"))
+		if (mClass.equals("initial_m") || mClass.equals("initial_m_highlight") || mClass.equals("m")
+				|| mClass.equals("m_highlight"))
 			return true;
 		return false;
 	}

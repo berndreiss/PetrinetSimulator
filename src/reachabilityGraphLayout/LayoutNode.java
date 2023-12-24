@@ -33,10 +33,10 @@ public class LayoutNode extends AbstractLayoutRectangle {
 	/**
 	 * Instantiates a new layout node.
 	 *
-	 * @param node   The GraphStream node.
-	 * @param parent The parent layout node.
-	 * @param level  The level in the layout hierarchy.
-	 * @param layout The layout instance the node is in.
+	 * @param node   the GraphStream node
+	 * @param parent the parent layout node
+	 * @param level  the level in the layout hierarchy
+	 * @param layout the layout instance the node is in
 	 */
 	LayoutNode(Node node, LayoutNode parent, int level, Layout layout) {
 		this.node = node;
@@ -49,7 +49,7 @@ public class LayoutNode extends AbstractLayoutRectangle {
 	}
 
 	/**
-	 * Get the GraphStream node.
+	 * Gets the GraphStream node.
 	 * 
 	 * @return the GraphStream node
 	 */
@@ -58,7 +58,7 @@ public class LayoutNode extends AbstractLayoutRectangle {
 	}
 
 	/**
-	 * Get a tag for the node. The tag consists of the parent tag (if the parent !=
+	 * Gets a tag for the node. The tag consists of the parent tag (if the parent !=
 	 * null) plus the own index. Nodes in each level can then be sorted by their
 	 * parent and own index so that nodes are closer to their parent creating less
 	 * intersections between edges.

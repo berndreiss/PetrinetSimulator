@@ -9,7 +9,7 @@ public class Main {
 	/**
 	 * The main method: starts an instance of {@link MainFrame}.
 	 *
-	 * @param args Not used.
+	 * @param args not used
 	 */
 	public static void main(String[] args) {
 

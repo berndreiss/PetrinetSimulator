@@ -61,49 +61,49 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	/** Toolbar mode (EDITOR / VIEWER) the panel is in. By default set to VIEWER. */
 	private ToolbarMode toolbarMode = ToolbarMode.VIEWER;
 
-	/** split pane holding petrinet and reachability graph */
+	/** Split pane holding petrinet and reachability graph. */
 	private ResizableSplitPane graphSplitPane;
 
-	/** */
+	/** A GraphStream implementation of PetrinetGraph. */
 	private GraphStreamPetrinetGraph petrinetGraph;
-	/** */
+	/** A GraphStream implementation of ReachabilityGraph. */
 	private GraphStreamReachabilityGraph reachabilityGraph;
 
 	/**
-	 * panel for the petrinet -> if the view panel for the GraphStream graph is not
-	 * put inside another panel the layout is unstable
+	 * Panel for the petrinet -> if the view panel for the GraphStream graph is not
+	 * put inside another panel the layout is unstable.
 	 */
 	private JPanel petrinetPanel;
 
 	/**
-	 * panel for the reachability graph -> if the view panel for the GraphStream
-	 * graph is not put inside another panel the layout is unstable
+	 * Panel for the reachability graph -> if the view panel for the GraphStream
+	 * graph is not put inside another panel the layout is unstable.
 	 */
 	private JPanel reachabilityPanel;
 
-	/** view panel holding the viewer for the GraphStream graph */
+	/** View panel holding the viewer for the GraphStream graph. */
 	private ViewPanel petrinetViewPanel;
-	/** view panel holding the viewer for the GraphStream graph */
+	/** View panel holding the viewer for the GraphStream graph. */
 	private ViewPanel reachabilityViewPanel;
 
-	/** controller managing the interaction with the data model */
+	/** Controller managing the interaction with the data model. */
 	private PetrinetViewerController petrinetViewerController;
-	/** controller managing the interaction with toolbar and menu */
+	/** Controller managing the interaction with toolbar and menu. */
 	private MainController mainController;
-	/** controller managing changes to the petrinet */
+	/** Controller managing changes to the petrinet. */
 	private PetrinetEditorController editor;
 
 	/**
 	 * Keep track whether arrow head should be adjusted -> takes time which
 	 * accumulates when doing multiple tasks in quick succession (e.g. when
-	 * analyzing a petrinet)
+	 * analyzing a petrinet).
 	 */
 	private boolean adjustArrowHeads = true;
 
 	/**
-	 * keeping track whether it is the first time adjusting the arrow heads since
+	 * Keeping track whether it is the first time adjusting the arrow heads since
 	 * there are problems adjusting them the first time after creating the view
-	 * panel for some reason
+	 * panel for some reason.
 	 */
 	private boolean firstTimeArrowHeadAdjusting = true;
 
@@ -111,15 +111,16 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	 * Instantiates a new petrinet panel.
 	 *
 	 * @param mainController the controller serving as an interface to the main GUI
-	 *                       components.
-	 * @param file           the pnml file from which contents will be loaded. If
-	 *                       null goes into {@link ToolbarMode} EDITOR.
-	 * @param layoutType     the layout type used.
-	 * @param toolbarMode 	 the toolbar mode that is being used 
-	 * @throws PetrinetException If there is a problem reading a file an exception
-	 *                           is thrown.
+	 *                       components
+	 * @param file           the pnml file from which contents will be loaded, if
+	 *                       null goes into {@link ToolbarMode} EDITOR
+	 * @param layoutType     the layout type used
+	 * @param toolbarMode    the toolbar mode that is being used
+	 * @throws PetrinetException if there is a problem reading a file an exception
+	 *                           is thrown
 	 */
-	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode) throws PetrinetException {
+	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode)
+			throws PetrinetException {
 
 		this.toolbarMode = toolbarMode;
 		this.petrinetViewerController = new PetrinetViewerController(file, mainController, toolbarMode);
@@ -203,16 +204,16 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	/**
 	 * Sets the layout type for the reachability graph.
 	 *
-	 * @param layoutType The new layout type to use with the panel.
+	 * @param layoutType the new layout type to use with the panel
 	 */
 	public void setLayoutType(LayoutType layoutType) {
 
 		// reset the reachability panel if there is a change from or to auto layout,
 		// only update reachability graph otherwise
-		if (layoutType == LayoutType.AUTOMATIC || reachabilityGraph.getLayoutType() == LayoutType.AUTOMATIC) 
+		if (layoutType == LayoutType.AUTOMATIC || reachabilityGraph.getLayoutType() == LayoutType.AUTOMATIC)
 			setReachabilityPanel(layoutType, reachabilityGraph.pathShown());
 
-		 else {
+		else {
 			reachabilityGraph.setLayoutType(layoutType);
 			resetReachabilityZoom();
 
@@ -260,7 +261,7 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 			return;
 		zoomIn(reachabilityViewPanel);
 	}
-	
+
 	@Override
 	public void zoomOutReachability() {
 		// disable zoom if there's only one node in graph, since there are problems with

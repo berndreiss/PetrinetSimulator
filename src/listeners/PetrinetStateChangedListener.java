@@ -21,14 +21,15 @@ public interface PetrinetStateChangedListener {
 	 * When a transition has been fired the reachability graph model has to check
 	 * whether it needs add a node / edge and set its View to the current state.
 	 *
-	 * @param transition The transition that has been fired.
+	 * @param transition the transition that has been fired
 	 */
 	void onTransitionFire(Transition transition);
 
 	/**
-	 * When a component of the petrinet has changed the reachability graph model has to reset itself.
+	 * When a component of the petrinet has changed the reachability graph model has
+	 * to reset itself.
 	 *
-	 * @param petrinet The new petrinet with changed components.
+	 * @param petrinet the new petrinet with changed components
 	 */
 	void onPetrinetChanged(Petrinet petrinet);
 

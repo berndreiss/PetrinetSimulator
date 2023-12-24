@@ -26,22 +26,22 @@ public class ResizableSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 1L;
 
-	/** ratio of the divider -> is updated when divider is moved */
+	/** Ratio of the divider -> is updated when divider is moved. */
 	private double dividerRatio = 0.5;
-	/** the parent container */
+	/** The parent container. */
 	private MainFrame parent;
 	/**
-	 * offset that is considered when toolbar is docked to EAST or WEST of parent
+	 * Offset that is considered when toolbar is docked to EAST or WEST of parent.
 	 */
 	private int toolbarOffSet;
 
 	/**
 	 * Instantiates a new resizable split pane.
 	 *
-	 * @param parent           The parent container.
-	 * @param splitOrientation The split orientation.
-	 * @param left             The left component to be set.
-	 * @param right            The right component to be set.
+	 * @param parent           the parent container
+	 * @param splitOrientation the split orientation
+	 * @param left             the left component to be set
+	 * @param right            the right component to be set
 	 */
 	public ResizableSplitPane(MainFrame parent, int splitOrientation, Component left, Component right) {
 		super(splitOrientation, left, right);
@@ -124,7 +124,7 @@ public class ResizableSplitPane extends JSplitPane {
 	/**
 	 * Sets the right component.
 	 *
-	 * @param comp The new right component.
+	 * @param comp the new right component
 	 */
 	@Override
 	public void setRightComponent(Component comp) {
@@ -148,21 +148,21 @@ public class ResizableSplitPane extends JSplitPane {
 	/**
 	 * Sets the divider ratio.
 	 *
-	 * @param ratio The new divider ratio.
+	 * @param ratio the new divider ratio
 	 */
 	public void setDividerRatio(double ratio) {
 		this.dividerRatio = ratio;
 	}
 
 	/**
-	 * Reset divider.
+	 * Resets the divider.
 	 */
 	public void resetDivider() {
 		initialize();
 	}
 
 	/**
-	 * Get the divider ratio.
+	 * Gets the divider ratio.
 	 * 
 	 * @return the divider ratio
 	 */

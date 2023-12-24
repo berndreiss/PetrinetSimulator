@@ -54,9 +54,8 @@ public class PetrinetState {
 	/**
 	 * Instantiates a new petrinet state.
 	 *
-	 * @param petrinet              The petrinet for which to save the current
-	 *                              state.
-	 * @param stepsFromInitialState Number of steps being taken from initial state.
+	 * @param petrinet              the petrinet for which to save the current state
+	 * @param stepsFromInitialState number of steps being taken from initial state
 	 */
 	PetrinetState(Petrinet petrinet, int stepsFromInitialState) {
 
@@ -70,7 +69,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the state as string.
+	 * Gets the state as string.
 	 *
 	 * @return the state
 	 */
@@ -79,7 +78,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the place tokens.
+	 * Gets the place tokens.
 	 *
 	 * @return the place tokens
 	 */
@@ -88,7 +87,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the number of places.
+	 * Gets the number of places.
 	 *
 	 * @return the number of places
 	 */
@@ -97,7 +96,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the predecessors.
+	 * Gets the predecessors.
 	 *
 	 * @return the predecessors
 	 */
@@ -106,7 +105,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the successors.
+	 * Gets the successors.
 	 *
 	 * @return the successors
 	 */
@@ -115,7 +114,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get the number of steps being taken from the initial state.
+	 * Gets the number of steps being taken from the initial state.
 	 *
 	 * @return number of steps from the initial state
 	 */
@@ -124,10 +123,10 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Add a new successor.
+	 * Adds a new successor.
 	 *
-	 * @param newSuccessor The new successor to be added.
-	 * @param transition   The transition being fired to get to the successor.
+	 * @param newSuccessor the new successor to be added
+	 * @param transition   the transition being fired to get to the successor
 	 * @return true, if successor has been added, false if transition already
 	 *         existed for successor
 	 */
@@ -169,7 +168,7 @@ public class PetrinetState {
 	/**
 	 * Gets the first transition for a given successor.
 	 *
-	 * @param successor The successor for which to return a transition.
+	 * @param successor the successor for which to return a transition
 	 * @return the first transition for successor
 	 */
 	public Transition getFirstSuccessorTransition(PetrinetState successor) {
@@ -184,8 +183,8 @@ public class PetrinetState {
 	/**
 	 * Add a new predecessor.
 	 *
-	 * @param newPredecessor The new predecessor to be added.
-	 * @param transition     The transition being fired to get to the predecessor.
+	 * @param newPredecessor the new predecessor to be added
+	 * @param transition     the transition being fired to get to the predecessor
 	 * @return true, if predecessor has been added, false if transition already
 	 *         existed for predecessor
 	 */
@@ -220,9 +219,9 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Set m -> state marking the start of a path proving that petrinet is unbound.
+	 * Sets m -> state marking the start of a path proving that petrinet is unbound.
 	 *
-	 * @param m                   The start of the path.
+	 * @param m                   the start of the path
 	 * @param stateChangeListener the state change listener
 	 */
 	void setM(PetrinetState m) {
@@ -244,7 +243,7 @@ public class PetrinetState {
 	 * state is bigger than in the other while all other tokens being at least the
 	 * same, return true.
 	 *
-	 * @param other The other state to compare to
+	 * @param other the other state to compare to
 	 * @return true, if all tokens are at least the same and at least one is bigger
 	 */
 	boolean isBiggerThan(PetrinetState other) {
@@ -298,7 +297,7 @@ public class PetrinetState {
 	 * Gets the path from other state if it exists (excluding this and the other
 	 * state), null otherwise.
 	 *
-	 * @param other The other path from which to return path.
+	 * @param other the other path from which to return path
 	 * @return the path from other state
 	 */
 	public List<PetrinetState> getPathFromOtherState(PetrinetState other) {
@@ -314,12 +313,12 @@ public class PetrinetState {
 		for (List<PetrinetState> l : paths) {
 			if (l == null)
 				continue;
-			
+
 			if (list == null) {
 				list = l;
 				continue;
 			}
-			
+
 			if (l.size() < list.size())
 				list = l;
 		}
@@ -369,7 +368,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Check for edges.
+	 * Checks for edges.
 	 *
 	 * @return true, if state has edges
 	 */
@@ -380,7 +379,7 @@ public class PetrinetState {
 	/**
 	 * Removes a predecessor.
 	 *
-	 * @param predecessor         The predecessor state to be removed.
+	 * @param predecessor         the predecessor state to be removed
 	 * @param stateChangeListener the state change listener listening for the
 	 *                            removal of transitions
 	 */
@@ -412,7 +411,7 @@ public class PetrinetState {
 	/**
 	 * Removes a successor.
 	 *
-	 * @param successor           The successor state to be removed.
+	 * @param successor           the successor state to be removed
 	 * @param stateChangeListener the state change listener listening for the
 	 *                            removal of transitions
 	 */
@@ -445,8 +444,8 @@ public class PetrinetState {
 	/**
 	 * Removes a predecessor edge.
 	 *
-	 * @param predecessor         The predecessor of the edge.
-	 * @param transition          The transition of the edge.
+	 * @param predecessor         the predecessor of the edge
+	 * @param transition          the transition of the edge
 	 * @param stateChangeListener the state change listener listening for edge
 	 *                            removals
 	 */
@@ -483,7 +482,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get number of predecessors.
+	 * Gets number of predecessors.
 	 *
 	 * @return the predecessors size
 	 */
@@ -492,7 +491,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get number of successors.
+	 * Gets number of successors.
 	 *
 	 * @return the successors size
 	 */
@@ -501,7 +500,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Remove all predecessors.
+	 * Removes all predecessors.
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
@@ -519,7 +518,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Remove all successors.
+	 * Removes all successors.
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
@@ -537,9 +536,9 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Get transitions one can fire in this state to get to the successor state.
+	 * Gets transitions one can fire in this state to get to the successor state.
 	 * 
-	 * @param successor The target state for which transitions should be returned.
+	 * @param successor the target state for which transitions should be returned
 	 * @return transitions leading to successor state
 	 */
 

@@ -10,10 +10,10 @@ import gui.ResizableSplitPane;
 import gui.ToolbarMode;
 
 /**
-  * <p>
- * An interface for a {@link JPanel} presenting a {@link Petrinet} with its according
- * reachability graph loaded from a file. It serves on the one hand as a
- * intermediary between the main controller and the petrinet controller and on
+ * <p>
+ * An interface for a {@link JPanel} presenting a {@link Petrinet} with its
+ * according reachability graph loaded from a file. It serves on the one hand as
+ * a intermediary between the main controller and the petrinet controller and on
  * the other mediates clicks on the {@link PetrinetGraph} between the
  * {@link PetrinetViewerController} and the {@link PetrinetEditorController}.
  * According to the {@link ToolbarMode} it is currently set to.
@@ -40,7 +40,7 @@ public interface PetrinetPanelInterface {
 	 * If it changes to VIEWER handles marked transitions (since transitions cannot
 	 * be marked in VIEWER mode).
 	 *
-	 * @param toolbarMode The toolbar mode to use.
+	 * @param toolbarMode the toolbar mode to use
 	 */
 	void setToolbarMode(ToolbarMode toolbarMode);
 
@@ -52,17 +52,18 @@ public interface PetrinetPanelInterface {
 	PetrinetEditorController getEditor();
 
 	/**
-	 * Zoom into the petrinet graph.
+	 * Zooms into the petrinet graph.
 	 */
 	void zoomInPetrinet();
+
 	/**
-	 * Zoom out of the petrinet graph.
+	 * Zooms out of the petrinet graph.
 	 */
 	void zoomOutPetrinet();
-	
+
 	/**
 	 * 
-	 * Analyse whether the current petrinet is bounded or unbounded. In the process
+	 * Analyses whether the current petrinet is bounded or unbounded. In the process
 	 * also adjusts the arrow heads in the GraphStream graph.
 	 * 
 	 * @return a petrinet analyser
@@ -71,25 +72,28 @@ public interface PetrinetPanelInterface {
 	PetrinetAnalyser getAnalyser();
 
 	/**
-	 * Reset the reachability graph.
+	 * Resets the reachability graph.
 	 */
 	void resetReachabilityGraph();
 
 	/**
-	 * Undo the last step in the reachability graph shown.
+	 * Undoes the last step in the reachability graph shown.
 	 */
 
 	void undo();
+
 	/**
-	 * Redo the last step in the reachability graph shown.
+	 * Redoes the last step in the reachability graph shown.
 	 */
 	void redo();
+
 	/**
-	 * Zoom into the reachability graph.
+	 * Zooms into the reachability graph.
 	 */
 	void zoomInReachability();
+
 	/**
-	 * Zoom out reachability.
+	 * Zooms out of reachability graph.
 	 */
 	void zoomOutReachability();
 
@@ -101,8 +105,11 @@ public interface PetrinetPanelInterface {
 	 */
 	ResizableSplitPane getGraphSplitPane();
 
-	/** Gets the reachability graph. 
-	 * @return the reachability graph*/
+	/**
+	 * Gets the reachability graph.
+	 * 
+	 * @return the reachability graph
+	 */
 	public GraphStreamReachabilityGraph getReachabilityGraph();
-	
+
 }

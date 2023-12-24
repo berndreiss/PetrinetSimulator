@@ -42,9 +42,9 @@ public class PetrinetEditorController {
 	/**
 	 * Instantiates a new editor.
 	 * 
-	 * @param petrinetViewerController The controller for the petrinet view.
-	 * @param petrinetGraph            The instance implementing petrinet graph.
-	 * @param toolbarChangeListener    Listener for change of the toolbar buttons.
+	 * @param petrinetViewerController the controller for the petrinet view
+	 * @param petrinetGraph            the instance implementing petrinet graph
+	 * @param toolbarChangeListener    listener for change of the toolbar buttons
 	 */
 	public PetrinetEditorController(PetrinetViewerController petrinetViewerController, PetrinetGraph petrinetGraph,
 			ToolbarChangedListener toolbarChangeListener) {
@@ -55,7 +55,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Set new label for the marked node in the petrinet graph.
+	 * Sets new label for the marked node in the petrinet graph.
 	 * 
 	 * @return true, if label has been set
 	 */
@@ -91,7 +91,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Increment marked place.
+	 * Increments marked place.
 	 *
 	 * @return true, if successful
 	 */
@@ -109,7 +109,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Decrement marked place.
+	 * Decrements marked place.
 	 *
 	 * @return true, if successful
 	 */
@@ -176,7 +176,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Abort adding edge.
+	 * Aborts adding edge.
 	 */
 	public void abortAddEdge() {
 		addEdgeSource = null;
@@ -185,7 +185,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Abort removing edge.
+	 * Aborts removing edge.
 	 */
 	public void abortRemoveEdge() {
 		removeEdgeSource = null;
@@ -193,7 +193,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Add an edge. If already adding an edge, adding edge gets aborted.
+	 * Adds an edge. If already adding an edge, adding edge gets aborted.
 	 *
 	 * @param id the id of the edge to be added
 	 * @throws DuplicateIdException thrown if id already exists
@@ -224,7 +224,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Remove an edge. If already removing an edge, removing edge gets aborted.
+	 * Removes an edge. If already removing an edge, removing edge gets aborted.
 	 *
 	 */
 	public void removeEdge() {
@@ -246,7 +246,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Check whether editor is in the process of adding an edge.
+	 * Checks whether editor is in the process of adding an edge.
 	 *
 	 * @return true, if in process of adding an edge
 	 */
@@ -255,7 +255,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Check whether editor is in the process of removing an edge.
+	 * Checks whether editor is in the process of removing an edge.
 	 *
 	 * @return true, if in process of removing an edge
 	 */

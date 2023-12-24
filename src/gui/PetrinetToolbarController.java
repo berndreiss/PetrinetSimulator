@@ -10,13 +10,13 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	// PETRINET RELATED METHODS
 
 	/**
-	 * Open the previous file in the current directory. Do nothing if current file
+	 * Opens the previous file in the current directory. Do nothing if current file
 	 * is first one.
 	 */
 	void onPrevious();
 
 	/**
-	 * Open the next file in the current directory. Do nothing if current file is
+	 * Opens the next file in the current directory. Do nothing if current file is
 	 * last one.
 	 */
 	void onNext();
@@ -27,7 +27,7 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onIncrement();
 
 	/**
-	 * Decrement a marked place in the petrinet. If the place has no marks does
+	 * Decrements a marked place in the petrinet. If the place has no marks does
 	 * nothing.
 	 */
 	void onDecrement();
@@ -40,12 +40,12 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onResetPetrinet();
 
 	/**
-	 * Zoom in into the petrinet.
+	 * Zooms into the petrinet.
 	 */
 	void onZoomInPetrinet();
 
 	/**
-	 * Zoom out of the petrinet.
+	 * Zooms out of the petrinet.
 	 */
 	void onZoomOutPetrinet();
 
@@ -54,32 +54,32 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	// BEGIN EDITOR SPECIFIC METHODS
 
 	/**
-	 * Add a new place to the petrinet.
+	 * Adds a new place to the petrinet.
 	 */
 	void onAddPlace();
 
 	/**
-	 * Add a new transition to the petrinet.
+	 * Adds a new transition to the petrinet.
 	 */
 	void onAddTransition();
 
 	/**
-	 * Remove an element from the petrinet.
+	 * Removes an element from the petrinet.
 	 */
 	void onRemoveComponent();
 
 	/**
-	 * Add a new edge to the petrinet.
+	 * Adds a new edge to the petrinet.
 	 */
 	void onAddEdge();
 
 	/**
-	 * Remove an edge from the petrinet.
+	 * Removes an edge from the petrinet.
 	 */
 	void onRemoveEdge();
 
 	/**
-	 * Add a new label to the petrinet.
+	 * Adds a new label to the petrinet.
 	 */
 	void onAddLabel();
 
@@ -88,9 +88,9 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	// REACHABILITY GRAPH RELATED METHODS
 
 	// BEGIN VIEWER SPECIFIC METHODS
-	
+
 	/**
-	 * Analyse the currently opened petrinet and determine if it is bounded /
+	 * Analyses the currently opened petrinet and determine if it is bounded /
 	 * unbounded.
 	 */
 	void onAnalyse();
@@ -101,12 +101,12 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onReset();
 
 	/**
-	 * Undo the last step in the reachability graph if there is one.
+	 * Undoes the last step in the reachability graph if there is one.
 	 */
 	void onUndo();
 
 	/**
-	 * Redo the last step in the reachability graph if there is one.
+	 * Redoes the last step in the reachability graph if there is one.
 	 */
 	void onRedo();
 
@@ -126,29 +126,31 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onZoomOutReachability();
 
 	/**
-	 * Choose the auto layout provided by the <a href="https://graphstream-project.org/">GraphStream</a> library for the reachability graph.	 
+	 * Chooses the auto layout provided by the
+	 * <a href="https://graphstream-project.org/">GraphStream</a> library for the
+	 * reachability graph.
 	 */
 	void onToggleAutoLayout();
 
 	/**
-	 * Choose the tree layout for the reachability graph.
+	 * Chooses the tree layout for the reachability graph.
 	 */
 	void onToggleTreeLayout();
 
 	/**
-	 * Choose the circle layout for the reachability graph.
+	 * Chooses the circle layout for the reachability graph.
 	 */
 	void onToggleCircleLayout();
 
 	// END VIEWER SPECIFIC METHODS
 
 	/**
-	 * Reset the dividers of the split panes to the default ratio.
+	 * Resets the dividers of the split panes to the default ratio.
 	 */
 	void onSetSplitPanesDefault();
 
 	/**
-	 * Reset the dividers of the split panes to the current ratio.
+	 * Resets the dividers of the split panes to the current ratio.
 	 */
 	void onReadjustDividers();
 }

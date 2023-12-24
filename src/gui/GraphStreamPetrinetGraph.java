@@ -15,17 +15,18 @@ import listeners.PetrinetComponentChangedListener;
 /**
  *
  * <p>
- * A <a href="https://graphstream-project.org/">GraphStream</a> implementation of {@link PetrinetGraph}.
+ * A <a href="https://graphstream-project.org/">GraphStream</a> implementation
+ * of {@link PetrinetGraph}.
  * </p>
  * 
  * <p>
  * The graph listens to changes in the petrinet passed to it via a
  * {@link PetrinetComponentChangedListener}. If the petrinet is not empty it
- * adds all containing components. Nodes can also be marked / unmarked by toggling
- * them.
+ * adds all containing components. Nodes can also be marked / unmarked by
+ * toggling them.
  * </p>
  */
-public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph{
+public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {
 
 	/** URL referencing CSS file */
 	private String CSS_FILE = "url(" + getClass().getResource("/resources/petrinet_graph.css") + ")";
@@ -39,7 +40,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 	/**
 	 * Instantiates a new petrinet graph.
 	 *
-	 * @param petrinet The petrinet to be visualized / listened to.
+	 * @param petrinet the petrinet to be visualized / listened to
 	 */
 	public GraphStreamPetrinetGraph(Petrinet petrinet) {
 		super("Petrinet");
@@ -140,7 +141,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 			public void onEdgeRemoved(PetrinetElement source, PetrinetElement target) {
 
 				String edgeString = source.getId() + target.getId();
-				
+
 				// remove edge and its sprite if they exist
 				Edge edge = removeEdge(edgeString);
 				if (edge == null)
@@ -293,7 +294,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 	 * Gets the element label -> for transitions "[id] label" is returned, for
 	 * places "[id] label &lt;numberOfTokens&gt;" is returned.
 	 *
-	 * @param element The petrinet element for which to return a label.
+	 * @param element the petrinet element for which to return a label
 	 * @return the element label: "[id] label" for transitions, "[id] label
 	 *         &lt;numberOfTokens&gt;" for places
 	 */

@@ -50,8 +50,8 @@ public class PetrinetMenu extends JMenuBar {
 	/**
 	 * Instantiates a new menu.
 	 *
-	 * @param menuController A controller implementing
-	 *                       {@link PetrinetMenuController}.
+	 * @param menuController a controller implementing
+	 *                       {@link PetrinetMenuController}
 	 */
 	PetrinetMenu(PetrinetMenuController menuController) {
 

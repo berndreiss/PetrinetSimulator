@@ -19,9 +19,9 @@ public class ReachabilityGraphUndoQueue {
 	/**
 	 * Instantiates a new undo queue.
 	 *
-	 * @param reachabilityGraph     The reachability graph for which this queue is
-	 *                              used.
-	 * @param toolbarButtonListener The listener for the toolbar buttons.
+	 * @param reachabilityGraph     the reachability graph for which this queue is
+	 *                              used
+	 * @param toolbarButtonListener the listener for the toolbar buttons
 	 */
 	public ReachabilityGraphUndoQueue(ReachabilityGraph reachabilityGraph,
 			ToolbarChangedListener toolbarButtonListener) {
@@ -31,13 +31,13 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Push a new petrinet state onto the queue.
+	 * Pushes a new petrinet state onto the queue.
 	 * 
-	 * @param state       The state to be added.
-	 * @param currentEdge The edge being currently active.
-	 * @param stateAdded  Information about whether components have been added.
-	 * @param transition  The transition that has been fired.
-	 * @param skippable   True if step can be skipped on un-/redo.
+	 * @param state       the state to be added
+	 * @param currentEdge the edge being currently active
+	 * @param stateAdded  information about whether components have been added
+	 * @param transition  the transition that has been fired
+	 * @param skippable   true if step can be skipped on un-/redo
 	 */
 	public void push(PetrinetState state, String currentEdge, AddedType stateAdded, Transition transition,
 			boolean skippable) {
@@ -64,7 +64,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Go a step back in the queue.
+	 * Goes a step back in the queue.
 	 */
 	public void goBack() {
 
@@ -111,7 +111,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Go a step forward in the queue.
+	 * Goes a step forward in the queue.
 	 * 
 	 * @return true if a step forward has been taken
 	 */
@@ -165,7 +165,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Rewind the queue, remove everything but initial state and reset the toolbar
+	 * Rewinds the queue, remove everything but initial state and reset the toolbar
 	 * buttons.
 	 */
 	public void reset() {
@@ -185,7 +185,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Rewind -> go to beginning of queue and undo everything.
+	 * Goes to beginning of queue and undo everything.
 	 */
 	public void rewind() {
 
@@ -197,7 +197,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Rewind -> go to beginning of queue but without undoing all steps.
+	 * Goes to beginning of queue but without undoing all steps.
 	 */
 	public void rewindSilent() {
 
@@ -223,7 +223,7 @@ public class ReachabilityGraphUndoQueue {
 	}
 
 	/**
-	 * Get the current state of the queue
+	 * Gets the current state of the queue
 	 * 
 	 * @return the current state
 	 */
@@ -234,7 +234,7 @@ public class ReachabilityGraphUndoQueue {
 	/**
 	 * Sets reachability graph to given state in the queue if it exists.
 	 * 
-	 * @param state State to be set.
+	 * @param state state to be set
 	 */
 	public void setToState(ReachabilityGraphUndoQueueState state) {
 
@@ -277,6 +277,5 @@ public class ReachabilityGraphUndoQueue {
 		toolbarButtonListener.onSetRedoButton(currentState.hasNext());
 
 	}
-
 
 }

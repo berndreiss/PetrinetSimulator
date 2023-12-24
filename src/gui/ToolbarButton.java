@@ -27,18 +27,18 @@ public class ToolbarButton extends JButton {
 
 	private static final long serialVersionUID = 1L;
 
-	/** the text shown if the image does not work */
+	/** The text shown if the image does not work. */
 	private String altText;
-	/** the color for the button */
+	/** The color for the button. */
 	private Color color = null;
 
 	/**
 	 * Instantiate a new instance of the button.
 	 * 
-	 * @param toolbarImage   The image the button will show.
-	 * @param actionListener The action the button performs when clicked.
-	 * @param toolTipText    The tool tip to show for the button.
-	 * @param altText        The text shown if the image does not work.
+	 * @param toolbarImage   the image the button will show
+	 * @param actionListener the action the button performs when clicked
+	 * @param toolTipText    the tool tip to show for the button
+	 * @param altText        the text shown if the image does not work
 	 */
 	public ToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText, String altText) {
 
@@ -82,11 +82,11 @@ public class ToolbarButton extends JButton {
 
 	/**
 	 * 
-	 * Set the background color of the button. Since setBackground does not work in
+	 * Sets the background color of the button. Since setBackground does not work in
 	 * certain look and feels this method provides an alternative way to set the
 	 * background.
 	 * 
-	 * @param color Color for the button.
+	 * @param color color for the button
 	 */
 	public void setColor(Color color) {
 		LookAndFeel laf = UIManager.getLookAndFeel();
@@ -101,7 +101,7 @@ public class ToolbarButton extends JButton {
 	}
 
 	/**
-	 * Get the color the button has been set to.
+	 * Gets the color the button has been set to.
 	 * 
 	 * @return the color set for the button
 	 */
