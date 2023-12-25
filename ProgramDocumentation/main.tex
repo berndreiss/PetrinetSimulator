@@ -47,27 +47,28 @@
 
 \section{Manual}
 %\label{sec1}
+\label{label:introduction}
 The Petrinet Simulator is able to display a petrinet and gradually build a reachability graph by firing transitions using the \textit{GraphStream} library\footnote{\url{https://graphstream-project.org/}}. The following picture shows the programs surface:
 
 \begin{center}
 \includegraphics[width=\textwidth]{Pictures/Example_276.png}
 \end{center}
 
-In the petrinet on the left activated transitions are marked bold. The current state is marked bold in the reachabiltiy graph on the right. Additionally the initial state is marked grey. After performing the boundedness analysis the graphs look like this: 
+In the petrinet on the left activated transitions are marked bold, these transitions can be fired. On the right in the reachability graph the current state is marked bold. Additionally the initial state is marked gray. After performing the boundedness analysis the graphs look like this: 
 
 \begin{center}
 \includegraphics[width=\textwidth]{Pictures/Example_276_analysed.png}
 \end{center}
 
-The reachability graph shows whether it encountered a state that is unbounded and mark the beginning (yellow) and ending (red) nodes on the path signifying the unboundedness of the petrinet. Any states on the paths between these nodes and between the yellow and intial node are marked also (brown).
+The reachability graph shows whether it encountered a state that signifies that the petrinet is unbounded and marks the beginning (yellow) and ending (red) nodes on the path signifying unboundedness. Any states on the paths between these nodes and between the yellow and intial node are marked also (brown).
 
-The following sections give an overview of additional features implemented in the program as well as of the menus and toolbars.
+The following sections give an overview of additional features implemented in the program and explain the menus and toolbars.
 
 \subsection{Additional features}
 
-\paragraph{Automatic Boundedness Check} By default building the reachability check automatically checks whether the petrinet is bounded or not (see also \ref{label:algorithm}). This can be turned off in the menu.
+\paragraph{Automatic Boundedness Check} By default building the reachability check automatically checks whether the petrinet is bounded or not (see also \ref{label:algorithm}). This can be turned off in the menu \textit{Edit}.
 
-\paragraph{Tabs} A new petrinet can be opened in a new tab. This can be done via the menu.
+\paragraph{Tabs} A new petrinet can be opened in a new tab. This can be done via the menu \textit{File}.
 
 \paragraph{Undo/Redo} The reachability graph provides undo/redo functionality.
 
@@ -76,7 +77,7 @@ The following sections give an overview of additional features implemented in th
 \paragraph{Editor Mode} Petrinets can be edited in an editor mode (see \ref{label:editor}).
 
 
-\subsection{The Menu}
+\subsection{Menus}
 
 \subsubsection{File}
 \label{label:file}
@@ -107,8 +108,8 @@ The \textit{Edit} menu consists of the following entries:
 \item \textbf{Open Editor:} opens the Editor.
 \item \textbf{Close Editor:} closes the Editor and reverts back to Viewer.
 \item \textbf{Change Look and Feel:} change between Nimbus and Metal look and feel.
-\item \textbf{Enable Automatic Boundedness Check:} automatically check for boundedness when building reachabilty graph.
-\item \textbf{Disable Automatic Boundedness Check:} do noe automatically check for boundedness when building reachabilty graph.
+\item \textbf{Enable Automatic Boundedness Check:} automatically check for boundedness when building the reachabilty graph.
+\item \textbf{Disable Automatic Boundedness Check:} do not automatically check for boundedness when building the reachabilty graph.
 \end{itemize}
 
 \subsubsection{Help}
@@ -121,7 +122,7 @@ The program has two distinct toolbar modes: viewer mode and editor mode. This se
 
 \subsubsection{Viewer Mode}
 
-The viewer mode provides functionality for viewing petrinets and building the reachability graph. The toolbar is split into two parts: the petrinet toolbar to the left and the reachability graph toolbar to the right. Below the specifics are discussed.
+The viewer mode provides functionality for viewing petrinets and building the reachability graph. The toolbar is split into two parts: the petrinet toolbar to the left and the reachability graph toolbar to the right.
 
 \paragraph{Petrinet Toolbar}
 
@@ -139,7 +140,7 @@ From left to right the buttons provide the following functionality:
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/plus.png}\hspace{0.1cm}\textbf{Increment Place:} increment a marked place by one token.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} decrement a marked place by one token.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/restart.png}\hspace{0.1cm}\textbf{Reset:} reset the petrinet graph to initial state $\rightarrow$ if place was in-/decremented the initial state is being updated.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom in into petrinet graph.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into petrinet graph.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of patrinet graph.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/edit.png}\hspace{0.1cm}\textbf{Open Editor:} open the Editor (see \ref{label:editor}).
 \end{itemize}
@@ -150,18 +151,18 @@ From left to right the buttons provide the following functionality:
 
 From left to right the buttons provide the following functionality:
 \begin{itemize}
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/stats.png}\hspace{0.1cm}\textbf{Analyse Petrinet:} analyse the currently opened petrinet $\rightarrow$ the reachability graph is built and a pop up window shows whether the petrinet is bounded or unbounded. If the petrinet is unbounded the starting and ending nodes of the path signifying unboundedness are marked yellow and red in the reachability graph. 
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/stats.png}\hspace{0.1cm}\textbf{Analyse Petrinet:} analyse the petrinet currently opened $\rightarrow$ the reachability graph is built and a pop up window shows whether the petrinet is bounded or unbounded. If the petrinet is unbounded the path signifying unboundedness is marked (see \ref{label:introduction}). 
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/delete.png}\hspace{0.1cm}\textbf{Reset:} delete the reachability graph except for the initial state (marked gray). Also resets the petrinet. 
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/undo.png}\hspace{0.1cm}\textbf{Undo:} undo the last step in the reachability graph. If last step way analysis it is treated as one single step.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/redo.png}\hspace{0.1cm}\textbf{Redo:} redo the last step in the reachability graph. If last step way analysis it is treated as one single step.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/undo.png}\hspace{0.1cm}\textbf{Undo:} undo the last step in the reachability graph. If last step was analysis it is treated as one single step.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/redo.png}\hspace{0.1cm}\textbf{Redo:} redo the last step in the reachability graph. If last step was analysis it is treated as one single step.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/input.png}\hspace{0.1cm}\textbf{Clear text area:} clears the text area.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom in into reachability graph.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into reachability graph.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of reachability graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/tree-layout.png}\hspace{0.1cm}\textbf{Tree layout:} organizes the reachability graph in a tree layout (see \ref{label:treeLayout}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/circle-layout.png}\hspace{0.1cm}\textbf{Circle layout:} organizes the reachability graph in a circle layout (see \ref{label:circleLayout}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/auto-layout.png}\hspace{0.1cm}\textbf{Automatic Layout:} uses the auto layout by GraphStream to organize the reachability graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} resets the split panes to the default ratio.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} changes between the different look and feels (\textit{Metal} or \textit{Nimbus}).
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/tree-layout.png}\hspace{0.1cm}\textbf{Tree layout:} organize the reachability graph in a tree layout (see \ref{label:treeLayout}).
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/circle-layout.png}\hspace{0.1cm}\textbf{Circle layout:} organize the reachability graph in a circle layout (see \ref{label:circleLayout}).
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/auto-layout.png}\hspace{0.1cm}\textbf{Automatic Layout:} use the auto layout by GraphStream to organize the reachability graph.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} reset the split panes to the default ratio.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} change between the different look and feels (\textit{Metal} or \textit{Nimbus}).
 \end{itemize} 
 %\hologo{LaTeX} 
 %\ref{sec1}
@@ -182,13 +183,13 @@ From left to right the buttons provide the following functionality:
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-circle.png}\hspace{0.1cm}\textbf{Add Place:} adds a place above the left top most element.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-square.png}\hspace{0.1cm}\textbf{Add Transition:} adds a transition above the left top most element.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/erase.png}\hspace{0.1cm}\textbf{Remove Element:} removes the marked element (place or transition).
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-circle.png}\hspace{0.1cm}\textbf{Add Place:} add a place above the left top most element.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-square.png}\hspace{0.1cm}\textbf{Add Transition:} add a transition above the left top most element.
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/erase.png}\hspace{0.1cm}\textbf{Remove Element:} remove the marked element (place or transition).
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/arc.png}\hspace{0.1cm}\textbf{Add Edge:} choose beginning and ending node of an edge to add it $\rightarrow$ beginning and ending nodes have to be of different type (place/transition).
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/remove-edge.png}\hspace{0.1cm}\textbf{Remove Edge:} choose beginning and ending node of an edge to remove it $\rightarrow$ the edge has to exist.
 \item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/label.png}\hspace{0.1cm}\textbf{Add Label:} add label to marked place or transition.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/eye.png}\hspace{0.1cm}\textbf{Close Editor:} closes the Editor and opens the Viewer (see \ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/eye.png}\hspace{0.1cm}\textbf{Close Editor:} close the Editor and opens the Viewer (see \ref{label:viewer}).
 \end{itemize}
 
 
@@ -207,15 +208,18 @@ From left to right the buttons provide the following functionality:
 
 \subsection{General Structure}
 
-Figure \ref{figure:design} shows the general control flow of the program. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure only demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program are included in the text as well. The following sections give a detailed description of how the data models are structured and how controllers and listeners work. On a general level it can be noted controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. 
+A Petrinet is determined by its places and transitions. The number of tokens on places represent the state of a petrinet and activated transition represent passages between states. These in order are buildings blocks for nodes and edges in the reachability graph. As places and transitions in this implementation of a petrinet simulator know their predecessors and successors they hold all the information needed for a data structure representing a petrinet. Thus the rest of the program essentially revolves around managing places and transitions \footnote{Although in this sense the petinet model can be seen as a kind of controller, it is still considered to be mainly a data structure, just not as pure as places and transitions might be.}.
 
+On a general level it can be noted that controllers control the input provided via the GUI elements and listeners transfer changes in the data model to the GUI components. The program is split into a set of hierarchichally organized controllers. For a general overview of the flow of control please refer to Figure \ref{figure:design}. Double rules signify a GUI component, dashed lines signify interfaces / listeners. The figure demonstrates the basic design of the program and how the essential data models, controllers and GUI components communicate with each other. Other parts of the program not shown in the figure are discussed in the text.
+
+The following sections give a detailed description of how the data models are structured and how controllers and listeners work. 
 \input{GeneralDesign.tex}
 
 
 \subsubsection{Data Models}
 
-\paragraph{Petrinet Model} It handles everything belonging only to the petrinet. It has functions for modifying the petrinet (such as adding or removing elements) and checks whether an action is valid. If an action is not valid it throws an according \textit{PetrinetException}. The petrinet model holds helper data structures \textit{Place} and \textit{Transition}. There is no data structure for arcs, as they are fully defined via the places and transitions connected to them\footnote{For storing ids belonging to arcs a map is used.}. Rather arcs are defined by lists of elements preceding and succeeding places and transitions. Places contain information about the number of tokens stored in them. Transitions have a status of being activated or not activated.   
-\paragraph{Reachability Graph Model} It provides methods for adding/removing states to/from the reachability graph and giving information about the graph. It contains a list of \textit{PetrinetStates}. Such a state contains predecessor and successor states, information about the tokens on the places in the petrinet as well as a state called \textit{m}, being the first state on a path that marks the given state as unbounded. When a new state is added the model checks whether the new state completes a path signifying unboudedness (see \ref{label:algorithm}. If so, the state at the start of the path is remembered by the state and the reachability graph model remembers the last state on the path. The states also store transitions leading up to them and from them. These are stored in lists in a map.
+\paragraph{Petrinet Model} It handles everything belonging only to the petrinet. It has functions for modifying the petrinet (such as adding or removing elements) and checks whether an action is valid. If an action is not valid it throws an according \textit{PetrinetException}. The petrinet model holds helper data structures \textit{Place} and \textit{Transition}. There is no data structure for arcs, as they are fully defined via the places and transitions connected to them\footnote{For storing ids belonging to arcs a map is used.}. Rather arcs are defined by elements preceding and succeeding places and transitions. Places contain information about the number of tokens stored in them. Transitions have a status of being activated or not activated.   
+\paragraph{Reachability Graph Model} It provides methods for adding/removing states to/from the reachability graph and giving information about the graph. It contains a list of \textit{PetrinetStates}. Such a state contains predecessor and successor states, information about the tokens on the places in the petrinet as well as a state called \textit{m}, being the first state on a path that marks the given state as unbounded. When a new state is added the model checks whether the new state completes a path signifying unboudedness (see \ref{label:algorithm}). If so, the state at the start of the path is remembered by the state and the reachability graph model remembers the last state on the path. The states also store transitions leading up to them and from them. These are stored in lists in a map.
 \paragraph{Reachability Graph Undo Queue} This queue records all the steps taken in the reachabilty graph and keeps track of the actions being taken (i.e. whether something has been added). To this end it has its own data structure called \textit{ReachabilityGraphUndoQueueState}. The queue can go back or forward or can be rewinded/reset. If it goes backward, alls steps are undone. Going forward means redoing all steps. The reachability model has methods to stop pushing steps onto the queue. Furthermore steps can be recorded as \enquote{skippable}. A step being skippable means on un-/redo it does not stop but continues going back-/forwards. This enables a multi step process like adding steps when analysing the petrinet to be treated as one big step.  
 
 \subsubsection{Controllers}

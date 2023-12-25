@@ -1,25 +1,27 @@
 /*
-	Dies ist die css-Datei, in der das Layout des Graphen beschrieben ist.
+ 	CSS file for a petrinet graph.
 */
 
 /*
-	Style-Angabe fuer einen Knoten
+ 	Global settings for graph. 
 */
 
 graph {
 	padding: 100px;
 }
 
+/*
+	Style for default node.
+*/
 node {
-
 	size: 30px;
-	
+
 	fill-color: #99ccff;
 
-	text-mode: normal;	
+	text-mode: normal;
 	text-color: #003366;
 	text-size: 18;
-	text-offset: 0,-5;
+	text-offset: 0, -5;
 
 	stroke-mode: plain;
 	stroke-color: #000000;
@@ -27,90 +29,87 @@ node {
 
 }
 
+/*
+	Additional style elements for a place.
+*/
+node.place {}
 
-node.place {
-
-
-}
-
+/*
+	Style for a highlighted place.
+*/
 node.place_highlight {
-
 	stroke-color: #ff0000;
 	stroke-width: 3px;
 }
 
-
+/*
+	Additional style for a transition.
+*/
 node.transition {
 
 	shape: box;
 
-
 }
 
-
 /*
-   zusaetzliches Attribut "highlight" fuer einen Knoten, der
-   hervorgehoben werden soll
+	Style for a transition that is activated.
 */
 node.transition_activated {
-
-
 	shape: box;
 	stroke-color: #0000ff;
 	stroke-width: 3px;
 }
 
+/*
+	Style for transition being edited in edit mode.
+*/
 node.transition_edit {
-
-
 	shape: box;
 	stroke-color: #ff0000;
 	stroke-width: 3px;
 }
 
 /*
-	Style-Angabe fuer eine Kante
+	Style for an edge.
 */
 edge {
- 	shape: line;
+	shape: line;
 	fill-color: #003366;
-	
+
 	arrow-shape: arrow;
 	arrow-size: 9px, 6px;
-	/*
-	text-size:  12;
-  text-color: #003366;
-	text-color: purple;
-	*/
 }
 
 /*
-	Style-Angabe fuer ein Sprite, dass als Label für eine Kante benutzt wird
+	Style for an edge sprite.
 */
 sprite.edgeLabel {
 	shape: box;
-	fill-color: rgb(255,255, 255);
-	size: 0,0;
+	fill-color: rgb(255, 255, 255);
+	size: 0, 0;
 
 	text-background-mode: rounded-box;
 	text-background-color: white;
 	text-padding: 2px;
-		
+
 	text-size: 12;
 	text-alignment: center;
-	text-offset: 0,-3;
+	text-offset: 0, -3;
 }
+
+/*
+	Style for a node sprite.
+*/
 sprite.nodeLabel {
 	shape: box;
-	fill-color: rgb(255,255, 255);
-	size: 0,0;
+	fill-color: rgb(255, 255, 255);
+	size: 0, 0;
 
 	text-background-mode: rounded-box;
 	text-background-color: white;
 	text-padding: 2px;
-		
+
 	text-size: 12;
 	text-alignment: center;
-	text-offset: 0,25;
+	text-offset: 0, 25;
 }
-

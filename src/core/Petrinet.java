@@ -26,11 +26,15 @@ import util.IterableMap;
  * they are only added between transitions and places. Since edges are not a
  * data structure on their own it also keeps track of original edge ids (needed
  * for saving).
+ * </p>
  * 
- *
+ * <p>
+ * Listeners serve as a means for communicating with the
+ * {@link ReachabilityGraph} ({@link PetrinetStateChangedListener}) and the
+ * {@link PetrinetGraph} ({@link PetrinetComponentChangedListener}).
  * </p>
  */
-//TODO discuss listeners
+
 public class Petrinet {
 
 	/**
@@ -48,8 +52,8 @@ public class Petrinet {
 	private IterableMap<String, String> originalArcIds = new IterableMap<String, String>();
 
 	/**
-	 * Listens for changes in the state of the petrinet (happens when transitions are
-	 * fired).
+	 * Listens for changes in the state of the petrinet (happens when transitions
+	 * are fired).
 	 */
 	private PetrinetStateChangedListener petrinetStateChangedListener;
 
@@ -94,8 +98,8 @@ public class Petrinet {
 	}
 
 	/**
-	 * Calculates (x,y) coordinates right above the left most element in the petrinet
-	 * and sets the element that is being added to these coordinates.
+	 * Calculates (x,y) coordinates right above the left most element in the
+	 * petrinet and sets the element that is being added to these coordinates.
 	 *
 	 * @param petrinetElement the new element that is being added
 	 */
@@ -230,8 +234,8 @@ public class Petrinet {
 	}
 
 	/**
-	 * Removes a petrinet element with the corresponding id. Also removes the id from
-	 * the orignal arc ids.
+	 * Removes a petrinet element with the corresponding id. Also removes the id
+	 * from the orignal arc ids.
 	 *
 	 * @param id the id of the element to be removed
 	 */
@@ -400,7 +404,7 @@ public class Petrinet {
 	 * @param id             the id of the place
 	 * @param numberOfTokens the number of tokens to be set
 	 */
-	void setTokens(String id, int numberOfTokens) throws PetrinetException{
+	void setTokens(String id, int numberOfTokens) throws PetrinetException {
 
 		// abort if place does not exist
 		if (!places.containsKey(id))
@@ -408,7 +412,7 @@ public class Petrinet {
 
 		if (numberOfTokens < 0)
 			throw new PetrinetException("number of tokens has to be positive.");
-		
+
 		Place p = places.get(id);
 
 		// if number of tokens is the same as before abort
@@ -616,8 +620,8 @@ public class Petrinet {
 
 		Place p = (Place) place;
 		p.incrementTokens();
-		
-		if (petrinetStateChangedListener != null) 
+
+		if (petrinetStateChangedListener != null)
 			petrinetStateChangedListener.onPetrinetChanged(this);
 
 		return true;
@@ -704,8 +708,7 @@ public class Petrinet {
 		if (places.isEmpty() && transitions.isEmpty()) {
 			return false;
 		}
-		
-		
+
 //		if (places.size() + transitions.size() == 1)
 //			return true;
 
