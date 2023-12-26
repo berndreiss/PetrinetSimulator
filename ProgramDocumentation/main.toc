@@ -23,7 +23,7 @@
 \contentsline {paragraph}{Petrinet Model}{5}{section*.11}%
 \contentsline {paragraph}{Reachability Graph Model}{5}{section*.12}%
 \contentsline {paragraph}{Reachability Graph Undo Queue}{5}{section*.13}%
-\contentsline {subsubsection}{\numberline {2.1.2}Controllers}{5}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.2}Controllers}{7}{subsubsection.2.1.2}%
 \contentsline {paragraph}{Main Controller}{7}{section*.14}%
 \contentsline {paragraph}{Petrinet Panel Interface}{7}{section*.15}%
 \contentsline {paragraph}{Petrinet Viewer Controller}{7}{section*.16}%
@@ -35,7 +35,7 @@
 \contentsline {paragraph}{Transition State Listener}{7}{section*.21}%
 \contentsline {paragraph}{Reachability State Changed Listener}{7}{section*.22}%
 \contentsline {paragraph}{Toolbar Changed Listener}{7}{section*.23}%
-\contentsline {paragraph}{Adjust Arrow Heads Listener}{7}{section*.24}%
+\contentsline {paragraph}{Adjust Arrow Heads Listener}{8}{section*.24}%
 \contentsline {subsection}{\numberline {2.2}Petrinet Analyser and the Algorithm for Checking Boundedness}{8}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Layout}{9}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Tree Layout}{9}{subsubsection.2.3.1}%
