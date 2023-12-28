@@ -1033,7 +1033,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	}
 
 	@Override
-	public void onChaneLookAndFeel() {
+	public void onChangeLookAndFeel() {
 		mainFrame.changeLookAndFeel();
 
 		// reset the split pane for every petrinet panel in the tabbed pane -> if

@@ -119,7 +119,7 @@ public class PetrinetMenu extends JMenuBar {
 
 		closeEditorMenuItem.addActionListener(e -> menuController.onCloseEditor());
 
-		changeLookAndFeelMenuItem.addActionListener(e -> menuController.onChaneLookAndFeel());
+		changeLookAndFeelMenuItem.addActionListener(e -> menuController.onChangeLookAndFeel());
 
 		enableAutomaticBoundednessMenuItem.addActionListener(e -> menuController.enableAutomaticBoundednessCheck());
 		

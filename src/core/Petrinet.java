@@ -11,6 +11,7 @@ import java.util.Stack;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import exceptions.PetrinetException;
+import gui.PetrinetGraph;
 import listeners.PetrinetComponentChangedListener;
 import listeners.PetrinetStateChangedListener;
 import util.IterableMap;

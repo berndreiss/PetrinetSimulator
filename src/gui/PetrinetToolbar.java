@@ -370,7 +370,7 @@ public class PetrinetToolbar extends JToolBar {
 		JButton setSplitPanesDefaultButton = new ToolbarButton(ToolbarImage.DEFAULT,
 				e -> mainController.onSetSplitPanesDefault(), "Reset split panes to default ratio", "reset pane");
 
-		changeLookAndFeelButton = new ToolbarButton(ToolbarImage.LAF, e -> mainController.onChaneLookAndFeel(),
+		changeLookAndFeelButton = new ToolbarButton(ToolbarImage.LAF, e -> mainController.onChangeLookAndFeel(),
 				"Change between Metal and Nimbus feel and look", "change design");
 
 		// PETRINET BUTTONS

@@ -16,11 +16,13 @@ import util.IterableMap;
  * <p>
  * A reachability graph basically consists of the states a petrinet can be in
  * and edges between those states being represented by transitions being fired.
- * While the grpah itself is being represented by the net of
+ * While the graph itself is being represented by the net of
  * {@link PetrinetState}s this class holds information about the current state,
  * current edge, validity of the petrinet (concerning its boundedness) and
  * methods for adding and removing states. Additionally it provides a
- * {@link ReachabilityStateChangedListener}.
+ * {@link ReachabilityStateChangedListener} communicating changes to the graph
+ * and a {@link ReachabilityGraphUndoQueue} recording steps. Changes can be
+ * stopped to be pushed on the queue or marked as skippable.
  * </p>
  */
 public class ReachabilityGraph {

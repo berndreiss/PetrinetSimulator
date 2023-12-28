@@ -78,7 +78,7 @@ public interface PetrinetMenuController {
 	 * default).
 	 */
 
-	void onChaneLookAndFeel();
+	void onChangeLookAndFeel();
 
 	// METHODS FOR HELP
 
