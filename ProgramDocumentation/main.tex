@@ -229,7 +229,11 @@ The following sections give a detailed description of how the data models are st
 \subsubsection{Controllers}
 There are three controllers in the program: the \textit{MainController}, the \textit{PetrinetViewerController} and the \textit{PetrinetEditorController}. Additionally the \textit{PetrinetPanelInterface} serves as an intermediary between the main controller and the other controllers.
 
-\paragraph{Main Controller} On a general level there is a main frame and a number of petrinets in tabs. The task of the main controller is to pass user interactions with elements belonging to the main frame (menus and toolbars) to the petrinet panel that is currently active. When switching tabs, it is also the task of the main controller to restore the state of the toolbar with regards to highlighted buttons for the active petrinet or switching to editor/viewer mode (see \ref{label:modes}). 
+\paragraph{Main Controller} On a general level there is a main frame and a number of petrinets in tabs. The task of the main controller is to pass user interactions with elements belonging to the main frame (menus and toolbars) to the petrinet panel that is currently active. To this end it implements the interfaces \textit{PetrinetToolbarController} and the \textit{PetrinetMenuController}. When switching tabs, it is also the task of the main controller to restore the state of the toolbar with regards to highlighted buttons for the active petrinet or switching to editor/viewer mode (see \ref{label:modes}). 
+
+\paragraph{Petrinet Toolbar Controller} An interface representing methods needed for controlling the toolbar.
+
+\paragraph{Petrinet Menu Controller} An interface representing methods needed for controlling the menus.
 
 \paragraph{Petrinet Panel Interface} This interface forwards messages from the main controller. It also handles clicks and forwards them to either the viewer controller or the editor controller. Additionally it keeps track of the toolbar mode and handles GUI related actions for an instance of a petrinet. 
 

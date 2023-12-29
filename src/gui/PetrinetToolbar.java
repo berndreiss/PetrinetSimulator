@@ -20,6 +20,7 @@ import javax.swing.UIManager;
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
 import control.PetrinetPanelInterface;
+import control.PetrinetToolbarController;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
 import reachabilityGraphLayout.LayoutType;

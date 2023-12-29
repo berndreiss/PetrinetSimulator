@@ -1,8 +1,12 @@
-package gui;
+package control;
 
 import javax.swing.LookAndFeel;
 
-import control.PetrinetEditorController;
+import gui.GraphStreamPetrinetGraph;
+import gui.MainFrame;
+import gui.PetrinetMenu;
+import gui.PetrinetPanel;
+import gui.ToolbarMode;
 
 /**
  * An interface defining methods for entries in {@link PetrinetMenu}.
