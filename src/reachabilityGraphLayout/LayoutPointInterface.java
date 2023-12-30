@@ -5,7 +5,7 @@ package reachabilityGraphLayout;
  * Interface representing a point.
  * </p>
  */
-public interface LayoutPointInterface {
+interface LayoutPointInterface {
 
 	/**
 	 * Gets the x coordinate.

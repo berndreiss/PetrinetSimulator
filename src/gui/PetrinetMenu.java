@@ -45,7 +45,7 @@ import control.PetrinetMenuController;
  * 
  * </p>
  */
-public class PetrinetMenu extends JMenuBar {
+class PetrinetMenu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 

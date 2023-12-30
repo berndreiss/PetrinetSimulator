@@ -16,7 +16,8 @@ import org.graphstream.graph.Node;
  * GraphStream graph).
  * </p>
  */
-public class LayoutNode extends AbstractLayoutRectangle {
+@SuppressWarnings("javadoc")
+class LayoutNode extends AbstractLayoutRectangle {
 
 	/** The GraphStream node. */
 	private Node node;

@@ -82,7 +82,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * @param pathShown              true, it reachability graph is not empty and
 	 *                               path has been shown before
 	 */
-	public GraphStreamReachabilityGraph(ReachabilityGraph reachabilityGraphModel, LayoutType layoutType,
+	GraphStreamReachabilityGraph(ReachabilityGraph reachabilityGraphModel, LayoutType layoutType,
 			boolean showBoundedness, boolean pathShown) {
 		super("Reachability Graph");
 
@@ -607,7 +607,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * 
 	 * @return true if 0 or 1 nodes, false otherwise
 	 */
-	public boolean hasLessThanTwoNodes() {
+	boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
 	}
 
@@ -652,7 +652,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * 
 	 * @return true, if path is shown
 	 */
-	public boolean pathShown() {
+	boolean pathShown() {
 		if (nodeM == null)
 			return false;
 

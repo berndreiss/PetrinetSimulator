@@ -144,7 +144,7 @@ public class PetrinetViewerController {
 	/**
 	 * Writes changes to the file.
 	 */
-	public void writeToFile() {
+	void writeToFile() {
 		if (file == null)// safety check
 			return;
 		writeToFile(getCurrentFile());
@@ -155,7 +155,7 @@ public class PetrinetViewerController {
 	 *
 	 * @param file the file changes are written to
 	 */
-	public void writeToFile(File file) {
+	void writeToFile(File file) {
 
 		// instantiate writer
 		PNMLWopedWriter writer = new PNMLWopedWriter(file);

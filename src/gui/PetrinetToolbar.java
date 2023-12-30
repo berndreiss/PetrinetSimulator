@@ -538,12 +538,12 @@ public class PetrinetToolbar extends JToolBar {
 
 	}
 
-	/**
+	/*
 	 * Toggles tree layout button. Activate auto tree if not active and highlight
 	 * button. Synchronizes with toggle circle / auto layout buttons -> only one can
 	 * be highlighted at a time.
 	 */
-	public void toggleTreeLayoutButton() {
+	private void toggleTreeLayoutButton() {
 		// button is not highlighted -> highlight it and handle the other buttons
 		if (toggleTreeLayoutButton.getColor() == buttonDefaultColor || toggleTreeLayoutButton.getColor() == null) {
 			// highlight button
@@ -557,12 +557,12 @@ public class PetrinetToolbar extends JToolBar {
 			toggleTreeLayoutButton.setColor(buttonDefaultColor);
 	}
 
-	/**
+	/*
 	 * Toggles circle layout button. Activate circle layout if not active and
 	 * highlight button. Synchronizes with toggle auto / tree layout buttons -> only
 	 * one can be highlighted at a time.
 	 */
-	public void toggleCircleLayoutButton() {
+	private void toggleCircleLayoutButton() {
 		// button is not highlighted -> highlight it and handle the other buttons
 		if (toggleCircleLayoutButton.getColor() == buttonDefaultColor || toggleCircleLayoutButton.getColor() == null) {
 			// highlight button
@@ -576,12 +576,12 @@ public class PetrinetToolbar extends JToolBar {
 			toggleCircleLayoutButton.setColor(buttonDefaultColor);
 	}
 
-	/**
+	/*
 	 * Toggles auto layout button. Activate auto layout if not active and highlight
 	 * button. Synchronizes with toggle circle / tree layout buttons -> only one can
 	 * be highlighted at a time.
 	 */
-	public void toggleAutoLayoutButton() {
+	private void toggleAutoLayoutButton() {
 		// button is not highlighted -> highlight it and handle the other buttons
 		if (toggleAutoLayoutButton.getColor() == buttonDefaultColor || toggleAutoLayoutButton.getColor() == null) {
 			// highlight button

@@ -60,7 +60,7 @@ public class PetrinetEditorController {
 	 * @return true, if label has been set
 	 */
 
-	public boolean setLabel() {
+	boolean setLabel() {
 
 		// get marked node in the petrinet graph
 		PetrinetElement markedNode = petrinetGraph.getMarkedNode();
@@ -95,7 +95,7 @@ public class PetrinetEditorController {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean incrementMarkedPlace() {
+	boolean incrementMarkedPlace() {
 
 		// get the marked node from the petrinet graph
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
@@ -113,7 +113,7 @@ public class PetrinetEditorController {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean decrementMarkedPlace() {
+	boolean decrementMarkedPlace() {
 
 		// get the marked node from the petrinet graph
 		PetrinetElement petrinetElement = petrinetGraph.getMarkedNode();
@@ -135,7 +135,7 @@ public class PetrinetEditorController {
 	 * @return true, if successful
 	 * @throws DuplicateIdException thrown if id already exists
 	 */
-	public boolean addPlace(String id) throws DuplicateIdException {
+	 boolean addPlace(String id) throws DuplicateIdException {
 
 		// add place and keep track of it
 		Place p = petrinet.addPlace(id);
@@ -160,7 +160,7 @@ public class PetrinetEditorController {
 	 * @return true, if successful
 	 * @throws DuplicateIdException thrown if id already exists
 	 */
-	public boolean addTransition(String id) throws DuplicateIdException {
+	boolean addTransition(String id) throws DuplicateIdException {
 
 		// add transition and keep track of it
 		Transition t = petrinet.addTransition(id);
@@ -178,7 +178,7 @@ public class PetrinetEditorController {
 	/**
 	 * Aborts adding edge.
 	 */
-	public void abortAddEdge() {
+	void abortAddEdge() {
 		addEdgeSource = null;
 		addsEdge = false;
 		edgeToAddId = null;
@@ -187,7 +187,7 @@ public class PetrinetEditorController {
 	/**
 	 * Aborts removing edge.
 	 */
-	public void abortRemoveEdge() {
+	private void abortRemoveEdge() {
 		removeEdgeSource = null;
 		removesEdge = false;
 	}
@@ -198,7 +198,7 @@ public class PetrinetEditorController {
 	 * @param id the id of the edge to be added
 	 * @throws DuplicateIdException thrown if id already exists
 	 */
-	public void addEdge(String id) throws DuplicateIdException {
+	void toggleAddEdge(String id) throws DuplicateIdException {
 		// if already adding edge, abort adding edge
 		if (addsEdge()) {
 			abortAddEdge();
@@ -227,7 +227,7 @@ public class PetrinetEditorController {
 	 * Removes an edge. If already removing an edge, removing edge gets aborted.
 	 *
 	 */
-	public void removeEdge() {
+	void toggleRemoveEdge() {
 		if (removesEdge()) {
 			abortRemoveEdge();
 			return;
@@ -266,7 +266,7 @@ public class PetrinetEditorController {
 	/**
 	 * Removes the component being marked in the petrinet graph.
 	 */
-	public void removeComponent() {
+	void removeComponent() {
 
 		// get the marked element
 		PetrinetElement markedElement = petrinetGraph.getMarkedNode();

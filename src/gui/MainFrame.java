@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import control.MainController;
+import control.PetrinetMenuController;
 
 /**
  * <p>
@@ -30,15 +31,13 @@ import control.MainController;
  * {@link JTabbedPane} in the top half. In the SOUTH it holds a {@link JLabel}
  * representing the status of the program. In the NORTH it holds a
  * {@link PetrinetToolbar} that can be moved and reattached to the EAST or WEST.
- * Additionally the menu bar is occupied by an instance of {@link PetrinetMenu}.
+ * Additionally the menu bar is occupied by an implementation of the 
+ * {@link PetrinetMenuController}.
  * </p>
  */
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
-	/** Represents the height of the graph relative to the frame. */
-	static final double GRAPH_PERCENT = 0.5;
 
 	/** Represents the default height of the graph relative to the split pane. */
 	public static final double SPLIT_PANE_DEFAULT_RATIO = 0.8;

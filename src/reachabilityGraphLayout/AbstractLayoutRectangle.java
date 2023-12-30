@@ -5,7 +5,7 @@ package reachabilityGraphLayout;
  * Class defining methods for a rectangle (and implementing some).
  * </p>
  */
-public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
+abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
 
 	/**
 	 * Gets the left lower corner of the object.
@@ -40,7 +40,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 *
 	 * @return the left side
 	 */
-	public LayoutLine leftSide() {
+	private LayoutLine leftSide() {
 		return new LayoutLine(leftLowerCorner(), leftUpperCorner());
 	}
 
@@ -49,7 +49,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 *
 	 * @return the right side
 	 */
-	public LayoutLine rightSide() {
+	private LayoutLine rightSide() {
 		return new LayoutLine(rightLowerCorner(), rightUpperCorner());
 	}
 
@@ -58,7 +58,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 *
 	 * @return the layout line
 	 */
-	public LayoutLine upperSide() {
+	private LayoutLine upperSide() {
 		return new LayoutLine(leftUpperCorner(), rightUpperCorner());
 	}
 
@@ -67,7 +67,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 *
 	 * @return the layout line
 	 */
-	public LayoutLine lowerSide() {
+	private LayoutLine lowerSide() {
 		return new LayoutLine(leftLowerCorner(), rightLowerCorner());
 	}
 
@@ -100,7 +100,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 * @param other the other rectangle
 	 * @return true, if rectangles intersect, false if not
 	 */
-	public boolean rectanglesIntersect(AbstractLayoutRectangle other) {
+	boolean rectanglesIntersect(AbstractLayoutRectangle other) {
 
 		// check whether any of the corners of the other rectangle is inside this
 		// rectangle, if so return true, if non is inside return false
@@ -126,7 +126,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 * @param p the point to be checked
 	 * @return true, if it lies inside the rectangle, false if not
 	 */
-	public boolean pointIsInsideRectangle(LayoutPointInterface p) {
+	private boolean pointIsInsideRectangle(LayoutPointInterface p) {
 		if (p == null)// safety check
 			return false;
 
@@ -147,7 +147,7 @@ public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayo
 	 * @param layoutEdge the edge to be checked
 	 * @return true, if it intersects, false if not
 	 */
-	public boolean edgeIntersectsRectangle(LayoutEdge layoutEdge) {
+	boolean edgeIntersectsRectangle(LayoutEdge layoutEdge) {
 
 		if (layoutEdge == null)// safety check
 			return false;

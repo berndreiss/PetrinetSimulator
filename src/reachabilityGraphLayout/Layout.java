@@ -27,13 +27,13 @@ public class Layout {
 	 * The Constant NODE_SIZE -> experience has shown that smaller widths produce
 	 * the best results.
 	 */
-	public final static Dimension NODE_SIZE = new Dimension(30, 30);
+	final static Dimension NODE_SIZE = new Dimension(30, 30);
 
 	/**
 	 * The Constant SPRITE_SIZE -> experience has shown that smaller widths produce
 	 * the best results.
 	 */
-	public final static Dimension SPRITE_SIZE = new Dimension(30, 30);
+	final static Dimension SPRITE_SIZE = new Dimension(30, 30);
 
 	/**
 	 * The Constant MINIMAL_SIZE -> used for creating artificial nodes for spreading
@@ -207,7 +207,7 @@ public class Layout {
 	 *
 	 * @param node the node to be added
 	 */
-	public void addNodeToLevel(LayoutNode node) {
+	void addNodeToLevel(LayoutNode node) {
 
 		int lastIndex = listHierarchy.size() - 1;
 

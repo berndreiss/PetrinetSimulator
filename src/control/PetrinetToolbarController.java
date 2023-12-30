@@ -1,5 +1,7 @@
 package control;
 
+import gui.MainFrame;
+
 /**
  * <p>
  * A controller defining methods used by a petrinet toolbar.
@@ -22,13 +24,12 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onNext();
 
 	/**
-	 * Increments a marked place in the petrinet.
+	 * Increments the marked place in the petrinet.
 	 */
 	void onIncrement();
 
 	/**
-	 * Decrements a marked place in the petrinet. If the place has no marks does
-	 * nothing.
+	 * Decrements the marked place in the petrinet.
 	 */
 	void onDecrement();
 
@@ -54,12 +55,12 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	// BEGIN EDITOR SPECIFIC METHODS
 
 	/**
-	 * Adds a new place to the petrinet.
+	 * Gets an id and adds a new place to the petrinet.
 	 */
 	void onAddPlace();
 
 	/**
-	 * Adds a new transition to the petrinet.
+	 * Gets an id and adds a new transition to the petrinet.
 	 */
 	void onAddTransition();
 
@@ -69,7 +70,7 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onRemoveComponent();
 
 	/**
-	 * Adds a new edge to the petrinet.
+	 * Gets an id and adds a new edge to the petrinet.
 	 */
 	void onAddEdge();
 
@@ -79,7 +80,7 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onRemoveEdge();
 
 	/**
-	 * Adds a new label to the petrinet.
+	 * Adds a new label to an element of the petrinet.
 	 */
 	void onAddLabel();
 
@@ -111,17 +112,17 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onRedo();
 
 	/**
-	 * Clears the text area in the main frame.
+	 * Clears the text area in the {@link MainFrame}.
 	 */
 	void onClearTextArea();
 
 	/**
-	 * On zoom in reachability.
+	 * Zoom into the reachability graph.
 	 */
 	void onZoomInReachability();
 
 	/**
-	 * On zoom out reachability.
+	 * Zoom out of the reachability graph.
 	 */
 	void onZoomOutReachability();
 

@@ -35,7 +35,7 @@ public class Transition extends PetrinetElement {
 	 * 
 	 * @param id ID of the transition.
 	 */
-	public Transition(String id) {
+	Transition(String id) {
 		super(id);
 		this.activated = checkActivated();
 	}
@@ -48,7 +48,7 @@ public class Transition extends PetrinetElement {
 	 *
 	 * @return true, if transition fired
 	 */
-	public boolean fire() {
+	boolean fire() {
 		// if transition is not activated, return immediately
 		if (!checkActivated())
 			return false;
@@ -80,7 +80,7 @@ public class Transition extends PetrinetElement {
 	/**
 	 * Checks the activation status and update it.
 	 */
-	public void updateActivationStatus() {
+	void updateActivationStatus() {
 		setActivated(checkActivated());
 	}
 
@@ -111,7 +111,7 @@ public class Transition extends PetrinetElement {
 	 * 
 	 * @param place place to be added as input
 	 */
-	public void addInput(Place place) {
+	void addInput(Place place) {
 
 		if (inputs.containsKey(place.getId()))
 			return;
@@ -140,7 +140,7 @@ public class Transition extends PetrinetElement {
 	 * 
 	 * @param place place to be added as an output
 	 */
-	public void addOutput(Place place) {
+	void addOutput(Place place) {
 		if (outputs.containsKey(place.getId()))
 			return;
 		outputs.put(place.getId(), place);

@@ -26,7 +26,7 @@ import listeners.PetrinetComponentChangedListener;
  * toggling them.
  * </p>
  */
-public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {
+class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {
 
 	/** URL referencing CSS file */
 	private String CSS_FILE = "url(" + getClass().getResource("/resources/petrinet_graph.css") + ")";
@@ -42,7 +42,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 	 *
 	 * @param petrinet the petrinet to be visualized / listened to
 	 */
-	public GraphStreamPetrinetGraph(Petrinet petrinet) {
+	GraphStreamPetrinetGraph(Petrinet petrinet) {
 		super("Petrinet");
 
 		// set CSS file for the graph
@@ -298,7 +298,7 @@ public class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGrap
 	 * @return the element label: "[id] label" for transitions, "[id] label
 	 *         &lt;numberOfTokens&gt;" for places
 	 */
-	public static String getElementLabel(PetrinetElement element) {
+	static String getElementLabel(PetrinetElement element) {
 
 		String base = "[" + element.getId() + "] " + element.getName();
 		if (element instanceof Place)

@@ -170,7 +170,7 @@ public class ReachabilityGraph {
 	 * @param transition the transition that has been fired
 	 * @return the state that has been added (null if non has been added)
 	 */
-	public PetrinetState addNewState(Petrinet petrinet, Transition transition) {
+	PetrinetState addNewState(Petrinet petrinet, Transition transition) {
 
 		// if there is no petrinet or the petrinet does not have places return
 		if (petrinet == null || !petrinet.hasPlaces())
@@ -248,7 +248,7 @@ public class ReachabilityGraph {
 	 *
 	 * @return true, if state is bounded
 	 */
-	public boolean checkIfCurrentStateIsBounded() {
+	boolean checkIfCurrentStateIsBounded() {
 
 		// for every predecessor state call check function
 		for (PetrinetState s : currentState.getPredecessors()) {
@@ -404,7 +404,7 @@ public class ReachabilityGraph {
 	 *
 	 * @param state the state to be removed
 	 */
-	public void removeState(PetrinetState state) {
+	void removeState(PetrinetState state) {
 
 		// safety measure
 		if (state == null)

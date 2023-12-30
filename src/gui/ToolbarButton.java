@@ -23,7 +23,7 @@ import javax.swing.UIManager;
  * in certain look and feels the setBackground method does not work.
  * </p>
  */
-public class ToolbarButton extends JButton {
+class ToolbarButton extends JButton {
 
 	private static final long serialVersionUID = 1L;
 
@@ -40,7 +40,7 @@ public class ToolbarButton extends JButton {
 	 * @param toolTipText    the tool tip to show for the button
 	 * @param altText        the text shown if the image does not work
 	 */
-	public ToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText, String altText) {
+	ToolbarButton(ToolbarImage toolbarImage, ActionListener actionListener, String toolTipText, String altText) {
 
 		this.altText = altText;
 		setImage(toolbarImage);

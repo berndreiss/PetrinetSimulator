@@ -12,7 +12,7 @@ import org.graphstream.ui.spriteManager.Sprite;
  * class.
  * </p>
  */
-public class LayoutEdge extends AbstractLayoutRectangle {
+class LayoutEdge extends AbstractLayoutRectangle {
 
 	/** The source node of the edge. */
 	LayoutNode source;

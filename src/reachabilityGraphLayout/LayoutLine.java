@@ -5,7 +5,7 @@ package reachabilityGraphLayout;
  * Class representing a line.
  * </p>
  */
-public class LayoutLine {
+class LayoutLine {
 
 	/** The first point defining the line. */
 	private LayoutPointInterface a;
@@ -34,7 +34,7 @@ public class LayoutLine {
 	 * @return the point where the lines intersect, null if there is no unambiguous
 	 *         single point
 	 */
-	public LayoutPointInterface findIntersectionPoint(LayoutLine other) {
+	LayoutPointInterface findIntersectionPoint(LayoutLine other) {
 
 		LayoutPointInterface p1 = this.a;
 		LayoutPointInterface p2 = this.b;

@@ -2,14 +2,13 @@ package control;
 
 import javax.swing.LookAndFeel;
 
-import gui.GraphStreamPetrinetGraph;
 import gui.MainFrame;
-import gui.PetrinetMenu;
+import gui.PetrinetGraph;
 import gui.PetrinetPanel;
 import gui.ToolbarMode;
 
 /**
- * An interface defining methods for entries in {@link PetrinetMenu}.
+ * An interface defining methods for entries in the menus.
  */
 public interface PetrinetMenuController {
 
@@ -17,7 +16,7 @@ public interface PetrinetMenuController {
 
 	/**
 	 * Opens a new {@link PetrinetPanel} containing an empty
-	 * {@link GraphStreamPetrinetGraph} and sets the panel to ToolbarMode EDITOR
+	 * {@link PetrinetGraph} and sets the panel to ToolbarMode EDITOR
 	 * (see {@link ToolbarMode}).
 	 */
 	void onNew();
@@ -68,12 +67,12 @@ public interface PetrinetMenuController {
 	// METHODS FOR EDIT
 
 	/**
-	 * Opens the {@link PetrinetEditorController}.
+	 * Switch to {@link ToolbarMode} EDITOR.
 	 */
 	void onOpenEditor();
 
 	/**
-	 * Closes the {@link PetrinetEditorController}.
+	 * Switch to {@link ToolbarMode} VIEW.
 	 */
 	void onCloseEditor();
 

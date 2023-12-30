@@ -7,7 +7,7 @@ import java.awt.Dimension;
  * Class representing a rectangle.
  * </p>
  */
-public class LayoutRectangle extends AbstractLayoutRectangle implements LayoutPointInterface {
+class LayoutRectangle extends AbstractLayoutRectangle implements LayoutPointInterface {
 
 	/** The coordinates of the center. */
 	private double x, y;

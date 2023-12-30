@@ -42,8 +42,8 @@ import reachabilityGraphLayout.LayoutType;
  * </p>
  * 
  * <p>
- * It holds a horizontal {@link ResizableSplitPane} containing a
- * {@link GraphStreamPetrinetGraph} on the left and a
+ * It holds a horizontal {@link ResizableSplitPane} containing an implementation
+ * of the {@link PetrinetGraph} on the left and a
  * {@link GraphStreamReachabilityGraph} on the right. Creates and holds a
  * {@link PetrinetViewerController} managing all interactions with the data
  * model. The graphs are implemented using the
@@ -271,13 +271,8 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 		zoomOut(reachabilityViewPanel);
 	}
 
-	/**
-	 * 
-	 * Sets the zoom factor of the reachability graph back to 1.0.
-	 * 
-	 */
-
-	public void resetReachabilityZoom() {
+	// Sets the zoom factor of the reachability graph back to 1.0.
+	private void resetReachabilityZoom() {
 
 		double zoom = reachabilityViewPanel.getCamera().getViewPercent();
 

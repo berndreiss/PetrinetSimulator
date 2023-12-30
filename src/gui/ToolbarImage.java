@@ -5,7 +5,7 @@ package gui;
  * file in the IMAGE_ROOT_FOLDER (originally obtained from
  * <a href="https://iconoir.com/">iconoir.com</a>).
  */
-public enum ToolbarImage {
+enum ToolbarImage {
 
 	/** Image for the open button. */
 	OPEN("folder"),
@@ -95,7 +95,7 @@ public enum ToolbarImage {
 	 * 
 	 * @return path to image root folder
 	 */
-	public String imagePath() {
+	String imagePath() {
 		return IMAGE_ROOT_FOLDER + this + ".png";
 
 	}

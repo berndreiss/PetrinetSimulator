@@ -5,7 +5,7 @@ package core;
  * The type of element that has been added to the petrinet state model.
  * </p>
  */
-public enum AddedType {
+enum AddedType {
 
 	/** A state has been added. */
 	STATE,

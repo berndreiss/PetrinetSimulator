@@ -43,7 +43,7 @@ public class ResizableSplitPane extends JSplitPane {
 	 * @param left             the left component to be set
 	 * @param right            the right component to be set
 	 */
-	public ResizableSplitPane(MainFrame parent, int splitOrientation, Component left, Component right) {
+	ResizableSplitPane(MainFrame parent, int splitOrientation, Component left, Component right) {
 		super(splitOrientation, left, right);
 		this.parent = parent;
 		if (parent != null)// safety check

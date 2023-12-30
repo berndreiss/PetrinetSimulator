@@ -35,7 +35,7 @@ public class ReachabilityGraphUndoQueueState {
 	 * @param transition    transition that has been fired
 	 * @param skippable     if true, state is skippable
 	 */
-	public ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState previousState, PetrinetState petrinetState,
+	ReachabilityGraphUndoQueueState(ReachabilityGraphUndoQueueState previousState, PetrinetState petrinetState,
 			String currentEdge, AddedType stateAdded, Transition transition, boolean skippable) {
 
 		this.previousState = previousState;

@@ -34,7 +34,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param id the id of the place
 	 */
-	public Place(String id) {
+	Place(String id) {
 		super(id);
 	}
 
@@ -43,7 +43,7 @@ public class Place extends PetrinetElement {
 	 * 
 	 * @return number of tokens > 0.
 	 */
-	public boolean hasTokens() {
+	boolean hasTokens() {
 		return numberOfTokens > 0;
 	}
 
@@ -97,7 +97,7 @@ public class Place extends PetrinetElement {
 	/**
 	 * Increments the number of tokens by 1.
 	 */
-	public void incrementTokens() {
+	void incrementTokens() {
 		setNumberOfTokens(numberOfTokens + 1);
 	}
 
@@ -106,7 +106,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @return true, if successful, false if the place has no tokens to begin with
 	 */
-	public boolean decrementTokens() {
+	boolean decrementTokens() {
 
 		if (numberOfTokens <= 0) {
 			System.out.println("There are no tokens in place with ID \"" + this.getId() + "\"");
@@ -122,7 +122,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param transition the transition to be added
 	 */
-	public void addOutput(Transition transition) {
+	void addOutput(Transition transition) {
 		outputs.put(transition.getId(), transition);
 	}
 
@@ -131,7 +131,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param transition the transition to be added
 	 */
-	public void addInput(Transition transition) {
+	void addInput(Transition transition) {
 		inputs.put(transition.getId(), transition);
 	}
 
@@ -159,7 +159,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param transition the transition to be removed
 	 */
-	public void removeOutput(Transition transition) {
+	void removeOutput(Transition transition) {
 		if (!outputs.containsKey(transition.getId()))
 			return;
 		outputs.remove(transition.getId());
@@ -174,7 +174,7 @@ public class Place extends PetrinetElement {
 	 *
 	 * @param transition the transition to be removed
 	 */
-	public void removeInput(Transition transition) {
+	void removeInput(Transition transition) {
 		if (!inputs.containsKey(transition.getId()))
 			return;
 		inputs.remove(transition.getId());

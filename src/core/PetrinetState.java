@@ -130,7 +130,7 @@ public class PetrinetState {
 	 * @return true, if successor has been added, false if transition already
 	 *         existed for successor
 	 */
-	public boolean addSuccessor(PetrinetState newSuccessor, Transition transition) {
+	boolean addSuccessor(PetrinetState newSuccessor, Transition transition) {
 
 		if (newSuccessor == null)
 			return false;
@@ -171,7 +171,7 @@ public class PetrinetState {
 	 * @param successor the successor for which to return a transition
 	 * @return the first transition for successor
 	 */
-	public Transition getFirstSuccessorTransition(PetrinetState successor) {
+	Transition getFirstSuccessorTransition(PetrinetState successor) {
 		if (!successors.containsKey(successor.getState()))
 			return null;
 		// return the first transition
@@ -408,14 +408,8 @@ public class PetrinetState {
 
 	}
 
-	/**
-	 * Removes a successor.
-	 *
-	 * @param successor           the successor state to be removed
-	 * @param stateChangeListener the state change listener listening for the
-	 *                            removal of transitions
-	 */
-	public void removeSuccessor(PetrinetState successor, ReachabilityStateChangedListener stateChangeListener) {
+	// Removes a successor.
+	private void removeSuccessor(PetrinetState successor, ReachabilityStateChangedListener stateChangeListener) {
 
 		if (!successors.containsKey(successor.getState()))
 			return;
@@ -504,7 +498,7 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	public void removeAllPredecessors(ReachabilityStateChangedListener stateChangeListener) {
+	void removeAllPredecessors(ReachabilityStateChangedListener stateChangeListener) {
 
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> predecessorStrings = new ArrayList<String>();
@@ -522,7 +516,7 @@ public class PetrinetState {
 	 *
 	 * @param stateChangeListener the state change listener
 	 */
-	public void removeAllSuccessors(ReachabilityStateChangedListener stateChangeListener) {
+	void removeAllSuccessors(ReachabilityStateChangedListener stateChangeListener) {
 
 		// temporary list for strings since while iterating items can't be remove
 		ArrayList<String> successorStrings = new ArrayList<String>();
@@ -533,17 +527,6 @@ public class PetrinetState {
 		for (String s : successorStrings)
 			removeSuccessor(successors.get(s), stateChangeListener);
 
-	}
-
-	/**
-	 * Gets transitions one can fire in this state to get to the successor state.
-	 * 
-	 * @param successor the target state for which transitions should be returned
-	 * @return transitions leading to successor state
-	 */
-
-	public List<Transition> getTransitions(PetrinetState successor) {
-		return transitionMap.get(this.getState() + successor.getState());
 	}
 
 }

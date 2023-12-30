@@ -439,7 +439,7 @@ public class Petrinet {
 	 *                                       already exists
 	 * @throws DuplicateIdException          thrown if id already exists
 	 */
-	public void addEdge(String source, String target, String id)
+	void addEdge(String source, String target, String id)
 			throws InvalidEdgeOperationException, DuplicateIdException {
 
 		PetrinetElement sourceElement = getPetrinetElement(source);
@@ -691,7 +691,7 @@ public class Petrinet {
 	 *
 	 * @return true, if the petrinet has places
 	 */
-	public boolean hasPlaces() {
+	boolean hasPlaces() {
 
 		return places.size() > 0;
 	}

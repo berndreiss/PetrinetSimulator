@@ -803,7 +803,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// try invoking add edge and catch duplicate id exception
 		try {
-			editor.addEdge(id);
+			editor.toggleAddEdge(id);
 			toolbar.toggleAddEdgeButton();
 
 		} catch (DuplicateIdException e) {
@@ -834,7 +834,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// get the toolbar
 		PetrinetToolbar toolbar = mainFrame.getToolbar();
 
-		editor.removeEdge();
+		editor.toggleRemoveEdge();
 		toolbar.toggleRemoveEdgeButton();
 	}
 
