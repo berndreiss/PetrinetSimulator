@@ -237,7 +237,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		while (queue.getCurrentState() != currentState && queue.goForward()) {
 		}
 
-		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
+		PetrinetState invalidState = reachabilityGraphModel.getLastStateOnUnboundednessPath();
 
 		// handle reachability graphs that are unbounded
 		if (invalidState != null) {

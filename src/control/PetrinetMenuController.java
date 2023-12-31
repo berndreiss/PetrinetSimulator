@@ -86,7 +86,7 @@ public interface PetrinetMenuController {
 	// METHODS FOR HELP
 
 	/**
-	 * Opens an info box showing java version and user directory used.
+	 * Opens an info box showing java version and user directory.
 	 */
 	void onInfo();
 

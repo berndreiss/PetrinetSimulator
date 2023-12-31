@@ -32,7 +32,8 @@ import util.IterableMap;
  * <p>
  * Listeners serve as a means for communicating with the
  * {@link ReachabilityGraph} ({@link PetrinetStateChangedListener}) and the
- * {@link PetrinetGraph} ({@link PetrinetComponentChangedListener}).
+ * {@link PetrinetGraph} ({@link PetrinetComponentChangedListener}). For more
+ * information on the listeners also refer to ProgramDocumentation.pdf.
  * </p>
  */
 
@@ -203,7 +204,7 @@ public class Petrinet {
 	 * Gets a petrinet element. Returns null if element does not exist.
 	 *
 	 * @param id the id for which to get the petrinet element
-	 * @return the petrinet element corresponding to the id
+	 * @return the petrinet element corresponding to the id, null if not found
 	 */
 	public PetrinetElement getPetrinetElement(String id) {
 		PetrinetElement element = places.get(id);
@@ -404,6 +405,7 @@ public class Petrinet {
 	 *
 	 * @param id             the id of the place
 	 * @param numberOfTokens the number of tokens to be set
+	 * @throws PetrinetException thrown if number of tokens is negative
 	 */
 	void setTokens(String id, int numberOfTokens) throws PetrinetException {
 
@@ -439,8 +441,7 @@ public class Petrinet {
 	 *                                       already exists
 	 * @throws DuplicateIdException          thrown if id already exists
 	 */
-	void addEdge(String source, String target, String id)
-			throws InvalidEdgeOperationException, DuplicateIdException {
+	void addEdge(String source, String target, String id) throws InvalidEdgeOperationException, DuplicateIdException {
 
 		PetrinetElement sourceElement = getPetrinetElement(source);
 

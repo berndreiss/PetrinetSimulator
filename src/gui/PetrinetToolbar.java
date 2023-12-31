@@ -114,6 +114,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * Instantiates a new petrinet toolbar.
 	 *
 	 * @param mainController the controller controlling the toolbar
+	 * @param parent the parent frame
 	 */
 	PetrinetToolbar(PetrinetToolbarController mainController, JFrame parent) {
 

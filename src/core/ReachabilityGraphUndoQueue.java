@@ -82,10 +82,10 @@ public class ReachabilityGraphUndoQueue {
 
 		// UNDO CURRENT STEP
 		// if state has been added, remove it
-		if (currentState.getAdded() == AddedType.STATE)
+		if (currentState.getAddedType() == AddedType.STATE)
 			reachabilityGraph.removeState(currentState.getPetrinetState());
 		// if only edge has been added, remove it
-		if (currentState.getAdded() == AddedType.EDGE)
+		if (currentState.getAddedType() == AddedType.EDGE)
 			reachabilityGraph.removeEdge(currentState.getPrevious().getPetrinetState(), currentState.getPetrinetState(),
 					currentState.getTransition());
 

@@ -222,7 +222,6 @@ public class PetrinetState {
 	 * Sets m -> state marking the start of a path proving that petrinet is unbound.
 	 *
 	 * @param m                   the start of the path
-	 * @param stateChangeListener the state change listener
 	 */
 	void setM(PetrinetState m) {
 		this.m = m;
@@ -239,7 +238,7 @@ public class PetrinetState {
 	}
 
 	/**
-	 * Checks state if is bigger than other -> if any token on a place in the given
+	 * Checks whether state is bigger than other -> if any token on a place in the given
 	 * state is bigger than in the other while all other tokens being at least the
 	 * same, return true.
 	 *

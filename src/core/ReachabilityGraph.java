@@ -18,11 +18,11 @@ import util.IterableMap;
  * and edges between those states being represented by transitions being fired.
  * While the graph itself is being represented by the net of
  * {@link PetrinetState}s this class holds information about the current state,
- * current edge, validity of the petrinet (concerning its boundedness) and
- * methods for adding and removing states. Additionally it provides a
- * {@link ReachabilityStateChangedListener} communicating changes to the graph
- * and a {@link ReachabilityGraphUndoQueue} recording steps. Changes can be
- * stopped to be pushed on the queue or marked as skippable.
+ * current edge, boundedness of the petrinet and methods for adding and removing
+ * states. Additionally it provides a {@link ReachabilityStateChangedListener}
+ * communicating changes to the graph and a {@link ReachabilityGraphUndoQueue}
+ * recording steps. Changes can be stopped to be pushed on the queue or marked
+ * as skippable.
  * </p>
  */
 public class ReachabilityGraph {
@@ -36,8 +36,8 @@ public class ReachabilityGraph {
 	/** The edge currently being active in the reachability graph. */
 	private String currentEdge = null;
 
-	/** State marking unboundedness (m'). */
-	private PetrinetState invalidState;
+	/** State on the end of the path marking unboundedness (m'). */
+	private PetrinetState lastStateOnUnboundednessPath;
 
 	/** The initial petrinet state. */
 	private PetrinetState initialState;
@@ -223,7 +223,7 @@ public class ReachabilityGraph {
 		setNewCurrentState(petrinetState);
 
 		// check if current state is on path signifying unboundedness
-		if (invalidState == null)
+		if (lastStateOnUnboundednessPath == null)
 			checkIfCurrentStateIsBounded();
 
 		// push onto undo queue
@@ -244,7 +244,7 @@ public class ReachabilityGraph {
 
 	/**
 	 * Checks if current state is bounded by backwards checking whether any state is
-	 * smaller than the given state (see PetrinetState).
+	 * smaller than the given state (see {@link PetrinetState}).
 	 *
 	 * @return true, if state is bounded
 	 */
@@ -257,10 +257,11 @@ public class ReachabilityGraph {
 			// m)
 			PetrinetState state = checkIfStateIsBounded(s, new ArrayList<PetrinetState>(), currentState);
 
-			// if state exists set invalid state and inform listener
+			// if state exists set last state on the path proving unboundedness and inform
+			// listener
 			if (state != null) {
 
-				invalidState = currentState;
+				lastStateOnUnboundednessPath = currentState;
 				currentState.setM(state);
 
 				if (stateChangeListener != null)
@@ -329,12 +330,14 @@ public class ReachabilityGraph {
 	}
 
 	/**
-	 * Gets the invalid state.
+	 * Gets the last state on the path proving unboundedness -> null if path does
+	 * not exist and therefore petrinet is bounded.
 	 *
-	 * @return the invalid state
+	 * @return the last state on the path proving unboudedness, null is petrinet is
+	 *         bounded
 	 */
-	public PetrinetState getInvalidState() {
-		return invalidState;
+	public PetrinetState getLastStateOnUnboundednessPath() {
+		return lastStateOnUnboundednessPath;
 	}
 
 	/**
@@ -414,9 +417,10 @@ public class ReachabilityGraph {
 		if (currentState == state)
 			currentState = null;
 
-		// reset invalid state if it is identical to state
-		if (invalidState == state)
-			invalidState = null;
+		// reset last state on the path proving unboundedness if it is identical to
+		// state
+		if (lastStateOnUnboundednessPath == state)
+			lastStateOnUnboundednessPath = null;
 
 		// remove edges
 		if (state.hasEdges()) {
@@ -492,7 +496,7 @@ public class ReachabilityGraph {
 
 	/**
 	 * If set true all changes made to the reachability graph are flagged as
-	 * skippable an will be skipped when re-/undoing changes. False by default.
+	 * skippable and will be skipped when re-/undoing changes. False by default.
 	 * 
 	 * @param skippableMode if true, added steps are flagged skippable in the undo
 	 *                      queue

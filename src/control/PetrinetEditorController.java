@@ -193,7 +193,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Adds an edge. If already adding an edge, adding edge gets aborted.
+	 * Adds an edge. If already adding an edge, adding edge is aborted.
 	 *
 	 * @param id the id of the edge to be added
 	 * @throws DuplicateIdException thrown if id already exists
@@ -224,7 +224,7 @@ public class PetrinetEditorController {
 	}
 
 	/**
-	 * Removes an edge. If already removing an edge, removing edge gets aborted.
+	 * Removes an edge. If already removing an edge, removing edge is aborted.
 	 *
 	 */
 	void toggleRemoveEdge() {

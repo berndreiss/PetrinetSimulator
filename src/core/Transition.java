@@ -12,7 +12,7 @@ import util.IterableMap;
  * Every transition has a set of places (see {@link Place}) that serve as input
  * (preset) and a set of places that serve as output (postset). The places know
  * their input and output transitions too and are synchronized when adding or
- * removing transitions. Transitions may be activated, if they are activated,
+ * removing transitions. Transitions may be activated,
  * meaning every place that serves as an input has a token. See also
  * {@link Petrinet}.
  * </p>
@@ -33,7 +33,7 @@ public class Transition extends PetrinetElement {
 	/**
 	 * A new instance of Transition is created.
 	 * 
-	 * @param id ID of the transition.
+	 * @param id id of the transition
 	 */
 	Transition(String id) {
 		super(id);

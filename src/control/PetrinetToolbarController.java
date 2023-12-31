@@ -1,6 +1,7 @@
 package control;
 
 import gui.MainFrame;
+import reachabilityGraphLayout.LayoutType;
 
 /**
  * <p>
@@ -134,12 +135,12 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onToggleAutoLayout();
 
 	/**
-	 * Chooses the tree layout for the reachability graph.
+	 * Chooses the tree {@link LayoutType} for the reachability graph.
 	 */
 	void onToggleTreeLayout();
 
 	/**
-	 * Chooses the circle layout for the reachability graph.
+	 * Chooses the circle {@link LayoutType} for the reachability graph.
 	 */
 	void onToggleCircleLayout();
 
@@ -151,7 +152,8 @@ public interface PetrinetToolbarController extends PetrinetMenuController {
 	void onSetSplitPanesDefault();
 
 	/**
-	 * Resets the dividers of the split panes to the current ratio.
+	 * Resets the dividers of the split panes to the current ratio. Needed for cases
+	 * when the dividers don't behave as intended.
 	 */
 	void onReadjustDividers();
 }

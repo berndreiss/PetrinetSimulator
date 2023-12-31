@@ -64,7 +64,7 @@ public interface PetrinetPanelInterface {
 	/**
 	 * 
 	 * Analyses whether the current petrinet is bounded or unbounded. In the process
-	 * also adjusts the arrow heads in the GraphStream graph.
+	 * also adjusts the arrow heads in the <a href="https://graphstream-project.org/">GraphStream</a> graph.
 	 * 
 	 * @return a petrinet analyser
 	 * 
@@ -93,7 +93,7 @@ public interface PetrinetPanelInterface {
 	void zoomInReachability();
 
 	/**
-	 * Zooms out of reachability graph.
+	 * Zooms out of the reachability graph.
 	 */
 	void zoomOutReachability();
 

@@ -49,9 +49,9 @@ public class PetrinetAnalyser {
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
-	 * @param file The file to be analyzed.
-	 * @throws PetrinetException Thrown if file contains an invalid petrinet
-	 *                           structure.
+	 * @param file the file to be analyzed
+	 * @throws PetrinetException thrown if file contains an invalid petrinet
+	 *                           structure
 	 */
 	public PetrinetAnalyser(File file) throws PetrinetException {
 		this(new PetrinetViewerController(file, null, null));
@@ -60,8 +60,8 @@ public class PetrinetAnalyser {
 	/**
 	 * Instantiates a new petrinet analyser.
 	 *
-	 * @param controller The controller containing the petrinet to be analyzed and
-	 *                   the reachability graph to show results.
+	 * @param controller the controller containing the petrinet to be analyzed and
+	 *                   the reachability graph to show results
 	 */
 	public PetrinetAnalyser(PetrinetViewerController controller) {
 		this.controller = controller;
@@ -76,8 +76,8 @@ public class PetrinetAnalyser {
 		// unboundedness and set beginning and end point markers of the path
 		if (!bounded) {
 			updateReachabilityGraph();
-			m = reachabilityGraphModel.getInvalidState().getM().getState();
-			mMarked = reachabilityGraphModel.getInvalidState().getState();
+			m = reachabilityGraphModel.getLastStateOnUnboundednessPath().getM().getState();
+			mMarked = reachabilityGraphModel.getLastStateOnUnboundednessPath().getState();
 
 		}
 
@@ -208,7 +208,7 @@ public class PetrinetAnalyser {
 
 		controller.resetPetrinet();
 
-		PetrinetState invalidState = reachabilityGraphModel.getInvalidState();
+		PetrinetState invalidState = reachabilityGraphModel.getLastStateOnUnboundednessPath();
 
 		if (invalidState != null) {
 

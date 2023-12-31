@@ -48,15 +48,6 @@ public class ReachabilityGraphUndoQueueState {
 	}
 
 	/**
-	 * Gets the type that has been added.
-	 * 
-	 * @return added type
-	 */
-	public AddedType getAdded() {
-		return stateAdded;
-	}
-
-	/**
 	 * Gets the petrinet state.
 	 *
 	 * @return the petrinet state
@@ -150,7 +141,7 @@ public class ReachabilityGraphUndoQueueState {
 	/**
 	 * Sets the petrinet state.
 	 * 
-	 * @param newPetrinetState The new petrinet state.
+	 * @param newPetrinetState the new petrinet state
 	 */
 	public void setPetrinetState(PetrinetState newPetrinetState) {
 		this.state = newPetrinetState;
