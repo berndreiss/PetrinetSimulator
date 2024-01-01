@@ -38,7 +38,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	private String CSS_FILE = "url(" + getClass().getResource("/resources/reachability_graph.css") + ")";
 	/**
 	 * Listens for certain instances the graph needs to be replayed -> needed for
-	 * adjusting arrow heads (see also {@link PetrinetPanel})
+	 * adjusting arrow heads (see also {@link GraphStreamPetrinetPanel})
 	 */
 	private AdjustArrowHeadsListener adjustArrowHeadsListener;
 	/** The sprite manager */

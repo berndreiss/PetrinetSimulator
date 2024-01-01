@@ -5,7 +5,9 @@ package exceptions;
  * The Class InvalidEdgeOperationException.
  * </p>
  * <p>
- * Gets thrown when an edge operation is invalid.
+ * Gets thrown when an edge operation is invalid -> if source or target do not
+ * exist, if both source and target are transitions/places or if the edge
+ * already exists.
  * </p>
  */
 public class InvalidEdgeOperationException extends PetrinetException {

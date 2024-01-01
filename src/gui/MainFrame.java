@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
 
 	/**
 	 * Represents the default width of the left half of the graph split pane (see
-	 * {@link PetrinetPanel}).
+	 * {@link GraphStreamPetrinetPanel}).
 	 */
 	public static final double GRAPH_SPLIT_PANE_DEFAULT_RATIO = 0.5;
 

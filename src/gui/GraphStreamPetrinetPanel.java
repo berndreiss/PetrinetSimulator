@@ -28,7 +28,7 @@ import org.graphstream.ui.view.util.InteractiveElement;
 import control.MainController;
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
-import control.PetrinetPanelInterface;
+import control.PetrinetPanel;
 import core.Petrinet;
 import core.PetrinetAnalyser;
 import core.PetrinetElement;
@@ -38,7 +38,7 @@ import reachabilityGraphLayout.LayoutType;
 
 /**
  * <p>
- * An implementation of the {@link PetrinetPanelInterface}.
+ * An implementation of the {@link PetrinetPanel}.
  * </p>
  * 
  * <p>
@@ -54,7 +54,7 @@ import reachabilityGraphLayout.LayoutType;
  * adjusting correctly when resizing components or adding / removing elements.
  * </p>
  */
-public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
+public class GraphStreamPetrinetPanel extends JPanel implements PetrinetPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -119,7 +119,7 @@ public class PetrinetPanel extends JPanel implements PetrinetPanelInterface {
 	 * @throws PetrinetException if there is a problem reading a file an exception
 	 *                           is thrown
 	 */
-	public PetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode)
+	public GraphStreamPetrinetPanel(MainController mainController, File file, LayoutType layoutType, ToolbarMode toolbarMode)
 			throws PetrinetException {
 
 		this.toolbarMode = toolbarMode;

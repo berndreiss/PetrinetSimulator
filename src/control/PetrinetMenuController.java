@@ -4,7 +4,7 @@ import javax.swing.LookAndFeel;
 
 import gui.MainFrame;
 import gui.PetrinetGraph;
-import gui.PetrinetPanel;
+import gui.GraphStreamPetrinetPanel;
 import gui.ToolbarMode;
 
 /**
@@ -15,7 +15,7 @@ public interface PetrinetMenuController {
 	// METHODS FOR FILE
 
 	/**
-	 * Opens a new {@link PetrinetPanel} containing an empty
+	 * Opens a new {@link GraphStreamPetrinetPanel} containing an empty
 	 * {@link PetrinetGraph} and sets the panel to ToolbarMode EDITOR
 	 * (see {@link ToolbarMode}).
 	 */

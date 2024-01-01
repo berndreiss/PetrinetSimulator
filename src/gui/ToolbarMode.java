@@ -8,7 +8,7 @@ import core.Petrinet;
  * </p>
  * <p>
  * The two modes are represented by the different buttons the toolbar is
- * showing. The toolbar mode is kept track of in the {@link PetrinetPanel} ->
+ * showing. The toolbar mode is kept track of in the {@link GraphStreamPetrinetPanel} ->
  * this way there can be different petrinets with different toolbar modes and
  * users can switch between them. Most notably in the VIEWER mode the
  * {@link Petrinet} can not be structurally modified. Only existing places can

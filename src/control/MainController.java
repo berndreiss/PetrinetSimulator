@@ -18,7 +18,7 @@ import core.PetrinetAnalyser;
 import exceptions.DuplicateIdException;
 import exceptions.PetrinetException;
 import gui.MainFrame;
-import gui.PetrinetPanel;
+import gui.GraphStreamPetrinetPanel;
 import gui.PetrinetToolbar;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
@@ -43,7 +43,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	/** The mainFrame holding all components. */
 	private MainFrame mainFrame;
 	/** The petrinet panel that is currently loaded. */
-	private PetrinetPanelInterface currentPetrinetPanel;
+	private PetrinetPanel currentPetrinetPanel;
 	/** The layout type currently in use. */
 	private LayoutType layoutType = LayoutType.TREE;
 	/** The toolbar mode. */
@@ -85,7 +85,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 					return;
 
 				// get panel and upadte current panel
-				PetrinetPanelInterface panel = (PetrinetPanelInterface) tabbedPane.getComponentAt(index);
+				PetrinetPanel panel = (PetrinetPanel) tabbedPane.getComponentAt(index);
 				currentPetrinetPanel = panel;
 
 				// update status label and toolbar
@@ -114,7 +114,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	 *
 	 * @return the current panel
 	 */
-	public PetrinetPanelInterface getCurrentPanel() {
+	public PetrinetPanel getCurrentPanel() {
 		return currentPetrinetPanel;
 	}
 
@@ -177,9 +177,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				return;
 
 		// create panel and catch errors from parsing the file -> return in case
-		PetrinetPanel newPanel = null;
+		GraphStreamPetrinetPanel newPanel = null;
 		try {
-			newPanel = new PetrinetPanel(this, file, layoutType, toolbarMode);
+			newPanel = new GraphStreamPetrinetPanel(this, file, layoutType, toolbarMode);
 		} catch (PetrinetException e) {
 			JOptionPane.showMessageDialog(null,
 					"Could not create panel from file " + file.getName() + " -> " + e.getMessage(), "",
@@ -958,7 +958,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// update every panel in the tabbed pane to tree layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
-				((PetrinetPanel) comp).setLayoutType(layoutType);
+				((GraphStreamPetrinetPanel) comp).setLayoutType(layoutType);
 		}
 
 		// set the toolbar buttons
@@ -973,7 +973,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// update every panel in the tabbed pane to circle layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
-				((PetrinetPanel) comp).setLayoutType(layoutType);
+				((GraphStreamPetrinetPanel) comp).setLayoutType(layoutType);
 		}
 
 		// set the toolbar buttons
@@ -992,7 +992,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// update every panel in the tabbed pane to automatic layout
 		if (mainFrame.getTabbedPane().getTabCount() != 0) {
 			for (Component comp : mainFrame.getTabbedPane().getComponents())
-				((PetrinetPanel) comp).setLayoutType(layoutType);
+				((GraphStreamPetrinetPanel) comp).setLayoutType(layoutType);
 		}
 		// set the toolbar buttons
 		getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
@@ -1038,7 +1038,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// components are not redone they are not displayed properly
 		JTabbedPane tabbedPane = mainFrame.getTabbedPane();
 		for (Component comp : tabbedPane.getComponents())
-			((PetrinetPanel) comp).setSplitPane();
+			((GraphStreamPetrinetPanel) comp).setSplitPane();
 		setToolbarMode(toolbarMode);
 	}
 
@@ -1057,7 +1057,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void enableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
-			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
+			((PetrinetPanel) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
 					.setShowBoundedness(true);
 		showBoundedness = true;
 
@@ -1066,7 +1066,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void disableAutomaticBoundednessCheck() {
 		for (int i = 0; i < mainFrame.getTabbedPane().getComponentCount(); i++)
-			((PetrinetPanelInterface) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
+			((PetrinetPanel) mainFrame.getTabbedPane().getComponentAt(i)).getReachabilityGraph()
 					.setShowBoundedness(false);
 		showBoundedness = false;
 	}

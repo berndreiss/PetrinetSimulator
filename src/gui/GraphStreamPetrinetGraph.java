@@ -22,8 +22,7 @@ import listeners.PetrinetComponentChangedListener;
  * <p>
  * The graph listens to changes in the petrinet passed to it via a
  * {@link PetrinetComponentChangedListener}. If the petrinet is not empty it
- * adds all containing components. Nodes can also be marked / unmarked by
- * toggling them.
+ * adds all containing components.
  * </p>
  */
 class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {

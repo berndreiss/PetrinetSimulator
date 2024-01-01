@@ -19,7 +19,7 @@ import gui.ToolbarMode;
  * According to the {@link ToolbarMode} it is currently set to.
  * </p>
  */
-public interface PetrinetPanelInterface {
+public interface PetrinetPanel {
 
 	/**
 	 * Gets the toolbar mode.

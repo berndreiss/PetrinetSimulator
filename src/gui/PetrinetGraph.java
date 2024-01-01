@@ -21,7 +21,7 @@ public interface PetrinetGraph {
 	 * unmark the former marked node (if there was one). If the provided node is
 	 * already marked unmark it. If null is passed unmark the currently marked node.
 	 *
-	 * @param petrinetElement rlement for which node should be marked / unmarked
+	 * @param petrinetElement element for which node should be marked / unmarked
 	 *                        (null -> currently marked node is unmarked)
 	 */
 	void toggleNodeMark(PetrinetElement petrinetElement);

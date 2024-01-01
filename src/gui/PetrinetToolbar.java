@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 import control.PetrinetViewerController;
 import control.PetrinetEditorController;
-import control.PetrinetPanelInterface;
+import control.PetrinetPanel;
 import control.PetrinetToolbarController;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
@@ -29,7 +29,7 @@ import reachabilityGraphLayout.LayoutType;
  * <p>
  * A toolbar for interactions with petrinets via a
  * {@link PetrinetToolbarController} representing the current state of a
- * {@link PetrinetPanelInterface}.
+ * {@link PetrinetPanel}.
  * </p>
  * 
  * <p>
@@ -114,7 +114,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * Instantiates a new petrinet toolbar.
 	 *
 	 * @param mainController the controller controlling the toolbar
-	 * @param parent the parent frame
+	 * @param parent         the parent frame
 	 */
 	PetrinetToolbar(PetrinetToolbarController mainController, JFrame parent) {
 
@@ -148,8 +148,7 @@ public class PetrinetToolbar extends JToolBar {
 		verticalStrut.setVisible(false);
 
 		// listen to the docking / undocking of the toolbar -> if not attached to the
-		// NORTH
-		// add separator
+		// NORTH add separator
 		addPropertyChangeListener(new PropertyChangeListener() {
 
 			// on adding the toolbar to the frame for the first time the property change
@@ -618,7 +617,7 @@ public class PetrinetToolbar extends JToolBar {
 	 * @param petrinetPanel the panel the toolbar represents
 	 * @param layoutType    the layoutType used
 	 */
-	public void setToolbarTo(PetrinetPanelInterface petrinetPanel, LayoutType layoutType) {
+	public void setToolbarTo(PetrinetPanel petrinetPanel, LayoutType layoutType) {
 
 		// get default color of current look and feel
 		JButton button = new JButton();
@@ -671,7 +670,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggles redo button. If it is not highlighted, highlight it. Set to default
+	 * Set the redo button. If highlight, highlight it. Set to default
 	 * color otherwise.
 	 * 
 	 * @param highlight if true, buttons are highlighted, highlighting removed
@@ -686,10 +685,10 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Toggles undo button. If it is not highlighted, highlight it. Set to default
+	 * Set the undo button. If highlight, highlight it. Set to default
 	 * color otherwise.
 	 * 
-	 * @param highlight true if undo button is highlighted
+	 * @param highlight true if undo button is to be highlighted
 	 */
 	public void setUndoButton(boolean highlight) {
 		if (highlight)
@@ -699,7 +698,7 @@ public class PetrinetToolbar extends JToolBar {
 	}
 
 	/**
-	 * Get the place the toolbar is currently docked in.
+	 * Get the place the toolbar is currently docked to.
 	 * 
 	 * @return any of {Borderlayout.NORTH, Borderlayout.EAST, Borderlayout.WEST}
 	 */
