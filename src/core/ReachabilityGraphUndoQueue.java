@@ -10,7 +10,7 @@ import listeners.ToolbarChangedListener;
 public class ReachabilityGraphUndoQueue {
 
 	/** The reachability graph. */
-	private ReachabilityGraph reachabilityGraph;
+	private ReachabilityGraphModel reachabilityGraph;
 	/** The listener for the toolbar buttons. */
 	private ToolbarChangedListener toolbarButtonListener;
 	/** The current state of the queue. */
@@ -23,7 +23,7 @@ public class ReachabilityGraphUndoQueue {
 	 *                              used
 	 * @param toolbarButtonListener the listener for the toolbar buttons
 	 */
-	ReachabilityGraphUndoQueue(ReachabilityGraph reachabilityGraph,
+	ReachabilityGraphUndoQueue(ReachabilityGraphModel reachabilityGraph,
 			ToolbarChangedListener toolbarButtonListener) {
 		this.reachabilityGraph = reachabilityGraph;
 		this.toolbarButtonListener = toolbarButtonListener;

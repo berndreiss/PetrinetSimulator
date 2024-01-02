@@ -1,10 +1,11 @@
 package gui;
 
+import core.Petrinet;
 import core.PetrinetElement;
 
 /**
  * <p>
- * Interface for a graph representing a petrinet.
+ * Interface for a graph representing a {@link Petrinet}.
  * </p>
  */
 public interface PetrinetGraph {

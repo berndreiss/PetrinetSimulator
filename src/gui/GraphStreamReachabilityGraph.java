@@ -11,7 +11,7 @@ import org.graphstream.ui.spriteManager.SpriteManager;
 import core.ReachabilityGraphUndoQueue;
 import core.ReachabilityGraphUndoQueueState;
 import core.PetrinetState;
-import core.ReachabilityGraph;
+import core.ReachabilityGraphModel;
 import core.Transition;
 import listeners.ReachabilityStateChangedListener;
 import listeners.AdjustArrowHeadsListener;
@@ -22,7 +22,7 @@ import reachabilityGraphLayout.LayoutType;
  *
  * <p>
  * A <a href="https://graphstream-project.org/">GraphStream</a> implementation
- * of {@link ReachabilityGraph}.
+ * of {@link ReachabilityGraphModel}.
  * </p>
  * 
  * <p>
@@ -32,7 +32,7 @@ import reachabilityGraphLayout.LayoutType;
  * {@link Layout}s which can be changed (see also {@link LayoutType}).
  * </p>
  */
-public class GraphStreamReachabilityGraph extends MultiGraph {
+public class GraphStreamReachabilityGraph extends MultiGraph implements ReachabilityGraph {
 
 	/** The CSS file for the GraphStream graph */
 	private String CSS_FILE = "url(" + getClass().getResource("/resources/reachability_graph.css") + ")";
@@ -82,7 +82,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * @param pathShown              true, it reachability graph is not empty and
 	 *                               path has been shown before
 	 */
-	GraphStreamReachabilityGraph(ReachabilityGraph reachabilityGraphModel, LayoutType layoutType,
+	GraphStreamReachabilityGraph(ReachabilityGraphModel reachabilityGraphModel, LayoutType layoutType,
 			boolean showBoundedness, boolean pathShown) {
 		super("Reachability Graph");
 
@@ -611,11 +611,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 		return nodeCount < 2;
 	}
 
-	/**
-	 * If true, boundedness is shown in graph.
-	 * 
-	 * @param show true if boundedness should be shown
-	 */
+
+	@Override
 	public void setShowBoundedness(boolean show) {
 		showBoundedness = show;
 
@@ -636,11 +633,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 			setHighlight(n);
 	}
 
-	/**
-	 * Gets whether boundedness is shown in graph.
-	 * 
-	 * @return true if boundedness is shown
-	 */
+	@Override
 	public boolean getShowBoundedness() {
 		return showBoundedness;
 
@@ -652,7 +645,7 @@ public class GraphStreamReachabilityGraph extends MultiGraph {
 	 * 
 	 * @return true, if path is shown
 	 */
-	boolean pathShown() {
+	public boolean pathShown() {
 		if (nodeM == null)
 			return false;
 

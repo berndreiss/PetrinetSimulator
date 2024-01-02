@@ -2,6 +2,7 @@ package listeners;
 
 import core.PetrinetState;
 import core.Transition;
+import gui.ReachabilityGraph;
 
 /**
  * <p>
@@ -15,15 +16,15 @@ import core.Transition;
 public interface ReachabilityStateChangedListener {
 
 	/**
-	 * The View needs to set a new state to the current state.
+	 * The {@link ReachabilityGraph} needs to set a new state to the current state.
 	 *
 	 * @param state the state which is the new current state
 	 */
 	void onSetCurrent(PetrinetState state);
 
 	/**
-	 * The View needs to mark the starting and ending nodes of the path signifying
-	 * that the graph is unbounded.
+	 * The {@link ReachabilityGraph} needs to mark the starting and ending nodes of
+	 * the path signifying that the graph is unbounded.
 	 *
 	 * @param m       the starting node of the path
 	 * @param mMarked the endong node of the path
@@ -31,8 +32,9 @@ public interface ReachabilityStateChangedListener {
 	void onMarkUnboundedPath(PetrinetState m, PetrinetState mMarked);
 
 	/**
-	 * The View needs to add a new State to it including an edge from the
-	 * predecessor with a label signifying the transition that has been fired.
+	 * The {@link ReachabilityGraph} needs to add a new State to it including an
+	 * edge from the predecessor with a label signifying the transition that has
+	 * been fired.
 	 *
 	 * @param state       the state to be added
 	 * @param predecessor the predecessor of the state to be added
@@ -41,14 +43,14 @@ public interface ReachabilityStateChangedListener {
 	void onAdd(PetrinetState state, PetrinetState predecessor, Transition transition);
 
 	/**
-	 * A state needs to be removed from the View.
+	 * A state needs to be removed from the {@link ReachabilityGraph}.
 	 *
 	 * @param state the state to be removed
 	 */
 	void onRemove(PetrinetState state);
 
 	/**
-	 * An edge needs to be removed from the View.
+	 * An edge needs to be removed from the {@link ReachabilityGraph}.
 	 *
 	 * @param stateSource the source state of the edge to be removed
 	 * @param stateTarget the target state of the edge to be removed
@@ -59,7 +61,7 @@ public interface ReachabilityStateChangedListener {
 
 	/**
 	 * 
-	 * The View needs to mark the edge as the current edge.
+	 * The {@link ReachabilityGraph} needs to mark the edge as the current edge.
 	 * 
 	 * @param edge the edge to be marked as the current edge
 	 */
@@ -71,12 +73,12 @@ public interface ReachabilityStateChangedListener {
 	void onResetCurrentEdge();
 
 	/**
-	 * Resets the path in the graph.
+	 * Resets the path proving unboundedness in the graph.
 	 */
 	void onResetPath();
 
 	/**
-	 * Adds a state to the path.
+	 * Adds a state to the path proving unboundedness.
 	 * 
 	 * @param state state to be added
 	 */

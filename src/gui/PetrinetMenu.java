@@ -8,7 +8,7 @@ import control.PetrinetMenuController;
 
 /**
  * <p>
- * A custom {@link JMenuBar} consisting of</p>
+ * A custom {@link JMenuBar}. Consists of</p>
  * <ul>
  *     <li>File:</li>
  *     <ul>

@@ -31,7 +31,7 @@ import util.IterableMap;
  * 
  * <p>
  * Listeners serve as a means for communicating with the
- * {@link ReachabilityGraph} ({@link PetrinetStateChangedListener}) and the
+ * {@link ReachabilityGraphModel} ({@link PetrinetStateChangedListener}) and the
  * {@link PetrinetGraph} ({@link PetrinetComponentChangedListener}). For more
  * information on the listeners also refer to ProgramDocumentation.pdf.
  * </p>

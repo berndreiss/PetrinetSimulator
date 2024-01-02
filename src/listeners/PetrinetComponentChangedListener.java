@@ -3,6 +3,7 @@ package listeners;
 import core.PetrinetElement;
 import core.Place;
 import core.Transition;
+import gui.PetrinetGraph;
 
 /**
  * <p>
@@ -11,36 +12,38 @@ import core.Transition;
  * </p>
  *
  * <p>
- * It provides methods for informing the View that the data model of the
- * petrinet has changed and therefore has to be updated.
+ * It provides methods for informing the {@link PetrinetGraph} that the data
+ * model of the petrinet has changed and therefore has to be updated.
  * </p>
  */
 public interface PetrinetComponentChangedListener {
 
 	/**
-	 * When an element has been added it should be added to the View also.
+	 * When an element has been added it should be added to the
+	 * {@link PetrinetGraph} also.
 	 *
 	 * @param element the element to be added
 	 */
 	void onPetrinetElementAdded(PetrinetElement element);
 
 	/**
-	 * When coordinates are set for an element they should be updated in the View
-	 * also.
+	 * When coordinates are set for an element they should be updated in the
+	 * {@link PetrinetGraph} also.
 	 *
 	 * @param element the element for which coordinates need to be reset
 	 */
 	void onPetrinetElementCoordinatesChanged(PetrinetElement element);
 
 	/**
-	 * When an element is removed it should be removed from the View also.
+	 * When an element is removed it should be removed from the
+	 * {@link PetrinetGraph} also.
 	 *
 	 * @param element the element to be removed
 	 */
 	void onPetrinetElementRemoved(PetrinetElement element);
 
 	/**
-	 * When an edge is added it should be added in the View also.
+	 * When an edge is added it should be added in the {@link PetrinetGraph} also.
 	 *
 	 * @param source the source element of the edge
 	 * @param target the target element of the edge
@@ -49,7 +52,8 @@ public interface PetrinetComponentChangedListener {
 	void onEdgeAdded(PetrinetElement source, PetrinetElement target, String id);
 
 	/**
-	 * When an edge is removed it should be removed from the View also.
+	 * When an edge is removed it should be removed from the {@link PetrinetGraph}
+	 * also.
 	 * 
 	 * @param source the source element for the edge to be removed
 	 * @param target the targets element for the edge to be removed
@@ -58,22 +62,23 @@ public interface PetrinetComponentChangedListener {
 
 	/**
 	 * When the count of tokens of a place has changed it needs to be changed in the
-	 * View also.
+	 * {@link PetrinetGraph} also.
 	 *
 	 * @param place the place for which the number of tokens needs to be updated
 	 */
 	void onPlaceTokenCountChanged(Place place);
 
 	/**
-	 * When a label for an element is changed it needs to be changed in the View
-	 * also.
+	 * When a label for an element is changed it needs to be changed in the
+	 * {@link PetrinetGraph} also.
 	 *
 	 * @param element the element for which the label needs to be changed
 	 */
 	void onPetrinetElementLabelChanged(PetrinetElement element);
 
 	/**
-	 * When a transition is (de-)activated the View needs to be updated.
+	 * When a transition is (de-)activated the {@link PetrinetGraph} needs to be
+	 * updated.
 	 *
 	 * @param transition the transition for which the state has changed
 	 */

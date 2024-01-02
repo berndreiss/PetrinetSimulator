@@ -17,8 +17,8 @@ import javax.swing.filechooser.FileFilter;
 import core.PetrinetAnalyser;
 import exceptions.DuplicateIdException;
 import exceptions.PetrinetException;
-import gui.MainFrame;
 import gui.GraphStreamPetrinetPanel;
+import gui.MainFrame;
 import gui.PetrinetToolbar;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
@@ -177,7 +177,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				return;
 
 		// create panel and catch errors from parsing the file -> return in case
-		GraphStreamPetrinetPanel newPanel = null;
+		PetrinetPanel newPanel = null;
 		try {
 			newPanel = new GraphStreamPetrinetPanel(this, file, layoutType, toolbarMode);
 		} catch (PetrinetException e) {

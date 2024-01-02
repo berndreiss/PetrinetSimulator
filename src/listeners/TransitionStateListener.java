@@ -6,13 +6,15 @@ package listeners;
  * transition has changed.
  * </p>
  * <p>
- * Informs the petrinet that the state of a transition has changed.
+ * Informs the {@link PetrinetComponentChangedListener} that the state of a
+ * transition has changed.
  * </p>
  */
 public interface TransitionStateListener {
 
 	/**
-	 * Informs the petrinet that the state of a transition has changed.
+	 * Informs the {@link PetrinetComponentChangedListener} that the state of a
+	 * transition has changed.
 	 */
 	void onStateChanged();
 }

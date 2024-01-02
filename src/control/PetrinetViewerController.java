@@ -9,7 +9,7 @@ import core.PetrinetElement;
 import core.ReachabilityGraphUndoQueue;
 import core.PetrinetState;
 import core.Place;
-import core.ReachabilityGraph;
+import core.ReachabilityGraphModel;
 import core.Transition;
 import exceptions.PetrinetException;
 import gui.ToolbarMode;
@@ -23,7 +23,7 @@ import propra.pnml.PNMLWopedWriter;
  * 
  * <p>
  * It also creates and handles a reachability graph model linked to petrinet
- * (see {@link ReachabilityGraph}).
+ * (see {@link ReachabilityGraphModel}).
  * </p>
  */
 public class PetrinetViewerController {
@@ -31,7 +31,7 @@ public class PetrinetViewerController {
 	/** The petrinet being handled. */
 	private Petrinet petrinet = new Petrinet();
 	/** The reachability graph model for the petrinet. */
-	private ReachabilityGraph reachabilityGraphModel;
+	private ReachabilityGraphModel reachabilityGraphModel;
 
 	/** The file being processed. */
 	private File file;
@@ -61,7 +61,7 @@ public class PetrinetViewerController {
 					"Petrinet is not connected. You can not view it but still open it in the editor.");
 
 		// create reachability graph model
-		this.reachabilityGraphModel = new ReachabilityGraph(petrinet, toolbarListener);
+		this.reachabilityGraphModel = new ReachabilityGraphModel(petrinet, toolbarListener);
 
 	}
 
@@ -88,7 +88,7 @@ public class PetrinetViewerController {
 	 *
 	 * @return the reachability graph model
 	 */
-	public ReachabilityGraph getReachabilityGraphModel() {
+	public ReachabilityGraphModel getReachabilityGraphModel() {
 		return reachabilityGraphModel;
 	}
 

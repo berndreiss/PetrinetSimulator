@@ -25,7 +25,7 @@ import util.IterableMap;
  * as skippable.
  * </p>
  */
-public class ReachabilityGraph {
+public class ReachabilityGraphModel {
 
 	/** The petrinet this reachability graph is linked to. */
 	private Petrinet petrinet;
@@ -67,7 +67,7 @@ public class ReachabilityGraph {
 	 *                              graph
 	 * @param toolbarToggleListener the toolbar listener for un-/redo buttons
 	 */
-	public ReachabilityGraph(Petrinet petrinet, ToolbarChangedListener toolbarToggleListener) {
+	public ReachabilityGraphModel(Petrinet petrinet, ToolbarChangedListener toolbarToggleListener) {
 
 		this.petrinet = petrinet;
 
@@ -88,7 +88,7 @@ public class ReachabilityGraph {
 			@Override
 			public void onPetrinetChanged(Petrinet petrinet) {
 
-				undoQueue = new ReachabilityGraphUndoQueue(ReachabilityGraph.this, toolbarToggleListener);
+				undoQueue = new ReachabilityGraphUndoQueue(ReachabilityGraphModel.this, toolbarToggleListener);
 
 				makeEmpty();
 				if (initialState != null) {

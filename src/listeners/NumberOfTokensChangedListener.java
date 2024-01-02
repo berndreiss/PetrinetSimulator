@@ -7,14 +7,18 @@ package listeners;
  * </p>
  * 
  * <p>
- * Informs the petrinet that the number of tokens has changed for a place.
+ * Informs the {@link PetrinetComponentChangedListener} and the
+ * {@link PetrinetStateChangedListener} that the number of tokens has changed
+ * for a place.
  * </p>
  *
  */
 public interface NumberOfTokensChangedListener {
 
 	/**
-	 * On number of tokens changed inform the petrinet.
+	 * On number of tokens changed inform the
+	 * {@link PetrinetComponentChangedListener} and the
+	 * {@link PetrinetStateChangedListener}.
 	 *
 	 * @param newNumber the new number of tokens
 	 */

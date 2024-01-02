@@ -4,8 +4,8 @@ import javax.swing.JPanel;
 
 import core.Petrinet;
 import core.PetrinetAnalyser;
-import gui.GraphStreamReachabilityGraph;
 import gui.PetrinetGraph;
+import gui.ReachabilityGraph;
 import gui.ResizableSplitPane;
 import gui.ToolbarMode;
 
@@ -110,6 +110,6 @@ public interface PetrinetPanel {
 	 * 
 	 * @return the reachability graph
 	 */
-	public GraphStreamReachabilityGraph getReachabilityGraph();
+	public ReachabilityGraph getReachabilityGraph();
 
 }

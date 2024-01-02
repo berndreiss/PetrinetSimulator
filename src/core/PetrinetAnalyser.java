@@ -29,7 +29,7 @@ public class PetrinetAnalyser {
 	private Petrinet petrinet;
 
 	/** The reachability graph model. */
-	private ReachabilityGraph reachabilityGraphModel;
+	private ReachabilityGraphModel reachabilityGraphModel;
 
 	/** True if petrinet is bounded. */
 	private boolean bounded = true;

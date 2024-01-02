@@ -542,7 +542,7 @@ public class GraphStreamPetrinetPanel extends JPanel implements PetrinetPanel {
 	}
 
 	@Override
-	public GraphStreamReachabilityGraph getReachabilityGraph() {
+	public ReachabilityGraph getReachabilityGraph() {
 		return reachabilityGraph;
 	}
 }
