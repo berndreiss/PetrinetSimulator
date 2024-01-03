@@ -60,7 +60,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		this.mainFrame = mainFrame;
 
 		// set default directory
-		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
+		workingDirectory = new File(System.getProperty("user.dir") + "/Petrinet_Examples");
 		// set status label
 		setStatusLabel();
 
@@ -566,14 +566,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		File previousFile = getFileNextToCurrentFile(FileEnum.PREVIOUS_FILE);
 
 		// set new panel if there is a previous file
-		if (previousFile != null) {
-			// ask if changes should be saved, on abort return
-			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
-				if (saveDialog())
-					return;
+		if (previousFile != null) 
 			setNewPanel(previousFile, false);
-
-		}
 
 	}
 
@@ -585,13 +579,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// get previous file
 		File nextFile = getFileNextToCurrentFile(FileEnum.NEXT_FILE);
 		// set new panel if there is a previous file
-		if (nextFile != null) {
-			// ask if changes should be saved, on abort return
-			if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
-				if (saveDialog())
-					return;
+		if (nextFile != null) 
 			setNewPanel(nextFile, false);
-		}
+		
 	}
 
 	// get previous or next file adjacent to the current file in alphabetical order

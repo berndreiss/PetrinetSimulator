@@ -6,22 +6,9 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/ProPra-WS23-Basis/libs/GraphStream/gs-algo-2.0/gs-algo-2.0.jar" sourcepath="/ProPra-WS23-Basis/libs/GraphStream/gs-algo-2.0/gs-algo-2.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ProPra-WS23-Basis/libs/GraphStream/gs-algo-2.0/gs-algo-2.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/ProPra-WS23-Basis/libs/GraphStream/gs-core-2.0/gs-core-2.0.jar" sourcepath="/ProPra-WS23-Basis/libs/GraphStream/gs-core-2.0/gs-core-2.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ProPra-WS23-Basis/libs/GraphStream/gs-core-2.0/gs-core-2.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/ProPra-WS23-Basis/libs/GraphStream/gs-ui-swing-2.0/gs-ui-swing-2.0.jar" sourcepath="/ProPra-WS23-Basis/libs/GraphStream/gs-ui-swing-2.0/gs-ui-swing-2.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ProPra-WS23-Basis/libs/GraphStream/gs-ui-swing-2.0/gs-ui-swing-2.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ProPra-WS23-Basis"/>
+	<classpathentry kind="lib" path="libs/GraphStream/gs-algo-2.0/gs-algo-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/GraphStream/gs-core-2.0/gs-core-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/GraphStream/gs-ui-swing-2.0/gs-ui-swing-2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

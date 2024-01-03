@@ -9,7 +9,7 @@ import java.util.Map;
 import exceptions.DuplicateIdException;
 import exceptions.InvalidEdgeOperationException;
 import exceptions.PetrinetException;
-import propra.pnml.PNMLWopedParser;
+import util.PNMLWopedParser;
 
 /**
  * The Class PNMLParser.

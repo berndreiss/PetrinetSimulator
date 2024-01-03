@@ -10,10 +10,10 @@ import org.graphstream.graph.Node;
  * 
  * <p>
  * Because nodes are implemented as rectangles in the layout the LayoutNode
- * extends the abstract rectangle class. It therefore also implements the
+ * extends {@link AbstractLayoutRectangle}. It therefore also implements the
  * {@link LayoutPointInterface} where the point is represented by the center of
  * the rectangle (and therefore by the (x,y) coordinates of the nodes in the
- * GraphStream graph).
+ * <a href="https://graphstream-project.org/">GraphStream</a> graph).
  * </p>
  */
 @SuppressWarnings("javadoc")

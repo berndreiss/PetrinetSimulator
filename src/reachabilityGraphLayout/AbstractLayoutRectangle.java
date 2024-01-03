@@ -5,7 +5,7 @@ package reachabilityGraphLayout;
  * Class defining methods for a rectangle (and implementing some).
  * </p>
  */
-abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
+public abstract class AbstractLayoutRectangle implements Comparable<AbstractLayoutRectangle>, LayoutPointInterface {
 
 	/**
 	 * Gets the left lower corner of the object.

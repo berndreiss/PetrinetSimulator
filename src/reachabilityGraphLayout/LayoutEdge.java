@@ -8,8 +8,9 @@ import org.graphstream.ui.spriteManager.Sprite;
  * </p>
  * 
  * <p>
- * Because it contains a GraphStream sprite it extends the abstract rectangle
- * class.
+ * Because it contains a
+ * <a href="https://graphstream-project.org/">GraphStream</a> sprite it extends
+ * {@link AbstractLayoutRectangle}.
  * </p>
  */
 class LayoutEdge extends AbstractLayoutRectangle {

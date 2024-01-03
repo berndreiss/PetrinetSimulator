@@ -1,0 +1,79 @@
+\begin{center}
+\begin{figure}
+\begin{tikzpicture}
+[> = latex', auto,
+block/.style ={rectangle,draw=black, thick,
+align=flush center, rounded corners,
+minimum height=4em},
+]
+\matrix [column sep=5mm,row sep=7mm]
+{
+% row 1
+&
+\node [block, double, double distance=1pt] (mf) {Main Frame}; & \\
+
+% row 2
+& 
+\node [block, text width=\mytw] (mc) {Main Controller}; & \\
+
+% row 3
+& 
+ \node[block, dashed, text width=\mytw] (pp) {Petrinet Panel}; & \\
+
+% row 2
+
+\node [block, text width=\mytw] (pec) {Petrinet Editor Controller}; & 
+&
+\node [block, text width=\mytw] (pvc) {Petrinet Viewer Controller};  \\
+
+% row 1
+\node[inner sep = 0pt] (dummy) {};
+&
+\node [block] (pnm) {Petrinet Model};  \\
+% \node[inner sep = 0pt] (dummy) {};
+% row 2
+
+\node [block] (tr) {Transition}; &
+&
+\node [block] (pl) {Place}; & \\
+
+&&\\
+&&\\
+% row 1
+&&
+\node [block] (rgm) {Reachability Graph Model}; \\
+&&\\
+&&\\
+
+%row 4
+
+\node [block, dashed, double, double distance=1pt] (pg) {Petrinet Graph}; &
+&\node [block, dashed, double, double distance=1pt] (rg) {Reachability Graph};\\
+};
+
+ \draw[->] (mf) -- (mc);
+ \draw[->] (mc) -- (pp);
+ \draw[->] (pp) -- (pvc); 
+ \draw[->] (pp) -- (pec);
+ \draw[->] (pvc) -- (pnm); 
+ \draw[->] (pec) -- (pnm); 
+ \draw[->] (pec) -- (pvc);
+ \draw[->] (pnm) -- (pl);
+ \draw[->] (pnm) -- (tr);
+ \draw[->, dashed] (pnm) -- (pg) node [midway, below, sloped] (cch) {Compenent Changed};
+ \draw[->, dashed] (pnm) -- (rgm) node [near end, above, sloped] (sch) {State Ch.};
+ \draw[->, dashed] (pl) -- (cch) node [near end, below, sloped] (tcch) {Token Count Ch.};
+ \draw[->, dashed] (tr) -- (cch) node [midway, below, sloped] (tsch) {State Ch.};
+ \draw[->, dashed] (rgm) -- (rg) node [midway, above, sloped] (rsch) {State Ch.};
+ \draw [->, bend right] (pg.west) to[out=20,in=120] (pec.south);
+ \draw [->, bend right] (pg.west) to[out=20,in=120] (dummy) -- (pvc.west);
+  \draw [->] (rg.east) to[bend right = 50] (pvc.south);
+ %\draw [->, bend right] (dummy) -- (pvc.west);
+%\draw [->] (pg.west) to[bend right = -90] (pvc.west);
+\end{tikzpicture}
+\caption{General Design of the Program.}
+\label{figure:design}
+
+\end{figure}
+\end{center}
+
