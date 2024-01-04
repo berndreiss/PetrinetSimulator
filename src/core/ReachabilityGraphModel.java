@@ -212,7 +212,7 @@ public class ReachabilityGraphModel {
 			initialState = petrinetState;
 
 		// inform the listener
-		if (stateChangeListener != null)
+		if (stateChangeListener != null) 
 			stateChangeListener.onAdd(petrinetState, currentState, transition);
 
 		// update current edge
@@ -356,14 +356,15 @@ public class ReachabilityGraphModel {
 		// reset undo queue and buttons in the toolbar
 		if (undoQueue != null)
 			undoQueue.reset();
+		else {
+			makeEmpty();
 
-		makeEmpty();
-
-		if (initialState != null) {
-			petrinetStates.put(initialState.getState(), initialState);
-			pushing = false;
-			setCurrentState(initialState);
-			pushing = true;
+			if (initialState != null) {
+				petrinetStates.put(initialState.getState(), initialState);
+				pushing = false;
+				setCurrentState(initialState);
+				pushing = true;
+			}
 		}
 
 	}

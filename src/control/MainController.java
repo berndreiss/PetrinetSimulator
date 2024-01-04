@@ -60,7 +60,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		this.mainFrame = mainFrame;
 
 		// set default directory
-		workingDirectory = new File(System.getProperty("user.dir") + "/Petrinet_Examples");
+		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		// set status label
 		setStatusLabel();
 

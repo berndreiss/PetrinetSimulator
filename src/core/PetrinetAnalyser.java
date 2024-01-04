@@ -241,6 +241,7 @@ public class PetrinetAnalyser {
 					// simply choose the first one
 					transition = currentState.getFirstSuccessorTransition(nextState);
 					transitionList.add(transition);
+					transitionsToMMarked.add(transition.getId());
 					currentState = nextState;
 				}
 
@@ -251,6 +252,7 @@ public class PetrinetAnalyser {
 			if (initialState != invalidState.getM()) {
 				transition = currentState.getFirstSuccessorTransition(invalidState.getM());
 				transitionList.add(transition);
+				transitionsToMMarked.add(transition.getId());
 				currentState = invalidState.getM();
 			}
 

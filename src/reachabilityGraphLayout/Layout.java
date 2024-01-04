@@ -132,6 +132,9 @@ public class Layout {
 				nodeMap.put(node.getId(), layoutNode);
 				graphicalObjectList.add(layoutNode);
 			}
+			
+			repaintNodes(true);
+			
 			return;
 
 		}

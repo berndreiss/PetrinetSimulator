@@ -287,9 +287,8 @@ public class GraphStreamReachabilityGraph extends MultiGraph implements Reachabi
 		}
 
 		// if it is first node added set initial node
-		if (initialNode == null) {
+		if (initialNode == null) 
 			initialNode = node;
-		}
 
 		// set node current if necessary
 		if (resetCurrent)
@@ -299,44 +298,44 @@ public class GraphStreamReachabilityGraph extends MultiGraph implements Reachabi
 		setHighlight(node);
 
 		// if there is no predecessor skip adding edge
-		if (predecessor == null)
-			return node;
+		if (predecessor != null) {
 
-		// check if predecessor node exists and add if necessary
-		Node predNode = getNode(predecessor.getState());
-		if (predNode == null) {
-			predNode = addNode(predecessor.getState());
-			predNode.setAttribute("ui.label", predecessor.getState());
+			// check if predecessor node exists and add if necessary
+			Node predNode = getNode(predecessor.getState());
+			if (predNode == null) {
+				predNode = addNode(predecessor.getState());
+				predNode.setAttribute("ui.label", predecessor.getState());
+			}
+
+			// check if the new edge exists and add if necessary
+			Edge newEdge = getEdge(predecessor.getState() + id + transitionId);
+
+			if (newEdge == null) {
+				newEdge = this.addEdge(predecessor.getState() + id + transitionId, predNode, node, true);
+				// set sprite to the edge having the transition as a label
+				Sprite sprite = spriteMan.addSprite("s" + newEdge.getId());
+				sprite.setAttribute("ui.class", "edgeLabel");
+				String label = GraphStreamPetrinetGraph.getElementLabel(t);
+				sprite.setAttribute("ui.label", label);
+				sprite.attachToEdge(newEdge.getId());
+				sprite.setPosition(0.5);
+			}
+
+			// set new edge to current if necessary
+			if (resetCurrent) {
+				newEdge.setAttribute("ui.class", "highlight");
+				if (currentEdge != null && currentEdge != newEdge)
+					currentEdge.setAttribute("ui.class", "edge");
+
+				currentEdge = newEdge;
+			}
 		}
-
-		// check if the new edge exists and add if necessary
-		Edge newEdge = getEdge(predecessor.getState() + id + transitionId);
-
-		if (newEdge == null) {
-			newEdge = this.addEdge(predecessor.getState() + id + transitionId, predNode, node, true);
-			// set sprite to the edge having the transition as a label
-			Sprite sprite = spriteMan.addSprite("s" + newEdge.getId());
-			sprite.setAttribute("ui.class", "edgeLabel");
-			String label = GraphStreamPetrinetGraph.getElementLabel(t);
-			sprite.setAttribute("ui.label", label);
-			sprite.attachToEdge(newEdge.getId());
-			sprite.setPosition(0.5);
-		}
-
-		// set new edge to current if necessary
-		if (resetCurrent) {
-			newEdge.setAttribute("ui.class", "highlight");
-			if (currentEdge != null && currentEdge != newEdge)
-				currentEdge.setAttribute("ui.class", "edge");
-
-			currentEdge = newEdge;
-		}
-
+		
 		// add the node to custom layout if one is set
-		if (layoutType != LayoutType.AUTOMATIC)
+		if (layoutType != LayoutType.AUTOMATIC) 
 			layoutManager.add(getNode(predecessor == null ? null : predecessor.getState()), node, t,
 					predecessor == null ? 0 : predecessor.getLevel());
-
+		
 		return node;
 	}
 
@@ -610,7 +609,6 @@ public class GraphStreamReachabilityGraph extends MultiGraph implements Reachabi
 	boolean hasLessThanTwoNodes() {
 		return nodeCount < 2;
 	}
-
 
 	@Override
 	public void setShowBoundedness(boolean show) {
