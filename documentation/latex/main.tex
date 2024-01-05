@@ -62,7 +62,7 @@ In the petrinet on the left activated transitions are marked bold, these transit
 \includegraphics[width=\textwidth]{Pictures/Example_276_analysed.png}
 \end{center}
 
-The reachability graph shows whether it encountered a state that signifies that the petrinet is unbounded and marks the beginning (yellow) and ending (red) nodes on the path signifying unboundedness. Any states on the paths between these nodes and between the yellow and intial node are marked also (brown).
+The reachability graph reflects whether it encountered a state that signifies that the petrinet is unbounded and marks the beginning (yellow) and ending (red) nodes on the path signifying unboundedness. Any states on the paths between these nodes and between the yellow and intial node are marked also (brown).
 
 The following sections give an overview of additional features implemented in the program and explain the menus and toolbars.
 
@@ -87,8 +87,8 @@ The \textit{File} menu consists of the following entries:
 
 \begin{itemize}
 
-\item \textbf{New:} opens a new empty file for editing $\rightarrow$ automatically opens the Editor view (see \ref{label:editor}). 
-\item \textbf{Open:} opens saved file from directory.
+\item \textbf{New:} open a new empty file for editing $\rightarrow$ automatically open the Editor view (see \ref{label:editor}). 
+\item \textbf{Open:} open saved file from directory.
 \item \textbf{Open in new Tab:} same as open but in a new tab.
 \item \textbf{Reload:} reload the currently opened file.
 \item \textbf{Save:} save changes.
@@ -107,8 +107,8 @@ The \textit{Edit} menu consists of the following entries:
 
 
 \begin{itemize}
-\item \textbf{Open Editor:} opens the Editor.
-\item \textbf{Close Editor:} closes the Editor and reverts back to Viewer.
+\item \textbf{Open Editor:} open the Editor.
+\item \textbf{Close Editor:} close the Editor and revert back to Viewer.
 \item \textbf{Change Look and Feel:} change between Nimbus and Metal look and feel.
 \item \textbf{Enable Automatic Boundedness Check:} automatically check for boundedness when building the reachabilty graph.
 \item \textbf{Disable Automatic Boundedness Check:} do not automatically check for boundedness when building the reachabilty graph.
@@ -135,16 +135,16 @@ From left to right the buttons provide the following functionality:
 
 \begin{itemize}
 
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/folder.png}\hspace{0.1cm}\textbf{Load:} see Menu \textit{File} \ref{label:file}.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/save.png}\hspace{0.1cm}\textbf{Save:} see Menu \textit{File} \ref{label:file}.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/left.png}\hspace{0.1cm}\textbf{Previous:} open the previous file in the current directory $\rightarrow$ do nothing if current file is the first.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/right.png}\hspace{0.1cm}\textbf{Next:} open the next file in the current directory $\rightarrow$ do nothing if current file is the last.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/plus.png}\hspace{0.1cm}\textbf{Increment Place:} increment a marked place by one token.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} decrement a marked place by one token.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/restart.png}\hspace{0.1cm}\textbf{Reset:} reset the petrinet graph to initial state $\rightarrow$ if place was in-/decremented the initial state is being updated.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into petrinet graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of patrinet graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/edit.png}\hspace{0.1cm}\textbf{Open Editor:} open the Editor (see \ref{label:editor}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/folder.png}\hspace{0.1cm}\textbf{Load:} see Menu \textit{File} \ref{label:file}.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/save.png}\hspace{0.1cm}\textbf{Save:} see Menu \textit{File} \ref{label:file}.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/left.png}\hspace{0.1cm}\textbf{Previous:} open the previous file in the current directory $\rightarrow$ do nothing if current file is the first.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/right.png}\hspace{0.1cm}\textbf{Next:} open the next file in the current directory $\rightarrow$ do nothing if current file is the last.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/plus.png}\hspace{0.1cm}\textbf{Increment Place:} increment a marked place by one token.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} decrement a marked place by one token.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/restart.png}\hspace{0.1cm}\textbf{Reset:} reset the petrinet graph to initial state $\rightarrow$ if place was in-/decremented the initial state is being updated.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into petrinet graph.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of petrinet graph.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/edit.png}\hspace{0.1cm}\textbf{Open Editor:} open the Editor (see \ref{label:editor}).
 \end{itemize}
 
 \paragraph{Reachability Graph Toolbar}
@@ -153,18 +153,18 @@ From left to right the buttons provide the following functionality:
 
 From left to right the buttons provide the following functionality:
 \begin{itemize}
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/stats.png}\hspace{0.1cm}\textbf{Analyse Petrinet:} analyse the petrinet currently opened $\rightarrow$ the reachability graph is built and a pop up window shows whether the petrinet is bounded or unbounded. If the petrinet is unbounded the path signifying unboundedness is marked (see \ref{label:introduction}). 
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/delete.png}\hspace{0.1cm}\textbf{Reset:} delete the reachability graph except for the initial state (marked gray). Also resets the petrinet. 
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/undo.png}\hspace{0.1cm}\textbf{Undo:} undo the last step in the reachability graph. If last step was analysis it is treated as one single step.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/redo.png}\hspace{0.1cm}\textbf{Redo:} redo the last step in the reachability graph. If last step was analysis it is treated as one single step.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/input.png}\hspace{0.1cm}\textbf{Clear text area:} clears the text area.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into reachability graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of reachability graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/tree-layout.png}\hspace{0.1cm}\textbf{Tree layout:} organize the reachability graph in a tree layout (see \ref{label:treeLayout}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/circle-layout.png}\hspace{0.1cm}\textbf{Circle layout:} organize the reachability graph in a circle layout (see \ref{label:circleLayout}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/auto-layout.png}\hspace{0.1cm}\textbf{Automatic Layout:} use the auto layout by GraphStream to organize the reachability graph.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} reset the split panes to the default ratio.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} change between the different look and feels (\textit{Metal} or \textit{Nimbus}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/stats.png}\hspace{0.1cm}\textbf{Analyse Petrinet:} analyse the petrinet currently opened $\rightarrow$ the reachability graph is built and a pop up window shows whether the petrinet is bounded or unbounded. If the petrinet is unbounded the path signifying unboundedness is marked (see \ref{label:introduction}). 
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/delete.png}\hspace{0.1cm}\textbf{Reset:} delete the reachability graph except for the initial state (marked gray). Also resets the petrinet. 
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/undo.png}\hspace{0.1cm}\textbf{Undo:} undo the last step in the reachability graph. If last step was analysis it is treated as one single step.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/redo.png}\hspace{0.1cm}\textbf{Redo:} redo the last step in the reachability graph. If last step was analysis it is treated as one single step.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/input.png}\hspace{0.1cm}\textbf{Clear text area:} clears the text area.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} zoom into reachability graph.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} zoom out of reachability graph.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/tree-layout.png}\hspace{0.1cm}\textbf{Tree layout:} organize the reachability graph in a tree layout (see \ref{label:treeLayout}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/circle-layout.png}\hspace{0.1cm}\textbf{Circle layout:} organize the reachability graph in a circle layout (see \ref{label:circleLayout}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/auto-layout.png}\hspace{0.1cm}\textbf{Automatic Layout:} use the auto layout by GraphStream to organize the reachability graph.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} reset the split panes to the default ratio.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} change between the different look and feels (\textit{Metal} or \textit{Nimbus}).
 \end{itemize} 
 %\hologo{LaTeX} 
 %\ref{sec1}
@@ -177,21 +177,21 @@ From left to right the buttons provide the following functionality:
 
 From left to right the buttons provide the following functionality:
 \begin{itemize}
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/folder.png}\hspace{0.1cm}\textbf{Load:} see Menu \textit{File} \ref{label:file}.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/save.png}\hspace{0.1cm}\textbf{Save:} see Menu \textit{File} \ref{label:file}.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/left.png}\hspace{0.1cm}\textbf{Previous:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/right.png}\hspace{0.1cm}\textbf{Next:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/plus.png}\hspace{0.1cm}\textbf{Increment Place:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-circle.png}\hspace{0.1cm}\textbf{Add Place:} add a place above the left top most element.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/add-square.png}\hspace{0.1cm}\textbf{Add Transition:} add a transition above the left top most element.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/erase.png}\hspace{0.1cm}\textbf{Remove Element:} remove the marked element (place or transition).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/arc.png}\hspace{0.1cm}\textbf{Add Edge:} choose beginning and ending node of an edge to add it $\rightarrow$ beginning and ending nodes have to be of different type (place/transition).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/remove-edge.png}\hspace{0.1cm}\textbf{Remove Edge:} choose beginning and ending node of an edge to remove it $\rightarrow$ the edge has to exist.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/label.png}\hspace{0.1cm}\textbf{Add Label:} add label to marked place or transition.
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/eye.png}\hspace{0.1cm}\textbf{Close Editor:} close the Editor and opens the Viewer (see \ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/folder.png}\hspace{0.1cm}\textbf{Load:} see Menu \textit{File} \ref{label:file}.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/save.png}\hspace{0.1cm}\textbf{Save:} see Menu \textit{File} \ref{label:file}.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/left.png}\hspace{0.1cm}\textbf{Previous:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/right.png}\hspace{0.1cm}\textbf{Next:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/plus.png}\hspace{0.1cm}\textbf{Increment Place:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/minus.png}\hspace{0.1cm}\textbf{Decrement Place:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-in.png}\hspace{0.1cm}\textbf{Zoom in:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/zoom-out.png}\hspace{0.1cm}\textbf{Zoom out:} see Petrinet Toolbar in Viewer Mode (\ref{label:viewer})..
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/add-circle.png}\hspace{0.1cm}\textbf{Add Place:} add a place above the left top most element.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/add-square.png}\hspace{0.1cm}\textbf{Add Transition:} add a transition above the left top most element.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/erase.png}\hspace{0.1cm}\textbf{Remove Element:} remove the marked element (place or transition).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/arc.png}\hspace{0.1cm}\textbf{Add Edge:} choose beginning and ending node of an edge to add it $\rightarrow$ beginning and ending nodes have to be of different type (place/transition).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/remove-edge.png}\hspace{0.1cm}\textbf{Remove Edge:} choose beginning and ending node of an edge to remove it $\rightarrow$ the edge has to exist.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/label.png}\hspace{0.1cm}\textbf{Add Label:} add label to marked place or transition.
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/eye.png}\hspace{0.1cm}\textbf{Close Editor:} close the Editor and open the Viewer (see \ref{label:viewer}).
 \end{itemize}
 
 
@@ -201,8 +201,8 @@ From left to right the buttons provide the following functionality:
 
 From left to right the buttons provide the following functionality:
 \begin{itemize}
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
-\item\includegraphics[scale=0.4]{../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/layout.png}\hspace{0.1cm}\textbf{Reset Split Panes:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
+\item\includegraphics[scale=0.4]{../../src/resources/images/Toolbar/design.png}\hspace{0.1cm}\textbf{Change Look and Feel:} see Reachability Graph Toolbar in Viewer Mode (\ref{label:viewer}).
 \end{itemize}
 
 \section{Design of the Program}
@@ -247,15 +247,15 @@ There are three controllers in the program: the \textit{MainController}, the \te
 
 \paragraph{Petrinet Component Changed Listener} This listener communicates changes in components of the petrinet to the petrinet graph. Whenever elements are added/removed or their attributes are changed it forwards this information.  Because it listens for changes in elements it also listens to the \textit{NumberOfTokensChangedListener} and the \textit{TransitionStateListener} and forwards their events.
 
-\paragraph{Number of Tokens Changed Listener} Part of the data structure \textit{Place} it listens to changes in the number of tokens on the place. If the number changes it informs the \textit{PetrinetComponentChangedListener}. 
+\paragraph{Number of Tokens Changed Listener} Associated with the data structure \textit{Place} it listens to changes in the number of tokens on the place. If the number changes it informs the \textit{PetrinetComponentChangedListener}. 
 
-\paragraph{Transition State Listener} Part of the data structure \textit{Transition} it listens to changes in the activation state of the transition. If the state changes it informs the \textit{PetrinetComponentChangedListener}.
+\paragraph{Transition State Listener} Associated with the data structure \textit{Transition} it listens to changes in the activation state of the transition. If the state changes it informs the \textit{PetrinetComponentChangedListener}.
 
 \paragraph{Reachability State Changed Listener} Listens for changes in the reachability graph model and communicates it to the reachability graph. It contains methods for adding/removing states and also methods for modifying edges.
 
 \paragraph{Toolbar Changed Listener} Listens for events belonging to the un-/redo buttons and the add/remove edge buttons. If events happen the buttons are highlighted accordingly.
 
-\paragraph{Adjust Arrow Heads Listener} This is a special listener for GraphStream. As the arrow heads don't adjust appropriately when adding/removing elements in the graph they need to be adjusted manually. This listener watches for events, where arrow heads need to be adjusted.
+\paragraph{Adjust Arrow Heads Listener} This is a special listener for GraphStream. As the arrow heads don't adjust appropriately when adding/removing elements in the graph they need to be adjusted manually. This listener watches for events, where arrow heads need to be adjusted\footnote{Unfortunately the author was not able to solve this issue for every case. Therefore misaligned arrow heads still appear.}.
 
 \subsection{Petrinet Analyser and the Algorithm for Checking Boundedness}
 \label{label:algorithm}
@@ -273,6 +273,7 @@ The actual algorithm for checking the boundedness of a given state is implemente
 
 Algorithm \ref{algorithm:analyser} shows how the \textit{PetrinetAnalyser} works. All the analyser has to do is start from the initial state and simulate all possible configurations of the petrinet at hand. It iteratively performs a depth first approach of firing all transitions $\rightarrow$ for each state it loops over all activated transitions, fires them and calls the analyse function for the resulting new state in turn firing all activated transitions in this new state. It does so until all configurations have been exhausted, the reachability model informs the analyser that the petrinet is unbounded or the petrinet has been found unbounded in another configuration (this what the variable \textit{bounded} keeps track of). If the petrinet is unbounded the analyser updates the reachability graph by resetting it to the initial state and only firing the transitions leading up to and including the path marking the petrinet unbounded. This way only the relevant information is shown in the reachability graph.
 
+\newpage
 
 \subsection{Layout}
 \label{label:layout}
@@ -288,43 +289,5 @@ The tree layout organizes nodes in the reachability graph as a tree. The level i
 \label{label:circleLayout}
 
 This layout organizes nodes around a circle -- or to be more precise an ellipse. Initially the nodes are ordered by level. Just putting them around a circle would lead to level clusters and most importantly edges clustering at the circles scope. To avoid clusters, the initial ordering of nodes is spread evenly around the circle by a certain ratio\footnote{For a more in depth explanation of how the algorithm works please refer to the comments in the source code.}. The ratio to which nodes are spread around the circle can be modified by clicking the circle layout button repeatedly.
-
-%\subsection{Packages}
-
-%\subsubsection{control}
-
-%\subsubsection{core}
-%\subsubsection{exceptions}
-%\subsubsection{gui}
-%\subsubsection{listeners}
-%\subsubsection{reachabilityGraphLayout}
-%\label{label:package:layout}
-%\subsubsection{util}
-
-
-\newpage
-%\begin{table}[t]
-
-%\centering
-
-
-%\begin{tabular}{| c | c | c | c |}
-%\hline
-%		& Hobbit		& Ringträger		& Gemeinschaft des Ringes	\\ \hline\hline
-
-%\end{tabular}
-
-%\caption{Verschiedene Charaktere und Gruppierungen in \textit{Der Herr der Ringe}.}
-%\label{tab:LOTR}
-
-%\end{table}
-
-
-%\cite{jamesetal13}
-
- 
-%\bibliographystyle{babplain-fl}
-
-%\bibliography{Literatur}
 
 \end{document}

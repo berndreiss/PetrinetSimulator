@@ -40,6 +40,6 @@
 \contentsline {paragraph}{Toolbar Changed Listener}{8}{section*.25}%
 \contentsline {paragraph}{Adjust Arrow Heads Listener}{8}{section*.26}%
 \contentsline {subsection}{\numberline {2.2}Petrinet Analyser and the Algorithm for Checking Boundedness}{8}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Layout}{9}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Tree Layout}{9}{subsubsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3}Layout}{10}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Tree Layout}{10}{subsubsection.2.3.1}%
 \contentsline {subsubsection}{\numberline {2.3.2}Circle Layout}{10}{subsubsection.2.3.2}%

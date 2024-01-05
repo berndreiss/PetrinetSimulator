@@ -14,7 +14,7 @@ import core.Transition;
 import exceptions.PetrinetException;
 import gui.ToolbarMode;
 import listeners.ToolbarChangedListener;
-import util.PNMLWopedWriter;
+import propra.pnml.PNMLWopedWriter;
 
 /**
  * <p>
