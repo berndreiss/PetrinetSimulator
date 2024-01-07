@@ -9,7 +9,7 @@ public class Main {
 	/**
 	 * The main method that starts the application. It initializes an instance of
 	 * {@link MainFrame}. This method is set to run on the Swing event dispatch
-	 * thread for thread safety.
+	 * thread for thread safety. 
 	 *
 	 * @param args command-line arguments, not used in this application
 	 */
