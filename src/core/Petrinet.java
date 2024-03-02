@@ -711,8 +711,8 @@ public class Petrinet {
 			return false;
 		}
 
-//		if (places.size() + transitions.size() == 1)
-//			return true;
+		if (places.size() + transitions.size() == 1)
+			return true;
 
 		// get starting point
 		PetrinetElement startElement = places.iterator().next();
