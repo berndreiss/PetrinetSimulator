@@ -176,10 +176,10 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private void setNewPanel(File file, boolean newTab) {
 
 		// ask if changes should be saved, on abort return
-		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+		if (newTab == false && currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
 			if (saveDialog())
 				return;
-
+		
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
