@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,7 +33,7 @@ import control.PetrinetMenuController;
  * {@link JTabbedPane} in the top half. In the SOUTH it holds a {@link JLabel}
  * representing the status of the program. In the NORTH it holds a
  * {@link PetrinetToolbar} that can be moved and reattached to the EAST or WEST.
- * Additionally the menu bar is occupied by an implementation of the 
+ * Additionally the menu bar is occupied by an implementation of the
  * {@link PetrinetMenuController}.
  * </p>
  */
@@ -112,7 +114,18 @@ public class MainFrame extends JFrame {
 		int w = (int) (h * aspectRatio);
 		setBounds((screenSize.width - w) / 2, (screenSize.height - h) / 2, w, h);
 		this.setMinimumSize(new Dimension(1250, 800));// min size so that all buttons are shown correctly
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (controller.getCurrentPanel() != null
+						&& controller.getCurrentPanel().getPetrinetViewerController().getFileChanged())
+					if (controller.saveDialog())
+						return;
+				System.exit(0);
+			}
+
+		});
 		this.setVisible(true);
 
 	}

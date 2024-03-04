@@ -515,8 +515,13 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		System.exit(0);
 	}
 
-	// ask if changes should be saved, returns true on abort
-	private boolean saveDialog() {
+	/**
+	 * Ask if changes should be saved, returns true on abort.
+	 * 
+	 * @return true if cancel is pressed
+	 */
+	// 
+	public boolean saveDialog() {
 		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
 
 		// 0=yes, 1=no, 2=cancel
