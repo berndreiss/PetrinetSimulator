@@ -177,7 +177,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// ask if changes should be saved, on abort return
 		if (newTab == false && currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
-			if (saveDialog())
+			if (saveDialog(currentPetrinetPanel.getPetrinetViewerController()))
 				return;
 		
 		// create panel and catch errors from parsing the file -> return in case
@@ -337,12 +337,12 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
 		// if no file is defined switch to save as
-		if (controller.getCurrentFile() == null)
+		if (controller.getCurrentFile() == null) {
 			onSaveAs();
+			return;
+		}
 
-		// write changes and update status label
-		controller.writeToFile();
-		setStatusLabel();
+		save(controller);
 	}
 
 	@Override
@@ -355,6 +355,39 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// get the controller
 		PetrinetViewerController controller = currentPetrinetPanel.getPetrinetViewerController();
 
+		saveAs(controller);
+	}
+
+	/**
+	 * Saves changes made to the petrinet in the controller.
+	 * 
+	 * @param controller the controller for the petrinet
+	 */
+	public void save(PetrinetViewerController controller) {
+		
+		if (controller == null)
+			return;
+
+		// if no file is defined switch to save as
+		if (controller.getCurrentFile() == null) {
+			saveAs(controller);
+			return;
+		}
+
+		// write changes and update status label
+		controller.writeToFile();
+		setStatusLabel();
+	}
+	
+	/**
+	 * Saves changes made to the petrinet in the controller to a new file
+	 * @param controller the controller for the petrinet
+	 */
+	public void saveAs(PetrinetViewerController controller) {
+
+		if (controller == null)
+			return;
+		
 		// create a file chooser for getting a file, assigning a filter and setting it
 		// to the current working directory
 		JFileChooser fileChooser = new JFileChooser();
@@ -375,7 +408,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		}
 
 	}
-
+	
 	@Override
 	public void onAnalyseMany() {
 
@@ -450,7 +483,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// append new lines and return
 		sb.append("\n\n");
 		return sb.toString();
-	}
+	}	
 
 	// checks whether array is too long or too short and formats the string
 	private static String formatStringForAnalysesOutput(String[] strings, String format) {
@@ -494,7 +527,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// ask if changes should be saved, on abort return
 		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
-			if (saveDialog())
+			if (saveDialog(currentPetrinetPanel.getPetrinetViewerController()))
 				return;
 
 		// get tab index and remove tab
@@ -509,7 +542,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// ask if changes should be saved, on abort return
 		if (currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
-			if (saveDialog())
+			if (saveDialog(currentPetrinetPanel.getPetrinetViewerController()))
 				return;
 
 		System.exit(0);
@@ -517,17 +550,18 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	/**
 	 * Ask if changes should be saved, returns true on abort.
+	 * @param controller controller controlling the petrinet
 	 * 
 	 * @return true if cancel is pressed
 	 */
 	// 
-	public boolean saveDialog() {
-		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes. Would you like to save?");
+	public boolean saveDialog(PetrinetViewerController controller) {
+		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes in file \"" + controller.getCurrentFile().getName() + "\". Would you like to save?");
 
 		// 0=yes, 1=no, 2=cancel
 		switch (input) {
 		case 0:
-			onSave();
+			save(controller);
 			return false;
 		case 2:
 			return true;

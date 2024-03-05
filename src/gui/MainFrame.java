@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -22,6 +23,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import control.MainController;
 import control.PetrinetMenuController;
+import control.PetrinetPanel;
 
 /**
  * <p>
@@ -118,10 +120,15 @@ public class MainFrame extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (controller.getCurrentPanel() != null
-						&& controller.getCurrentPanel().getPetrinetViewerController().getFileChanged())
-					if (controller.saveDialog())
-						return;
+
+				for (Component comp : tabbedPane.getComponents()) {
+					
+					PetrinetPanel panel = (PetrinetPanel) comp;
+					if (panel != null
+							&& panel.getPetrinetViewerController().getFileChanged())
+						if (controller.saveDialog(panel.getPetrinetViewerController()))
+							return;
+				}
 				System.exit(0);
 			}
 
