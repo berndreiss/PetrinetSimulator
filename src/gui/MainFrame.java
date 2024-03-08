@@ -116,6 +116,7 @@ public class MainFrame extends JFrame {
 		int w = (int) (h * aspectRatio);
 		setBounds((screenSize.width - w) / 2, (screenSize.height - h) / 2, w, h);
 		this.setMinimumSize(new Dimension(1250, 800));// min size so that all buttons are shown correctly
+		this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
