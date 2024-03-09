@@ -22,7 +22,7 @@ public class Main {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// Initialize and display the main application window with the title.
-				new MainFrame("Bernd Reiß 3223442");
+				new MainFrame("Petrinet Simulator");
 
 			}
 		});

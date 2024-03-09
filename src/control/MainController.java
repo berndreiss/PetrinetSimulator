@@ -63,7 +63,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
 		
 		if (!workingDirectory.exists())
-			System.out.println("Directory with example files could not be found.");
+			System.out.println("TESTDirectory with example files could not be found.");
 		
 		// set status label
 		setStatusLabel();

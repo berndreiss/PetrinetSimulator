@@ -1,5 +1,6 @@
 package util;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,7 +24,7 @@ public final class PNMLWopedWriter {
 	 *            Die Konsolen Parameter, mit denen das Programm aufgerufen
 	 *            wird.
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args){
 		if (args.length > 0) {
 			File pnmlDatei = new File(args[0]);
 			PNMLWopedWriter pnmlWriter = new PNMLWopedWriter(pnmlDatei);
@@ -78,7 +79,7 @@ public final class PNMLWopedWriter {
 	 * Diese Methode beginnt ein neues XML Dokument und initialisiert den XML
 	 * Writer für diese Datei.
 	 */
-	public void startXMLDocument() {
+	public boolean startXMLDocument() {
 		try {
 			FileOutputStream fos = new FileOutputStream(pnmlDatei);
 			XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -87,13 +88,15 @@ public final class PNMLWopedWriter {
 			writer.writeStartDocument("UTF-8", "1.0");
 			writer.writeStartElement("pnml");
 			writer.writeStartElement("net");
+			return true;
 		} catch (FileNotFoundException e) {
-			System.err.println("Die Datei " + pnmlDatei.getAbsolutePath()
-					+ " kann nicht geschrieben werden! " + e.getMessage());
+			System.err.println("Datei konnte nicht geschrieben werden: " + e.getMessage());
 			e.printStackTrace();
+			return false;
 		} catch (XMLStreamException e) {
 			System.err.println("XML Fehler: " + e.getMessage());
 			e.printStackTrace();
+			return false;
 		}
 	}
 
