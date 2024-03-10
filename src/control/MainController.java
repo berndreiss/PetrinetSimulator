@@ -5,6 +5,7 @@ import static gui.MainFrame.SPLIT_PANE_DEFAULT_RATIO;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
@@ -60,11 +61,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		this.mainFrame = mainFrame;
 
 		// set default directory
-		workingDirectory = new File(System.getProperty("user.dir") + "/../ProPra-WS23-Basis/Beispiele/");
-		
+		workingDirectory = new File("./Petrinet_Examples/");
+
 		if (!workingDirectory.exists())
-			System.out.println("TESTDirectory with example files could not be found.");
-		
+			System.out.println("Directory with example files could not be found.");
+
 		// set status label
 		setStatusLabel();
 
@@ -176,10 +177,11 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	private void setNewPanel(File file, boolean newTab) {
 
 		// ask if changes should be saved, on abort return
-		if (newTab == false && currentPetrinetPanel != null && currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
+		if (newTab == false && currentPetrinetPanel != null
+				&& currentPetrinetPanel.getPetrinetViewerController().getFileChanged())
 			if (saveDialog(currentPetrinetPanel.getPetrinetViewerController()))
 				return;
-		
+
 		// create panel and catch errors from parsing the file -> return in case
 		PetrinetPanel newPanel = null;
 		try {
@@ -364,7 +366,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	 * @param controller the controller for the petrinet
 	 */
 	public void save(PetrinetViewerController controller) {
-		
+
 		if (controller == null)
 			return;
 
@@ -375,19 +377,25 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		}
 
 		// write changes and update status label
-		controller.writeToFile();
-		setStatusLabel();
+		try {
+			controller.writeToFile();
+			setStatusLabel();
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Could not save file: probably missing permission.", "",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
-	
+
 	/**
 	 * Saves changes made to the petrinet in the controller to a new file
+	 * 
 	 * @param controller the controller for the petrinet
 	 */
 	public void saveAs(PetrinetViewerController controller) {
 
 		if (controller == null)
 			return;
-		
+
 		// create a file chooser for getting a file, assigning a filter and setting it
 		// to the current working directory
 		JFileChooser fileChooser = new JFileChooser();
@@ -402,13 +410,20 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 			File file = fileChooser.getSelectedFile();
 			// reset working directory
 			workingDirectory = file.getParentFile();
-			controller.writeToFile(file);
-			// update status label
-			setStatusLabel();
+			
+			// write changes and update status label
+			try {
+				controller.writeToFile();
+				setStatusLabel();
+			} catch (FileNotFoundException e) {
+				JOptionPane.showMessageDialog(null, "Could not save file: probably missing permission.", "",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+
 		}
 
 	}
-	
+
 	@Override
 	public void onAnalyseMany() {
 
@@ -483,7 +498,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// append new lines and return
 		sb.append("\n\n");
 		return sb.toString();
-	}	
+	}
 
 	// checks whether array is too long or too short and formats the string
 	private static String formatStringForAnalysesOutput(String[] strings, String format) {
@@ -550,13 +565,15 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 	/**
 	 * Ask if changes should be saved, returns true on abort.
+	 * 
 	 * @param controller controller controlling the petrinet
 	 * 
 	 * @return true if cancel is pressed
 	 */
-	// 
+	//
 	public boolean saveDialog(PetrinetViewerController controller) {
-		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes in file \"" + controller.getCurrentFile().getName() + "\". Would you like to save?");
+		int input = JOptionPane.showConfirmDialog(null, "There are unsaved changes in file \""
+				+ controller.getCurrentFile().getName() + "\". Would you like to save?");
 
 		// 0=yes, 1=no, 2=cancel
 		switch (input) {
@@ -609,7 +626,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		File previousFile = getFileNextToCurrentFile(FileEnum.PREVIOUS_FILE);
 
 		// set new panel if there is a previous file
-		if (previousFile != null) 
+		if (previousFile != null)
 			setNewPanel(previousFile, false);
 
 	}
@@ -622,9 +639,9 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// get previous file
 		File nextFile = getFileNextToCurrentFile(FileEnum.NEXT_FILE);
 		// set new panel if there is a previous file
-		if (nextFile != null) 
+		if (nextFile != null)
 			setNewPanel(nextFile, false);
-		
+
 	}
 
 	// get previous or next file adjacent to the current file in alphabetical order

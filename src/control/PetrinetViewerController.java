@@ -1,6 +1,7 @@
 package control;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import core.PNMLParser;
 import core.Petrinet;
@@ -144,7 +145,7 @@ public class PetrinetViewerController {
 	/**
 	 * Writes changes to the file.
 	 */
-	void writeToFile() {
+	void writeToFile() throws FileNotFoundException{
 		if (file == null)// safety check
 			return;
 		writeToFile(getCurrentFile());
@@ -155,7 +156,7 @@ public class PetrinetViewerController {
 	 *
 	 * @param file the file changes are written to
 	 */
-	void writeToFile(File file) {
+	void writeToFile(File file) throws FileNotFoundException {
 
 		// instantiate writer
 		PNMLWopedWriter writer = new PNMLWopedWriter(file);
