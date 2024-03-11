@@ -234,7 +234,6 @@ class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {
 		// set up sprite and attach it to the edge
 		Sprite sprite = spriteMan.addSprite("s" + id);
 		sprite.setAttribute("ui.class", "edgeLabel");
-		sprite.setAttribute("ui.label", "[" + originalId + "]");
 		sprite.attachToEdge(id);
 		sprite.setPosition(0.5);
 
@@ -299,11 +298,7 @@ class GraphStreamPetrinetGraph extends MultiGraph implements PetrinetGraph {
 	 */
 	static String getElementLabel(PetrinetElement element) {
 
-		String base = "[" + element.getId() + "] " + element.getName();
-		if (element instanceof Place)
-			return base + " <" + ((Place) element).getNumberOfTokens() + ">";
-
-		return base;
+		return element.getName();
 
 	}
 
