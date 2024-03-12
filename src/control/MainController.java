@@ -408,12 +408,16 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 		// if file was chosen, save to given path
 		if (result == 0) {
 			File file = fileChooser.getSelectedFile();
+			
+			if (!file.getName().endsWith(".pnml"))
+				file = new File(file.getAbsolutePath() + ".pnml");
+			
 			// reset working directory
 			workingDirectory = file.getParentFile();
 			
 			// write changes and update status label
 			try {
-				controller.writeToFile();
+				controller.writeToFile(file);
 				setStatusLabel();
 			} catch (FileNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Could not save file: probably missing permission.", "",
