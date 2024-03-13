@@ -68,7 +68,7 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 
 		// set status label
 		setStatusLabel();
-
+		
 		// set listener for tabbed pane -> if tabs are switched panel status label and
 		// toolbar need to be updated
 		mainFrame.getTabbedPane().addChangeListener(new ChangeListener() {
@@ -97,12 +97,21 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 				mainFrame.setStatusLabel(getStatusLabel());
 				setToolbarMode(currentPetrinetPanel.getToolbarMode());
 				getFrame().getToolbar().setToolbarTo(currentPetrinetPanel, layoutType);
+				
 			}
 
 		});
-
+		
 	}
 
+	/**
+	 * Opens up the exmple. Needs to be in its own method because needs to be called after toolbar has been initialized.
+	 */
+	public void openExample() {
+		setNewPanel(new File(workingDirectory + "/151-B1-N05-A07-Example02.pnml"), true);
+
+	}
+	
 	// GETTER METHODS
 
 	/**

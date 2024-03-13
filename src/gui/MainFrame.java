@@ -107,6 +107,9 @@ public class MainFrame extends JFrame {
 		toolbar = new PetrinetToolbar(controller, this);
 		add(toolbar, BorderLayout.NORTH);
 
+		//open up an example (needs to be done after toolbar has been initialized)
+		controller.openExample();
+		
 		// set up the frame and show it
 		setLocationRelativeTo(null);
 		double heightPerc = 0.7;
