@@ -106,7 +106,9 @@ public class MainFrame extends JFrame {
 
 		toolbar = new PetrinetToolbar(controller, this);
 		add(toolbar, BorderLayout.NORTH);
-
+		//make toolbar non detachable
+		toolbar.setFloatable(false);
+		
 		//open up an example (needs to be done after toolbar has been initialized)
 		controller.openExample();
 		
@@ -274,6 +276,8 @@ public class MainFrame extends JFrame {
 			// remove it and readd it, set orientation if necessary
 			remove(toolbar);
 			toolbar = new PetrinetToolbar(controller, this);
+			//make toolbar non detachable
+			toolbar.setFloatable(false);
 
 			if (dockingPlace == null)
 				add(toolbar, BorderLayout.NORTH);
