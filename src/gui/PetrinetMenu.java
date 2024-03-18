@@ -95,8 +95,8 @@ class PetrinetMenu extends JMenuBar {
 		edit.add(openEditorMenuItem);
 		edit.add(closeEditorMenuItem);
 		edit.add(changeLookAndFeelMenuItem);
-		edit.add(enableAutomaticBoundednessMenuItem);
-		edit.add(disableAutomaticBoundednessMenuItem);
+//		edit.add(enableAutomaticBoundednessMenuItem);
+//		edit.add(disableAutomaticBoundednessMenuItem);
 		help.add(showInfoMenuItem);
 
 		newMenuItem.addActionListener(e -> menuController.onNew());
