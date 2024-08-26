@@ -1,0 +1,233 @@
+/*
+	CSS file for a reachability graph.
+*/
+
+/*
+	Global settings for the graph.
+*/
+graph {
+	padding: 100px;
+}
+
+/*
+	Style for edges.
+*/
+edge {
+	fill-color: #003366;
+
+	arrow-shape: arrow;
+	arrow-size: 9px, 6px;
+}
+	
+/*
+	Style for highlighted edges.
+*/
+edge.highlight {
+	fill-color: #000000;
+	size: 3px;
+}
+
+/*
+	Style for edge sprites.
+*/
+sprite.edgeLabel {
+	text-background-mode: rounded-box;
+	text-background-color: white;
+	text-padding: 2px;
+
+	text-size: 12;
+	text-alignment: center;
+	text-offset: 0, -3;
+}
+
+/*
+	A blank node -> needed for the tree layout.
+*/
+node.blank {
+	size: 0px;
+	fill-color: rgba(0, 0, 0, 0);
+}
+
+/*
+	Default style for a node.
+*/
+node {
+	shape: box;
+
+	size: 140px, 30px;
+
+	fill-color: #99ccff;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0, -5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+}
+
+/*
+	Additional attributes for a highlighted node.
+*/
+node.highlight {
+
+	stroke-color: #0000ff;
+	stroke-width: 3px;
+}
+
+
+/*
+	Style for the intial node in the reachability graph.
+*/
+node.initial {
+	fill-color: #d3d3d3;
+
+}
+
+/*
+	Style for the highlighted intial node in the reachability graph.
+*/
+node.initial_highlight {
+	fill-color: #d3d3d3;
+	stroke-color: #000000;
+	stroke-width: 3px;
+}
+
+/*
+	Style for node being initial and m.
+*/
+node.initial_m {
+	shape: box;
+	size: 125px, 30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0, -5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+
+
+	fill-mode: image-scaled;
+	fill-image: url('resources/images/initial_m.png');
+
+}
+
+/*
+	Style for node being initial, m and highlighted.
+*/
+node.initial_m_highlight {
+	shape: box;
+	size: 125px, 30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0, -5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+
+
+	fill-mode: image-scaled;
+	fill-image: url('resources/images/initial_m.png');
+
+}
+
+/*
+	Style for node being initial and m'.
+*/
+node.initial_m__mark {
+	shape: box;
+	size: 125px, 30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0, -5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 1px;
+
+
+	fill-mode: image-scaled;
+	fill-image: url('resources/images/initial_m_mark.png');
+
+}
+
+/*
+	Style for node being initial, m' and highlighted.
+*/
+node.inital_highlight_m__mark {
+	shape: box;
+	size: 125px, 30px;
+
+	text-color: #003366;
+	text-size: 12;
+	text-offset: 0, -5;
+
+	stroke-mode: plain;
+	stroke-color: #003366;
+	stroke-width: 3px;
+
+
+	fill-mode: image-scaled;
+	fill-image: url('resources/images/initial_m_mark.png');
+
+}
+
+/*
+	Style for node being m.
+*/
+node.m {
+
+	fill-color: #ffff00;
+
+}
+
+/*	
+	Style for node being m and highlighted.
+*/
+node.m_highlight {
+	fill-color: #ffff00;
+	stroke-width: 3px;
+}
+
+/*
+	Style for node being m'.
+*/
+node.m_mark {
+
+	fill-color: #ff0000;
+
+}
+
+/*
+	Style for node being m' and highlighted.
+*/
+node.m_mark_highlight {
+	fill-color: #ff0000;
+	stroke-width: 3px;
+
+
+}
+
+/*
+	Style for nodes on the path from intial to m and from m to m'.
+*/
+node.path {
+
+	fill-color: #bfac98;
+
+}
+
+/*
+	Style for highlighted nodes on the path.
+*/
+node.path_highlight {
+
+	fill-color: #bfac98;
+	stroke-width: 3px;
+}
