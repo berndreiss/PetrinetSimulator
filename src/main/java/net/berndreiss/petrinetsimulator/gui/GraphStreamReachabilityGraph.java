@@ -35,7 +35,7 @@ import net.berndreiss.petrinetsimulator.reachabilityGraphLayout.LayoutType;
 public class GraphStreamReachabilityGraph extends MultiGraph implements ReachabilityGraph {
 
 	/** The CSS file for the GraphStream graph */
-	private String CSS_FILE = "url(" + getClass().getResource("/resources/reachability_graph.css") + ")";
+	private String CSS_FILE = "url(" + getClass().getResource("/reachability_graph.css") + ")";
 	/**
 	 * Listens for certain instances the graph needs to be replayed -> needed for
 	 * adjusting arrow heads (see also {@link GraphStreamPetrinetPanel})
