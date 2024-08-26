@@ -1,7 +1,7 @@
 package net.berndreiss.petrinetsimulator.gui;
 /**
  * <p>
- * Interface for a graph representing a {@link core.ReachabilityGraphModel}.
+ * Interface for a graph representing a {@link net.berndreiss.petrinetsimulator.core.ReachabilityGraphModel}.
  * </p>
  */
 public interface ReachabilityGraph {
