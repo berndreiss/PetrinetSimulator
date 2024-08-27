@@ -108,8 +108,8 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	 * Opens up the exmple. Needs to be in its own method because needs to be called after toolbar has been initialized.
 	 */
 	public void openExample() {
-		setNewPanel(new File(workingDirectory + "/151-B1-N05-A07-Example02.pnml"), true);
-
+		if (workingDirectory.exists())
+			setNewPanel(new File(workingDirectory + "/151-B1-N05-A07-Example02.pnml"), true);
 	}
 	
 	// GETTER METHODS
