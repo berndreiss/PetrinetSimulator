@@ -277,6 +277,12 @@ public class MainController implements PetrinetMenuController, PetrinetToolbarCo
 	@Override
 	public void onOpenInNewTab() {
 
+		// This check can be commented out when not on a memory budget.
+		if (mainFrame.getTabbedPane().getTabCount() == 3) {
+			JOptionPane.showMessageDialog(mainFrame, "Maximum amount of tabs reached.");
+			return;
+		}
+
 		// let user choose file
 		File file = getFile();
 
