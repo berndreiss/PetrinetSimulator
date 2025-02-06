@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import net.berndreiss.petrinetsimulator.Main;
 import net.berndreiss.petrinetsimulator.control.MainController;
 import net.berndreiss.petrinetsimulator.control.PetrinetMenuController;
 import net.berndreiss.petrinetsimulator.control.PetrinetPanel;
@@ -121,7 +122,11 @@ public class MainFrame extends JFrame {
 		int w = (int) (h * aspectRatio);
 		setBounds((screenSize.width - w) / 2, (screenSize.height - h) / 2, w, h);
 		this.setMinimumSize(new Dimension(1250, 800));// min size so that all buttons are shown correctly
-		this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+		if (Main.HEIGHT > 0 && Main.WIDTH > 0) {
+		    this.setSize(Main.WIDTH, Main.HEIGHT);
+		} else {
+			this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+		}
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override

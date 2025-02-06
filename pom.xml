@@ -4,7 +4,11 @@
   <groupId>net.berndreiss.petrinetsimulator</groupId>
   <artifactId>petrinetsimulator</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+    <properties>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
+    </properties>
+    <version>1.0</version>
   <name>petrinetsimulator</name>
   <url>http://maven.apache.org</url>
   <build>
