@@ -1,6 +1,6 @@
 # Pertinet Simulator
 
-A simulator for Petri nets with a graphical interface. The program can display, edit, and perform limited analysis of Petri nets. The demo is provided via a docker container served by a Flask server. A demo of the program can be found here: petrinet.berndreiss.net
+A simulator for Petri nets with a graphical interface. The program can display, edit, and perform limited analysis of Petri nets. The demo is provided via a docker container served by a Flask server. A demo of the program can be found here: https://petrinet.berndreiss.net
 
 ![image](https://github.com/user-attachments/assets/27e3919d-2531-4d7a-89fc-cf8a57889196)
 
